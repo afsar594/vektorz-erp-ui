@@ -1,25 +1,35 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .clock-container {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 85vh;
-  width: 99vw;
-  background-color:#1b7080;
+  width: 100%;
+  background: radial-gradient(circle at 50% 45%, #123a60 0%, #0b1f38 60%, #040914 100%);
+  box-sizing: border-box;
 }
+
 .clock-face {
   position: relative;
   width: 300px;
   height: 300px;
-  border: 2px solid white;
+  border: 2px solid rgba(143, 211, 216, 0.7);
   border-radius: 50%;
-  background-color: #217478;
+  background: rgba(9, 20, 39, 0.88);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.85),
+    0 0 36px rgba(0, 194, 255, 0.18);
 }
 
 .clock-number {
   position: absolute;
-  color: white;
+  color: #dbeafe;
   font-size: 14px;
-  font-family: Arial, sans-serif;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', 'Inter', Arial, sans-serif;
   text-align: center;
   width: 20px;
   height: 20px;
@@ -31,7 +41,8 @@
   bottom: 50%;
   left: 50%;
   transform-origin: bottom center;
-  background: white;
+  background: #e8f1f8;
+  border-radius: 2px;
 }
 
 .hour-hand {
@@ -47,7 +58,8 @@
 .second-hand {
   width: 2px;
   height: 100px;
-  background: deepskyblue;
+  background: #00c2ff;
+  box-shadow: 0 0 8px rgba(0, 194, 255, 0.8);
 }
 
 .date-info {
@@ -55,8 +67,11 @@
   bottom: 55px;
   left: 50%;
   transform: translateX(-50%);
-  color: white;
+  color: #8fd3d8;
   text-align: center;
-  font-family: Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', Arial, sans-serif;
   font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
