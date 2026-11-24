@@ -1,0 +1,825 @@
+/* ==========================================================================
+   Dark theme — forms, controls, validation, buttons, pickers, alerts
+   ========================================================================== */
+
+@mixin dt-placeholder {
+  &::placeholder {
+    color: var(--erp-muted) !important;
+    opacity: 1 !important;
+  }
+
+  &::-webkit-input-placeholder {
+    color: var(--erp-muted) !important;
+    opacity: 1 !important;
+  }
+
+  &:-ms-input-placeholder {
+    color: var(--erp-muted) !important;
+    opacity: 1 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Text inputs, textareas, selects, search fields
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .ui-inputtext,
+  .p-inputtext,
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="email"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input:not([type]),
+  textarea,
+  select,
+  [pInputText],
+  [pInputTextarea],
+  .modern-input,
+  .modern-textarea,
+  .modern-dropdown,
+  .erp-table-search input,
+  .ui-dropdown-filter,
+  .ui-multiselect-filter input,
+  .ui-listbox-filter,
+  .p-dropdown-filter,
+  .p-multiselect-filter input,
+  .p-listbox-filter,
+  .ui-table-filter input,
+  .p-table-filter input,
+  .ui-inputnumber input,
+  .p-inputnumber input,
+  .ui-autocomplete-input,
+  .ui-chips > ul.ui-inputtext {
+    @include dt-field;
+    @include dt-placeholder;
+    caret-color: var(--erp-accent) !important;
+
+    &:hover:not(:disabled):not(.ui-state-disabled) {
+      border-color: #5b718f !important;
+    }
+
+    &:focus,
+    &.ui-state-focus,
+    &.p-focus,
+    &.ui-inputtext:focus {
+      @include dt-focus-ring;
+      background: #2b3a52 !important;
+    }
+
+    &:disabled,
+    &[disabled],
+    &.ui-state-disabled,
+    &.p-disabled {
+      background: var(--erp-surface-3) !important;
+      color: var(--erp-muted) !important;
+      border-color: var(--erp-line-soft) !important;
+      cursor: not-allowed;
+    }
+
+    &[readonly] {
+      color: var(--erp-text-2) !important;
+    }
+  }
+
+  option,
+  optgroup {
+    background: var(--erp-input) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-inputgroup-addon,
+  .p-inputgroup-addon {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text-2) !important;
+  }
+
+  .ui-inputgroup .ui-inputtext,
+  .p-inputgroup .p-inputtext {
+    border-radius: 0 !important;
+  }
+
+  /* File upload buttons and their labels stay clearly visible. */
+  input[type="file"] {
+    color: var(--erp-text-2) !important;
+
+    &::file-selector-button {
+      background: var(--erp-accent-strong) !important;
+      border: 1px solid var(--erp-accent) !important;
+      border-radius: 8px !important;
+      color: #ffffff !important;
+      padding: 7px 12px !important;
+      margin-right: 10px !important;
+      cursor: pointer !important;
+    }
+  }
+
+  .ui-inputtextarea,
+  .ui-editor-container,
+  .ql-toolbar.ql-snow,
+  .ql-container.ql-snow {
+    background: var(--erp-input) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ql-toolbar.ql-snow .ql-picker-label,
+  .ql-snow .ql-stroke {
+    color: var(--erp-text-2) !important;
+    stroke: var(--erp-text-2) !important;
+  }
+
+  .ql-snow .ql-fill {
+    fill: var(--erp-text-2) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Labels, help text, validation and error states
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  label,
+  .field-label,
+  .form-group label,
+  .spec-item label,
+  .control-label,
+  .form-label,
+  .ui-label,
+  .p-label,
+  .ui-outputlabel,
+  .remember-label-text,
+  .ui-selectlabel,
+  .ui-checkbox-label,
+  .ui-radiobutton-label {
+    color: var(--erp-text-2) !important;
+    font-weight: 600 !important;
+  }
+
+  /* Status radio headers use inline pastel/primary backgrounds. Replace the
+     whole header treatment with a dark surface and readable white text. */
+  h5[style*="background"],
+  h5[style*="background-color"] {
+    background: var(--erp-surface-3) !important;
+    border: 1px solid var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  h5[style] label {
+    color: inherit !important;
+  }
+
+  .help-block,
+  .field-help,
+  .form-text,
+  .hint-text {
+    color: var(--erp-muted) !important;
+  }
+
+  .ui-message,
+  .ui-messages,
+  .ui-messages-error,
+  .p-message,
+  .p-toast-message,
+  .p-toast-message-content,
+  .ui-growl-item-container,
+  .error-message {
+    background: var(--erp-surface-3) !important;
+    border: 1px solid var(--erp-border) !important;
+    color: var(--erp-text) !important;
+    box-shadow: var(--erp-shadow) !important;
+  }
+
+  .ui-message-error,
+  .ui-messages-error,
+  .p-message-error,
+  .p-toast-message-error,
+  .p-toast-message-error .p-toast-detail,
+  .p-toast-message-error .p-toast-summary,
+  .error-message,
+  .error-message i,
+  .text-danger {
+    background: var(--erp-danger-soft) !important;
+    border-color: var(--erp-danger) !important;
+    color: #fca5a5 !important;
+  }
+
+  .p-message-success,
+  .p-toast-message-success,
+  .p-toast-message-success .p-toast-detail {
+    background: var(--erp-success-soft) !important;
+    border-color: var(--erp-success) !important;
+    color: #86efac !important;
+  }
+
+  .p-message-warn,
+  .p-toast-message-warn,
+  .ui-message-warn {
+    background: var(--erp-warning-soft) !important;
+    border-color: var(--erp-warning) !important;
+    color: #fcd34d !important;
+  }
+
+  .p-message-info,
+  .p-toast-message-info,
+  .ui-message-info {
+    background: var(--erp-accent-soft) !important;
+    border-color: var(--erp-accent) !important;
+    color: #bfdbfe !important;
+  }
+
+  .ui-message-close,
+  .p-message-close,
+  .p-toast-close-icon {
+    color: var(--erp-text-2) !important;
+
+    &:hover {
+      background: var(--erp-surface-hover) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .ng-invalid.ng-touched:not(form),
+  .ui-inputtext.ng-invalid.ng-touched,
+  .is-invalid input,
+  .is-invalid select,
+  .has-error input,
+  .has-error select {
+    border-color: var(--erp-danger) !important;
+    box-shadow: 0 0 0 2px var(--erp-danger-soft) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Buttons — all states
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .ui-button,
+  .p-button,
+  .layout-wrapper button,
+  .layout-wrapper .btn,
+  .ui-dialog button,
+  .p-dialog button,
+  .ui-overlaypanel button,
+  .p-overlaypanel button {
+    background: var(--erp-surface-3) !important;
+    background-image: none !important;
+    border: 1px solid var(--erp-border) !important;
+    border-radius: var(--erp-radius) !important;
+    color: var(--erp-text) !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: background-color 0.16s ease, border-color 0.16s ease,
+      color 0.16s ease, transform 0.16s ease;
+
+    &:hover:not(:disabled):not(.ui-state-disabled):not(.p-disabled) {
+      background: var(--erp-surface-hover) !important;
+      border-color: var(--erp-accent) !important;
+      color: #ffffff !important;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &:focus {
+      outline: none !important;
+      box-shadow: 0 0 0 3px var(--erp-accent-soft) !important;
+    }
+
+    &:disabled,
+    &.ui-state-disabled,
+    &.p-disabled {
+      background: var(--erp-surface-2) !important;
+      border-color: var(--erp-line-soft) !important;
+      color: var(--erp-muted) !important;
+      cursor: not-allowed !important;
+      opacity: 1 !important;
+    }
+  }
+
+  .ui-button.ui-button-primary,
+  .ui-button.ui-button-info,
+  .p-button.p-button-primary,
+  .p-button.p-button-info,
+  .btn.btn-primary,
+  .btn-primary {
+    background: var(--erp-accent-strong) !important;
+    border-color: var(--erp-accent) !important;
+    color: #ffffff !important;
+
+    &:hover:not(:disabled) {
+      background: var(--erp-accent) !important;
+      border-color: var(--erp-accent-hover) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .ui-button.ui-button-success,
+  .p-button.p-button-success,
+  .btn-success {
+    background: var(--erp-success) !important;
+    border-color: #4ade80 !important;
+    color: #052e16 !important;
+
+    &:hover:not(:disabled) {
+      background: #4ade80 !important;
+      color: #052e16 !important;
+    }
+  }
+
+  .ui-button.ui-button-warning,
+  .p-button.p-button-warning,
+  .btn-warning {
+    background: var(--erp-warning) !important;
+    border-color: #fbbf24 !important;
+    color: #451a03 !important;
+
+    &:hover:not(:disabled) {
+      background: #fbbf24 !important;
+      color: #451a03 !important;
+    }
+  }
+
+  .ui-button.ui-button-danger,
+  .p-button.p-button-danger,
+  .btn-danger,
+  .delete-button .p-button {
+    background: var(--erp-danger) !important;
+    border-color: #f87171 !important;
+    color: #450a0a !important;
+
+    &:hover:not(:disabled) {
+      background: #f87171 !important;
+      color: #450a0a !important;
+    }
+  }
+
+  .ui-button.ui-button-secondary,
+  .p-button.p-button-secondary,
+  .ui-button-raised {
+    background: var(--erp-surface-3) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-selectbutton .ui-button {
+    background: var(--erp-input) !important;
+    color: var(--erp-text-2) !important;
+
+    &.ui-state-active {
+      background: var(--erp-accent-strong) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Icon-only buttons must still show a visible glyph. */
+  .ui-button-icon-only,
+  .p-button-icon-only {
+    color: var(--erp-text) !important;
+
+    .fa,
+    .pi {
+      color: inherit !important;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Dropdowns, multiselect, autocomplete, listbox
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .ui-dropdown,
+  .ui-multiselect,
+  .ui-autocomplete,
+  .ui-chips,
+  .p-dropdown,
+  .p-multiselect,
+  .p-autocomplete,
+  .p-chips {
+    @include dt-field;
+
+    .ui-dropdown-label,
+    .ui-multiselect-label,
+    .ui-autocomplete-input,
+    .p-dropdown-label,
+    .p-multiselect-label,
+    .p-autocomplete-input,
+    .p-chips-token {
+      background: transparent !important;
+      color: var(--erp-text) !important;
+    }
+
+    .ui-dropdown-trigger,
+    .ui-multiselect-trigger,
+    .p-dropdown-trigger,
+    .p-multiselect-trigger {
+      background: var(--erp-surface-3) !important;
+      border-left: 1px solid var(--erp-border) !important;
+      color: var(--erp-text) !important;
+    }
+
+    &:hover {
+      border-color: #5b718f !important;
+    }
+
+    &.ui-state-focus,
+    &.p-focus,
+    &.ui-state-active {
+      @include dt-focus-ring;
+    }
+  }
+
+  .ui-dropdown-panel,
+  .ui-multiselect-panel,
+  .ui-autocomplete-panel,
+  .ui-listbox,
+  .p-dropdown-panel,
+  .p-multiselect-panel,
+  .p-autocomplete-panel,
+  .p-listbox,
+  .dropdown-menu {
+    @include dt-menu-surface;
+    border-radius: var(--erp-radius) !important;
+    padding: 4px !important;
+  }
+
+  .ui-listbox-list,
+  .p-listbox-list {
+    background: transparent !important;
+  }
+
+  .ui-dropdown-item,
+  .ui-multiselect-item,
+  .ui-autocomplete-list-item,
+  .ui-listbox-item,
+  .p-dropdown-item,
+  .p-multiselect-item,
+  .p-autocomplete-list-item,
+  .p-listbox-item,
+  .dropdown-menu > li > a {
+    background: transparent !important;
+    border-radius: 6px !important;
+    color: var(--erp-text-2) !important;
+
+    &:hover,
+    &.ui-state-highlight,
+    &.p-highlight,
+    &:focus {
+      background: var(--erp-accent-soft) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .ui-dropdown .ui-dropdown-filter,
+  .p-dropdown .p-dropdown-filter {
+    @include dt-field;
+    @include dt-placeholder;
+    border-radius: 8px !important;
+    margin: 4px !important;
+  }
+
+  .ui-multiselect-header,
+  .p-multiselect-header,
+  .ui-listbox-header,
+  .p-listbox-header {
+    background: var(--erp-surface-3) !important;
+    border-bottom-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+
+    a,
+    .ui-chkbox-label,
+    .p-checkbox-label {
+      color: var(--erp-text-2) !important;
+    }
+  }
+
+  .ui-autocomplete-list-item mark,
+  .p-autocomplete-list-item mark {
+    background: var(--erp-accent-soft) !important;
+    color: #ffffff !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Checkboxes, radios, switches
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--erp-accent) !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+  }
+
+  .ui-checkbox-box,
+  .ui-radiobutton-box,
+  .ui-chkbox-box,
+  .p-checkbox-box,
+  .p-radiobutton-box,
+  .ui-inputswitch-slider,
+  .p-inputswitch-slider {
+    background: var(--erp-input) !important;
+    border: 1px solid var(--erp-border) !important;
+    box-shadow: none !important;
+  }
+
+  .ui-checkbox .ui-checkbox-box .ui-checkbox-icon,
+  .ui-chkbox .ui-chkbox-icon,
+  .p-checkbox .p-checkbox-icon {
+    color: #ffffff !important;
+  }
+
+  .ui-radiobutton .ui-radiobutton-icon,
+  .p-radiobutton .p-radiobutton-icon {
+    background: #ffffff !important;
+  }
+
+  .ui-checkbox.ui-state-active .ui-checkbox-box,
+  .ui-chkbox.ui-state-active .ui-chkbox-box,
+  .ui-radiobutton.ui-state-active .ui-radiobutton-box,
+  .p-checkbox.p-highlight .p-checkbox-box,
+  .p-radiobutton.p-highlight .p-radiobutton-box,
+  .ui-inputswitch.ui-state-active .ui-inputswitch-slider,
+  .p-inputswitch.p-highlight .p-inputswitch-slider {
+    background: var(--erp-accent-strong) !important;
+    border-color: var(--erp-accent) !important;
+  }
+
+  /* File-upload labels are <label> elements, so they need an explicit white
+     foreground to stay readable on the blue call-to-action background. */
+  .upload-btn {
+    background: var(--erp-accent-strong) !important;
+    border-color: var(--erp-accent) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+
+    &:hover {
+      background: var(--erp-accent) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .checkbox-custom-ui {
+    background: var(--erp-input) !important;
+    border-color: var(--erp-border) !important;
+  }
+
+  .custom-checkbox:checked + .checkbox-custom-ui {
+    background: var(--erp-accent-strong) !important;
+    border-color: var(--erp-accent) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Date pickers / calendars (PrimeNG + native)
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .ui-datepicker,
+  .ui-calendar .ui-datepicker,
+  .p-datepicker,
+  .p-calendar .p-datepicker {
+    @include dt-menu-surface;
+    border-radius: var(--erp-radius) !important;
+    padding: 8px !important;
+  }
+
+  .ui-datepicker-header,
+  .p-datepicker-header {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+
+    a,
+    .ui-datepicker-prev,
+    .ui-datepicker-next,
+    .p-datepicker-prev,
+    .p-datepicker-next,
+    .p-datepicker-title {
+      color: var(--erp-text) !important;
+
+      &:hover {
+        background: var(--erp-surface-hover) !important;
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .ui-datepicker-calendar,
+  .p-datepicker-calendar {
+    thead th,
+    .p-datepicker-dayname {
+      color: var(--erp-muted) !important;
+      background: transparent !important;
+    }
+
+    tbody td,
+    td > span,
+    td > a {
+      border-color: var(--erp-line-soft) !important;
+    }
+
+    tbody td a,
+    td > span.p-datepicker-day {
+      background: var(--erp-input) !important;
+      border-radius: 6px !important;
+      color: var(--erp-text-2) !important;
+
+      &:hover {
+        background: var(--erp-accent-soft) !important;
+        color: #ffffff !important;
+      }
+    }
+
+    .ui-state-active,
+    .ui-state-highlight,
+    .p-highlight,
+    .p-datepicker-today > span {
+      background: var(--erp-accent-strong) !important;
+      color: #ffffff !important;
+    }
+
+    .ui-state-disabled,
+    .p-disabled {
+      background: var(--erp-surface-2) !important;
+      color: var(--erp-muted) !important;
+      opacity: 1 !important;
+    }
+  }
+
+  .ui-datepicker .ui-datepicker-buttonpane,
+  .p-datepicker-buttonbar {
+    background: var(--erp-surface-3) !important;
+    border-top-color: var(--erp-border) !important;
+
+    button {
+      background: var(--erp-surface-3) !important;
+      border: 1px solid var(--erp-border) !important;
+      color: var(--erp-text) !important;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   SweetAlert2 dialogs (library default is a white card)
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .swal2-container {
+    --swal2-backdrop: rgba(2, 6, 23, 0.82);
+    --swal2-background: #1e293b;
+    --swal2-color: #f8fafc;
+  }
+
+  .swal2-popup {
+    @include dt-panel;
+    border-radius: var(--erp-radius-lg) !important;
+    color: var(--erp-text) !important;
+    font-family: "Lato", "Helvetica Neue", sans-serif !important;
+  }
+
+  .swal2-title,
+  .swal2-html-container,
+  .swal2-content,
+  #swal2-content {
+    color: var(--erp-text) !important;
+  }
+
+  .swal2-html-container a {
+    color: var(--erp-accent-hover) !important;
+  }
+
+  .swal2-icon,
+  .swal2-icon .swal2-icon-content,
+  .swal2-icon-text {
+    color: inherit !important;
+    border-color: currentColor !important;
+  }
+
+  .swal2-success-circular-line-left,
+  .swal2-success-circular-line-right,
+  .swal2-success-fix,
+  .swal2-success-ring {
+    background: transparent !important;
+  }
+
+  .swal2-success-line-tip,
+  .swal2-success-line-long {
+    background-color: var(--erp-success) !important;
+  }
+
+  .swal2-actions {
+    gap: 10px !important;
+  }
+
+  .swal2-confirm,
+  .swal2-deny,
+  .swal2-cancel {
+    background: var(--erp-accent-strong) !important;
+    border: 1px solid var(--erp-accent) !important;
+    border-radius: var(--erp-radius) !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 10px 18px !important;
+
+    &:hover,
+    &:focus {
+      background: var(--erp-accent) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .swal2-deny {
+    background: var(--erp-danger) !important;
+    border-color: #f87171 !important;
+    color: #450a0a !important;
+  }
+
+  .swal2-cancel {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .swal2-close {
+    color: var(--erp-text-2) !important;
+
+    &:hover,
+    &:focus {
+      background: var(--erp-surface-hover) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .swal2-input,
+  .swal2-textarea,
+  .swal2-select,
+  .swal2-file {
+    @include dt-field;
+    @include dt-placeholder;
+  }
+
+  .swal2-validation-message {
+    background: var(--erp-danger-soft) !important;
+    color: #fca5a5 !important;
+  }
+
+  .swal2-footer {
+    border-top-color: var(--erp-border) !important;
+    color: var(--erp-text-2) !important;
+  }
+
+  .swal2-timer-progress-bar {
+    background: var(--erp-accent) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Login screen — preserve its premium glass/gradient treatment while keeping
+   every control on the shared palette.
+   -------------------------------------------------------------------------- */
+body.dark-theme .bios-auth-viewport {
+  background-color: var(--erp-bg) !important;
+  color: var(--erp-text) !important;
+
+  .custom-text-input,
+  .custom-select-input {
+    background: #1e293b !important;
+    border: 1px solid var(--erp-border) !important;
+    color: var(--erp-text) !important;
+    border-radius: 10px !important;
+
+    @include dt-placeholder;
+
+    &:hover {
+      background: #233349 !important;
+      border-color: #5b718f !important;
+    }
+
+    &:focus {
+      background: #273449 !important;
+      border-color: var(--erp-accent) !important;
+      box-shadow: 0 0 0 3px var(--erp-accent-soft) !important;
+    }
+  }
+
+  .field-label,
+  .header-title,
+  .header-subtitle,
+  .brand-headline,
+  .brand-description {
+    color: var(--erp-text) !important;
+  }
+
+  .copyright-text,
+  .security-indicator {
+    color: var(--erp-muted) !important;
+  }
+}

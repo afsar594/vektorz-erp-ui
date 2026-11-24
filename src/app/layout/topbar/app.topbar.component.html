@@ -1,22 +1,26 @@
 <div class="topbar">
   <div class="topbar-main">
-    <div style="display: flex; align-items: center">
+    <div class="topbar-brand-group">
       <a href="#" id="menu-button" (click)="toggleMenu()">
         <span class="fa fa-bars"></span>
       </a>
 
-      <a href="/">
-        <img alt="main logo" src="assets/Images/logo.png" class="logo" />
+      <a href="/" class="topbar-brand">
+        <span class="topbar-logo-tile">
+          <img
+            alt="BioS Cybersecurity logo"
+            src="assets/Images/BioS_CyberSecure.png"
+            class="logo"
+          />
+        </span>
+        <span class="app-name">
+          <span class="app-name__title">{{ companyDetails?.stationMasterStationName | translate }}</span>
+          <span class="app-tagline">PROJECT COSTING TOOL</span>
+        </span>
       </a>
-
-      <div class="app-name">
-        <a href="/">{{
-          companyDetails?.stationMasterStationName | translate
-          }}</a>
-      </div>
     </div>
 
-    <!-- Menu Search -->
+    <!-- Menu Search (Vektorz functionality, restyled to the BioS shell) -->
     <div class="menu-search-wrapper" #searchContainer>
       <div class="menu-search-input-wrapper">
         <i class="fa fa-search menu-search-icon"></i>
@@ -57,71 +61,101 @@
       </div>
     </div>
 
-    <div class="user-panel" style="display: flex; align-content: flex-end; position: relative">
-      <app-translater style="display: flex; align-items: center"></app-translater>
+    <div class="user-panel">
+      <app-translater></app-translater>
 
       <!-- Notification Bell -->
-      <div id="notification-bell" class="notification-wrapper"
-        (click)="notificationService.toggleNotifications($event)">
-        <button type="button" class="notification-btn">
-          <i class="fa fa-bell"></i>
-
-          <span *ngIf="notificationService.unreadCount > 0" class="notification-badge">
-            {{ notificationService.unreadCount }}
-          </span>
-        </button>
+      <div
+        id="notification-bell"
+        class="topbar-icon-btn"
+        (click)="notificationService.toggleNotifications($event)"
+      >
+        <i class="fa fa-bell"></i>
+        <span
+          class="notification-badge"
+          *ngIf="notificationService.unreadCount > 0"
+        >
+          {{ notificationService.unreadCount }}
+        </span>
 
         <!-- Notification Dropdown -->
-        <div *ngIf="notificationService.notificationsVisible" class="notification-dropdown"
-          (click)="$event.stopPropagation()">
-          <div class="notification-header">
-            <div>
-              <h4>{{ 'Notifications' | translate }}</h4>
-              <small *ngIf="notificationService.unreadCount > 0">
+        <div
+          class="notification-panel"
+          *ngIf="notificationService.notificationsVisible"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="notification-panel__head">
+            <span class="notification-panel__title">{{ 'Notifications' | translate }}</span>
+            <div class="notification-panel__actions">
+              <span class="notification-panel__count">
                 {{ notificationService.unreadCount }} {{ 'unread' | translate }}
-              </small>
+              </span>
+              <button
+                type="button"
+                class="notification-panel__clear"
+                *ngIf="notificationService.notifications.length > 0"
+                (click)="notificationService.clearNotifications()"
+              >
+                {{ 'Clear All' | translate }}
+              </button>
             </div>
-
-            <button type="button" class="clear-btn" *ngIf="notificationService.notifications.length > 0"
-              (click)="notificationService.clearNotifications()">
-              {{ 'Clear All' | translate }}
-            </button>
           </div>
 
-          <div *ngIf="notificationService.notifications.length > 0" class="notification-list">
-            <div class="notification-item" *ngFor="let item of notificationService.notifications"
-              (click)="notificationService.onNotificationSelected({ value: item })">
-              <div class="notification-icon">
-                <i class="fa fa-info"></i>
-              </div>
-
-              <div class="notification-content">
+          <div
+            class="notification-panel__list"
+            *ngIf="notificationService.notifications.length > 0"
+          >
+            <div
+              class="notification-panel__item"
+              *ngFor="let item of notificationService.notifications"
+              (click)="notificationService.onNotificationSelected({ value: item })"
+            >
+              <i class="fa fa-info notification-panel__item-icon"></i>
+              <div class="notification-panel__item-content">
                 <p>{{ item.message }}</p>
-
-                <small *ngIf="item.createdDate">
-                  {{ item.createdDate | date: 'short' }}
-                </small>
+                <small *ngIf="item.createdDate">{{ item.createdDate | date: 'short' }}</small>
               </div>
             </div>
           </div>
 
-          <div *ngIf="notificationService.notifications.length === 0" class="empty-notification">
-            <i class="fa fa-bell-slash"></i>
-            <p>{{ 'No new notifications' | translate }}</p>
+          <div
+            class="notification-panel__empty"
+            *ngIf="notificationService.notifications.length === 0"
+          >
+            <i class="pi pi-bell"></i>
+            {{ 'No new notifications' | translate }}
           </div>
         </div>
       </div>
 
       <!-- User Menu -->
       <div id="user-display" (click)="app.onTopbarMenuButtonClick($event)">
-        <div style="margin: 0 4px">
+        <div class="user-meta">
           <div class="username">{{ userData.userName | translate }}</div>
+          <div class="userrole">Administrator</div>
         </div>
-        <img alt="main logo" [src]="'data:image/png;base64,' + userData.userImage" />
+        <img
+          *ngIf="userData.userImage; else defaultUserLogo"
+          alt="User profile"
+          [src]="'data:image/png;base64,' + userData.userImage"
+        />
+        <ng-template #defaultUserLogo>
+          <img
+            alt="BioS user"
+            src="assets/Images/BioS_CyberSecure.png"
+          />
+        </ng-template>
       </div>
 
-      <ul id="topbar-menu" class="fadeInDown animated" [ngClass]="{ 'topbar-menu-visible': app.topbarMenuActive }">
-        <li #profile [ngClass]="{ 'menuitem-active': app.activeTopbarItem === profile }">
+      <ul
+        id="topbar-menu"
+        class="fadeInDown animated"
+        [ngClass]="{ 'topbar-menu-visible': app.topbarMenuActive }"
+      >
+        <li
+          #profile
+          [ngClass]="{ 'menuitem-active': app.activeTopbarItem === profile }"
+        >
           <a href="#" (click)="app.onTopbarItemClick($event, profile)">
             <i class="topbar-icon fa fa-fw fa-user"></i>
             <span class="topbar-item-name">{{ 'Profile' | translate }}</span>
@@ -138,7 +172,10 @@
             </li>
           </ul>
         </li>
-        <li #logout [ngClass]="{ 'menuitem-active': app.activeTopbarItem === logout }">
+        <li
+          #logout
+          [ngClass]="{ 'menuitem-active': app.activeTopbarItem === logout }"
+        >
           <a href="#" (click)="app.logout($event)">
             <i class="fa fa-fw fa-sign-out"></i>{{ 'Logout' | translate }}
           </a>
@@ -147,5 +184,7 @@
     </div>
   </div>
 
-  <app-menu [itemMenu]="items"></app-menu>
+  <div class="topbar-nav">
+    <app-menu [itemMenu]="items"></app-menu>
+  </div>
 </div>

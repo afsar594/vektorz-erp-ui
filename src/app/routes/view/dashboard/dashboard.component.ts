@@ -14,6 +14,7 @@ import {
 } from '../../domain/Administration/dashboard';
 import { FormControl, FormBuilder } from '@angular/forms';
 import { DashboardDataService } from '../../service/dashboard/dashboard.service';
+import { LoginService } from '../../service/login.service';
 import { MISService } from '../../service/mis/mis.service';
 import { ApiResponse } from '../../domain/Masters/ApiResponse';
 import { Observable, Subscription } from 'rxjs';
@@ -22,6 +23,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
   // Recompile trigger for TranslatePipe scope
   styles: [
     `
@@ -306,18 +308,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedChart: any = 'SALES,PURCHASE';
   selectedPeriod: string = 'CURRENT_MONTH';
 
+  // UI-only presentation state for the BioS dashboard header.
+  today: string = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+  greeting = 'Welcome back';
+  userName = 'User';
+
   constructor(
     private misService: MISService,
     private dashbaordServce: DashboardDataService,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private fb: FormBuilder,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit() {
     console.log("Dashboard check");
-    
+
+    this.resolveUserGreeting();
     this.GetFinancialYear();
     this.getPDC('TOTAL');
     this.initMenuItems();
@@ -358,6 +372,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       this.cdr.markForCheck();
     });
+  }
+
+  private resolveUserGreeting() {
+    const credentials = this.loginService.GetCredentialData();
+    this.userName = credentials?.userName || 'User';
+
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      this.greeting = 'Good morning';
+    } else if (hour < 17) {
+      this.greeting = 'Good afternoon';
+    } else {
+      this.greeting = 'Good evening';
+    }
   }
 
   initChartData() {

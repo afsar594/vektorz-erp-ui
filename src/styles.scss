@@ -235,42 +235,6 @@ button {
   min-width: 0 !important;
 }
 
-// Opened dropdown panel must match the closed field width; long option text
-// truncates with an ellipsis instead of widening the panel (and scrolling the page).
-body .ui-dropdown-panel {
-  min-width: 100% !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  left: 0 !important;
-  box-sizing: border-box;
-
-  .ui-dropdown-items,
-  .ui-dropdown-item,
-  .ui-dropdown-item-group {
-    overflow: hidden;
-  }
-
-  .ui-dropdown-item,
-  .ui-dropdown-item-group {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-  }
-
-  .ui-dropdown-item > span,
-  .ui-dropdown-item-group > span {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .ui-dropdown-filter-container .ui-dropdown-filter {
-    width: 100%;
-  }
-}
-
 .ui-autocomplete {
   width: 100%;
   display: inline-flex;
@@ -590,20 +554,6 @@ table.border-table {
   }
 }
 
-.handsontable .changeType,
-.handsontable button.changeType {
-  display: none !important;
-  visibility: hidden !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-.handsontable th.afterHiddenColumn:before,
-.handsontable th.beforeHiddenColumn:after {
-  display: none !important;
-  content: "" !important;
-}
-
 .pagination-controls {
   display: flex;
   align-items: center;
@@ -655,6 +605,63 @@ table.border-table {
       color: #ffb900 !important;
     }
   }
+}
+
+// Enterprise shell refresh (must stay last so it overrides theme/layout css)
+@import "./assets/sass/layout/enterprise";
+
+// Professional dark theme — final override layer for shell, PrimeNG and Handsontable
+@import "./assets/sass/layout/dark-theme";
+
+// Vektorz functional overrides, re-asserted after the imported theme layer.
+// Opened dropdown panel must match the closed field width; long option text
+// truncates with an ellipsis instead of widening the panel (and scrolling the page).
+body .ui-dropdown-panel {
+  min-width: 100% !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  left: 0 !important;
+  box-sizing: border-box;
+
+  .ui-dropdown-items,
+  .ui-dropdown-item,
+  .ui-dropdown-item-group {
+    overflow: hidden;
+  }
+
+  .ui-dropdown-item,
+  .ui-dropdown-item-group {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .ui-dropdown-item > span,
+  .ui-dropdown-item-group > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ui-dropdown-filter-container .ui-dropdown-filter {
+    width: 100%;
+  }
+}
+
+.handsontable .changeType,
+.handsontable button.changeType {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.handsontable th.afterHiddenColumn:before,
+.handsontable th.beforeHiddenColumn:after {
+  display: none !important;
+  content: "" !important;
 }
 
 /* ==========================================================================

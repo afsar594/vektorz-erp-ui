@@ -1,0 +1,785 @@
+/* ============================================================
+   Enterprise shell (topbar, mega-menu frame, content, footer)
+   Imported last from src/styles.scss so it wins over the legacy
+   theme + layout stylesheets loaded from index.html.
+   ============================================================ */
+
+:root {
+  --erp-ink: #102a43;
+  --erp-ink-soft: #334e68;
+  --erp-muted: #7b8fa8;
+  --erp-line: #e3eaf3;
+  --erp-line-soft: #eef2f7;
+  --erp-surface: #ffffff;
+  --erp-page: #f4f7fb;
+  --erp-navy: #0b1f38;
+  --erp-navy-2: #123a60;
+  --erp-teal: #0f8b8d;
+  --erp-teal-dark: #0b6f7e;
+  --erp-blue: #2f80ed;
+  --erp-amber: #f2994a;
+  --erp-radius: 16px;
+  --erp-shadow-soft: 0 18px 40px -30px rgba(8, 30, 55, 0.45),
+    0 2px 7px -3px rgba(8, 30, 55, 0.08);
+}
+
+body {
+  background-color: var(--erp-page);
+}
+
+/* ------------------------------------------------------------
+   Topbar shell
+   ------------------------------------------------------------ */
+body .layout-wrapper .topbar {
+  position: sticky;
+  top: 0;
+  left: auto;
+  right: auto;
+  z-index: 1000;
+  width: 100%;
+  padding: 0;
+  background: linear-gradient(100deg, #0b1f38 0%, #103457 52%, #0d5f6b 100%);
+  background-image: linear-gradient(
+    100deg,
+    #0b1f38 0%,
+    #103457 52%,
+    #0d5f6b 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 14px 34px -24px rgba(5, 20, 40, 0.85);
+  filter: none;
+}
+
+body .layout-wrapper.layout-menu-horizontal .topbar,
+body .layout-wrapper .topbar {
+  height: auto;
+  box-shadow: 0 14px 34px -24px rgba(5, 20, 40, 0.85);
+}
+
+body .layout-wrapper .topbar .topbar-main,
+body .layout-wrapper.layout-menu-horizontal .topbar .topbar-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 18px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 24px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body .layout-wrapper .topbar #menu-button {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   Brand
+   ------------------------------------------------------------ */
+body .layout-wrapper .topbar .topbar-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+body .layout-wrapper .topbar .topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-decoration: none;
+}
+
+/* The BioS asset is a stacked mark on a black field. Crop it to the
+   emblem and screen out the black so it sits cleanly on the dark
+   toolbar instead of reading as a pasted-on black square. */
+body .layout-wrapper .topbar .topbar-logo-tile {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+body .layout-wrapper .topbar .topbar-logo-tile .logo {
+  position: absolute;
+  top: -20%;
+  left: -31%;
+  width: auto;
+  height: 162%;
+  max-width: none;
+  margin: 0;
+  display: block;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+body .layout-wrapper .topbar .app-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+body .layout-wrapper .topbar .app-name a,
+body .layout-wrapper .topbar .app-name__title {
+  display: block;
+  max-width: none;
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+body .layout-wrapper .topbar .app-name .app-tagline {
+  color: #8fd3d8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   Right-hand controls
+   ------------------------------------------------------------ */
+body .layout-wrapper .topbar .user-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  gap: 9px;
+  min-width: 0;
+}
+
+body .layout-wrapper .topbar .topbar-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #dbeafe;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+body .layout-wrapper .topbar .topbar-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+body .layout-wrapper .topbar #notification-bell {
+  margin: 0;
+}
+
+body .layout-wrapper .topbar #notification-bell .fa-bell {
+  font-size: 16px;
+  color: inherit;
+  margin: 0;
+}
+
+body .layout-wrapper .topbar .notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #e2574c;
+  border: 2px solid #0e2c4a;
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Notification dropdown */
+body .layout-wrapper .topbar .notification-panel {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  padding: 0;
+  margin: 0;
+  background: #ffffff;
+  border: 1px solid var(--erp-line);
+  border-radius: 14px;
+  box-shadow: 0 30px 60px -32px rgba(5, 20, 40, 0.65),
+    0 4px 12px -6px rgba(5, 20, 40, 0.18);
+  overflow: hidden;
+  z-index: 1200;
+}
+
+body .layout-wrapper .topbar .notification-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--erp-line-soft);
+  background: #f8fafc;
+}
+
+body .layout-wrapper .topbar .notification-panel__title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--erp-ink);
+}
+
+body .layout-wrapper .topbar .notification-panel__count {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--erp-teal-dark);
+  background: #e6f4f5;
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+body .layout-wrapper .topbar .notification-panel .ui-listbox {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+}
+
+body .layout-wrapper .topbar .notification-panel .ui-listbox .ui-listbox-item {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--erp-line-soft);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--erp-ink-soft);
+}
+
+body
+  .layout-wrapper
+  .topbar
+  .notification-panel
+  .ui-listbox
+  .ui-listbox-item:last-child {
+  border-bottom: 0;
+}
+
+body
+  .layout-wrapper
+  .topbar
+  .notification-panel
+  .ui-listbox
+  .ui-listbox-item.ui-state-highlight {
+  background: #eef7f8;
+  color: var(--erp-teal-dark);
+}
+
+body .layout-wrapper .topbar .notification-panel__empty {
+  padding: 22px 16px;
+  text-align: center;
+  color: var(--erp-muted);
+  font-size: 12px;
+}
+
+body .layout-wrapper .topbar .notification-panel__empty i {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 20px;
+  color: #c2cfdd;
+}
+
+/* ------------------------------------------------------------
+   User chip
+   ------------------------------------------------------------ */
+body .layout-wrapper .topbar #user-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 5px 6px 5px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+body .layout-wrapper .topbar #user-display:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+body .layout-wrapper .topbar #user-display .user-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  min-width: 0;
+  margin: 0;
+}
+
+body .layout-wrapper .topbar #user-display .username {
+  display: block;
+  max-width: 130px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #f2f8ff;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: right;
+}
+
+body .layout-wrapper .topbar #user-display .userrole {
+  display: block;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  color: #8fd3d8;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+body .layout-wrapper .topbar #user-display img {
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  background: #ffffff;
+  object-fit: cover;
+  transition: border-color 0.2s ease;
+}
+
+body .layout-wrapper .topbar #user-display:hover img {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* ------------------------------------------------------------
+   Profile dropdown
+   ------------------------------------------------------------ */
+body .layout-wrapper .topbar #topbar-menu {
+  display: none;
+  position: absolute;
+  top: 56px;
+  right: 0;
+  width: 232px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid var(--erp-line);
+  border-radius: 14px;
+  box-shadow: 0 30px 60px -32px rgba(5, 20, 40, 0.65),
+    0 4px 12px -6px rgba(5, 20, 40, 0.18);
+  z-index: 1200;
+  animation-duration: 0.18s;
+}
+
+body .layout-wrapper .topbar #topbar-menu.topbar-menu-visible {
+  display: block;
+}
+
+body .layout-wrapper .topbar #topbar-menu > li {
+  margin: 0;
+}
+
+body .layout-wrapper .topbar #topbar-menu li > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  color: var(--erp-ink-soft);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+body .layout-wrapper .topbar #topbar-menu li > a i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #f1f6f9;
+  color: var(--erp-teal-dark);
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+body .layout-wrapper .topbar #topbar-menu li > a span {
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+body .layout-wrapper .topbar #topbar-menu li > a:hover,
+body .layout-wrapper .topbar #topbar-menu li.menuitem-active > a {
+  background: #eef7f8;
+  color: var(--erp-teal-dark);
+}
+
+body .layout-wrapper .topbar #topbar-menu li > ul {
+  display: none;
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px 0 0;
+  border-top: 1px solid var(--erp-line-soft);
+}
+
+body .layout-wrapper .topbar #topbar-menu li.menuitem-active > ul {
+  display: block;
+}
+
+body .layout-wrapper .topbar #topbar-menu li > ul > li > a {
+  font-weight: 500;
+}
+
+/* ------------------------------------------------------------
+   Language switcher
+   ------------------------------------------------------------ */
+body .layout-wrapper .topbar .translator {
+  position: relative;
+  margin: 0;
+}
+
+body .layout-wrapper .topbar .translator .translator__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 11px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #e8f1f8;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+body .layout-wrapper .topbar .translator .translator__trigger:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+body .layout-wrapper .topbar .translator .translator__trigger .pi-angle-down {
+  font-size: 9px;
+  opacity: 0.7;
+}
+
+body .layout-wrapper .topbar .translator .lang-menu {
+  display: none;
+  position: absolute;
+  top: 46px;
+  right: 0;
+  width: 188px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid var(--erp-line);
+  border-radius: 14px;
+  box-shadow: 0 30px 60px -32px rgba(5, 20, 40, 0.65),
+    0 4px 12px -6px rgba(5, 20, 40, 0.18);
+  z-index: 1200;
+}
+
+body .layout-wrapper .topbar .translator .lang-menu.lang-menu--visible {
+  display: block;
+}
+
+body .layout-wrapper .topbar .translator .lang-menu li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  color: var(--erp-ink-soft);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+body .layout-wrapper .topbar .translator .lang-menu li i {
+  color: var(--erp-teal);
+  font-size: 12px;
+}
+
+body .layout-wrapper .topbar .translator .lang-menu li:hover {
+  background: #eef7f8;
+  color: var(--erp-teal-dark);
+}
+
+body .layout-wrapper .topbar .translator .lang-menu li a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------
+   Mega-menu navigation row
+   ------------------------------------------------------------ */
+body .layout-wrapper .topbar .topbar-nav {
+  position: relative;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  background: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--erp-line);
+  box-sizing: border-box;
+}
+
+body .layout-wrapper .topbar .topbar-nav app-menu,
+body .layout-wrapper .topbar .topbar-nav .ui-megamenu {
+  display: block;
+  width: 100%;
+}
+
+/* ------------------------------------------------------------
+   Content + footer
+   ------------------------------------------------------------ */
+body .layout-wrapper .layout-content,
+body .layout-wrapper.layout-menu-horizontal .layout-content {
+  padding: 22px 24px 34px;
+  background: var(--erp-page);
+  box-sizing: border-box;
+}
+
+body .layout-wrapper .footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  background: #ffffff;
+  border-top: 1px solid var(--erp-line);
+  color: var(--erp-muted);
+  font-size: 12px;
+}
+
+body .layout-wrapper .footer img {
+  width: 26px;
+  height: auto;
+  border-radius: 6px;
+}
+
+/* Footer badge: reuse the BioS emblem crop from the toolbar, mounted in
+   a small dark chip so the asset's black field reads as intentional. */
+body .layout-wrapper .footer .footer-logo-tile {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  box-sizing: border-box;
+  border: 1px solid rgba(143, 211, 216, 0.4);
+  border-radius: 8px;
+  background: #0b1f38;
+  box-shadow: 0 4px 10px -6px rgba(5, 20, 40, 0.55);
+  overflow: hidden;
+}
+
+body .layout-wrapper .footer .footer-logo-tile .logo {
+  position: absolute;
+  top: -20%;
+  left: -31%;
+  width: auto;
+  height: 162%;
+  max-width: none;
+  margin: 0;
+  display: block;
+  border-radius: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+body .layout-wrapper .footer .app-name {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--erp-ink);
+}
+
+body .layout-wrapper .footer .footer-right {
+  float: none;
+  margin-left: auto;
+  text-align: right;
+  color: var(--erp-muted);
+  font-size: 11.5px;
+}
+
+body .layout-wrapper .footer .footer-right span {
+  margin: 0;
+}
+
+/* ------------------------------------------------------------
+   Responsive shell
+   ------------------------------------------------------------ */
+@media (max-width: 1280px) {
+  body .layout-wrapper .topbar .topbar-main,
+  body .layout-wrapper.layout-menu-horizontal .topbar .topbar-main {
+    padding: 9px 18px;
+  }
+
+  body .layout-wrapper .layout-content,
+  body .layout-wrapper.layout-menu-horizontal .layout-content {
+    padding: 18px 18px 28px;
+  }
+
+  body .layout-wrapper .footer {
+    padding: 12px 18px;
+  }
+}
+
+@media (max-width: 1024px) {
+  body .layout-wrapper .topbar .ui-megamenu .ui-megamenu-root-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  body
+    .layout-wrapper
+    .topbar
+    .ui-megamenu
+    .ui-megamenu-root-list::-webkit-scrollbar {
+    height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  body .layout-wrapper .topbar .topbar-main,
+  body .layout-wrapper.layout-menu-horizontal .topbar .topbar-main {
+    min-height: 56px;
+    padding: 7px 12px;
+    gap: 10px;
+  }
+
+  body .layout-wrapper .topbar .topbar-logo-tile {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  body .layout-wrapper .topbar .app-name a,
+  body .layout-wrapper .topbar .app-name__title {
+    max-width: none;
+    font-size: 13px;
+  }
+
+  body .layout-wrapper .topbar .app-name .app-tagline {
+    font-size: 8.5px;
+  }
+
+  body .layout-wrapper .topbar .user-panel {
+    gap: 6px;
+  }
+
+  body .layout-wrapper .topbar .translator .translator__trigger span {
+    display: none;
+  }
+
+  body .layout-wrapper .topbar .translator .translator__trigger {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  body .layout-wrapper .topbar .translator .translator__trigger .pi-angle-down {
+    display: none;
+  }
+
+  body .layout-wrapper .topbar .topbar-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  body .layout-wrapper .topbar #user-display {
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  body .layout-wrapper .topbar #user-display .user-meta {
+    display: none;
+  }
+
+  body .layout-wrapper .topbar #user-display img {
+    width: 30px;
+    height: 30px;
+  }
+
+  body .layout-wrapper .topbar #topbar-menu {
+    right: 0;
+    width: 220px;
+  }
+
+  body .layout-wrapper .layout-content,
+  body .layout-wrapper.layout-menu-horizontal .layout-content {
+    padding: 14px 12px 24px;
+  }
+
+  body .layout-wrapper .footer {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+
+  body .layout-wrapper .footer .footer-right {
+    width: 100%;
+    margin-left: 0;
+    text-align: left;
+  }
+}

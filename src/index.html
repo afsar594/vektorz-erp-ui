@@ -2,12 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Inspire Systems</title>
+    <title>BioS by VektorZ-AI</title>
     <!-- <title>Inspire EQSoft</title> -->
     <base href="/" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" href="assets/Images/BioS_CyberSecure.png" />
     <link
       id="theme-css"
       rel="stylesheet"
@@ -20,16 +20,39 @@
       type="text/css"
       href="assets/layout/css/layout-flow.css"
     />
+    <!-- Boot splash: must be inline because Angular CSS is not loaded yet. -->
+    <style>
+      .splash-screen {
+        position: fixed !important;
+        inset: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #0b1120 !important;
+      }
+      .splash-logo {
+        width: 72px !important;
+        height: 72px !important;
+        object-fit: contain !important;
+        border-radius: 18px !important;
+        box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.9) !important;
+        animation: splash-logo-pulse 1.4s ease-in-out infinite !important;
+      }
+      @keyframes splash-logo-pulse {
+        0%, 100% { transform: scale(0.94); opacity: 0.75; }
+        50% { transform: scale(1.04); opacity: 1; }
+      }
+    </style>
   </head>
-  <body>
+  <body class="dark-theme">
     <app-root>
       <div class="splash-screen">
-        <div class="splash-loader">
-          <div class="splash-cube1"></div>
-          <div class="splash-cube2"></div>
-          <div class="splash-cube4"></div>
-          <div class="splash-cube3"></div>
-        </div>
+        <img
+          class="splash-logo"
+          src="assets/Images/BioS_CyberSecure.png"
+          alt="BioS"
+        />
       </div>
     </app-root>
   </body>

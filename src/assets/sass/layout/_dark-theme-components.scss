@@ -1,0 +1,808 @@
+/* ==========================================================================
+   Dark theme — PrimeNG widgets, cards, tables, dialogs, feature surfaces
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Data tables and paginators
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .ui-table,
+  .ui-datatable,
+  .p-table,
+  .p-datatable,
+  .p-table-wrapper,
+  .ui-table-wrapper {
+    @include dt-panel;
+    border-radius: var(--erp-radius) !important;
+    overflow: hidden !important;
+
+    .ui-table-caption,
+    .ui-table-header,
+    .ui-datatable-header,
+    .p-table-header,
+    .p-datatable-header,
+    .ui-table-thead > tr > th,
+    .ui-datatable-thead > tr > th,
+    .p-datatable-thead > tr > th,
+    thead tr th {
+      background: var(--erp-table-head) !important;
+      border-color: var(--erp-border) !important;
+      color: var(--erp-text) !important;
+      font-weight: 700 !important;
+    }
+
+    .ui-sortable-column .ui-sortable-column-icon,
+    .p-sortable-column .p-sortable-column-icon {
+      color: var(--erp-accent-hover) !important;
+    }
+
+    .ui-table-tbody > tr > td,
+    .ui-datatable-tbody > tr > td,
+    .p-datatable-tbody > tr > td,
+    tbody tr td,
+    .ui-table-tfoot > tr > td,
+    .ui-datatable-tfoot > tr > td,
+    .p-datatable-tfoot > tr > td,
+    .ui-datatable-scrollable-footer,
+    .p-datatable-scrollable-footer {
+      background: var(--erp-table) !important;
+      border-color: var(--erp-line-soft) !important;
+      color: var(--erp-text-2) !important;
+    }
+
+    tbody tr:nth-child(even) > td,
+    .ui-table-tbody > tr.ui-widget-content:nth-child(even) > td,
+    .p-datatable-tbody > tr:nth-child(even) > td {
+      background: var(--erp-table-alt) !important;
+    }
+
+    tbody tr:hover > td,
+    .ui-table-tbody > tr:hover > td,
+    .p-datatable-tbody > tr:hover > td {
+      background: var(--erp-table-hover) !important;
+      color: var(--erp-text) !important;
+    }
+
+    tbody tr.ui-state-highlight > td,
+    tbody tr.ui-state-highlight:hover > td,
+    tr.p-highlight > td {
+      background: var(--erp-accent-soft) !important;
+      color: #ffffff !important;
+    }
+
+    .ui-table-tbody > tr > td:has(input),
+    .p-datatable-tbody > tr > td:has(input) {
+      color: var(--erp-text) !important;
+    }
+  }
+
+  .ui-paginator,
+  .p-paginator {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    border-radius: 0 0 var(--erp-radius) var(--erp-radius) !important;
+    color: var(--erp-text-2) !important;
+
+    .ui-paginator-element,
+    .ui-paginator-page,
+    .ui-paginator-first,
+    .ui-paginator-prev,
+    .ui-paginator-next,
+    .ui-paginator-last,
+    .p-paginator-element,
+    .p-paginator-page,
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      background: transparent !important;
+      border-color: transparent !important;
+      color: var(--erp-text-2) !important;
+
+      &:hover:not(:disabled) {
+        background: var(--erp-surface-hover) !important;
+        color: #ffffff !important;
+      }
+    }
+
+    .ui-state-active,
+    .ui-state-active:hover,
+    .p-highlight,
+    .p-highlight:hover {
+      background: var(--erp-accent-strong) !important;
+      color: #ffffff !important;
+    }
+
+    .ui-paginator-rpp-options,
+    .ui-paginator-current,
+    .p-paginator-current,
+    .p-paginator-rpp-label {
+      color: var(--erp-text-2) !important;
+    }
+  }
+
+  .pagination-controls {
+    background: var(--erp-surface-3) !important;
+    border: 1px solid var(--erp-border) !important;
+    border-radius: var(--erp-radius) !important;
+    color: var(--erp-text-2) !important;
+
+    button,
+    select {
+      background: var(--erp-input) !important;
+      border-color: var(--erp-border) !important;
+      color: var(--erp-text) !important;
+
+      &:hover:not(:disabled) {
+        border-color: var(--erp-accent) !important;
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .global-filter-container {
+    background: var(--erp-surface) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Plain HTML report tables used across vouchers / MIS reports
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  #customers,
+  #Voucher,
+  #payment,
+  #Trial,
+  #report,
+  .customers,
+  .customers1,
+  .Account,
+  .Acc,
+  .def,
+  .Asset,
+  .MPL,
+  .PLM,
+  .border-table,
+  .printingTable,
+  .compact-table {
+    th,
+    td {
+      background: var(--erp-table) !important;
+      border-color: var(--erp-border) !important;
+      color: var(--erp-text-2) !important;
+    }
+
+    th {
+      background: var(--erp-table-head) !important;
+      color: var(--erp-text) !important;
+      font-weight: 700 !important;
+    }
+
+    tr:nth-child(even) td,
+    tr:nth-child(even) th {
+      background: var(--erp-table-alt) !important;
+      color: var(--erp-text-2) !important;
+    }
+
+    tr:hover td {
+      background: var(--erp-table-hover) !important;
+      color: var(--erp-text) !important;
+    }
+  }
+
+  /* One grouped rule covers every zebra variant found in component SCSS. */
+  #customers tr:nth-child(even) td,
+  #Voucher tr:nth-child(even) td,
+  #payment tr:nth-child(even) td,
+  #Trial tr:nth-child(even) td,
+  #report tr:nth-child(even) td,
+  .customers tr:nth-child(even) td,
+  .customers1 tr:nth-child(even) td,
+  .Account tr:nth-child(even) td,
+  .Acc tr:nth-child(even) td,
+  .def tr:nth-child(even) td,
+  .Asset tr:nth-child(even) td,
+  .MPL tr:nth-child(even) td,
+  .PLM tr:nth-child(even) td,
+  .border-table tr:nth-child(even) td {
+    background: var(--erp-table-alt) !important;
+    color: var(--erp-text-2) !important;
+  }
+
+  .def tr:hover td,
+  .customers tr:hover td {
+    background: var(--erp-table-hover) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .second,
+  .summary,
+  .cost-center,
+  .job-cost-analysis,
+  .expenses-report-container,
+  .report-container,
+  .page-footer,
+  .sim,
+  .SvTotal,
+  .bg-gray,
+  .dialog-footer,
+  .disabled-row,
+  .sidebar-card,
+  .card-modern,
+  .panel-header {
+    background: var(--erp-surface) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .deignsize1,
+  .designsize2,
+  .aa,
+  .bb,
+  .cc,
+  .dd,
+  .net,
+  .MPL th,
+  .printingTable th {
+    background: var(--erp-table-head) !important;
+    color: var(--erp-text) !important;
+    border-color: var(--erp-border) !important;
+  }
+
+  .printingTable {
+    background: var(--erp-surface) !important;
+
+    th {
+      color: var(--erp-text) !important;
+    }
+  }
+
+  .sub-header,
+  .table-header .sub-header {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  /* A few report cells still carry legacy inline colour names. */
+  [style*="color: brown"],
+  [style*="color:brown"],
+  [style*="color: rgb(165, 42, 42)"] {
+    color: #fca5a5 !important;
+  }
+
+  [style*="color: green"],
+  [style*="color:green"],
+  [style*="color: rgb(0, 128, 0)"] {
+    color: #86efac !important;
+  }
+
+  [style*="color: rgb(199, 11, 174)"],
+  [style*="color: fuchsia"],
+  [style*="color:magenta"] {
+    color: #f0abfc !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Dialogs, panels and overlay menus
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .ui-dialog,
+  .p-dialog,
+  .p-dynamic-dialog,
+  .ui-dialog-content,
+  .p-dialog-content,
+  .ui-overlaypanel,
+  .p-overlaypanel,
+  .ui-overlaypanel-content,
+  .p-overlaypanel-content {
+    @include dt-panel;
+    border-radius: var(--erp-radius-lg) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-dialog-titlebar,
+  .p-dialog-header,
+  .ui-dialog-footer,
+  .p-dialog-footer {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+    border-radius: 0 !important;
+  }
+
+  .ui-dialog-title,
+  .p-dialog-title {
+    color: var(--erp-text) !important;
+    font-weight: 700 !important;
+  }
+
+  .ui-dialog-titlebar-icon,
+  .ui-dialog-titlebar-close,
+  .p-dialog-header-icon,
+  .p-dialog-header-close,
+  .ui-overlaypanel-close,
+  .p-overlaypanel-close {
+    background: transparent !important;
+    border-color: transparent !important;
+    color: var(--erp-text-2) !important;
+
+    &:hover {
+      background: var(--erp-surface-hover) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .ui-confirmdialog-message,
+  .p-confirm-dialog-message {
+    color: var(--erp-text-2) !important;
+  }
+
+  .ui-menu,
+  .ui-megamenu,
+  .ui-contextmenu,
+  .ui-tieredmenu,
+  .ui-slidemenu,
+  .ui-menu-panel,
+  .p-menu,
+  .p-contextMenu,
+  .p-tieredmenu,
+  .p-slidemenu {
+    @include dt-menu-surface;
+    border-radius: var(--erp-radius) !important;
+
+    .ui-menuitem-link,
+    .p-menuitem-link {
+      background: transparent !important;
+      color: var(--erp-text-2) !important;
+
+      .ui-menuitem-icon,
+      .p-menuitem-icon {
+        color: var(--erp-accent-hover) !important;
+      }
+
+      &:hover,
+      &:focus {
+        background: var(--erp-accent-soft) !important;
+        color: #ffffff !important;
+      }
+    }
+
+    .ui-submenu-header,
+    .p-submenu-header {
+      background: transparent !important;
+      border-bottom-color: var(--erp-border) !important;
+      color: var(--erp-accent-hover) !important;
+    }
+
+    .ui-menu-separator {
+      border-top-color: var(--erp-border) !important;
+    }
+  }
+
+  .ui-tooltip,
+  .p-tooltip .p-tooltip-text {
+    @include dt-panel;
+    border-radius: 8px !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-tooltip-arrow,
+  .p-tooltip-arrow {
+    border-bottom-color: var(--erp-surface-3) !important;
+  }
+
+  .ui-tabview-nav,
+  .p-tabview-nav,
+  .p-tabs {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    border-radius: var(--erp-radius) var(--erp-radius) 0 0 !important;
+
+    > li {
+      background: var(--erp-surface-3) !important;
+      border-color: var(--erp-border) !important;
+    }
+
+    .ui-tabview-title,
+    .p-tabview-title {
+      color: var(--erp-text-2) !important;
+    }
+
+    > li > a,
+    > li > a:focus,
+    .p-tabview-nav-link,
+    .p-tab-nav-link {
+      background: transparent !important;
+      border-color: transparent !important;
+      color: var(--erp-text-2) !important;
+
+      &:hover {
+        color: #ffffff !important;
+      }
+    }
+
+    > li.ui-state-active > a,
+    > li.ui-state-active > a:focus,
+    .p-highlight .p-tabview-nav-link,
+    .p-highlight .p-tab-nav-link {
+      background: var(--erp-surface) !important;
+      border-color: var(--erp-border) !important;
+      border-bottom-color: var(--erp-surface) !important;
+      color: var(--erp-accent-hover) !important;
+
+      .ui-tabview-title,
+      .p-tabview-title {
+        color: var(--erp-accent-hover) !important;
+      }
+    }
+  }
+
+  .ui-tabview-panel,
+  .p-tabview-panels,
+  .ui-panel,
+  .p-panel,
+  .ui-panel-content,
+  .p-panel-content,
+  .ui-accordion-content,
+  .p-accordion-content,
+  .ui-fieldset,
+  .p-fieldset,
+  .ui-toolbar,
+  .p-toolbar {
+    background: var(--erp-surface) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-panel-titlebar,
+  .p-panel-header,
+  .ui-accordion .ui-accordion-header,
+  .p-accordion-header .p-accordion-header-link,
+  .ui-fieldset-legend,
+  .p-fieldset-legend {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-breadcrumb,
+  .p-breadcrumb {
+    background: transparent !important;
+    border: 0 !important;
+    color: var(--erp-muted) !important;
+
+    a {
+      color: var(--erp-accent-hover) !important;
+    }
+  }
+
+  .ui-progressbar,
+  .p-progressbar {
+    background: var(--erp-input) !important;
+    border-color: var(--erp-border) !important;
+
+    .ui-progressbar-value,
+    .p-progressbar-value {
+      background: var(--erp-accent) !important;
+    }
+  }
+
+  .ui-notificationbar {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-editor-toolbar,
+  .p-editor-toolbar {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard (.erp-dash re-declares its own light tokens locally)
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .erp-dash {
+    --erp-primary: #3b82f6;
+    --erp-primary-dark: #60a5fa;
+    --erp-primary-soft: rgba(59, 130, 246, 0.18);
+    --erp-ink: #f8fafc;
+    --erp-ink-soft: #cbd5e1;
+    --erp-muted: #94a3b8;
+    --erp-line: #475569;
+    --erp-line-soft: #334155;
+    --erp-surface: #1e293b;
+    --erp-green: #22c55e;
+    --erp-blue: #3b82f6;
+    --erp-amber: #f59e0b;
+    --erp-radius: 12px;
+    --erp-shadow: 0 14px 34px -22px rgba(0, 0, 0, 0.95);
+
+    color: var(--erp-text) !important;
+
+    .erp-dash__eyebrow,
+    .erp-dash__title span,
+    .erp-kpi__label,
+    .erp-kpi__value,
+    .erp-list__title,
+    .erp-list__meta {
+      color: var(--erp-text-2) !important;
+    }
+
+    .erp-dash__dot {
+      background: var(--erp-border) !important;
+    }
+
+    .erp-kpi,
+    .erp-list,
+    .erp-card,
+    .erp-panel {
+      background: var(--erp-surface) !important;
+      border-color: var(--erp-border) !important;
+      color: var(--erp-text) !important;
+    }
+
+    .erp-kpi--blue .erp-kpi__icon,
+    .erp-list__icon--blue,
+    .erp-kpi--amber .erp-kpi__icon,
+    .erp-list__icon--amber,
+    .erp-kpi--green .erp-kpi__icon,
+    .erp-list__icon--green {
+      background: var(--erp-accent-soft) !important;
+      color: var(--erp-accent-hover) !important;
+    }
+
+    .erp-kpi--amber .erp-kpi__icon,
+    .erp-list__icon--amber {
+      background: var(--erp-warning-soft) !important;
+      color: var(--erp-warning) !important;
+    }
+
+    .erp-kpi--green .erp-kpi__icon,
+    .erp-list__icon--green {
+      background: var(--erp-success-soft) !important;
+      color: var(--erp-success) !important;
+    }
+
+    .erp-list__item,
+    .erp-list__item:hover {
+      background: var(--erp-surface-3) !important;
+      color: var(--erp-text) !important;
+    }
+
+    .erp-list__item:hover {
+      background: var(--erp-surface-hover) !important;
+    }
+
+    .erp-table-search,
+    .erp-table-search input,
+    .erp-table .ui-table .ui-table-caption,
+    .erp-table .ui-table-caption .ui-inputtext,
+    .erp-table .ui-table-thead .ui-inputtext,
+    .erp-table ::ng-deep .ui-table .ui-table-thead > tr > th,
+    .erp-table .ui-table .ui-table-thead > tr > th,
+    .erp-table ::ng-deep .ui-table .ui-table-thead > tr:nth-child(2) > th,
+    .erp-table .ui-paginator {
+      background: var(--erp-surface-3) !important;
+      color: var(--erp-text) !important;
+      border-color: var(--erp-border) !important;
+    }
+
+    .erp-table ::ng-deep .ui-table .ui-table-thead > tr > th,
+    .erp-table .ui-table .ui-table-thead > tr > th,
+    .erp-table ::ng-deep .ui-table .ui-table-thead > tr:nth-child(2) > th {
+      background: var(--erp-table-head) !important;
+      color: var(--erp-text) !important;
+    }
+
+    .erp-table ::ng-deep .ui-table .ui-table-tbody > tr:hover {
+      background: var(--erp-table-hover) !important;
+    }
+
+    .erp-table .ui-paginator .ui-state-active {
+      background: var(--erp-accent-strong) !important;
+      color: #ffffff !important;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Feature-specific light islands (item master, chart of accounts, etc.)
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .modern-container {
+    background: var(--erp-bg) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .tree-node:hover {
+    background: var(--erp-surface-hover) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .node-label,
+  .folder-label,
+  .file-label,
+  .panel-header h3 {
+    color: var(--erp-text) !important;
+  }
+
+  /* Job-master print preview is a screen-visible dialog, not a print sheet. */
+  #contentToConvert {
+    th,
+    .expenses-table th {
+      background: var(--erp-table-head) !important;
+      color: var(--erp-text) !important;
+    }
+
+    h3,
+    .total-label {
+      background: var(--erp-surface-3) !important;
+      color: var(--erp-text) !important;
+    }
+
+    table,
+    th,
+    td,
+    h1 {
+      border-color: var(--erp-border) !important;
+    }
+  }
+
+  .modern-ui-container,
+  .ui-header,
+  .header-content,
+  .main-content,
+  .card-header,
+  .card-body,
+  .product-image,
+  .item-name,
+  .item-id,
+  .sidebar-header,
+  .tree-node,
+  .tree-container,
+  .global-filter-container,
+  .container,
+  .checkbox-container {
+    background: var(--erp-surface) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .header-title h1,
+  .card-header h3,
+  .form-group label,
+  .spec-item label,
+  .item-name {
+    color: var(--erp-text) !important;
+  }
+
+  .product-image,
+  .image-container {
+    background: var(--erp-input) !important;
+    border-color: var(--erp-border) !important;
+  }
+
+  .badge {
+    background: var(--erp-success) !important;
+    border-color: var(--erp-success) !important;
+    color: #052e16 !important;
+  }
+
+  .error-message,
+  .error-message i {
+    background: var(--erp-danger-soft) !important;
+    border-color: var(--erp-danger) !important;
+    color: #fca5a5 !important;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th,
+  .modern-ui-container .p-datatable .p-datatable-thead > tr > th {
+    background: var(--erp-table-head) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background: var(--erp-table-hover) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .modern-ui-container .btn,
+  .p-button-success,
+  .p-button-success:hover {
+    color: #ffffff !important;
+  }
+
+  .invoice-POS {
+    background: var(--erp-surface) !important;
+    border-color: var(--erp-border) !important;
+    color: var(--erp-text) !important;
+    box-shadow: var(--erp-shadow) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Loading overlay — dark surface, visible spinner, BioS brand logo
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .cdk-overlay-backdrop.cdk-overlay-dark-backdrop {
+    background: rgba(2, 6, 23, 0.82) !important;
+  }
+
+  app-loading {
+    display: block;
+
+    .card {
+      background: var(--erp-surface) !important;
+      border: 1px solid var(--erp-border) !important;
+      border-radius: var(--erp-radius-lg) !important;
+      box-shadow: var(--erp-shadow) !important;
+      color: var(--erp-text) !important;
+    }
+
+    .spinner {
+      border-color: var(--erp-border) !important;
+      border-top-color: var(--erp-accent) !important;
+      border-right-color: var(--erp-accent-hover) !important;
+    }
+
+    b {
+      color: var(--erp-text) !important;
+      font-size: 12px !important;
+      letter-spacing: 0.02em !important;
+    }
+
+    .img {
+      width: 56px !important;
+      height: 56px !important;
+      top: 58px !important;
+      object-fit: contain !important;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.55)) !important;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Printed output must stay legible on paper: reset our dark surfaces.
+   -------------------------------------------------------------------------- */
+@media print {
+  body.dark-theme {
+    background: #ffffff !important;
+    color: #000000 !important;
+
+    .layout-wrapper,
+    .layout-content,
+    .topbar,
+    .footer,
+    .ui-dialog,
+    .p-dialog,
+    .ui-dialog-content,
+    .p-dialog-content,
+    #print,
+    [id^="printdetail"],
+    .invoice-POS,
+    .card,
+    .box,
+    .second,
+    .summary,
+    .report-container {
+      background: #ffffff !important;
+      color: #000000 !important;
+      box-shadow: none !important;
+    }
+
+    .ui-button,
+    .p-button,
+    button {
+      display: none !important;
+    }
+  }
+}

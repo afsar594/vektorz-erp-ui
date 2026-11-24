@@ -24,6 +24,12 @@ export class LoginComponent implements OnInit {
   value: boolean;
   loadList: any;
   returnUrl: string = '/dashboard'; // default redirect
+
+  // UI-only state for the BioS login presentation.
+  showPassword = false;
+  isSubmitting = false;
+  rememberMeUi = false;
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -89,9 +95,26 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  onForgotPassword(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Password Assistance',
+      detail: 'Please contact your system administrator to reset your login credentials.',
+    });
+  }
+
   clklogin() {
+    this.isSubmitting = true;
     const formvalues = this.loginForm.value as User;
     this.apiLogin.loginRequest(formvalues).subscribe((k) => {
+      this.isSubmitting = false;
       if (k.valid) {
         const encryptData = this._permission.encryptLogin(k.result);
         this._local.remove('Login');

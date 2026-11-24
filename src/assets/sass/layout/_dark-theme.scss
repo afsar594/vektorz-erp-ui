@@ -1,0 +1,24 @@
+/* ==========================================================================
+   Professional dark theme — final override layer
+   --------------------------------------------------------------------------
+   Imported last from src/styles.scss. The <body class="dark-theme"> flag is
+   set in src/index.html, so every rule here is scoped to body.dark-theme.
+
+   The theme is deliberately split into small partials so the design system
+   has one source of truth (tokens in dark-theme-core) and no duplication:
+
+     dark-theme-core        tokens, base surface, shell, scrollbars
+     dark-theme-forms       inputs, labels, validation, buttons, pickers
+     dark-theme-components  PrimeNG widgets, cards, tables, dialogs, print
+     dark-theme-grid        Handsontable (all internal + overlay surfaces)
+     dark-theme-responsive  desktop / tablet / mobile refinements
+
+   CSS only: no component, service, validator, API or Handsontable setting is
+   changed by this theme.
+   ========================================================================== */
+
+@import "dark-theme-core";
+@import "dark-theme-forms";
+@import "dark-theme-components";
+@import "dark-theme-grid";
+@import "dark-theme-responsive";

@@ -1,0 +1,101 @@
+/* ==========================================================================
+   Dark theme — responsive refinements (desktop / tablet / mobile)
+   ========================================================================== */
+
+@media (max-width: 1280px) {
+  body.dark-theme {
+    .layout-wrapper .topbar .topbar-nav {
+      padding: 0 10px;
+    }
+
+    .layout-wrapper .topbar .topbar-nav .ui-megamenu-submenu {
+      min-width: 14em;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  body.dark-theme {
+    .layout-wrapper .topbar .notification-panel,
+    .layout-wrapper .topbar #topbar-menu,
+    .layout-wrapper .topbar .translator .lang-menu {
+      right: -6px;
+      max-width: calc(100vw - 24px);
+    }
+
+    .ui-dialog,
+    .p-dialog {
+      max-width: calc(100vw - 24px) !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  body.dark-theme {
+    .layout-wrapper {
+      .layout-content {
+        padding: 14px 12px 24px !important;
+      }
+
+      .footer {
+        flex-wrap: wrap;
+        padding: 12px !important;
+        gap: 8px;
+      }
+    }
+
+    .handsontable {
+      font-size: 12px !important;
+
+      th,
+      td {
+        padding: 0 5px !important;
+      }
+    }
+
+    .ui-dialog,
+    .p-dialog {
+      width: calc(100vw - 20px) !important;
+    }
+
+    .modern-ui-container .main-content,
+    .form-row-dual,
+    .specs-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  body.dark-theme {
+    .layout-wrapper .topbar .topbar-nav .ui-megamenu-panel {
+      left: 8px !important;
+      right: 8px !important;
+      max-width: calc(100vw - 16px) !important;
+      max-height: 60vh !important;
+    }
+
+    .ui-button,
+    .p-button,
+    .layout-wrapper button {
+      min-height: 40px;
+    }
+
+    .header-actions,
+    .form-actions-group {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+/* Coarse pointer devices: larger hit targets, same high-contrast palette. */
+@media (pointer: coarse) {
+  body.dark-theme {
+    .ui-button,
+    .p-button,
+    .layout-wrapper button,
+    .htUIInput input {
+      min-height: 42px;
+    }
+  }
+}

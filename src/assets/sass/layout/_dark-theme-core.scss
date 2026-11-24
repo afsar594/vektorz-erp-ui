@@ -1,0 +1,539 @@
+/* ==========================================================================
+   Dark theme core — design tokens, base surface, application shell
+   ========================================================================== */
+
+/* Reusable building blocks for the rest of the theme. */
+@mixin dt-focus-ring {
+  border-color: var(--erp-accent) !important;
+  box-shadow: 0 0 0 3px var(--erp-accent-soft) !important;
+  outline: none !important;
+}
+
+@mixin dt-field {
+  background: var(--erp-input) !important;
+  background-image: none !important;
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius) !important;
+  color: var(--erp-text) !important;
+  box-shadow: none !important;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease,
+    background-color 0.16s ease;
+}
+
+@mixin dt-panel {
+  background: var(--erp-surface) !important;
+  border: 1px solid var(--erp-border) !important;
+  color: var(--erp-text) !important;
+  box-shadow: var(--erp-shadow) !important;
+}
+
+@mixin dt-menu-surface {
+  background: var(--erp-surface) !important;
+  border: 1px solid var(--erp-border) !important;
+  color: var(--erp-text) !important;
+  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.9),
+    0 6px 16px -8px rgba(0, 0, 0, 0.7) !important;
+}
+
+body.dark-theme {
+  /* ---------- Required palette ---------- */
+  --erp-bg: #0b1120;
+  --erp-sidebar: #111827;
+  --erp-surface: #1e293b;
+  --erp-input: #273449;
+  --erp-table: #172033;
+  --erp-text: #f8fafc;
+  --erp-text-2: #cbd5e1;
+  --erp-border: #475569;
+  --erp-accent: #3b82f6;
+  --erp-success: #22c55e;
+  --erp-danger: #ef4444;
+  --erp-error: #ef4444;
+  --erp-warning: #f59e0b;
+
+  /* ---------- Derived surfaces (kept inside the same family) ---------- */
+  --erp-surface-2: #172033;
+  --erp-surface-3: #273449;
+  --erp-surface-hover: #2d3d55;
+  --erp-table-alt: #1c2a3e;
+  --erp-table-head: #24334a;
+  --erp-table-hover: #2a3a52;
+  --erp-muted: #94a3b8;
+  --erp-accent-strong: #2563eb;
+  --erp-accent-hover: #60a5fa;
+  --erp-accent-soft: rgba(59, 130, 246, 0.2);
+  --erp-success-soft: rgba(34, 197, 94, 0.16);
+  --erp-warning-soft: rgba(245, 158, 11, 0.16);
+  --erp-danger-soft: rgba(239, 68, 68, 0.16);
+  --erp-radius: 10px;
+  --erp-radius-lg: 14px;
+  --erp-shadow: 0 14px 34px -22px rgba(0, 0, 0, 0.95),
+    0 2px 8px -4px rgba(0, 0, 0, 0.6);
+
+  /* ---------- Backwards-compatible aliases ----------
+     Older layout/dashboard Sass still reads --erp-* and --dt-* names.       */
+  --erp-page: var(--erp-bg);
+  --erp-navy: #0a1020;
+  --erp-navy-2: var(--erp-sidebar);
+  --erp-line: var(--erp-border);
+  --erp-line-soft: #334155;
+  --erp-ink: var(--erp-text);
+  --erp-ink-soft: var(--erp-text-2);
+  --erp-primary: var(--erp-accent);
+  --erp-primary-dark: var(--erp-accent-strong);
+  --erp-primary-soft: var(--erp-accent-soft);
+  --erp-green: var(--erp-success);
+  --erp-blue: var(--erp-accent);
+  --erp-amber: var(--erp-warning);
+  --erp-shadow-soft: var(--erp-shadow);
+  --dt-bg: var(--erp-bg);
+  --dt-surface: var(--erp-surface);
+  --dt-surface-2: var(--erp-surface-2);
+  --dt-surface-3: var(--erp-surface-3);
+  --dt-surface-hover: var(--erp-surface-hover);
+  --dt-border: var(--erp-border);
+  --dt-border-soft: var(--erp-line-soft);
+  --dt-text: var(--erp-text);
+  --dt-text-soft: var(--erp-text-2);
+  --dt-text-muted: var(--erp-muted);
+  --dt-accent: var(--erp-accent);
+  --dt-accent-strong: var(--erp-accent-strong);
+  --dt-accent-soft: var(--erp-accent-soft);
+  --dt-danger: var(--erp-danger);
+  --dt-success: var(--erp-success);
+  --dt-grid-head: var(--erp-table-head);
+  --dt-grid-head-2: #1d2a3d;
+  --dt-grid-head-active: #2f4564;
+  --dt-grid-row-alt: var(--erp-table-alt);
+  --dt-grid-hover: var(--erp-table-hover);
+  --dt-grid-selected: var(--erp-accent-soft);
+
+  color: var(--erp-text);
+  background: var(--erp-bg) !important;
+  font-family: "Lato", "Helvetica Neue", sans-serif;
+
+  a,
+  a:visited {
+    color: var(--erp-accent-hover) !important;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: #93c5fd !important;
+      text-decoration: underline;
+    }
+  }
+
+  ::selection {
+    background: rgba(59, 130, 246, 0.45);
+    color: #ffffff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .matero-page-title,
+  .page-title,
+  .header-title h1 {
+    color: var(--erp-text) !important;
+  }
+
+  small,
+  .text-muted,
+  .muted,
+  .page-info {
+    color: var(--erp-muted) !important;
+  }
+
+  hr {
+    border-color: var(--erp-border) !important;
+  }
+
+  .error,
+  .text-danger,
+  .validation-message,
+  .ui-message-error,
+  .p-message-error {
+    color: var(--erp-danger) !important;
+  }
+
+  .success,
+  .text-success {
+    color: var(--erp-success) !important;
+  }
+
+  /* PrimeNG/CDK overlays are appended to <body> and need their own base. */
+  .ui-widget,
+  .ui-widget .ui-widget,
+  .p-component,
+  .p-component .p-component {
+    color: var(--erp-text-2) !important;
+    font-family: "Lato", "Helvetica Neue", sans-serif;
+  }
+
+  .ui-widget-content,
+  .ui-widget-header,
+  .ui-widget-overlay {
+    border-color: var(--erp-border) !important;
+  }
+
+  .ui-widget-content,
+  .ui-widget-header {
+    background: var(--erp-surface) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .ui-widget-overlay,
+  .p-dialog-mask,
+  .p-dynamic-dialog-mask {
+    background: rgba(2, 6, 23, 0.78) !important;
+  }
+
+  .ui-state-disabled,
+  .p-disabled {
+    opacity: 1 !important;
+    color: var(--erp-muted) !important;
+  }
+
+  .ui-state-default,
+  .ui-state-hover,
+  .ui-state-focus {
+    color: var(--erp-text-2) !important;
+  }
+
+  .ui-state-active,
+  .ui-state-highlight {
+    background: var(--erp-accent-soft) !important;
+    border-color: var(--erp-accent) !important;
+    color: #ffffff !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Application shell
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  .layout-wrapper {
+    background: var(--erp-bg) !important;
+    color: var(--erp-text) !important;
+
+    .topbar {
+      background: linear-gradient(100deg, #0d1526 0%, #111827 58%, #16233a 100%) !important;
+      background-image: linear-gradient(100deg, #0d1526 0%, #111827 58%, #16233a 100%) !important;
+      border-bottom: 1px solid var(--erp-border) !important;
+      color: var(--erp-text) !important;
+
+      .logo,
+      .app-name,
+      .topbar-item a,
+      .topbar-item > a,
+      .topbar-menu a {
+        color: var(--erp-text) !important;
+      }
+
+      /* Search box in the top bar */
+      .ui-inputtext,
+      input[type="text"],
+      input[type="search"] {
+        background: var(--erp-input) !important;
+        border-color: var(--erp-border) !important;
+        color: var(--erp-text) !important;
+
+        &::placeholder {
+          color: var(--erp-muted) !important;
+        }
+      }
+
+      #user-display {
+        background: var(--erp-surface-3) !important;
+        border: 1px solid var(--erp-border) !important;
+        color: var(--erp-text) !important;
+
+        &:hover {
+          background: var(--erp-surface-hover) !important;
+          border-color: var(--erp-accent) !important;
+        }
+
+        img {
+          background: var(--erp-accent) !important;
+          border-radius: 50%;
+          padding: 2px;
+        }
+      }
+
+      .notification-panel {
+        @include dt-menu-surface;
+        background: var(--erp-surface) !important;
+
+        &__head {
+          background: var(--erp-surface-3) !important;
+          border-bottom-color: var(--erp-border) !important;
+        }
+
+        &__title {
+          color: var(--erp-text) !important;
+        }
+
+        &__count {
+          background: var(--erp-accent) !important;
+          color: #ffffff !important;
+        }
+
+        .ui-listbox .ui-listbox-item {
+          background: transparent !important;
+          color: var(--erp-text-2) !important;
+          border-bottom-color: var(--erp-line-soft) !important;
+
+          &:hover {
+            background: var(--erp-surface-hover) !important;
+            color: var(--erp-text) !important;
+          }
+
+          &.ui-state-highlight {
+            background: var(--erp-accent-soft) !important;
+            color: #ffffff !important;
+          }
+        }
+
+        &__empty {
+          color: var(--erp-muted) !important;
+
+          i {
+            color: var(--erp-muted) !important;
+          }
+        }
+      }
+
+      #topbar-menu {
+        @include dt-menu-surface;
+
+        li > a {
+          background: transparent !important;
+          color: var(--erp-text-2) !important;
+
+          i {
+            background: var(--erp-surface-3) !important;
+            color: var(--erp-accent-hover) !important;
+          }
+
+          &:hover,
+          &:focus {
+            background: var(--erp-accent-soft) !important;
+            color: #ffffff !important;
+          }
+        }
+
+        li.menuitem-active > a {
+          background: var(--erp-accent-soft) !important;
+          color: #ffffff !important;
+        }
+
+        li > ul {
+          border-top-color: var(--erp-border) !important;
+        }
+      }
+
+      .translator {
+        .translator__trigger {
+          background: var(--erp-surface-3) !important;
+          border: 1px solid var(--erp-border) !important;
+          color: var(--erp-text) !important;
+
+          &:hover {
+            background: var(--erp-surface-hover) !important;
+            border-color: var(--erp-accent) !important;
+          }
+        }
+
+        .lang-menu {
+          @include dt-menu-surface;
+
+          li {
+            color: var(--erp-text-2) !important;
+
+            i {
+              color: var(--erp-accent-hover) !important;
+            }
+
+            &:hover {
+              background: var(--erp-accent-soft) !important;
+              color: #ffffff !important;
+            }
+          }
+        }
+      }
+
+      /* Mega menu row + flyout panels */
+      .topbar-nav {
+        background: var(--erp-sidebar) !important;
+        border-top-color: var(--erp-border) !important;
+        border-bottom-color: var(--erp-border) !important;
+
+        .ui-megamenu {
+          background: transparent !important;
+          border: 0 !important;
+        }
+
+        .ui-megamenu-root-list > .ui-menuitem > .ui-menuitem-link {
+          background: transparent !important;
+          color: var(--erp-text-2) !important;
+          border-bottom-color: transparent !important;
+
+          .ui-menuitem-icon,
+          .ui-submenu-icon {
+            color: var(--erp-accent-hover) !important;
+          }
+
+          .ui-menuitem-text {
+            color: var(--erp-text-2) !important;
+          }
+
+          &:hover,
+          &:focus,
+          .ui-menuitem-active > & {
+            background: var(--erp-accent-soft) !important;
+            color: #ffffff !important;
+            border-bottom-color: var(--erp-accent) !important;
+
+            .ui-menuitem-icon,
+            .ui-submenu-icon,
+            .ui-menuitem-text {
+              color: #ffffff !important;
+            }
+          }
+        }
+
+        .ui-megamenu-panel {
+          @include dt-menu-surface;
+          border-radius: var(--erp-radius-lg) !important;
+
+          &::-webkit-scrollbar-thumb {
+            background: var(--erp-border) !important;
+          }
+        }
+
+        .ui-megamenu-submenu-header {
+          background: transparent !important;
+          border-bottom-color: var(--erp-border) !important;
+          color: var(--erp-accent-hover) !important;
+        }
+
+        .ui-megamenu-submenu .ui-menuitem-link {
+          background: transparent !important;
+          color: var(--erp-text-2) !important;
+
+          .ui-menuitem-icon,
+          .ui-menuitem-text {
+            color: var(--erp-text-2) !important;
+          }
+
+          &:hover,
+          &:focus,
+          .ui-menuitem-active > & {
+            background: var(--erp-accent-soft) !important;
+            color: #ffffff !important;
+
+            .ui-menuitem-icon,
+            .ui-menuitem-text {
+              color: #ffffff !important;
+            }
+          }
+        }
+
+        .ui-megamenu-submenu .ui-menu-separator {
+          border-top-color: var(--erp-border) !important;
+        }
+      }
+    }
+
+    .layout-content,
+    .layout-main,
+    .content-wrapper {
+      background: var(--erp-bg) !important;
+      color: var(--erp-text) !important;
+    }
+
+    .footer {
+      background: var(--erp-sidebar) !important;
+      border-top-color: var(--erp-border) !important;
+      color: var(--erp-muted) !important;
+
+      .app-name,
+      .footer-right,
+      .footer-right span {
+        color: var(--erp-text-2) !important;
+      }
+
+      .footer-right a {
+        color: var(--erp-accent-hover) !important;
+      }
+
+      img {
+        background: var(--erp-surface) !important;
+      }
+    }
+  }
+
+  .matero-page-title {
+    background: linear-gradient(100deg, #16233a 0%, #1c3149 100%) !important;
+    border: 1px solid var(--erp-border) !important;
+    color: var(--erp-text) !important;
+    border-radius: var(--erp-radius) !important;
+  }
+
+  .matero-breadcrumb {
+    color: var(--erp-muted) !important;
+
+    a {
+      color: var(--erp-accent-hover) !important;
+    }
+  }
+
+  .box,
+  .card,
+  .ui-panel,
+  .p-panel,
+  .p-panel-content,
+  .ui-panel-content {
+    @include dt-panel;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbars — every scrollable surface, including HOT overlays
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+  scrollbar-color: #334155 #0f172a;
+  scrollbar-width: thin;
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #334155 #0f172a;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #0f172a !important;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #334155 !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 999px !important;
+
+    &:hover {
+      background-color: var(--erp-border) !important;
+    }
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: #0f172a !important;
+  }
+}

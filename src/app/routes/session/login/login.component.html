@@ -1,99 +1,236 @@
-<div class="wrapper background-pattern login">
-  <div class="container">
-    <div class="col-left">
-      <div class="login-text">
-        <h1>
-          <img
-            style="width: 220px"
-            src="../../../../assets/Images/logo-2.png"
-          />
-        </h1>
-        <!-- <h1>
-          <img
-            style="width: 220px"
-            src="../../../../assets/Images/EQsoft.jpg"
-          />
-        </h1> -->
+<div class="bios-auth-viewport">
+  <!-- Subtle Ambient Glow Orbs -->
+  <div class="ambient-glow glow-top-left"></div>
+  <div class="ambient-glow glow-bottom-right"></div>
 
-        <!-- <h1 style="color:#1f487e ;">Inspire Equinox ERP</h1> -->
-        <p style="color: black">
-          Forgot your password? <br /><a href="#">Click here to reset it</a>.
-        </p>
+  <!-- Main Card Container -->
+  <div class="bios-auth-card">
+    
+    <!-- LEFT PANEL: Brand Showcase & Image -->
+    <div class="brand-showcase-panel">
+      <div class="showcase-content">
+        <!-- Enterprise Status Badge -->
+        <div class="enterprise-badge">
+          <span class="pulse-dot"></span>
+          <span class="badge-text">Next-Gen Enterprise ERP</span>
+        </div>
+
+        <!-- Hero Branding Image Showcase -->
+        <div class="image-showcase-wrapper">
+          <img
+            src="assets/Images/bios-vektorz-ai.jpg"
+            alt="BioS By VeKtorZ-Ai ERP"
+            class="hero-brand-image"
+          />
+          <div class="image-reflection-overlay"></div>
+        </div>
+
+        <!-- Brand Information & Tagline -->
+        <div class="brand-copy">
+          <h2 class="brand-headline">Intelligent Business Operations</h2>
+          <p class="brand-description">
+            Streamlining global workflows, financial governance, multi-entity operations,
+            and real-time analytics with AI-driven intelligence.
+          </p>
+        </div>
+
+        <!-- Feature Pills -->
+        <div class="feature-pills-row">
+          <div class="feature-pill">
+            <i class="pi pi-shield"></i>
+            <span>256-Bit SSL</span>
+          </div>
+          <div class="feature-pill">
+            <i class="pi pi-globe"></i>
+            <span>Multi-Location</span>
+          </div>
+          <div class="feature-pill">
+            <i class="pi pi-chart-line"></i>
+            <span>Real-time Auditing</span>
+          </div>
+        </div>
+
+        <!-- System Status Bar -->
+        <div class="showcase-footer">
+          <div class="system-status">
+            <i class="pi pi-check-circle status-icon"></i>
+            <span>BioS Cloud Infrastructure Operational</span>
+          </div>
+          <span class="version-tag">v3.4 Enterprise</span>
+        </div>
       </div>
     </div>
-    <div class="col-right">
-      <div class="login-form">
-        <h2>Login</h2>
-        <form method="post" [formGroup]="loginForm" action>
-          <p>
-            <label>Location</label>
-            <select
-              formControlName="location"
-              (change)="onLocationChange($event)"
+
+    <!-- RIGHT PANEL: Login Form -->
+    <div class="login-form-panel">
+      <div class="form-wrapper">
+        <!-- Form Header -->
+        <div class="form-header">
+          <div class="header-pretitle">SECURE ACCESS</div>
+          <h1 class="header-title">Welcome Back</h1>
+          <p class="header-subtitle">
+            Please enter your corporate credentials to sign in to your ERP workstation.
+          </p>
+        </div>
+
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="clklogin()" class="login-form-inner" autocomplete="off">
+          
+          <!-- ERP Context Selectors Row (Location & Financial Period) -->
+          <div class="form-row-dual">
+            <!-- Location Select -->
+            <div class="form-field">
+              <label class="field-label">
+                <i class="pi pi-map-marker field-icon"></i>
+                <span>Location</span>
+              </label>
+              <div class="select-container">
+                <select
+                  class="custom-select-input"
+                  formControlName="location"
+                  (change)="onLocationChange($event)"
+                  id="login-location"
+                >
+                  <option [ngValue]="null" disabled>Select Location</option>
+                  <option *ngFor="let loc of LocationmasterArry" [ngValue]="loc">
+                    {{ loc.locationMasterLocationName }} ({{ loc.locationMasterLocationId }})
+                  </option>
+                </select>
+                <i class="pi pi-chevron-down select-chevron"></i>
+              </div>
+            </div>
+
+            <!-- Financial Period Select -->
+            <div class="form-field">
+              <label class="field-label">
+                <i class="pi pi-calendar field-icon"></i>
+                <span>Financial Period</span>
+              </label>
+              <div class="select-container">
+                <select
+                  class="custom-select-input"
+                  formControlName="financialperiod"
+                  id="login-period"
+                >
+                  <option [value]="-1" disabled>Select Period</option>
+                  <option *ngFor="let fin of FinacialPeriodArry" [value]="fin">
+                    {{ fin.financialPeriodsStartDate | date : "dd/MM/yy" }} - {{ fin.financialPeriodsEndDate | date : "dd/MM/yy" }}
+                  </option>
+                </select>
+                <i class="pi pi-chevron-down select-chevron"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Username / Email Field -->
+          <div class="form-field">
+            <label class="field-label" for="login-username">
+              <i class="pi pi-user field-icon"></i>
+              <span>Username or Email</span>
+            </label>
+            <div class="input-container">
+              <i class="pi pi-user leading-icon"></i>
+              <input
+                type="text"
+                id="login-username"
+                name="login"
+                formControlName="username"
+                class="custom-text-input with-leading-icon"
+                placeholder="Enter your username or email"
+                autocomplete="username"
+              />
+            </div>
+          </div>
+
+          <!-- Password Field with Show/Hide Toggle -->
+          <div class="form-field">
+            <label class="field-label" for="login-password">
+              <i class="pi pi-lock field-icon"></i>
+              <span>Password</span>
+            </label>
+            <div class="input-container">
+              <i class="pi pi-lock leading-icon"></i>
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="login-password"
+                name="password"
+                formControlName="password"
+                class="custom-text-input with-leading-icon with-trailing-icon"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="trailing-action-button"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                title="{{ showPassword ? 'Hide password' : 'Show password' }}"
+              >
+                <i [class]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Remember Me & Forgot Password Row -->
+          <div class="form-utilities-row">
+            <label class="remember-me-container">
+              <input
+                type="checkbox"
+                [(ngModel)]="rememberMeUi"
+                [ngModelOptions]="{ standalone: true }"
+                class="custom-checkbox"
+                id="login-remember"
+              />
+              <span class="checkbox-custom-ui"></span>
+              <span class="remember-label-text">Remember me</span>
+            </label>
+
+            <a
+              href="javascript:void(0)"
+              (click)="onForgotPassword($event)"
+              class="forgot-password-link"
             >
-              <option [ngValue]="null">--select--</option>
-              <option *ngFor="let loc of LocationmasterArry" [ngValue]="loc">
-                {{ loc.locationMasterLocationName }}::{{
-                  loc.locationMasterLocationId
-                }}
-              </option>
-            </select>
-          </p>
-          <p>
-            <label>Financial Period</label>
-            <select formControlName="financialperiod">
-              <option [value]="-1">--select--</option>
-              <option *ngFor="let fin of FinacialPeriodArry" [value]="fin">
-                {{ fin.financialPeriodsStartDate | date : "dd/MM/yy" }}::{{
-                  fin.financialPeriodsEndDate | date : "dd/MM/yy"
-                }}
-              </option>
-            </select>
-          </p>
-          <p>
-            <label>User Id</label>
-            <input
-              type="text"
-              name="login"
-              value=""
-              formControlName="username"
-              placeholder="Username or Email"
-            />
-          </p>
-          <p>
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              formControlName="password"
-              value=""
-              placeholder="Password"
-            />
-          </p>
-          <p>
-            <p-triStateCheckbox
-              [(ngModel)]="value"
-              [ngModelOptions]="{ standalone: true }"
-              label="Remember Me"
-            ></p-triStateCheckbox>
-          </p>
-          <p style="display: flex; gap: 10px">
-            <input
+              Forgot Password?
+            </a>
+          </div>
+
+          <!-- Form Action Buttons -->
+          <div class="form-actions-group">
+            <button
               type="submit"
-              name="commit"
-              (click)="clklogin()"
-              value="Login"
-            />
-            <input
-              type="submit"
-              name="commit"
+              class="btn-primary-login"
+              [disabled]="isSubmitting"
+            >
+              <i *ngIf="isSubmitting" class="pi pi-spin pi-spinner btn-icon"></i>
+              <i *ngIf="!isSubmitting" class="pi pi-sign-in btn-icon"></i>
+              <span class="btn-text">{{ isSubmitting ? 'Authenticating...' : 'Sign In to BioS' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn-secondary-reset"
               (click)="clear()"
-              value="Cancel"
-            />
-          </p>
+              title="Reset fields to initial defaults"
+            >
+              <i class="pi pi-refresh btn-icon"></i>
+              <span class="btn-text">Reset</span>
+            </button>
+          </div>
         </form>
+
+        <!-- Compliance & Security Assurance Footer -->
+        <div class="form-security-footer">
+          <div class="security-indicator">
+            <i class="pi pi-lock"></i>
+            <span>Encrypted 256-bit Enterprise Session</span>
+          </div>
+          <div class="copyright-text">
+            &copy; BioS by VeKtorZ-Ai. All rights reserved.
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 

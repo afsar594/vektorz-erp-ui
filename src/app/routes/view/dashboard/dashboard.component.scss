@@ -1,0 +1,759 @@
+/* ============================================================
+   Dashboard — simple, professional layout
+   Palette follows theme-turquoise (#2ab1be) + neutral greys.
+   ============================================================ */
+.erp-dash {
+  --erp-primary: #2ab1be;
+  --erp-primary-dark: #1c8d98;
+  --erp-primary-soft: #eaf7f8;
+  --erp-ink: #24323d;
+  --erp-ink-soft: #4d5b66;
+  --erp-muted: #7d8a95;
+  --erp-line: #dde4e8;
+  --erp-line-soft: #eef2f4;
+  --erp-surface: #ffffff;
+  --erp-green: #2e9e75;
+  --erp-blue: #3b82d6;
+  --erp-amber: #d78a3c;
+  --erp-radius: 10px;
+  --erp-shadow: 0 1px 2px rgba(20, 40, 60, 0.06),
+    0 1px 3px rgba(20, 40, 60, 0.04);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 0 16px;
+  color: var(--erp-ink);
+  font-size: 13px;
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+/* ------------------------------------------------------------
+   Header
+   ------------------------------------------------------------ */
+.erp-dash__hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 2px 2px 0;
+}
+
+.erp-dash__eyebrow {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--erp-primary-dark);
+}
+
+.erp-dash__title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--erp-ink);
+}
+
+.erp-dash__title span {
+  color: var(--erp-primary-dark);
+}
+
+.erp-dash__subtitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--erp-muted);
+}
+
+.erp-dash__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #c3ccd3;
+}
+
+.erp-dash__hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ------------------------------------------------------------
+   KPI cards
+   ------------------------------------------------------------ */
+.erp-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.erp-kpi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 104px;
+  padding: 16px 18px;
+  background: var(--erp-surface);
+  border: 1px solid var(--erp-line);
+  border-radius: var(--erp-radius);
+  box-shadow: var(--erp-shadow);
+}
+
+.erp-kpi__main {
+  min-width: 0;
+}
+
+.erp-kpi__head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 8px;
+}
+
+.erp-kpi__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--erp-primary-soft);
+  color: var(--erp-primary-dark);
+}
+
+.erp-kpi--blue .erp-kpi__icon {
+  background: #eef3fb;
+  color: var(--erp-blue);
+}
+
+.erp-kpi--amber .erp-kpi__icon {
+  background: #fdf4ea;
+  color: var(--erp-amber);
+}
+
+.erp-kpi--green .erp-kpi__icon {
+  background: #eef7f2;
+  color: var(--erp-green);
+}
+
+.erp-kpi__label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--erp-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.erp-kpi__value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--erp-ink);
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+.erp-kpi__unit {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--erp-muted);
+  text-transform: uppercase;
+}
+
+.erp-kpi__meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--erp-muted);
+}
+
+.erp-kpi__ring {
+  flex: 0 0 auto;
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.erp-kpi__ring app-circle-progress {
+  display: block;
+  width: 76px;
+  height: 76px;
+}
+
+.erp-kpi__ring ::ng-deep .circular-progress {
+  width: 76px;
+  height: 76px;
+}
+
+.erp-kpi__ring ::ng-deep .progress-background {
+  stroke: var(--erp-line-soft);
+  stroke-width: 7;
+}
+
+.erp-kpi__ring ::ng-deep .progress-bar {
+  stroke-width: 7;
+}
+
+.erp-kpi__ring ::ng-deep text {
+  fill: var(--erp-ink) !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.erp-kpi__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--erp-muted);
+  white-space: nowrap;
+}
+
+.erp-kpi__badge i {
+  color: var(--erp-primary-dark);
+  font-size: 11px;
+}
+
+/* ------------------------------------------------------------
+   Layout grid
+   ------------------------------------------------------------ */
+.erp-dash__grid {
+  display: grid;
+  grid-template-columns: minmax(290px, 340px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.erp-dash__column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.erp-dash__charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------
+   Panels
+   ------------------------------------------------------------ */
+.erp-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--erp-surface);
+  border: 1px solid var(--erp-line);
+  border-radius: var(--erp-radius);
+  box-shadow: var(--erp-shadow);
+  overflow: hidden;
+}
+
+.erp-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--erp-line-soft);
+}
+
+.erp-panel__heading {
+  min-width: 0;
+}
+
+.erp-panel__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--erp-ink);
+}
+
+.erp-panel__subtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--erp-muted);
+}
+
+/* Panel actions are plain labels — no pill backgrounds. */
+.erp-panel__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--erp-muted);
+  white-space: nowrap;
+}
+
+.erp-panel__chip i {
+  color: var(--erp-primary);
+  font-size: 11px;
+}
+
+.erp-panel__body {
+  padding: 12px 14px 14px;
+  min-width: 0;
+}
+
+.erp-panel__body--flush {
+  padding: 6px 0;
+}
+
+.erp-panel__body--chart {
+  position: relative;
+  padding: 10px 12px 12px;
+  height: 248px;
+}
+
+.erp-panel__body--chart p-chart,
+.erp-panel__body--chart .ui-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ------------------------------------------------------------
+   Summary lists
+   ------------------------------------------------------------ */
+.erp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.erp-list__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.erp-list__item:hover {
+  background: #f7fafb;
+}
+
+.erp-list__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  font-size: 12px;
+  background: var(--erp-primary-soft);
+  color: var(--erp-primary-dark);
+}
+
+.erp-list__icon--green {
+  background: #eef7f2;
+  color: var(--erp-green);
+}
+
+.erp-list__icon--blue {
+  background: #eef3fb;
+  color: var(--erp-blue);
+}
+
+.erp-list__icon--amber {
+  background: #fdf4ea;
+  color: var(--erp-amber);
+}
+
+.erp-list__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--erp-ink-soft);
+}
+
+.erp-list__label--link {
+  cursor: pointer;
+  color: var(--erp-primary-dark);
+  font-weight: 600;
+}
+
+.erp-list__label--link:hover {
+  text-decoration: underline;
+}
+
+.erp-list__value {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--erp-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.erp-list--approvals .erp-list__value {
+  color: var(--erp-amber);
+}
+
+/* ------------------------------------------------------------
+   Tables
+   ------------------------------------------------------------ */
+.erp-panel--tables {
+  overflow: visible;
+}
+
+.erp-dash__tables-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+}
+
+.erp-dash__tables-head .erp-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.erp-dash__tables-head .erp-panel__title i {
+  color: var(--erp-primary);
+  font-size: 13px;
+}
+
+.erp-tabs ::ng-deep .ui-tabview {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.erp-tabs ::ng-deep .ui-tabview-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 0 14px;
+  margin: 0;
+  background: #f7fafb;
+  border-top: 1px solid var(--erp-line-soft);
+  border-bottom: 1px solid var(--erp-line);
+}
+
+.erp-tabs ::ng-deep .ui-tabview-nav > li {
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
+.erp-tabs ::ng-deep .ui-tabview-nav > li > .ui-tabview-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 13px;
+  margin: 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--erp-muted);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.erp-tabs ::ng-deep .ui-tabview-nav > li > .ui-tabview-nav-link:hover {
+  color: var(--erp-primary-dark);
+}
+
+.erp-tabs
+  ::ng-deep
+  .ui-tabview-nav
+  > li.ui-tabview-selected
+  > .ui-tabview-nav-link,
+.erp-tabs
+  ::ng-deep
+  .ui-tabview-nav
+  > li.ui-state-active
+  > .ui-tabview-nav-link {
+  color: var(--erp-primary-dark);
+  border-bottom-color: var(--erp-primary);
+  background: transparent;
+}
+
+.erp-tabs ::ng-deep .ui-tabview-panels {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.erp-table ::ng-deep .ui-table {
+  border: 0;
+}
+
+.erp-table ::ng-deep .ui-table .ui-table-caption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid var(--erp-line-soft);
+}
+
+.erp-table ::ng-deep .ui-table .ui-table-caption > i {
+  color: var(--erp-muted);
+  margin: 0 !important;
+}
+
+.erp-table ::ng-deep .ui-table-caption .ui-inputtext,
+.erp-table ::ng-deep .erp-table-search {
+  width: 100% !important;
+  max-width: 340px;
+  height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--erp-line);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  color: var(--erp-ink-soft);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.erp-table ::ng-deep .ui-table-caption .ui-inputtext:focus {
+  outline: 0;
+  border-color: var(--erp-primary);
+  box-shadow: 0 0 0 2px rgba(42, 177, 190, 0.16);
+}
+
+.erp-table ::ng-deep .ui-table-scrollable-header {
+  border: 0;
+}
+
+.erp-table ::ng-deep .ui-table .ui-table-thead > tr > th {
+  padding: 9px 12px;
+  background: #f5f8f9;
+  border-color: var(--erp-line-soft);
+  border-width: 0 0 1px 0;
+  color: var(--erp-ink-soft);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.erp-table ::ng-deep .ui-table .ui-table-thead > tr:nth-child(2) > th {
+  padding: 6px 10px;
+  background: #fafcfc;
+}
+
+.erp-table ::ng-deep .ui-table-thead .ui-inputtext {
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--erp-line);
+  border-radius: 5px;
+  font-size: 11.5px;
+  background: #fff;
+}
+
+.erp-table ::ng-deep .ui-table .ui-table-tbody > tr > td {
+  padding: 9px 12px;
+  border-color: var(--erp-line-soft);
+  border-width: 0 0 1px 0;
+  color: var(--erp-ink-soft);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.erp-table ::ng-deep .ui-table .ui-table-tbody > tr:hover {
+  background: #f7fafb;
+}
+
+.erp-table ::ng-deep .ui-table .ui-table-tbody > tr.ui-state-highlight {
+  background: var(--erp-primary-soft);
+  color: var(--erp-ink);
+}
+
+.erp-table ::ng-deep .ui-paginator {
+  padding: 9px 14px;
+  border: 0;
+  border-top: 1px solid var(--erp-line-soft);
+  background: #fff;
+}
+
+.erp-table ::ng-deep .ui-paginator .ui-paginator-pages .ui-paginator-page,
+.erp-table ::ng-deep .ui-paginator .ui-paginator-first,
+.erp-table ::ng-deep .ui-paginator .ui-paginator-prev,
+.erp-table ::ng-deep .ui-paginator .ui-paginator-next,
+.erp-table ::ng-deep .ui-paginator .ui-paginator-last {
+  border-radius: 5px;
+  min-width: 2em;
+  height: 2em;
+  line-height: 2em;
+  color: var(--erp-ink-soft);
+}
+
+.erp-table ::ng-deep .ui-paginator .ui-state-active {
+  background: var(--erp-primary);
+  color: #fff;
+}
+
+/* ------------------------------------------------------------
+   Period split button
+   ------------------------------------------------------------ */
+.erp-period ::ng-deep .ui-splitbutton {
+  display: inline-flex;
+}
+
+.erp-period ::ng-deep .ui-splitbutton .ui-button {
+  height: 36px;
+  padding: 0 14px;
+  border: 0;
+  background: var(--erp-primary);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.erp-period ::ng-deep .ui-splitbutton > .ui-button {
+  border-radius: 6px 0 0 6px !important;
+}
+
+.erp-period ::ng-deep .ui-splitbutton .ui-splitbutton-menubutton {
+  width: 36px;
+  padding: 0;
+  border-radius: 0 6px 6px 0 !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.erp-period ::ng-deep .ui-splitbutton .ui-button:enabled:hover {
+  background: var(--erp-primary-dark);
+}
+
+.erp-period ::ng-deep .ui-splitbutton .ui-button:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px rgba(42, 177, 190, 0.24);
+}
+
+/* ------------------------------------------------------------
+   Responsive
+   ------------------------------------------------------------ */
+@media (max-width: 1400px) {
+  .erp-dash__grid {
+    grid-template-columns: minmax(270px, 320px) minmax(0, 1fr);
+  }
+
+  .erp-kpi {
+    min-height: 98px;
+    padding: 14px 16px;
+  }
+
+  .erp-kpi__value {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .erp-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .erp-dash__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .erp-dash__column--summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+@media (max-width: 900px) {
+  .erp-dash__charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .erp-dash__column--summary {
+    display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .erp-dash {
+    gap: 12px;
+    padding: 0 0 12px;
+  }
+
+  .erp-kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .erp-dash__hero {
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .erp-dash__title {
+    font-size: 20px;
+  }
+
+  .erp-dash__hero-actions {
+    width: 100%;
+  }
+
+  .erp-dash__grid,
+  .erp-dash__column,
+  .erp-dash__charts {
+    gap: 12px;
+  }
+
+  .erp-panel__head {
+    padding: 12px 14px;
+  }
+
+  .erp-panel__body {
+    padding: 12px;
+  }
+
+  .erp-panel__body--chart {
+    height: 224px;
+    padding: 8px;
+  }
+
+  .erp-list__item {
+    padding: 8px 12px;
+  }
+}

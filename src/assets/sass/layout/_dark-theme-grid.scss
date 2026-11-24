@@ -1,0 +1,493 @@
+/* ==========================================================================
+   Dark theme — Handsontable 8 spreadsheet surface
+   --------------------------------------------------------------------------
+   Covers the grid, its clones, editors, selection layer, overlay menus,
+   filters, sorting indicators, custom cell classes and the Pikaday editor.
+   Every rule is visual only; no HOT option or renderer is modified.
+   ========================================================================== */
+
+body.dark-theme {
+  hot-table,
+  .handsontable-container {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    background: var(--erp-table) !important;
+    color: var(--erp-text) !important;
+  }
+
+  .handsontable {
+    background: var(--erp-table) !important;
+    color: var(--erp-text) !important;
+    font-family: "Lato", "Helvetica Neue", sans-serif !important;
+    font-size: 12.5px !important;
+
+    /* master + frozen clones must share the same surface */
+    .ht_master,
+    .ht_clone_top,
+    .ht_clone_bottom,
+    .ht_clone_left,
+    .ht_clone_top_left_corner,
+    .ht_clone_bottom_left_corner,
+    .wtHolder,
+    .wtScrollContainer {
+      background: var(--erp-table) !important;
+      color: var(--erp-text) !important;
+    }
+
+    table.htCore {
+      background: var(--erp-table) !important;
+      border-color: var(--erp-border) !important;
+      color: var(--erp-text) !important;
+
+      /* remove the library's gradient/stripedimages */
+      background-image: none !important;
+    }
+
+    th,
+    td {
+      background-color: var(--erp-table) !important;
+      background-image: none !important;
+      border-right-color: var(--erp-border) !important;
+      border-bottom-color: var(--erp-border) !important;
+      border-left-color: var(--erp-border) !important;
+      border-top-color: var(--erp-border) !important;
+      color: var(--erp-text-2) !important;
+      padding: 0 7px !important;
+      vertical-align: middle !important;
+      transition: background-color 0.12s ease, color 0.12s ease;
+    }
+
+    td {
+      color: var(--erp-text-2) !important;
+    }
+
+    /* ---------- column headers, corner, row headers ---------- */
+    thead th,
+    .ht_clone_top th,
+    th {
+      background: var(--erp-table-head) !important;
+      background-image: none !important;
+      border-color: var(--erp-border) !important;
+      color: var(--erp-text) !important;
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
+    }
+
+    thead th span.colHeader,
+    .colHeader {
+      color: inherit !important;
+    }
+
+    thead th.active {
+      background: #2c405d !important;
+      color: #ffffff !important;
+    }
+
+    tbody th,
+    .htRowHeaders tbody th {
+      background: var(--erp-table-head) !important;
+      color: var(--erp-text-2) !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      text-align: center !important;
+    }
+
+    /* ---------- zebra rows + hover ---------- */
+    tbody tr:nth-child(even) td {
+      background-color: var(--erp-table-alt) !important;
+      background-image: none !important;
+    }
+
+    /* Global legacy CSS paints cell descendants light blue on zebra rows. */
+    tr:nth-child(even) td * {
+      background: transparent !important;
+    }
+
+    tbody tr:nth-child(even) th {
+      background: #1e2c40 !important;
+    }
+
+    tbody tr:hover td {
+      background-color: var(--erp-table-hover) !important;
+      color: var(--erp-text) !important;
+    }
+
+    tbody tr:hover th {
+      background: #2c405d !important;
+      color: #ffffff !important;
+    }
+
+    /* ---------- highlighted / active headers ---------- */
+    tbody th.ht__highlight,
+    thead th.ht__highlight {
+      background: #2c405d !important;
+      background-image: none !important;
+      color: var(--erp-accent-hover) !important;
+    }
+
+    tbody th.ht__active_highlight,
+    thead th.ht__active_highlight {
+      background: var(--erp-accent-strong) !important;
+      background-image: none !important;
+      color: #ffffff !important;
+    }
+
+    /* ---------- selection ---------- */
+    td.area,
+    td.area-1,
+    td.area-2,
+    td.area-3,
+    td.area-4,
+    td.area-5,
+    td.area-6,
+    td.area-7 {
+      color: var(--erp-text) !important;
+
+      &:before {
+        background: var(--erp-accent) !important;
+      }
+    }
+
+    .wtBorder {
+      border-color: var(--erp-accent) !important;
+
+      &.current {
+        border-color: var(--erp-accent-hover) !important;
+        box-shadow: 0 0 0 2px var(--erp-accent-soft) !important;
+      }
+
+      &.area {
+        border-color: rgba(59, 130, 246, 0.85) !important;
+      }
+
+      &.fill {
+        border-color: rgba(96, 165, 250, 0.9) !important;
+      }
+
+      &.corner {
+        background: var(--erp-accent) !important;
+        border-color: #ffffff !important;
+      }
+    }
+
+    /* ---------- editors ---------- */
+    .handsontableInput,
+    textarea.handsontableInput {
+      background: var(--erp-input) !important;
+      border: 0 !important;
+      border-radius: 4px !important;
+      box-shadow: 0 0 0 2px var(--erp-accent) inset !important;
+      color: var(--erp-text) !important;
+      font-family: inherit !important;
+      font-size: 12.5px !important;
+      padding: 0 6px !important;
+    }
+
+    .handsontableInputHolder,
+    .handsontableInputHolder textarea {
+      background: transparent !important;
+    }
+
+    /* ---------- renderer states ---------- */
+    td.htInvalid,
+    .htInvalid {
+      background-color: var(--erp-danger-soft) !important;
+      border-color: var(--erp-danger) !important;
+      color: #fca5a5 !important;
+    }
+
+    td.htDimmed,
+    .htDimmed {
+      color: var(--erp-muted) !important;
+    }
+
+    .htPlaceholder {
+      color: var(--erp-muted) !important;
+    }
+
+    .htSearchResult {
+      background: var(--erp-warning-soft) !important;
+      color: #fcd34d !important;
+    }
+
+    .htAutocompleteArrow {
+      color: var(--erp-accent-hover) !important;
+    }
+
+    .htCheckboxRendererInput {
+      accent-color: var(--erp-accent) !important;
+    }
+
+    .htNoData,
+    .htEmpty {
+      background: var(--erp-table) !important;
+      color: var(--erp-muted) !important;
+    }
+
+    /* ---------- custom cell classes used by the app ---------- */
+    .lightblue-bg,
+    td[class*="lightblue-bg"] {
+      background: var(--erp-accent-soft) !important;
+      color: var(--erp-text) !important;
+    }
+
+    .header-numeric,
+    .header-text,
+    .custom-th-header {
+      background: var(--erp-table-head) !important;
+      color: var(--erp-text) !important;
+      font-weight: 700 !important;
+    }
+
+    /* A few legacy renderers paint cells yellow inline. */
+    td[style*="yellow"] {
+      background: var(--erp-warning-soft) !important;
+      color: #fcd34d !important;
+    }
+
+    /* ---------- sorting / filters ---------- */
+    span.colHeader.columnSorting::before {
+      filter: brightness(0) invert(1) !important;
+      opacity: 1 !important;
+    }
+
+    .changeType {
+      background: var(--erp-surface-3) !important;
+      border: 1px solid var(--erp-border) !important;
+      border-radius: 5px !important;
+      color: var(--erp-text-2) !important;
+
+      &:hover {
+        border-color: var(--erp-accent) !important;
+        color: #ffffff !important;
+      }
+    }
+
+    .htFiltersActive .changeType {
+      background: var(--erp-success-soft) !important;
+      border-color: var(--erp-success) !important;
+      color: #86efac !important;
+    }
+
+    .htMenuFiltering {
+      border-bottom-color: var(--erp-border) !important;
+    }
+
+    .ht_master table td.htCustomMenuRenderer {
+      background-color: var(--erp-surface-3) !important;
+      color: var(--erp-text) !important;
+    }
+
+    .htFiltersMenuCondition.border,
+    .htFiltersMenuValue {
+      border-bottom-color: var(--erp-border) !important;
+    }
+
+    .htFiltersMenuLabel {
+      color: var(--erp-text-2) !important;
+    }
+
+    .htUIInput input,
+    .htFiltersMenuCondition .htUIInput input,
+    .htFiltersMenuValue .htUIMultipleSelectSearch input,
+    .htUIInput.htUIButton input {
+      background: var(--erp-input) !important;
+      border: 1px solid var(--erp-border) !important;
+      border-radius: 5px !important;
+      color: var(--erp-text) !important;
+
+      @include dt-placeholder;
+
+      &:focus {
+        border-color: var(--erp-accent) !important;
+        box-shadow: 0 0 0 2px var(--erp-accent-soft) !important;
+        outline: none !important;
+      }
+    }
+
+    .htUIInput.htUIButtonOK input {
+      background: var(--erp-accent-strong) !important;
+      border-color: var(--erp-accent) !important;
+      color: #ffffff !important;
+    }
+
+    .htUISelectCaption,
+    .htUISelect {
+      background: var(--erp-input) !important;
+      border-color: var(--erp-border) !important;
+      border-radius: 5px !important;
+      color: var(--erp-text) !important;
+    }
+
+    .htUIMultipleSelect .handsontable .htCore td:hover {
+      background: var(--erp-accent-soft) !important;
+    }
+
+    .htUIClearAll a,
+    .htUISelectAll a {
+      color: var(--erp-accent-hover) !important;
+    }
+
+    /* ---------- resize handles ---------- */
+    .manualColumnResizer,
+    .manualRowResizer,
+    .manualColumnResizerGuide,
+    .manualRowResizerGuide {
+      background-color: var(--erp-accent-strong) !important;
+      border-color: var(--erp-accent) !important;
+    }
+
+    .manualColumnResizer:hover,
+    .manualColumnResizer.active,
+    .manualRowResizer:hover,
+    .manualRowResizer.active {
+      background-color: var(--erp-accent) !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     Overlay containers are appended to <body>, outside the grid element.
+     ------------------------------------------------------------------------ */
+  .htContextMenu:not(.htGhostTable),
+  .htDropdownMenu:not(.htGhostTable),
+  .htFiltersConditionsMenu:not(.htGhostTable),
+  .htFiltersMenuValue:not(.htGhostTable),
+  .htUIMultipleSelect:not(.htGhostTable),
+  .htAutocomplete:not(.htGhostTable) {
+    @include dt-menu-surface;
+    border-radius: var(--erp-radius) !important;
+    color: var(--erp-text) !important;
+    font-family: "Lato", "Helvetica Neue", sans-serif !important;
+    font-size: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .htContextMenu table.htCore,
+  .htDropdownMenu table.htCore,
+  .htFiltersConditionsMenu table.htCore,
+  .htFiltersMenuValue table.htCore,
+  .htUIMultipleSelect table.htCore {
+    background: transparent !important;
+    border: 0 !important;
+
+    th,
+    td {
+      background: transparent !important;
+      border: 0 !important;
+    }
+  }
+
+  .htContextMenu table tbody tr td,
+  .htDropdownMenu table tbody tr td,
+  .htFiltersConditionsMenu table tbody tr td,
+  .htFiltersMenuValue table tbody tr td,
+  .htUIMultipleSelect table tbody tr td {
+    background: transparent !important;
+    border: 0 !important;
+    color: var(--erp-text-2) !important;
+    padding: 7px 11px !important;
+    font-size: 12px !important;
+    transition: background-color 0.12s ease, color 0.12s ease;
+
+    &:hover,
+    &.current,
+    &.zeroclipboard-is-hover {
+      background: var(--erp-accent-soft) !important;
+      color: #ffffff !important;
+    }
+
+    &.htDimmed {
+      color: var(--erp-muted) !important;
+    }
+
+    &.htDisabled,
+    &.htDisabled:hover {
+      background: transparent !important;
+      color: var(--erp-muted) !important;
+      cursor: default !important;
+    }
+
+    &.htSeparator {
+      border-top: 1px solid var(--erp-border) !important;
+      height: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  .htContextMenu .ht_master .wtHolder,
+  .htDropdownMenu .ht_master .wtHolder,
+  .htFiltersConditionsMenu .ht_master .wtHolder {
+    background: transparent !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     Pikaday (Handsontable's date cell editor)
+     ------------------------------------------------------------------------ */
+  .pika-single {
+    @include dt-menu-surface;
+    border-radius: var(--erp-radius) !important;
+    color: var(--erp-text) !important;
+
+    &.is-bound {
+      box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.95) !important;
+    }
+  }
+
+  .pika-label,
+  .pika-table th,
+  .pika-week {
+    background: transparent !important;
+    color: var(--erp-text-2) !important;
+  }
+
+  .pika-table thead th {
+    border-bottom-color: var(--erp-border) !important;
+  }
+
+  .pika-button {
+    background: var(--erp-input) !important;
+    border-radius: 6px !important;
+    color: var(--erp-text-2) !important;
+
+    &:hover {
+      background: var(--erp-accent-soft) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .is-today .pika-button {
+    color: var(--erp-accent-hover) !important;
+  }
+
+  .is-selected .pika-button,
+  .has-event .pika-button,
+  .is-endrange .pika-button,
+  .is-startrange .pika-button {
+    background: var(--erp-accent-strong) !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+  }
+
+  .is-disabled .pika-button,
+  .is-inrange .pika-button {
+    background: var(--erp-surface-3) !important;
+  }
+
+  .is-disabled .pika-button {
+    color: var(--erp-muted) !important;
+  }
+
+  #hot-display-license-info {
+    background: var(--erp-surface-3) !important;
+    border-color: var(--erp-border) !important;
+    border-radius: 6px !important;
+    color: var(--erp-text-2) !important;
+    padding: 4px 8px !important;
+
+    a {
+      color: var(--erp-accent-hover) !important;
+    }
+  }
+}
