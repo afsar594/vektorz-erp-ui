@@ -1,0 +1,518 @@
+<app-page-header [nav]="[
+    { label: 'customer' | translate },
+    { label: 'customer enquiry' | translate }
+  ]" [title]="title | translate"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" [label]="'New' | translate" (click)="new()" icon="pi pi-plus"
+      class="ui-button-info"></button>
+    <button pButton type="button" [label]="'Edit' | translate" (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission.Edit" icon="fa fa-pencil" class="ui-button-success"></button>
+
+    <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag.cancel" [label]="'Cancel' | translate"
+      (click)="cancel()" icon="fa fa-ban"></button>
+    <button pButton type="button" [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission.Add || btnFlag.new" (click)="savecustomerEnquiry()" icon="fa fa-floppy-o"
+      class="ui-button-success"></button>
+
+    <button pButton type="button" [label]="'List' | translate" [disabled]="!Permission.View" icon="fa fa-list"
+      (click)="showMaximizableDialog()" class="ui-button-info"></button>
+
+    <button pButton type="button" (click)="delete()" [disabled]="!btnFlag.delete || !Permission.Delete"
+      [label]="'Delete' | translate" icon="fa fa-trash" class="ui-button-danger"></button>
+
+    <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"
+      class="ui-button-danger"></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" (click)="callDropdowns(true)" icon="fa fa-refresh" class="ui-button-success"></button>
+    <p-splitButton icon="fa fa-print" [model]="printbtn" label="Print" [disabled]="!btnFlag.edit || !Permission.Print"
+      styleClass="p-button-outlined mr-2 mb-2">
+    </p-splitButton>
+
+    <button pButton type="button" label="Excel" icon="fa fa-file-excel-o" class="ui-button-success"></button>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="customerEnquiryFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Customer Enquiry' | translate">
+      <div class="p-grid p-sm-12 p-md-12 p-lg-12">
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                "Enquiry No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-4 p-1">
+                <input class="w-100" formControlName="enquiryMasterEnquiryNo" id="quotationno" pInputText readOnly />
+              </div>
+              <p-message severity="error" *ngIf="
+                  f.enquiryMasterEnquiryId?.errors?.Exist && !btnFlag.update
+                " text="Enquiry  No is exist"></p-message>
+
+              <label class="p-col-12 p-md-12 p-lg-2" for="quotedate">{{
+                "Enquiry Date" | translate
+                }}</label>
+
+              <div class="p-col-12 p-md-12 p-lg-4 p-1">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [yearNavigator]="true" yearRange="2000:2040" class="w-100" [showIcon]="true" useUtc
+                  formControlName="enquiryMasterEnquiryDate" id="quotedate">
+                </p-calendar>
+                <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" [(ngModel)]="dateValue" view="month" dateFormat="mm/yy" [yearNavigator]="true" yearRange="2000:2030"></p-calendar> -->
+                <div class="error" *ngIf="
+                    f.enquiryMasterEnquiryDate.errors &&
+                    (f.enquiryMasterEnquiryDate.dirty ||
+                      f.enquiryMasterEnquiryDate.touched)
+                  ">
+                  <span *ngIf="f.enquiryMasterEnquiryDate.errors.required">
+                    {{ "Enquiry date is Mandatory Field*" | translate }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="customer">{{
+                "Cust Name" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-1">
+                <p-dropdown filter="true" class="w-100" formControlName="enquiryMasterContactId"
+                  appDropdownOptionTitle
+                  [options]="customerList">
+                </p-dropdown>
+                <div class="error" *ngIf="
+                    f.enquiryMasterContactId.touched &&
+                    f.enquiryMasterContactId.invalid
+                  ">
+                  Customer is Mandatory Field*
+                </div>
+              </div>
+
+              <!-- <div  class="p-inputgroup">
+                                    <input type="text"  #custCtrl
+                                     pInputText placeholder="Customer">
+                                   
+                                </div>
+                                <div class="p-col-12 p-md-12 p-lg-1">
+                                    <button type="button" pButton pRipple icon="pi pi-search" (click)='openCustomer()'
+                                    styleClass="p-button-warn"></button>      
+                                </div> -->
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="contact">{{
+                "Contact Person" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-1">
+                <input class="w-100" formControlName="enquiryMasterContactName" style="width: 190px" id="contactper"
+                  pInputText />
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="contact">{{
+                "Contact Email" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-1">
+                <input class="w-100" formControlName="enquiryMasterContactEmail" style="width: 190px" id="email"
+                  pInputText />
+                <!-- <div class="error"
+                                    *ngIf="f.enquiryMasterContactEmail.touched && f.enquiryMasterContactEmail.invalid">
+                                    Contact Email is Mandatory Field*
+                                </div> -->
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="enquirytype">{{
+                "Enquiry About" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-1">
+                <p-dropdown filter="true" class="w-100" formControlName="enquiryMasterEnquiryAboutId"
+                  [options]="enquiryAboutList">
+                </p-dropdown>
+                <!-- <div  class="p-inputgroup">
+                                        <input type="text"  #enqaCtrl
+                                         pInputText placeholder="EnquiryAbout">
+                                       
+                                    </div>
+                                    <div class="p-col-12 p-md-12 p-lg-1">
+                                        <button type="button" pButton pRipple icon="pi pi-search" (click)='openEnquiryAbout()'
+                                        styleClass="p-button-warn"></button>      
+                                    </div> -->
+                <div class="error" *ngIf="
+                    f.enquiryMasterEnquiryAboutId.errors &&
+                    (f.enquiryMasterEnquiryAboutId.dirty ||
+                      f.enquiryMasterEnquiryAboutId.touched)
+                  ">
+                  <span *ngIf="f.enquiryMasterEnquiryAboutId.errors.required">
+                    {{ "Enquiry About is Mandatory Field*" | translate }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                "Consult Engr" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-1">
+                <input class="w-100" id="quotationno" pInputText />
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="businesstype">{{
+                "Business Type" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-1">
+                <p-dropdown filter="true" class="w-100" formControlName="enquiryMasterBusineesTypeId"
+                  [options]="businessTypeList">
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="narration">{{
+                "Remarks" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-2">
+                <textarea class="w-100" formControlName="enquiryMasterRemarks"
+                  style="margin: 0px; width: 467x; height: 56px" id="narration" pInputText></textarea>
+                <div class="error" *ngIf="
+                    f.enquiryMasterRemarks.touched &&
+                    f.enquiryMasterRemarks.invalid
+                  ">
+                  Remarks is Mandatory Field*
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <div class="p-col-3">
+                <p-checkbox formControlName="itemDetailsChecked" [binary]="true" label="Item Details"></p-checkbox>
+
+                <!-- //  <p-checkbox label="Item Details"  formControlName='itemDetailsChecked'></p-checkbox> -->
+              </div>
+              <div class="p-col-12 p-md-12 p-lg-9 p-1">
+                <p style="color: red">
+                  Press F11 key in the grid to add as new item
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="salesman">{{
+              "Sales Man" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-10 p-1">
+              <p-dropdown filter="true" class="w-100" formControlName="enquiryMasterSalesManId"
+                [options]="salesManList">
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="location">{{
+              "Location" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-10 p-1">
+              <p-dropdown filter="true" class="w-100" formControlName="enquiryMasterLocationId"
+                [options]="locationList">
+              </p-dropdown>
+              <!-- <div  class="p-inputgroup">
+                                    <input type="text"  #locaCtrl
+                                     pInputText placeholder="Location">
+                                   
+                                </div>
+                                <div class="p-col-12 p-md-12 p-lg-1">
+                                    <button type="button" pButton pRipple icon="pi pi-search" (click)='openLocation()'
+                                    styleClass="p-button-warn"></button>      
+                                </div> -->
+              <div class="error" *ngIf="
+                  f.enquiryMasterLocationId.errors &&
+                  (f.enquiryMasterLocationId.dirty ||
+                    f.enquiryMasterLocationId.touched)
+                ">
+                <span *ngIf="f.enquiryMasterLocationId.errors.required">
+                  Location is Mandatory Field*</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="contact">{{
+              "Customer Ref." | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-10 p-2">
+              <input class="w-100" formControlName="enquiryMasterCustomerReference" style="width: 190px" id="refno"
+                pInputText />
+              <div class="error" *ngIf="
+                  f.enquiryMasterCustomerReference.touched &&
+                  f.enquiryMasterCustomerReference.invalid
+                ">
+                Customer Ref is Mandatory Field*
+              </div>
+            </div>
+          </div>
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="currency">{{
+              "Currency" | translate
+              }}</label>
+
+            <div class="p-col-12 p-md-12 p-lg-4 p-1">
+              <p-dropdown filter="true" class="w-100" formControlName="enquiryMasterCurrencyId"
+                [options]="currencyList">
+              </p-dropdown>
+              <!-- <div  class="p-inputgroup">
+                                    <input type="text"  #currCtrl
+                                     pInputText placeholder="Currency">
+                                   
+                                </div>
+                                <div class="p-col-12 p-md-12 p-lg-1">
+                                    <button type="button" pButton pRipple icon="pi pi-search" (click)='openCurrency()'
+                                    styleClass="p-button-warn"></button>      
+                                </div> -->
+              <div class="error" *ngIf="
+                  f.enquiryMasterCurrencyId.errors &&
+                  (f.enquiryMasterCurrencyId.dirty ||
+                    f.enquiryMasterCurrencyId.touched)
+                ">
+                <span *ngIf="f.enquiryMasterCurrencyId.errors.required">
+                  Currency is Mandatory Field*</span>
+              </div>
+            </div>
+            <label class="p-col-12 p-md-12 p-lg-2" for="enquirystatus">{{
+              "Enquiry Status" | translate
+              }}</label>
+
+            <div class="p-col-12 p-md-12 p-lg-4 p-1">
+              <p-dropdown filter="true" class="w-100" formControlName="enquiryMasterEnquiryStatusId"
+                [options]="enquiryStatusList">
+              </p-dropdown>
+              <div class="error" *ngIf="
+                  f.enquiryMasterEnquiryStatusId.errors &&
+                  (f.enquiryMasterEnquiryStatusId.dirty ||
+                    f.enquiryMasterEnquiryStatusId.touched)
+                ">
+                <span *ngIf="f.enquiryMasterEnquiryStatusId.errors.required">
+                  Enquiry Status is Mandatory Field*</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="enquirystatus">{{ "Qts Made" | translate }}
+            </label>
+            <div class="p-col-12 p-md-12 p-lg-10 p-1">
+              <p-panel>
+                <p-table>
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Quotation No</th>
+                      <th>Date</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body"> </ng-template>
+                </p-table>
+              </p-panel>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-sm-12 p-md-12 p-lg-12">
+        <p-panel>
+          <p-header>
+            {{ "Item Details" | translate }}
+          </p-header>
+          <div class="grid">
+            <div class="p-col-12 tbl-maxheight">
+              <div class="p-col-12 tbl-maxheight">
+                <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="customerEnquiryentry">
+                </hot-table>
+              </div>
+            </div>
+          </div>
+        </p-panel>
+
+        <ng-container *ngIf="showSalesLookUp">
+          <app-lookup [header]="'Look Up'" [dataArry]="dataList" [isServerSearch]="isServerSearch"
+            [selectedItem]="selectItem" [columns]="lookupGridColumns" (selectItemEvent)="selectsales($event)"
+            (exitEvent)="exit($event)" [cell]="activeRow" (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)"
+            (searchEvent)="onSearch($event)" [tableheader]="'Sales List'" [(show)]="showSalesLookUp"></app-lookup>
+        </ng-container>
+        <app-lookup *ngIf="formControlLookUp" [header]="'Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference"
+          [dataArry]="dataList" (exitEvent)="exit($event)" (clearEvent)="clear($event)" [formControlName]="control"
+          [columns]="lookupGridColumns" (selectItemEvent)="selectControl($event)" (hideDialogEvent)="hide($event)"
+          [tableheader]="'Sales List'" [(show)]="formControlLookUp"></app-lookup>
+      </div>
+    </p-tabPanel>
+    
+    <p-tabPanel [header]="'Document' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-sm-12 p-md-3">
+          <p-panel>
+            <p-header>
+              <div class="flexrow w-100">
+                <span class="w-100" style="margin-top: 6px">
+                  {{ "Files" | translate }}
+                </span>
+                <span class="w-100 right">
+                  <div style="display: flex; align-items: center; gap: 4px">
+                    <button
+                      pButton
+                      type="button"
+                      [disabled]="!btnFlag.edit"
+                      icon="pi pi-paperclip"
+                      label="Attach"
+                      class="p-button-sm"
+                      (click)="showFileAttachmentDialog()"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      [disabled]="!btnFlag.edit"
+                      icon="pi pi-download"
+                      style="width: 130px"
+                      label="Download All"
+                      class="p-button-lg"
+                      (click)="downloadAllDocuments()"
+                    ></button>
+                  </div>
+                </span>
+              </div>
+            </p-header>
+
+            <div style="width: 100%; height: 60vh; overflow-y: scroll">
+              <p-tree
+                [value]="files"
+                selectionMode="single"
+                [(selection)]="selectedFile"
+                (onNodeSelect)="onNodeSelect($event)"
+              >
+                <ng-template let-node pTemplate="default">
+                  <span>{{ node.label }}</span>
+                  <i
+                    *ngIf="isChildNode(node)"
+                    class="pi pi-trash delete-icon"
+                    (click)="onDeleteNode(node)"
+                    style="margin-left: 20px; cursor: pointer; color: red"
+                  >
+                  </i>
+                </ng-template>
+              </p-tree>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-9">
+          <p-panel>
+            <p-header>
+              {{ "Document Preview" | translate }}
+            </p-header>
+            <div style="width: 100%; height: 62vh">
+              <iframe
+                *ngIf="previewUrl"
+                [src]="previewUrl"
+                width="100%"
+                height="100%"
+                frameborder="0"
+              >
+              </iframe>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog header="Customer Enquiry List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-table #dt [value]="customerEnquiryarry" [columns]="cols" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right" class="sear">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    {{ customerEnquiryarry | json }}
+
+    <ng-template pTemplate="body" let-custenquiry>
+      <tr>
+        <td>{{ custenquiry.enquiryMasterEnquiryId }}</td>
+        <td>{{ custenquiry.enquiryMasterEnquiryNo }}</td>
+        <td>
+          {{ custenquiry.enquiryMasterEnquiryDate | date : "dd/MM/yyyy" }}
+        </td>
+
+        <td>
+          {{ getLocation(custenquiry?.enquiryMasterLocationId) }}
+        </td>
+        <td>
+          {{ getSalesMan(custenquiry?.enquiryMasterSalesManId) }}
+        </td>
+        <td>
+          {{ getCurrency(custenquiry?.enquiryMasterCurrencyId) }}
+        </td>
+        <td>{{ custenquiry?.enquiryMasterRemarks }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedCustomerEnquiryDetails(
+                custenquiry.enquiryMasterEnquiryId
+              );
+              displayMaximizable = false
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+
+  <p-dialog
+  header="Add Attachments"
+  [modal]="true"
+  [(visible)]="fileAttachmentDialogVisibility"
+  [style]="{ width: '50rem' }"
+>
+  <div class="card">
+    <p-fileUpload
+      name="files"
+      [maxFileSize]="1000000"
+      [customUpload]="true"
+      (uploadHandler)="customUploadHandler($event)"
+      [showUploadButton]="true"
+      [showCancelButton]="true"
+      [multiple]="true"
+      [accept]="'.pdf'"
+      [auto]="false"
+      [mode]="'advanced'"
+      [uploadLabel]="'Upload'"
+      [cancelLabel]="'Cancel'"
+      [chooseLabel]="'Choose'"
+    >
+      <ng-template #empty>
+        <div>Drag and drop files here to upload.</div>
+      </ng-template>
+      <ng-template #content>
+        <ul *ngIf="attachmentsToUploaded.length">
+          <li *ngFor="let file of attachmentsToUploaded">
+            {{ file.name }} - {{ file.size }} bytes
+          </li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
+</p-dialog>

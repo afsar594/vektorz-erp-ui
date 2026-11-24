@@ -1,0 +1,175 @@
+<app-page-header
+  [nav]="[
+    { label: 'procurement' | translate },
+    { label: 'purchase Requisition S tatus Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="getreport()"
+      label="Show"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="clear()"
+      label="Clear"
+      icon="fa fa-close"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Close"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="PRSRForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Purchase Requisition Status Report' | translate">
+      <div class="p-grid">
+        <div class="p-col-4">
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account" FormControl>
+              <b>{{ "Location:" | translate }}</b>
+            </label>
+            <div class="p-col-9 p-md-9 p-lg-9">
+  <p-dropdown
+    filter="true"
+    [style]="{ width: '100%' }"
+    placeholder="--- Location ---"
+    formControlName="location"
+    [options]="locationList"
+    [showClear]="true"
+    [disabled]="locationLocked"
+  >
+  </p-dropdown>
+            </div>
+          </div>
+
+          <!-- <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account" FormControl>
+              <b>{{ "Job:" | translate }}</b>
+            </label>
+            <div class="p-col-9 p-md-9 p-lg-9">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="--- Job ---"
+                formControlName="location"
+                [options]="jobList"
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div> -->
+        </div>
+        <div class="p-col-8">
+          <p-panel>
+            <p-header>
+              <input type="checkbox" formControlName="isdate" pInputCheck />
+              {{ "By Date" | translate }}
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-2">
+                <label>{{ "From Date:" | translate }}</label>
+              </div>
+              <div class="p-col-4">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [disabled]="!f.isdate.value"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  id="dateFrom"
+                  useUtc
+                  formControlName="FromDate"
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div
+                  class="error"
+                  *ngIf="f.FromDate.touched && f.FromDate.invalid"
+                >
+                  FromDate Invalid Entry
+                </div>
+              </div>
+
+              <div class="p-col-2">
+                <label>{{ "To Date:" | translate }}</label>
+              </div>
+              <div class="p-col-4">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [disabled]="!f.isdate.value"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  id="dateTo"
+                  useUtc
+                  formControlName="ToDate"
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div class="error" *ngIf="f.ToDate.touched && f.ToDate.invalid">
+                  ToDate Invalid Entry
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <div class="card card-w-title">
+        <div class="grid">
+          <div class="p-col-12">
+            <!-- <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey"
+                        [settings]="puchaserequsitionreport">
+
+                    </hot-table> -->
+            <p-table>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>PR No</th>
+                  <th>Date</th>
+                  <th class="w30">Material</th>
+                  <th>Location</th>
+                  <th>Unit</th>
+                  <th class="w20">Sales QTY</th>
+                  <th class="w20">Sales QTY</th>
+                  <th class="w40">Balance</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body">
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

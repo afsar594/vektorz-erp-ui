@@ -1,0 +1,572 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <!-- <button pButton type="button" (click)='new()' label="New" icon="pi pi-plus" class="ui-button-info"></button> -->
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="edit()"
+      [label]="'Edit' | translate"
+      [disabled]="!btnFlag.edit"
+      icon="fa fa-pencil ||!Permission?.Edit"
+      class="ui-button-success"
+    ></button>
+    <!-- <button pButton type="button" label="Edit" icon="fa fa-pencil" class="ui-button-success"></button> -->
+    <button
+      pButton
+      type="button"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add"
+      (click)="saveAssetPurchase()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+    <!-- <button pButton type="button" class="ui-button-danger" (click)="delete()" label="Delete" icon="fa fa-trash"></button> -->
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      [label]="'Delete' | translate"
+      icon="fa fa-trash"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      icon="fa fa-ban"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print || !btnFlag.edit"
+
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="getPOReport()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="ExitNew()"
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <div [formGroup]="assetPurchaseFormGroup">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Purchase' | translate">
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Invoice Type" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <!-- <p-dropdown filter="true" placeholder="---Type---">
+                    </p-dropdown> -->
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              formControlName="astPurchaseType"
+              [options]="v_typeList"
+            >
+            </p-dropdown>
+            <!-- <div class="error" *ngIf="f.invoice.invalid">Invalid Entry</div> formControlName="invoice" -->
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Voucher No." | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <input pInputText formControlName="assetPurchaseVoucherNo" />
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Voucher Date" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              class="w-100"
+              [showIcon]="true"
+              formControlName="VoucherDate"
+            >
+            </p-calendar>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Currency" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <!-- <input pInputText class="w-100"> -->
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              formControlName="currencyId"
+              [options]="currencyList"
+            >
+            </p-dropdown>
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Location" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <!-- <p-dropdown filter="true" [options]="location" placeholder="---Location---">
+                    </p-dropdown> -->
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              formControlName="locationID"
+              [options]="locationList"
+            >
+            </p-dropdown>
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <!-- <b>{{'PO Wise Pur' | translate}}</b> -->
+          </label>
+          <div class="p-col-12 p-md-2">
+            <!-- <input pInputText class="w-100" formControlName='PoWisePur'> -->
+          </div>
+          <div class="p-col-12 p-md-1">
+            <button
+              pButton
+              type="button"
+              label="Load PO"
+              style="width: 110px"
+            ></button>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Supplier" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <!-- <p-dropdown filter="true" placeholder="---All---">
+                    </p-dropdown> -->
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              formControlName="SupplierId"
+              [options]="SupplierMasterList"
+            >
+            </p-dropdown>
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "LPO No" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <input pInputText formControlName="lpoNo" />
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "LPO Date" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              class="w-100"
+              [showIcon]="true"
+              formControlName="lpoDate"
+            >
+            </p-calendar>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Supp.Invo.No" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <input pInputText class="w-100" formControlName="supInvNo" />
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "GR No" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <input pInputText class="w-100" formControlName="grNo" />
+          </div>
+
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "GR Date" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              class="w-100"
+              [showIcon]="true"
+              formControlName="grDate"
+            >
+            </p-calendar>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Ref No" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <input pInputText formControlName="AstPurchaseRef" />
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Narration" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-3">
+            <textarea
+              pTextArea
+              rows="5"
+              class="w-100"
+              formControlName="description"
+            ></textarea>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel [header]="'Account Details' | translate">
+        And this the Panel 2 for details, Welcome
+      </p-tabPanel>
+    </p-tabView>
+    <div class="card card-w-title">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Details' | translate">
+          <div class="grid">
+            <div class="p-col-12">
+              <hot-table
+                #hotTable
+                [hotId]="hotid"
+                [data]="Assetpurchaseorder_entryDataset"
+                [licenseKey]="licensekey"
+                [settings]="assetPurchaseentry"
+              >
+              </hot-table>
+              <!-- <p-table [value]="accountTransactionList" *ngIf="index==1">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{'Account No' | translate}}</th>
+                                <th>{{'Account Name'| translate}}</th>                       
+                                <th>{{'Debit' | translate}}</th>
+                                <th>{{'Credit'| translate}}</th>
+                                <th>{{'Particulars'| translate}}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-accountTrans>
+                            <tr>
+                                <td>{{accountTrans?.accountsTransactionsAccNo}}</td>
+                                <td>
+                                </td>
+                                <td>{{accountTrans?.accountsTransactionsDebit.toFixed(3)}}</td>
+                                <td>{{accountTrans?.accountsTransactionsCredit.toFixed(3)}}</td>
+                                <td>{{accountTrans?.accountsTransactionsParticulars}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table> -->
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+    <div class="p-grid p-ai-center">
+      <div class="p-col-8 p-md-8"></div>
+      <div class="p-col-12 p-md-4 p-0">
+        <p-panel>
+          <p-header>
+            {{ "Bill Summary" | translate }}
+          </p-header>
+          <div class="p-col-12">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3">
+                <b>{{ "Gross Total" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-9">
+                <input pInputText class="w-100" formControlName="grossTotal" />
+              </div>
+            </div>
+            <div class="p-col-12 p-grid p-0">
+              <label class="p-col-12 p-md-3" for="account">
+                <b>{{ "Discount" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-9 p-grid">
+                <div class="p-col-12 p-md-4 p-0">
+                  <input
+                    id="disPer"
+                    class="w-100"
+                    pInputText
+                    formControlName="disPer"
+                    (change)="CalcDiscFromPer()"
+                    pInputText
+                  />
+                </div>
+                <span class="p-col-12 p-md-1">
+                  <b>{{ "%" | translate }}</b>
+                </span>
+                <div class="p-col-12 p-md-7 p-0">
+                  <input
+                    id="DisAmount"
+                    class="w-100"
+                    pInputText
+                    (change)="CalcDiscFromAmt()"
+                    formControlName="DisAmount"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="p-col-12 p-grid">
+                    <label class="p-col-4 " for="account">
+                        <b>{{'Total Disc '| translate}}</b>
+                    </label>
+                    <div class="p-col-6 p-grid    p-0">
+
+                        <div class="p-col-4   p-0">
+                            <input id="purchaseOrderTotalDisPer" class="w-100"
+                                formControlName='purchaseOrderTotalDisPer' (change)="CalcDiscFromPer()"
+                                style="border-color: black;  text-align: right; " pInputText>
+                        </div>
+                        <span class="p-col-2">
+                            <b>{{'%'| translate}}</b>
+                        </span>
+                        <div class="p-col-6   p-0">
+                            <input id="purchaseOrderTotalDisAmount" class="w-100"
+                                formControlName='purchaseOrderTotalDisAmount' (change)="CalcDiscFromAmt()"
+                                style="border-color: black; width: 115px; text-align: right;" pInputText>
+                        </div>
+
+                    </div>
+                </div> -->
+
+            <!-- <div class="p-col-12 p-grid">
+                    <label class="p-col-4  p-col-align-end  p-0 " for="account">
+                        <b>{{'VATable Amt'| translate}}</b>
+                    </label>
+                    <div class="p-col-6  p-col-align-end  p-0  ">
+                        <input id="purchaseOrderTotalActualAmount" class="w-100"
+                            formControlName='purchaseOrderTotalActualAmount' readonly (change)="GetTotal()"
+                            style="border-color: black;  text-align: right; " pInputText>
+                    </div>
+                </div> -->
+
+            <div class="p-col-12 p-grid p-0">
+              <label class="p-col-12 p-md-3" for="account">
+                <b>{{ "Round OFF " | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-9 p-grid">
+                <div class="p-col-12 p-md-4 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="vatRoundSign"
+                    [options]="sign"
+                    value="-"
+                    (onChange)="GetTotal($event)"
+                  >
+                  </p-dropdown>
+                </div>
+                <span class="p-col-12 p-md-1"> </span>
+                <div class="p-col-12 p-md-7 p-0">
+                  <input class="w-100" pInputText formControlName="roundOff" />
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "VAT " | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-grid p-0">
+                <div class="p-col-4 p-0">
+                  <input
+                    id="VatPer"
+                    class="w-100"
+                    formControlName="VatPer"
+                    (change)="GetTotal()"
+                    pInputText
+                  />
+                </div>
+                <span class="p-col-1">
+                  <b>{{ "%" | translate }}</b>
+                </span>
+                <div class="p-col-7 p-0">
+                  <input
+                    id="salesVoucherVatAmt"
+                    class="w-100"
+                    formControlName="salesVoucherVatAmt"
+                    (change)="GetTotal()"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="p-col-12 p-grid p-0">
+                        <label class="p-col-12 p-md-3 p-0 " for="account">
+                            <b>{{'5% Vat'| translate}}</b>
+                        </label>
+                        <div class="p-col-12 p-md-9 p-0  ">
+                            <input class="w-100" (onChange)="GetTotal()" pInputText formControlName="salesVoucherVatAmt">
+                        </div>
+                    </div> -->
+            <div class="p-col-12 p-grid p-0">
+              <label class="p-col-12 p-md-3 p-0" for="account">
+                <b>{{ "Grand Total" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-9 p-0">
+                <input class="w-100" pInputText formControlName="grandTotal" />
+              </div>
+            </div>
+          </div>
+        </p-panel>
+        <!-- </div> -->
+      </div>
+      <!--<div class="card">
+    <div class="grid">
+        <button (click)="addInput()">Add</button>
+        <div *ngFor="let item of inputs">
+            <button (click)="removeInput(item)">Remove</button>
+            <label class="p-col-1">Field No : {{item}}</label>
+            <div class="p-col-2">
+                <input pInputText/>
+            </div>
+        </div>
+    </div>
+</div>-->
+    </div>
+  </div>
+  <p-confirmDialog
+    key="confirm-key"
+    acceptLabel="Yes"
+    rejectLabel="No"
+    header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"
+  ></p-confirmDialog>
+
+  <p-dialog
+    header="Asset Purchase List"
+    [(visible)]="displayMaximizable"
+    [modal]="true"
+    [style]="{ width: '90%' }"
+    [maximizable]="true"
+    [baseZIndex]="10000"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <p-table
+      #dt
+      [value]="assetPurchasearry"
+      [columns]="cols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-assetpr>
+        <tr *ngIf="assetpr.assetPurchaseVoucherDelStatus != true">
+          <td>{{ assetpr.assetPurchaseVoucherNo }}</td>
+
+          <td>{{ assetpr.astPurDt | date }}</td>
+
+          <td>
+            {{ assetpr.astPurchaseType }}
+          </td>
+          <td>
+            {{ getsuppliername(assetpr.supplierId) }}
+          </td>
+
+          <td>
+            {{ getLocation(assetpr.currencyId) }}
+          </td>
+          <!-- <td><span *ngIf='assetpr?.customerQuotationSalesManId != null'>
+                        {{getSalesMan(assetpr.customerQuotationSalesManId)}}</span></td> -->
+          <td>
+            {{ assetpr.netAmount }}
+          </td>
+          <td>
+            {{ assetpr.lpoNo }}
+          </td>
+          <td>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              (click)="
+                GetSavedCustomerQuotationDetails(
+                  assetpr.assetPurchaseVoucherNo
+                );
+                displayMaximizable = false
+              "
+              class="ui-button-info"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-dialog>
+  <p-toast [style]="{ marginTop: '80px' }"></p-toast>
+
+  <app-lookup
+    [header]="'Look Up'"
+    [dataArry]="dataList"
+    [selectedItem]="selectItem"
+    [columns]="lookupGridColumns"
+    (selectItemEvent)="selectaccount($event)"
+    (exitEvent)="exit($event)"
+    [cell]="activeRow"
+    (clearEvent)="clear($event)"
+    (hideDialogEvent)="hide($event)"
+    [tableheader]="'Account List'"
+    [(show)]="showProcurementsLookUp"
+  ></app-lookup>
+</div>

@@ -1,0 +1,289 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="new()"
+      label="New"
+      icon="fa fa-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="edit()"
+      label="Edit"
+      [disabled]="!btnFlag.edit || !Permission.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Save"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="saveStoreRequisition()"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+    <!-- <button pButton type="button" [disabled]='!btnFlag.cancel' label="Cancel" class="ui-button-danger" icon="fa fa-ban"></button> -->
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search" class="ui-button-warning"></button> -->
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission.Delete"
+      label="Delete"
+      icon="fa fa-close"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="ExitNew()"
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Approval Status"
+      icon="ui-button-info"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="SRForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Store Requisition' | translate">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Requisition Id:" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-2">
+              <input
+                pInputText
+                style="width: 100%"
+                formControlName="RequisitionNo"
+                readonly
+              />
+              <div
+                class="error"
+                *ngIf="f.RequisitionNo.touched && f.RequisitionNo.invalid"
+              >
+                Requisitionid is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Requested By:" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3">
+              <input
+                pInputText
+                style="width: 100%"
+                formControlName="Requestedby"
+              />
+              <div
+                class="error"
+                *ngIf="f.Requestedby.touched && f.Requestedby.invalid"
+              >
+                Requestedby is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Date:" | translate }}</b>
+            </label>
+            <div class="p-col-2 p-md-2 p-lg-2">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                formControlName="Date"
+                style="width: 100%"
+                [showIcon]="true"
+              >
+              </p-calendar>
+              <div class="error" *ngIf="f.Date.touched && f.Date.invalid">
+                Date Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account" *ngIf="!JOBCOST">
+              <b>{{ "Job:" | translate }}<span class="required">*</span></b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-2" *ngIf="!JOBCOST">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="---Job---"
+                formControlName="Job"
+                [options]="jobList"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div class="error" *ngIf="f.Job.touched && f.Job.invalid">
+                Job Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Remarks:" | translate }}<span class="required">*</span></b>
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <textarea
+                style="min-height: 80px; width: 100%; margin-top: 5px"
+                formControlName="Remarks"
+                pInputTextarea
+              ></textarea>
+              <div class="error" *ngIf="f.Remarks.touched && f.Remarks.invalid">
+                Remarks Invalid Entry
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Store Requisition' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [licenseKey]="licensekey"
+              [settings]="StoreRequisition_datail"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+<p-dialog
+  header="Purchase Voucher List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="StockRequisitionarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-stockRequisition_list>
+      <tr>
+        <td>{{ stockRequisition_list.stockRequisitionNo }}</td>
+        <td>
+          {{ stockRequisition_list.stockRequisitionDate | date : "dd/MM/yyyy" }}
+        </td>
+        <td>{{ stockRequisition_list.stockRequisitionDetailsItemName }}</td>
+        <td>{{ stockRequisition_list.stockRequisitionDetailsQuantity }}</td>
+        <td>{{ stockRequisition_list.stockRequisitionDetailsUnitName }}</td>
+        <td>{{ stockRequisition_list.stockRequisitionDetailsRemarks }}</td>
+        <td>{{ stockRequisition_list.stockRequisitionDetailsReqStatus }}</td>
+
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedStockRequisitionDetails(
+                stockRequisition_list.stockRequisitionNo
+              );
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<ng-container *ngIf="showSalesLookUp">
+  <app-lookup
+    [header]="'Look Up item'"
+    [dataArry]="dataList"
+    [isServerSearch]="isServerSearch"
+    [selectedItem]="selectItem"
+    [columns]="lookupGridColumns"
+    (selectItemEvent)="selectprocurements($event)"
+    (exitEvent)="exit($event)"
+    [cell]="activeRow"
+    [width]="width"
+    (clearEvent)="clear($event)"
+    (hideDialogEvent)="hide($event)"
+    [tableheader]="'Sales List'"
+    [(show)]="showSalesLookUp"
+    (searchEvent)="onSearch($event)"
+  ></app-lookup
+></ng-container>
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

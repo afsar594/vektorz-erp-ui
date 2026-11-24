@@ -1,0 +1,865 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="fa fa-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add"
+      (click)="GeneralsavePurchaseOrder()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      [disabled]="!btnFlag.cancel"
+      (click)="cancel()"
+      class="ui-button-danger"
+      icon="fa fa-ban"
+    ></button>
+    <!-- <button pButton type="button" label="PO Template" class="ui-button-danger" icon="fa fa-floppy-o"></button> -->
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Delete"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission.Delete"
+      icon="fa fa-close"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="callDropdowns(true)"
+      icon="fa fa-refresh"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="showPrint()"
+      label="Print"
+      icon="fa fa-print"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="navigateBack()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="GPOForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="' General Purchase Order' | translate">
+      <div class="p-col-12">
+        <div class="p-grid">
+          <div class="p-col-6">
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "PO No:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <input
+                  pInputText
+                  style="width: 100%"
+                  readonly
+                  formControlName="PONo"
+                />
+                <div class="error" *ngIf="f.PONo.touched && f.PONo.invalid">
+                  PO No is Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Supplier:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <p-dropdown
+                  filter="true"
+                  [style]="{ width: '100%' }"
+                  placeholder="---Supplier---"
+                  formControlName="Supplier"
+                  [options]="SupplierMasterList"
+                  [showClear]="true"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="f.Supplier.touched && f.Supplier.invalid"
+                >
+                  Supplier Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Location:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+    <p-dropdown
+      filter="true"
+      [style]="{ width: '100%' }"
+      placeholder="---Location---"
+      formControlName="Location"
+      [options]="locationList"
+      [showClear]="true"
+      [disabled]="locationLocked"
+    >
+    </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="f.Location.touched && f.Location.invalid"
+                >
+                  Location Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Date:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  formControlName="Date"
+                  style="width: 98%"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div class="error" *ngIf="f.Date.touched && f.Date.invalid">
+                  Date Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid" *ngIf="!JOBCOST">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Job:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <p-dropdown
+                  filter="true"
+                  [style]="{ width: '100%' }"
+                  placeholder="---Job---"
+                  formControlName="Job"
+                  [options]="jobList"
+                  [showClear]="true"
+                >
+                </p-dropdown>
+                <div class="error" *ngIf="f.Job.touched && f.Job.invalid">
+                  Job Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Currency:" | translate }}</b>
+              </label>
+              <div class="p-col-4 p-md-4 p-lg-4">
+                <p-dropdown
+                  filter="true"
+                  [style]="{ width: '100%' }"
+                  placeholder="---Currency---"
+                  formControlName="Currency"
+                  [options]="currencyList"
+                  [showClear]="true"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="f.Currency.touched && f.Currency.invalid"
+                >
+                  Currency Invalid Entry
+                </div>
+              </div>
+              <div class="p-col-4 p-md-4 p-lg-4">
+                <!-- <button pButton type="button" style="width: 100%;" label="Import From Supplier Quotation"
+                  class="ui-button-purple" icon="fa fa-floppy-o"></button> -->
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Status:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <p-dropdown
+                  filter="true"
+                  [style]="{ width: '100%' }"
+                  placeholder="---Status---"
+                  formControlName="Status"
+                  [options]="v_OPENCLOSE"
+                  [showClear]="true"
+                >
+                </p-dropdown>
+                <div class="error" *ngIf="f.Status.touched && f.Status.invalid">
+                  Status Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Remark:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <textarea
+                  style="min-height: 60px; width: 100%; margin-top: 8px"
+                  formControlName="Narration"
+                  pInputTextarea
+                ></textarea>
+                <div
+                  class="error"
+                  *ngIf="f.Narration.touched && f.Narration.invalid"
+                >
+                  Narration Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Delivery Period:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <input
+                  pInputText
+                  style="width: 100%"
+                  formControlName="IndentNo"
+                />
+                <div
+                  class="error"
+                  *ngIf="f.IndentNo.touched && f.IndentNo.invalid"
+                >
+                  Indent No is Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                <b>{{ "Order Type:" | translate }}</b>
+              </label>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="GeneralpurchaseOrderOrdertype"
+                  [options]="Ordertype"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <!-- <br />
+            <p style="color: brown">Press Ctrl+I To Get Purchase History</p> -->
+          </div>
+          <div class="p-col-6">
+            <p-panel>
+              <p-header>
+                <p-checkbox
+                  formControlName="isChecked"
+                  [binary]="true"
+                ></p-checkbox>
+                {{ "Approvals Details" | translate }}
+              </p-header>
+              <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                  <b>{{ "Date:" | translate }}</b>
+                </label>
+                <div class="p-col-8 p-md-8 p-lg-8">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    [disabled]="!GPOForm.get('isChecked').value"
+                    useUtc
+                    formControlName="dDate"
+                    style="width: 98%"
+                    [showIcon]="true"
+                  >
+                  </p-calendar>
+                  <div class="error" *ngIf="f.dDate.touched && f.dDate.invalid">
+                    Date Invalid Entry
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                  <b>{{ "Status:" | translate }}</b>
+                </label>
+                <div class="p-col-9 p-md-9 p-lg-9">
+                  <p-dropdown
+                    filter="true"
+                    [style]="{ width: '100%' }"
+                    [disabled]="!GPOForm.get('isChecked').value"
+                    placeholder="---Status---"
+                    formControlName="aStatus"
+                    [options]="v_OPENCLOSE"
+                    [showClear]="true"
+                  >
+                  </p-dropdown>
+
+                  <div
+                    class="error"
+                    *ngIf="f.aStatus.touched && f.aStatus.invalid"
+                  >
+                    Status Invalid Entry
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                  <b>{{ "Approved by:" | translate }}</b>
+                </label>
+                <div class="p-col-9 p-md-9 p-lg-9">
+                  <p-dropdown
+                    filter="true"
+                    [disabled]="!GPOForm.get('isChecked').value"
+                    [style]="{ width: '100%' }"
+                    placeholder="---Approved by---"
+                    formControlName="Approvedby"
+                    [showClear]="true"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="f.Approvedby.touched && f.Approvedby.invalid"
+                  >
+                    Approved by Invalid Entry
+                  </div>
+                </div>
+              </div>
+            </p-panel>
+            <div class="container">
+              <!-- <button class="left-button">Create Template</button> -->
+              <div class="card card-w-title" style="padding-top: 27px">
+                <p-tabView (onChange)="onTabChange($event)">
+                  <p-tabPanel [header]="'Header' | translate">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                      <textarea
+                        class="w-100"
+                        [rows]="3"
+                        formControlName="purchaseOrderHeader"
+                        id="purchaseOrderHeader"
+                        maxlength="500"
+                        style="border-color: black; width: 100%"
+                        pInputText
+                      ></textarea>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel [header]="'Delivery Terms' | translate">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                      <textarea
+                        class="w-100"
+                        [rows]="3"
+                        formControlName="purchaseOrderDelivery"
+                        id="purchaseOrderDelivery"
+                        maxlength="500"
+                        style="border-color: black; width: 100%"
+                        pInputText
+                      ></textarea>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel [header]="'Notes' | translate">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                      <textarea
+                        class="w-100"
+                        [rows]="3"
+                        formControlName="purchaseOrderNotes"
+                        id="purchaseOrderNotes"
+                        maxlength="500"
+                        style="border-color: black; width: 100%"
+                        pInputText
+                      ></textarea>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel [header]="'Footer' | translate">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                      <textarea
+                        class="w-100"
+                        [rows]="3"
+                        formControlName="purchaseOrderFooter"
+                        id="purchaseOrderFooter"
+                        maxlength="500"
+                        style="border-color: black; width: 100%"
+                        pInputText
+                      ></textarea>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel [header]="'Payment' | translate">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                      <textarea
+                        class="w-100"
+                        [rows]="3"
+                        formControlName="purchaseOrderPayment"
+                        id="purchaseOrderPayment"
+                        maxlength="500"
+                        style="border-color: black; width: 100%"
+                        pInputText
+                      ></textarea>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel [header]="'Terms' | translate">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                      <textarea
+                        class="w-100"
+                        [rows]="3"
+                        formControlName="purchaseOrderPaymentTerms"
+                        id="purchaseOrderPaymentTerms"
+                        maxlength="500"
+                        style="border-color: black; width: 100%"
+                        pInputText
+                      ></textarea>
+                    </div>
+                  </p-tabPanel>
+                </p-tabView>
+                <!-- <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+                                    <p-tabPanel [header]="'Header' | translate">
+                                        <div class="grid">
+
+                                            <div class="p-col-12 p-md-12 p-lg-12">
+                                                <textarea
+                                                    style="min-height:80px; background-color: rgb(206, 204, 207); width:100%; margin-top:8px;"
+                                                    pInputTextarea></textarea>
+
+                                            </div>
+                                        </div>
+
+                                    </p-tabPanel>
+                                    <p-tabPanel [header]="'Delivery'| translate">
+                                        <div class="grid">
+
+                                        </div>
+                                    </p-tabPanel>
+                                    <p-tabPanel [header]="'Notes'| translate">
+                                        <div class="grid">
+
+                                        </div>
+                                    </p-tabPanel>
+                                    <p-tabPanel [header]="'Footer' | translate">
+                                        <div class="grid">
+
+                                        </div>
+
+                                    </p-tabPanel>
+                                    <p-tabPanel [header]="'Payment'| translate">
+                                        <div class="grid">
+
+                                        </div>
+                                    </p-tabPanel>
+                                    <p-tabPanel [header]="'Terms'| translate">
+                                        <div class="grid">
+
+                                        </div>
+                                    </p-tabPanel>
+                                </p-tabView> -->
+              </div>
+              <div class="clk">Click Here To Add Template</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <p-tabPanel [header]="'Document' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-sm-12 p-md-3">
+          <p-panel>
+            <p-header>
+              <div class="flexrow w-100">
+                <span class="w-100" style="margin-top: 6px">
+                  {{ "Files" | translate }}
+                </span>
+                <span class="w-100 right">
+                  <div style="display: flex; align-items: center; gap: 4px">
+                    <!-- <button pButton type="button" icon="pi pi-plus" label="PR Files" class="p-button-sm"
+                      [disabled]='!btnFlag.edit' (click)="showImportFileDialog()"> </button> -->
+
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-paperclip"
+                      label="Attach"
+                      class="p-button-sm"
+                      [disabled]="!btnFlag.edit"
+                      (click)="showFileAttachmentDialog()"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      [disabled]="!btnFlag.edit"
+                      icon="pi pi-download"
+                      style="width: 130px"
+                      label="Download All"
+                      class="p-button-lg"
+                      (click)="downloadAllDocuments()"
+                    ></button>
+                  </div>
+                </span>
+              </div>
+            </p-header>
+            <div style="width: 100%; height: 60vh; overflow-y: scroll">
+              <p-tree
+                [value]="files"
+                selectionMode="single"
+                [(selection)]="selectedFile"
+                (onNodeSelect)="onNodeSelect($event)"
+              >
+                <ng-template let-node pTemplate="default">
+                  <span>{{ node.label }}</span>
+                  <i
+                    *ngIf="isChildNode(node)"
+                    class="pi pi-trash delete-icon"
+                    (click)="onDeleteNode(node)"
+                    style="margin-left: 20px; cursor: pointer; color: red"
+                  >
+                  </i>
+                </ng-template>
+              </p-tree>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-9">
+          <p-panel>
+            <p-header>
+              {{ "Document Preview" | translate }}
+            </p-header>
+            <div style="width: 100%; height: 62vh">
+              <iframe
+                *ngIf="previewUrl"
+                [src]="previewUrl"
+                width="100%"
+                height="100%"
+                frameborder="0"
+              >
+              </iframe>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="' General Purchase order' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="GeneralPurchaseOrder_entry"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-12 p-md-5Bill Summary p-lg-5 p-md-offset-7">
+      <p-panel>
+        <p-header>
+          {{ "Bill Summary" | translate }}
+        </p-header>
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-3" for="account">
+            <b>{{ "Total Gross Amt" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-12 p-lg-9 p-0">
+            <input
+              class="w-100"
+              id="GeneralpurchaseOrderTotalGrossAmount"
+              formControlName="GeneralpurchaseOrderTotalGrossAmount"
+              readonly
+              pInputText
+            />
+          </div>
+        </div>
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-3" for="account">
+            <b>{{ "Total Disc " | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-12 p-lg-9 p-grid p-0">
+            <div class="p-col-12 p-md-12 p-lg-3 p-0">
+              <!-- <input id="purchaseOrderTotalDisPer" class="w-100" 
+                pInputText> -->
+              <input
+                id="GeneralpurchaseOrderTotalDisPer"
+                class="w-100"
+                formControlName="GeneralpurchaseOrderTotalDisPer"
+                (change)="CalcDiscFromPer()"
+                pInputText
+              />
+            </div>
+            <span class="p-col-1">
+              <b>{{ "%" | translate }}</b>
+            </span>
+            <div class="p-col-8 p-0">
+              <input
+                id="GeneralpurchaseOrderTotalDisAmount"
+                class="w-100"
+                formControlName="GeneralpurchaseOrderTotalDisAmount"
+                (change)="CalcDiscFromAmt()"
+                pInputText
+              />
+            </div>
+          </div>
+        </div>
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-3" for="account">
+            <b>{{ "VATable Amt" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-12 p-lg-9 p-0">
+            <!-- <input id="purchaseOrderTotalActualAmount"  readonly
+               pInputText> -->
+
+            <input
+              id="GeneralpurchaseOrderTotalActualAmount"
+              formControlName="GeneralpurchaseOrderTotalActualAmount"
+              readonly
+              (change)="GetTotal()"
+              pInputText
+            />
+          </div>
+        </div>
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-3" for="account">
+            <b>{{ "VAT " | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-12 p-lg-9 p-grid p-0">
+            <div class="p-col-4 p-0">
+              <input
+                id="GeneralpurchaseOrderVatPer"
+                class="w-100"
+                formControlName="GeneralpurchaseOrderVatPer"
+                (change)="GetTotal()"
+                pInputText
+              />
+            </div>
+            <span class="p-col-1">
+              <b>{{ "%" | translate }}</b>
+            </span>
+            <div class="p-col-7 p-0">
+              <input
+                id="GeneralpurchaseOrderVatAmt"
+                class="w-100"
+                formControlName="GeneralpurchaseOrderVatAmt"
+                (change)="GetTotal()"
+                pInputText
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-3" for="account">
+            <b>{{ "Net Amt" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-12 p-lg-9 p-0">
+            <input
+              id="GeneralpurchaseOrderNetAmount"
+              class="w-100"
+              pInputText
+              formControlName="GeneralpurchaseOrderNetAmount"
+              readonly
+            />
+          </div>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="General Purchase Order List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="purchaseOrderarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-purchaseorder_list>
+      <tr>
+        <td>{{ purchaseorder_list.generalPurchaseOrderPono }}</td>
+        <td>
+          {{
+            purchaseorder_list.generalPurchaseOrderPoDate | date : "dd/MM/yyyy"
+          }}
+        </td>
+        <!-- <td>{{purchaseorder_list.generalPurchaseOrderNetAmount}}</td> -->
+        <td>
+          {{
+            getSupplierMasterbyId(
+              purchaseorder_list.generalPurchaseOrderSupplierId
+            )
+          }}
+        </td>
+        <td>
+          {{ getjobnamebyId(purchaseorder_list.generalPurchaseOrderJobId) }}
+        </td>
+        <td>{{ purchaseorder_list.generalPurchaseOrderDescription }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedPurchaseOrderDetails(
+                purchaseorder_list.generalPurchaseOrderPono
+              );
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+<p-toast></p-toast>
+
+<ng-container *ngIf="showProcurementsLookUp">
+  <app-lookup
+    [header]="'Look Up'"
+    [dataArry]="dataList"
+    [selectedItem]="selectItem"
+    [isServerSearch]="isServerSearch"
+    [columns]="lookupGridColumns"
+    (selectItemEvent)="selectprocurements($event)"
+    (exitEvent)="exit($event)"
+    [cell]="activeRow"
+    (clearEvent)="clear($event)"
+    [width]="width"
+    (hideDialogEvent)="hide($event)"
+    [tableheader]="'Procurements List'"
+    [(show)]="showProcurementsLookUp"
+    (searchEvent)="onSearch($event)"
+  ></app-lookup>
+</ng-container>
+<app-lookup
+  [header]="'Look Up'"
+  [selectedItem]="selectItem"
+  [dataArry]="dataList"
+  (exitEvent)="exit($event)"
+  (clearEvent)="clear($event)"
+  [columns]="lookupGridColumns"
+  (selectItemEvent)="selectprocurements($event)"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Procurements List'"
+  [(show)]="showSalesLookUp"
+></app-lookup>
+<p-dialog
+  header="Add Attachments"
+  [modal]="true"
+  [(visible)]="fileAttachmentDialogVisibility"
+  [style]="{ width: '50rem' }"
+>
+  <div class="card">
+    <p-fileUpload
+      name="files"
+      [maxFileSize]="1000000"
+      [customUpload]="true"
+      (uploadHandler)="customUploadHandler($event)"
+      [showUploadButton]="true"
+      [showCancelButton]="true"
+      [multiple]="true"
+      [accept]="'.pdf'"
+      [auto]="false"
+      [mode]="'advanced'"
+      [uploadLabel]="'Upload'"
+      [cancelLabel]="'Cancel'"
+      [chooseLabel]="'Choose'"
+    >
+      <ng-template #empty>
+        <div>Drag and drop files here to upload.</div>
+      </ng-template>
+      <ng-template #content>
+        <ul *ngIf="attachmentsToUploaded.length">
+          <li *ngFor="let file of attachmentsToUploaded">
+            {{ file.name }} - {{ file.size }} bytes
+          </li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
+</p-dialog>

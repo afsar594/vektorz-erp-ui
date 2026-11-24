@@ -1,0 +1,1386 @@
+<!-- <p>purchasequotation works!</p> -->
+
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Purchase Quotation' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add"
+      (click)="savePurchaseQuotation()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right flexSearch">
+    <!-- <button pButton type="button" icon="pi pi-search"></button>
+        <button pButton type="button" icon="pi pi-calendar" class="ui-button-success"></button>
+        <button pButton type="button" icon="pi pi-times" class="ui-button-danger"></button> -->
+    <div class="ui-inputgroup">
+      <button
+        pButton
+        type="button"
+        (click)="callDropdowns(true)"
+        icon="fa fa-refresh"
+        class="ui-button-success"
+      ></button>
+      <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
+      <button
+        pButton
+        type="button"
+        (click)="GetSavedPurchaseQuotationDetails(search)"
+        icon="pi pi-search"
+      ></button>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      (click)="this.displayPrintPreview = true"
+      label="Print"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <p-splitButton
+      icon="fa fa-print"
+      [model]="printbtn"
+      label="Print Report"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      styleClass="p-button-outlined mr-2 mb-2"
+    >
+    </p-splitButton>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+
+    <!-- <p-checkbox label="Suppess Allocation in Print" ></p-checkbox> -->
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="purchaseQuotationFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Purchase Quotation' | translate">
+      <div class="p-grid p-sm-12 p-md-12 p-lg-12">
+        <div class="p-sm-12 p-md-12 p-lg-3">
+          <p-panel>
+            <p-header>
+              {{ "Purchase Quotation Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="voucherno">{{
+                  "Voucher No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="purchaseQuotationNo"
+                    id="voucherno"
+                    pInputText
+                  />
+                  <div
+                    class="error"
+                    *ngIf="f.purchaseQuotationDate.errors"
+                  ></div>
+                </div>
+                <p-message
+                  severity="error"
+                  *ngIf="
+                    f.purchaseQuotationNo?.errors?.Exist && !btnFlag.update
+                  "
+                  text="Voucher No is exist"
+                ></p-message>
+              </div>
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-4"
+                  for="voucherdate"
+                  style="color: darkred"
+                  >{{
+                    "
+                  Date" | translate
+                  }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    formControlName="purchaseQuotationDate"
+                    id="voucherdate"
+                  >
+                  </p-calendar>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.purchaseQuotationDate.errors &&
+                      (f.purchaseQuotationDate.dirty ||
+                        f.purchaseQuotationDate.touched)
+                    "
+                  >
+                    <span *ngIf="f.purchaseQuotationDate.errors.required">
+                      Voucher date is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="suppinvno">{{
+                  "Supp Inv No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    id="purchaseQuotationSupInvNo"
+                    formControlName="purchaseQuotationSupInvNo"
+                    maxlength="50"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-4"
+                  for="refno"
+                  style="color: darkred"
+                  >{{ "Reference No" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="purchaseQuotationRefNo"
+                    id="refno"
+                    maxlength="50"
+                    pInputText
+                  />
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.purchaseQuotationRefNo.errors &&
+                      (f.purchaseQuotationRefNo.dirty ||
+                        f.purchaseQuotationRefNo.touched)
+                    "
+                  >
+                    <span *ngIf="f.purchaseQuotationRefNo.errors.required">
+                      Reference no is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-4"
+                  for="currency"
+                  style="color: darkred"
+                  >{{ "Currency" | translate }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="purchaseQuotationCurrencyId"
+                    [options]="currencyList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.purchaseQuotationCurrencyId.errors &&
+                      (f.purchaseQuotationCurrencyId.dirty ||
+                        f.purchaseQuotationCurrencyId.touched)
+                    "
+                  >
+                    <span *ngIf="f.purchaseQuotationCurrencyId.errors.required">
+                      Currency is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="zerovat">{{
+                  "Zero VAT" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-checkbox
+                    formControlName="purchaseQuotationExcludeVat"
+                    id="purchaseQuotationExcludeVat"
+                    [binary]="true"
+                    (onChange)="GetTotal()"
+                  ></p-checkbox>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Supplier Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-2"
+                  for="account"
+                  style="color: darkred"
+                  >{{ "Type" | translate }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="purchaseQuotationType"
+                    [options]="v_typeList"
+                    value="CREDIT"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="account"
+                  >{{ "Supplier" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-inputgroup">
+                  <input
+                    type="text"
+                    #suppCtrl
+                    pInputText
+                    placeholder="Supplier"
+                  />
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-1">
+                  <button
+                    type="button"
+                    pButton
+                    pRipple
+                    icon="pi pi-search"
+                    (click)="openSupplier()"
+                    styleClass="p-button-warn"
+                  ></button>
+                </div>
+
+                <!-- </div> -->
+              </div>
+              <div
+                class="error"
+                *ngIf="
+                  f.purchaseQuotationPartyId.errors &&
+                  (f.purchaseQuotationPartyId.dirty ||
+                    f.purchaseQuotationPartyId.touched)
+                "
+              >
+                <span *ngIf="f.purchaseQuotationPartyId.errors.required">
+                  Account is Mandatory Field*</span
+                >
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="address">{{
+                  "Address" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <!-- <textarea class="w-100" formControlName='purchaseQuotationDescription' id="narration" maxlength="500"
+                                    pInputText></textarea>
+
+                                <div class="error" *ngIf="f.purchaseQuotationDescription.errors
+                                && (f.purchaseQuotationDescription.dirty || f.purchaseQuotationDescription.touched)">
+                                    <span *ngIf="f.purchaseQuotationDescription.errors.required">
+                                        Narration is Mandatory Field*</span>
+                                </div> -->
+
+                  <textarea
+                    class="w-100"
+                    id="purchaseQuotationPartyAddress"
+                    formControlName="purchaseQuotationPartyAddress"
+                    maxlength="500"
+                    pInputText
+                  ></textarea>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="vatno">{{
+                  "VAT No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <!--<input class="w-100"
+        formControlName='purchaseQuotationSupInvNo' id="refno"  maxlength="50"  pInputText>
+    <div class="error" *ngIf="f.purchaseQuotationSupInvNo.errors
+    && (f.purchaseQuotationSupInvNo.dirty || f.purchaseQuotationSupInvNo.touched)">
+        <span *ngIf="f.purchaseQuotationSupInvNo.errors.required">
+            Reference no is Mandatory Field*</span>
+    </div> -->
+                  <input
+                    class="w-100"
+                    id="purchaseQuotationPartyVatNo"
+                    formControlName="purchaseQuotationPartyVatNo"
+                    maxlength="50"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-2"
+                  for="narration"
+                  style="color: darkred"
+                  >{{ "Narration" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <textarea
+                    class="w-100"
+                    formControlName="purchaseQuotationDescription"
+                    id="narration"
+                    maxlength="500"
+                    pInputText
+                  ></textarea>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.purchaseQuotationDescription.errors &&
+                      (f.purchaseQuotationDescription.dirty ||
+                        f.purchaseQuotationDescription.touched)
+                    "
+                  >
+                    <span
+                      *ngIf="f.purchaseQuotationDescription.errors.required"
+                    >
+                      Narration is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-5">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "GRN No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <!-- <input class="w-100" formControlName='purchaseQuotationNo'
+            id="voucherno"    pInputText>
+            <div class="error" *ngIf="f.purchaseQuotationDate.errors">
+            </div> -->
+                  <input
+                    class="w-100"
+                    id="purchaseQuotationGrno"
+                    formControlName="purchaseQuotationGrno"
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "GRN Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc formControlName='purchaseQuotationDate'
+             id="voucherdate">
+         </p-calendar>
+
+         <div class="error" *ngIf="f.purchaseQuotationDate.errors
+         && (f.purchaseQuotationDate.dirty || f.purchaseQuotationDate.touched)">
+             <span *ngIf="f.purchaseQuotationDate.errors.required">
+                 Voucher date is Mandatory Field*</span>
+
+
+         </div> -->
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="purchaseQuotationGrdate"
+                    formControlName="purchaseQuotationGrdate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "LPO No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <!-- <input class="w-100" formControlName='purchaseQuotationNo'
+            id="voucherno"    pInputText>
+            <div class="error" *ngIf="f.purchaseQuotationDate.errors">
+            </div> -->
+                  <input
+                    class="w-100"
+                    id="purchaseQuotationLpono"
+                    formControlName="purchaseQuotationLpono"
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "LPO Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="purchaseQuotationLpodate"
+                    formControlName="purchaseQuotationLpodate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "QTN No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="purchaseQuotationQtnNo"
+                    formControlName="purchaseQuotationQtnNo"
+                    pInputText
+                  />
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "QTN Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="purchaseQuotationQtnDate"
+                    formControlName="purchaseQuotationQtnDate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "PO No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="purchaseQuotationPono"
+                    formControlName="purchaseQuotationPono"
+                    pInputText
+                  />
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "BATCH" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <input
+                    class="w-100"
+                    id="purchaseQuotationBatchCode"
+                    formControlName="purchaseQuotationBatchCode"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid inputGroup" *ngIf="!JOBCOST">
+                <label
+                  class="p-col-12 p-md-12 p-lg-2"
+                  for="job"
+                  style="color: darkred"
+                  >{{ "Job" | translate }}</label
+                >
+
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="purchaseQuotationJobId"
+                    [options]="jobList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-2"
+                  for="location"
+                  style="color: darkred"
+                  >{{ "Location" | translate }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="purchaseQuotationLocationId"
+                    [options]="locationList"
+                    [disabled]="locationLocked"
+                  >
+                  </p-dropdown>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.purchaseQuotationLocationId.errors &&
+                      (f.purchaseQuotationLocationId.dirty ||
+                        f.purchaseQuotationLocationId.touched)
+                    "
+                  >
+                    <span *ngIf="f.purchaseQuotationLocationId.errors.required">
+                      Location is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Item Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="purchasequotation_entry"
+            [data]="purchasequotation_entryDataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+      <app-lookup
+        [header]="'Look Up'"
+        [dataArry]="dataList"
+        [selectedItem]="selectItem"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectprocurements($event)"
+        (exitEvent)="exit($event)"
+        [cell]="activeRow"
+        (clearEvent)="clear($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Procurements List'"
+        [(show)]="showProcurementsLookUp"
+      ></app-lookup>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Procurements List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+
+      <p-panel>
+        <p-header>
+          {{ "Bill Summary" | translate }}
+        </p-header>
+
+        <div class="p-grid">
+          <div class="p-col-4 p-offset-8">
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4 p-col-align-end" for="account">
+                <b>{{ "Total Gross Amt" | translate }}</b>
+              </label>
+              <div class="p-col-6 p-col-align-end p-0">
+                <input
+                  class="w-100"
+                  id="purchaseQuotationTotalGrossAmount"
+                  formControlName="purchaseQuotationTotalGrossAmount"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  pInputText
+                />
+              </div>
+            </div>
+
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4 p-col-align-end" for="account">
+                <b>{{ "Total Item Disc Amt" | translate }}</b>
+              </label>
+              <div class="p-col-6 p-col-align-end p-0">
+                <input
+                  id="purchaseQuotationTotalItemDisAmount"
+                  class="w-100"
+                  formControlName="purchaseQuotationTotalItemDisAmount"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  pInputText
+                />
+              </div>
+            </div>
+
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4" for="account">
+                <b>{{ "Total Disc " | translate }}</b>
+              </label>
+              <div class="p-col-6 p-grid p-0">
+                <div class="p-col-4">
+                  <input
+                    id="purchaseQuotationTotalDisPer"
+                    class="w-100"
+                    formControlName="purchaseQuotationTotalDisPer"
+                    (change)="CalcDiscFromPer()"
+                    style="border-color: black; text-align: right"
+                    pInputText
+                  />
+                </div>
+                <span class="p-col-1">
+                  <b>{{ "%" | translate }}</b>
+                </span>
+                <div class="p-col-6">
+                  <input
+                    id="purchaseQuotationTotalDisAmount"
+                    class="w-100"
+                    formControlName="purchaseQuotationTotalDisAmount"
+                    (change)="CalcDiscFromAmt()"
+                    style="border-color: black; width: 115px; text-align: right"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4 p-col-align-end" for="account">
+                <b>{{ "VATable Amt" | translate }}</b>
+              </label>
+              <div class="p-col-6 p-col-align-end p-0">
+                <input
+                  id="purchaseQuotationTotalActualAmount"
+                  class="w-100"
+                  formControlName="purchaseQuotationTotalActualAmount"
+                  readonly
+                  (change)="GetTotal()"
+                  style="border-color: black; text-align: right"
+                  pInputText
+                />
+              </div>
+            </div>
+
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4" for="account">
+                <b>{{ "VAT " | translate }}</b>
+              </label>
+              <div class="p-col-6 p-grid p-0">
+                <div class="p-col-4">
+                  <input
+                    id="purchaseQuotationVatPer"
+                    class="w-100"
+                    formControlName="purchaseQuotationVatPer"
+                    (change)="GetTotal()"
+                    style="border-color: black; text-align: right"
+                    pInputText
+                  />
+                </div>
+                <span class="p-col-1">
+                  <b>{{ "%" | translate }}</b>
+                </span>
+                <div class="p-col-6">
+                  <input
+                    id="purchaseQuotationVatAmt"
+                    class="w-100"
+                    formControlName="purchaseQuotationVatAmt"
+                    (change)="GetTotal()"
+                    style="border-color: black; width: 115px; text-align: right"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4" for="account">
+                <b>{{ "Round OFF " | translate }}</b>
+              </label>
+              <div class="p-col-6 p-grid p-0">
+                <div class="p-col-4">
+                  <p-dropdown
+                    filter="true"
+                    id="purchaseQuotationVatRoundSign"
+                    formControlName="purchaseQuotationVatRoundSign"
+                    (onChange)="GetTotal($event)"
+                    [style]="{ minWidth: '50px', width: '50px' }"
+                    [options]="v_RoundoffList"
+                    value="-"
+                  >
+                  </p-dropdown>
+                </div>
+                <span class="p-col-1">
+                  <b>{{ "-" | translate }}</b>
+                </span>
+                <div class="p-col-6">
+                  <input
+                    id="purchaseQuotationVatRountAmt"
+                    class="w-100"
+                    formControlName="purchaseQuotationVatRountAmt"
+                    (change)="GetTotal()"
+                    style="border-color: black; width: 115px; text-align: right"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4 p-col-align-end" for="account">
+                <b>{{ "Net Amt" | translate }}</b>
+              </label>
+              <div class="p-col-6 p-col-align-end p-0">
+                <input
+                  id="purchaseQuotationNetAmount"
+                  class="w-100"
+                  formControlName="purchaseQuotationNetAmount"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Account Details'| translate">
+        <p-table [value]="accountTransactionList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>{{'Account No' | translate}}</th>
+                    <th>{{'Account Name'| translate}}</th>
+                    <th>{{'Particulars'| translate}}</th>
+                    <th>{{'Debit'  | translate}}</th>
+                    <th>{{'Credit'| translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-accountTrans>
+                <tr>
+                    <td>{{accountTrans?.accountsTransactionsAccNo}}</td>
+                    <td><span
+                            *ngIf='accountArray?.length > 0'>{{getAccountName(accountTrans?.accountsTransactionsAccNo)}}</span>
+                    </td>
+                    <td>{{accountTrans?.accountsTransactionsParticulars}}</td>
+                    <td>{{accountTrans?.accountsTransactionsDebit}}</td>
+                    <td>{{accountTrans?.accountsTransactionsCredit}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </p-tabPanel> -->
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+        Content 3
+    </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog
+  header="Purchase Quotation List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button
+          type="submit"
+          pButton
+          label="Find"
+          (click)="filter()"
+          icon="pi pi-search"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Clear"
+          icon="fa fa-pencil"
+          (click)="ClearFilter()"
+          class="ui-button-success"
+        ></button>
+      </p-header>
+      <form [formGroup]="PurchaseQuotationFilterForm">
+        <div class="p-grid">
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                "Voucher No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <input
+                  class="w-100"
+                  formControlName="paymentVoucherNo"
+                  pInputText
+                />
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                "Account No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <input
+                  class="w-100"
+                  formControlName="paymentVoucherAcNo"
+                  pInputText
+                />
+              </div>
+              <!-- <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'Location/Mobile' | translate }}</label>
+                      <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                        <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId" [options]="locationList" ></p-dropdown>
+                        <div class="error" *ngIf="f.salesVoucherLocationId.errors && (f.salesVoucherLocationId.dirty || f.salesVoucherLocationId.touched)">
+                          <span *ngIf="f.salesVoucherLocationId.errors.required">Location is Mandatory Field*</span>
+                        </div>
+                      </div> -->
+            </div>
+          </div>
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="Date Range"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="fromDate"
+                    [showIcon]="true"
+                    [disabled]="
+                      !PurchaseQuotationFilterForm.get('isDate').value
+                    "
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="toDate"
+                    [showIcon]="true"
+                    [disabled]="
+                      !PurchaseQuotationFilterForm.get('isDate').value
+                    "
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+  <p-table
+    #dt
+    [value]="purchaseQuotationarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-purchasequotation_list>
+      <tr>
+        <td>{{ purchasequotation_list.purchaseQuotationNo }}</td>
+        <td>
+          {{
+            purchasequotation_list.purchaseQuotationDate | date : "dd/MM/yyyy"
+          }}
+        </td>
+        <td>{{ purchasequotation_list.purchaseQuotationPartyId }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationCurrencyId }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationDescription }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationTotalGrossAmount }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationTotalDisAmount }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationVatAmt }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationVatRoundSign }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationVatRountAmt }}</td>
+        <td>{{ purchasequotation_list.purchaseQuotationNetAmount }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedPurchaseQuotationDetails(
+                purchasequotation_list.purchaseQuotationNo
+              );
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="getPIReport()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+
+  <div id="print" class="container w-100">
+    <div class="flex">
+      <div class="contain1">
+        <img
+          [src]="
+            'data:image/png;base64,' + stationmasterObj.stationMasterLogoImg
+          "
+        />
+      </div>
+      <div class="contain2">
+        <h1 class="cross">PURCHASE Quotation</h1>
+
+        <table class="table">
+          <tr>
+            <td>
+              <h2
+                class="tfe"
+                style="font-family: Tahoma; font-size: 15px; font-weight: bold"
+              >
+                PO No.
+              </h2>
+            </td>
+            <td
+              class="tfe"
+              style="font-family: Tahoma; font-size: 15px; font-weight: normal"
+            >
+              {{ savedPurchaseQuotation?.purchaseQuotationNo }}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <h2
+                class="tfe"
+                style="font-family: Tahoma; font-size: 15px; font-weight: bold"
+              >
+                Date
+              </h2>
+            </td>
+            <td style="font-family: Tahoma; font-size: 15px">
+              {{
+                savedPurchaseQuotation?.purchaseQuotationDate
+                  | date : "dd/MM/yyyy"
+              }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="flex">
+      <div class="bank1">
+        <div class="flexrow" style="padding-top: 10px">
+          <div class="flexcol">
+            <div
+              style="font-family: Tahoma; font-weight: bold; font-size: 15px"
+            >
+              SUPPLIER
+            </div>
+
+            <div
+              style="font-family: Tahoma; font-weight: bold; font-size: 15px"
+            >
+              Supplier
+            </div>
+            <div
+              style="font-family: Tahoma; font-weight: bold; font-size: 15px"
+            >
+              Mobile
+            </div>
+            <div
+              style="font-family: Tahoma; font-weight: bold; font-size: 15px"
+            >
+              Address
+            </div>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <div style="font-family: Tahoma; font-size: 15px; margin-top: -4px">
+              {{
+                getSupplierName(
+                  savedPurchaseQuotation?.purchaseQuotationPartyId
+                )
+              }}&nbsp;
+            </div>
+            <div style="font-family: Tahoma; font-size: 15px">
+              {{
+                getSupplierMobile(
+                  savedPurchaseQuotation?.purchaseQuotationPartyId
+                )
+              }}&nbsp;
+            </div>
+            <div style="font-family: Tahoma; font-size: 15px">
+              {{ savedPurchaseQuotation?.purchaseQuotationPartyAddress }}&nbsp;
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin: 3px"></div>
+      <div class="bank2">
+        <div class="flexrow">
+          <div class="flexcol"></div>
+          <!-- <div class="flexcol">
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+
+                </div> -->
+          <div class="flexcol" style="margin-left: 4px">
+            <div
+              style="font-family: Tahoma; font-weight: bold; font-size: 15px"
+            >
+              SHIP TO
+            </div>
+            <div
+              style="font-family: Tahoma; font-weight: bold; font-size: 15px"
+            >
+              {{ stationmasterObj?.stationMasterStationName }},
+              {{ stationmasterObj?.stationMasterAddress }} &nbsp;
+            </div>
+            <div
+              style="font-family: Tahoma; font-size: 15px; font-weight: normal"
+            >
+              {{ stationmasterObj?.stationMasterCity }} &nbsp;
+            </div>
+            <div
+              style="font-family: Tahoma; font-size: 15px; font-weight: normal"
+            >
+              {{ stationmasterObj?.stationMasterPostOffice }}
+            </div>
+            <div
+              style="font-family: Tahoma; font-size: 15px; font-weight: normal"
+            >
+              {{ stationmasterObj?.stationMasterAddress }},
+              {{ stationmasterObj?.stationMasterCountry }} &nbsp;
+            </div>
+            <div
+              style="font-family: Tahoma; font-size: 15px; font-weight: normal"
+            >
+              Tel. {{ stationmasterObj?.stationMasterTele1 }} &nbsp;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tbh">
+      <table id="customers">
+        <tr>
+          <th style="width: 100px">S#</th>
+          <th style="width: 300px; text-align: left">Description</th>
+          <th style="width: 100px">Unit</th>
+          <th style="width: 100px">Qty</th>
+          <th style="width: 100px">Unit Price</th>
+          <th style="width: 100px">Amount</th>
+        </tr>
+        <tr
+          *ngFor="
+            let item of savedPurchaseQuotation?.purchaseQuotationDetails;
+            let i = index
+          "
+        >
+          <td style="text-align: center">{{ i + 1 }}</td>
+          <td style="text-align: left">
+            {{ getItemMasterName(item?.purchaseQuotationDetailsMatId) }}
+          </td>
+          <td style="text-align: center">
+            {{ getUnitName(item?.purchaseQuotationDetailsUnitId) }}
+          </td>
+          <td style="text-align: center">
+            {{ item?.purchaseQuotationDetailsQuantity.toFixed(2) }}
+          </td>
+          <td style="text-align: center">
+            {{ item?.purchaseQuotationDetailsRate.toFixed(2) }}
+          </td>
+          <td style="text-align: center">
+            {{ item?.purchaseQuotationDetailsNetAmt.toFixed(2) }}
+          </td>
+        </tr>
+        <tr
+          *ngFor="
+            let _ of [].constructor(
+              getEmptyRowCount(
+                savedPurchaseQuotation?.purchaseQuotationDetails?.length
+              )
+            );
+            let i = index
+          "
+        >
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+      <br />
+      <div class="fix">
+        <div class="lft" *ngIf="showAmountInWords">
+          <p class="rup" style="margin-top: 75px">
+            <strong>&nbsp;Amount In Words</strong>:&nbsp;{{
+              convertNumberToWordsWithDecimal(
+                savedPurchaseQuotation?.purchaseQuotationNetAmount
+              )
+            }}
+          </p>
+        </div>
+        <table class="rit" style="width: 25%">
+          <tr>
+            <td>Subtotal</td>
+            <td style="text-align: right">
+              {{
+                savedPurchaseQuotation?.purchaseQuotationTotalGrossAmount.toFixed(
+                  2
+                )
+              }}
+            </td>
+          </tr>
+          <tr>
+            <td>Discount</td>
+            <td style="text-align: right">
+              {{
+                savedPurchaseQuotation?.purchaseQuotationTotalItemDisAmount.toFixed(
+                  2
+                )
+              }}
+            </td>
+          </tr>
+          <tr>
+            <td>VAT</td>
+            <td style="text-align: right">
+              {{ savedPurchaseQuotation?.purchaseQuotationVatAmt }}
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Net Amount</strong></td>
+            <td style="text-align: right">
+              {{
+                savedPurchaseQuotation?.purchaseQuotationNetAmount.toFixed(2)
+              }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <br />
+    </div>
+
+    <div class="page-footer">
+      <div class="rounded-table">
+        <table id="payment">
+          <tr>
+            <th>
+              Prepared by: <br /><br />
+              Procurement Dept.
+            </th>
+            <th>
+              Reviewed by: <br /><br />
+              Estimtaion Dept.
+            </th>
+            <th>
+              Approved by: <br /><br />
+              General Manager
+            </th>
+          </tr>
+          <tr style="height: 55px">
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+</p-dialog>

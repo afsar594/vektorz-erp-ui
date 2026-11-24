@@ -1,0 +1,16 @@
+<div class="layout-wrapper"
+    [ngClass]="{'layout-menu-horizontal': app.menuMode === 'horizontal',
+                                        'layout-menu-popup': app.menuMode === 'popup',
+                                        'layout-menu-overlay': app.menuMode === 'overlay',
+                                        'layout-menu-static': app.menuMode === 'static',
+                                        'layout-menu-static-inactive': (app.menuMode == 'static' && app.menuActive === false)}"
+    (click)="app.onLayoutClick()">
+    <app-topbar></app-topbar>
+
+    <div class="layout-content">
+
+        <router-outlet></router-outlet>
+    </div>
+
+    <app-footer></app-footer>
+</div>

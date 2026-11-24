@@ -1,0 +1,194 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      (click)="show()"
+      label="Show"
+      icon="pi pi-search"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-success"
+      (click)="clear()"
+      label="Clear Selection"
+      icon="fa fa-pencil"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      class="ui-button-primary"
+      (click)="showPrint()"
+      label="Print"
+      icon="fa fa-print"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      routerLink="/dashboard"
+      label="Exit"
+      icon="pi pi-search"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Invoice/Profit Analysis' | translate">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Customer" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                class="w-100"
+                [options]="CustomerMasterList"
+                (onChange)="onSalesManChange($event)"
+                [(ngModel)]="customerId"
+              >
+              </p-dropdown>
+            </div>
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Salesman" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                [options]="SalesManMasterList"
+                (onChange)="onSalesManChange1($event)"
+                [(ngModel)]="salemanId"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-6">
+          <p-panel>
+            <p-header>
+              <p-header>
+                <input
+                  (click)="toggleDate()"
+                  [(ngModel)]="isChecked"
+                  type="checkbox"
+                  pInputCheck
+                />
+                By Date
+              </p-header>
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "From" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  class="w-100"
+                  useUtc
+                  [showIcon]="true"
+                  [disabled]="!isChecked"
+                  [(ngModel)]="startDate"
+                ></p-calendar>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "To" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  class="w-100"
+                  useUtc
+                  [showIcon]="true"
+                  [disabled]="!isChecked"
+                  [(ngModel)]="endDate"
+                ></p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <div>
+        <p-panel>
+          <p-header> Details </p-header>
+          <hot-table
+            [hotId]="hotid"
+            [data]="dataset"
+            [licenseKey]="licensekey"
+            [settings]="invoiceprofit"
+          >
+          </hot-table>
+          <div class="p-grid">
+            <div class="p-col-7 p-md-7 p-lg-5"></div>
+            <div class="p-col-5 p-md-5 p-lg-7">
+              <div class="p-col-12 p-grid">
+                <label class="p-col-4" for="account">
+                  <b style="color: brown">{{ "  Total " | translate }}</b>
+                </label>
+                <div class="p-col-2">
+                  <input
+                    type="number"
+                    [ngModel]="salesAmount"
+                    class="w-100 end"
+                    pInputText
+                    readonly
+                  />
+                </div>
+                <div class="p-col-2">
+                  <input
+                    type="number"
+                    [ngModel]="totalcost"
+                    class="w-100 end"
+                    pInputText
+                    readonly
+                  />
+                </div>
+
+                <div class="p-col-2">
+                  <input
+                    type="number"
+                    [ngModel]="totalprofit"
+                    class="w-100 end"
+                    pInputText
+                    readonly
+                  />
+                </div>
+
+                <div class="p-col-2">
+                  <input
+                    type="number"
+                    [ngModel]="totalprofitPercentage"
+                    class="w-100 end"
+                    pInputText
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-panel>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

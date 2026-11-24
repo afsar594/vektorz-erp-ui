@@ -1,0 +1,158 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Sales Voucher Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      (click)="show()"
+      label="Show"
+      icon="pi pi-search"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="ClearContrll()"
+      label="Clear"
+      icon="pi pi-close"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="JobInvoiceReportFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Job Invoice Report' | translate">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Customer" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                [options]="CustomerMasterList"
+                formControlName="CustomerId"
+                optionLabel=""
+                [showClear]="true"
+              ></p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Salesman" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <p-dropdown
+                filter="true"
+                [options]="SalesManMasterList"
+                formControlName="SalesmanId"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Location" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <p-dropdown
+                filter="true"
+                [options]="locationList"
+                formControlName="locationId"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-6">
+          <p-panel>
+            <p-header>
+              <p-checkbox
+                formControlName="isDateChecked"
+                [binary]="true"
+                label="ByDate"
+              ></p-checkbox>
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "From" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  formControlName="DateFrom"
+                  class="w-200"
+                  [disabled]="
+                    !JobInvoiceReportFormGroup.get('isDateChecked').value
+                  "
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "To" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  formControlName="DateTO"
+                  class="w-200"
+                  [disabled]="
+                    !JobInvoiceReportFormGroup.get('isDateChecked').value
+                  "
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-12">
+          <p-panel>
+            <p-header>
+              {{ "Job Invoice Report Detail" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="grid">
+                <hot-table
+                  [hotId]="hotid1"
+                  [licenseKey]="licensekey"
+                  [settings]="invoicereport"
+                  [data]="DataList"
+                ></hot-table>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

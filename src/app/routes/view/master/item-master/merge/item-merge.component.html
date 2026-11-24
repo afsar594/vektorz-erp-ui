@@ -1,0 +1,538 @@
+<app-page-header
+  [nav]="breadcumbmodel"
+  [title]="title | translate"
+></app-page-header>
+
+<!-- Action Toolbar -->
+<p-toolbar class="modern-toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Execute Merge"
+      icon="fa fa-compress"
+      class="p-button-danger merge-btn"
+      [disabled]="!canExecuteMerge"
+      (click)="confirmAndExecuteMerge()"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Reset"
+      icon="fa fa-refresh"
+      class="p-button-outlined reset-btn"
+      (click)="resetAll()"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Refresh Items"
+      [icon]="isLoadingItems ? 'fa fa-spin fa-spinner' : 'fa fa-refresh'"
+      [disabled]="isLoadingItems"
+      class="p-button-text p-button-sm"
+      (click)="loadItemMasterList()"
+    ></button>
+  </div>
+</p-toolbar>
+
+<div class="item-merge-container">
+  <!-- Main Merge Selection Row -->
+  <div class="selection-grid">
+    <!-- SOURCE ITEM: MERGE FROM -->
+    <div class="selection-card source-card" [ngClass]="{ 'item-selected': !!fromItem }">
+      <div class="card-header source-header">
+        <div class="header-title">
+          <i class="fa fa-sign-out"></i>
+          <div>
+            <h3>{{ 'Merge From (Source Item)' | translate }}</h3>
+            <span class="sub-label">{{ 'This item will be absorbed and deactivated' | translate }}</span>
+          </div>
+        </div>
+        <span class="badge badge-source">{{ 'Source' | translate }}</span>
+      </div>
+
+      <div class="card-body">
+        <!-- Pick item actions if not selected -->
+        <div class="picker-controls">
+          <label class="control-label">
+            <i class="fa fa-search"></i>
+            {{ 'Select Source Item' | translate }}
+          </label>
+
+          <div class="dropdown-wrapper">
+            <p-dropdown
+              [options]="itemDropdownOptions"
+              [(ngModel)]="fromItem"
+              (onChange)="onDropdownChange($event, 'from')"
+              placeholder="Search & choose item..."
+              [filter]="true"
+              filterBy="label"
+              [showClear]="true"
+              class="modern-dropdown"
+              styleClass="w-100"
+            ></p-dropdown>
+          </div>
+
+          <div class="button-actions-row">
+            <button
+              pButton
+              type="button"
+              label="Browse Items Table"
+              icon="fa fa-list"
+              class="p-button-outlined p-button-sm select-btn"
+              (click)="openItemPicker('from')"
+            ></button>
+          </div>
+        </div>
+
+        <!-- Selected Item Card -->
+        <div *ngIf="fromItem" class="selected-item-details source-details">
+          <div class="item-title-row">
+            <div class="item-main-info">
+              <span class="item-id-pill">#{{ fromItem.itemMasterItemId }}</span>
+              <h4 class="item-name">{{ fromItem.itemMasterItemName || 'Unnamed Item' }}</h4>
+            </div>
+            <button
+              pButton
+              type="button"
+              icon="fa fa-times"
+              class="p-button-rounded p-button-danger p-button-text remove-btn"
+              pTooltip="Clear item"
+              (click)="clearItem('from')"
+            ></button>
+          </div>
+
+          <div class="item-meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Material Code' | translate }}</span>
+              <span class="meta-value">{{ fromItem.itemMasterMaterialCode || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Part No' | translate }}</span>
+              <span class="meta-value">{{ fromItem.itemMasterPartNo || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Batch Code' | translate }}</span>
+              <span class="meta-value">{{ fromItem.itemMasterBatchCode || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Account No' | translate }}</span>
+              <span class="meta-value">{{ fromItem.itemMasterAccountNo || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Unit Price' | translate }}</span>
+              <span class="meta-value price-value">{{ (fromItem.itemMasterUnitPrice || 0) | number:'1.2-2' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Status' | translate }}</span>
+              <span class="meta-value">
+                <span class="status-pill status-source">{{ 'To Be Merged' | translate }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state placeholder -->
+        <div *ngIf="!fromItem" class="empty-item-state">
+          <i class="fa fa-cube empty-icon"></i>
+          <p>{{ 'No source item selected' | translate }}</p>
+          <span class="empty-hint">{{ 'Use the dropdown or browse button above to choose the item to merge from.' | translate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER CONNECTOR: ARROW & SWAP BUTTON -->
+    <div class="merge-connector">
+      <div class="flow-line"></div>
+      <button
+        pButton
+        type="button"
+        icon="fa fa-exchange"
+        class="p-button-rounded p-button-secondary swap-center-btn"
+        pTooltip="Swap Source and Target Items"
+        tooltipPosition="top"
+        [disabled]="!fromItem && !toItem"
+        (click)="swapItems()"
+      ></button>
+      <div class="flow-indicator">
+        <i class="fa fa-arrow-right flow-arrow"></i>
+        <span class="flow-text">{{ 'Merging Into' | translate }}</span>
+      </div>
+      <div class="flow-line"></div>
+    </div>
+
+    <!-- TARGET ITEM: MERGE TO -->
+    <div class="selection-card target-card" [ngClass]="{ 'item-selected': !!toItem }">
+      <div class="card-header target-header">
+        <div class="header-title">
+          <i class="fa fa-sign-in"></i>
+          <div>
+            <h3>{{ 'Merge To (Target Item)' | translate }}</h3>
+            <span class="sub-label">{{ 'This master item will be retained' | translate }}</span>
+          </div>
+        </div>
+        <span class="badge badge-target">{{ 'Target / Master' | translate }}</span>
+      </div>
+
+      <div class="card-body">
+        <!-- Pick item actions if not selected -->
+        <div class="picker-controls">
+          <label class="control-label">
+            <i class="fa fa-search"></i>
+            {{ 'Select Target Item' | translate }}
+          </label>
+
+          <div class="dropdown-wrapper">
+            <p-dropdown
+              [options]="itemDropdownOptions"
+              [(ngModel)]="toItem"
+              (onChange)="onDropdownChange($event, 'to')"
+              placeholder="Search & choose target item..."
+              [filter]="true"
+              filterBy="label"
+              [showClear]="true"
+              class="modern-dropdown"
+              styleClass="w-100"
+            ></p-dropdown>
+          </div>
+
+          <div class="button-actions-row">
+            <button
+              pButton
+              type="button"
+              label="Browse Items Table"
+              icon="fa fa-list"
+              class="p-button-outlined p-button-sm select-btn"
+              (click)="openItemPicker('to')"
+            ></button>
+          </div>
+        </div>
+
+        <!-- Selected Item Card -->
+        <div *ngIf="toItem" class="selected-item-details target-details">
+          <div class="item-title-row">
+            <div class="item-main-info">
+              <span class="item-id-pill target-pill">#{{ toItem.itemMasterItemId }}</span>
+              <h4 class="item-name">{{ toItem.itemMasterItemName || 'Unnamed Item' }}</h4>
+            </div>
+            <button
+              pButton
+              type="button"
+              icon="fa fa-times"
+              class="p-button-rounded p-button-danger p-button-text remove-btn"
+              pTooltip="Clear item"
+              (click)="clearItem('to')"
+            ></button>
+          </div>
+
+          <div class="item-meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Material Code' | translate }}</span>
+              <span class="meta-value">{{ toItem.itemMasterMaterialCode || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Part No' | translate }}</span>
+              <span class="meta-value">{{ toItem.itemMasterPartNo || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Batch Code' | translate }}</span>
+              <span class="meta-value">{{ toItem.itemMasterBatchCode || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Account No' | translate }}</span>
+              <span class="meta-value">{{ toItem.itemMasterAccountNo || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Unit Price' | translate }}</span>
+              <span class="meta-value price-value">{{ (toItem.itemMasterUnitPrice || 0) | number:'1.2-2' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">{{ 'Status' | translate }}</span>
+              <span class="meta-value">
+                <span class="status-pill status-target">{{ 'Master To Keep' | translate }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state placeholder -->
+        <div *ngIf="!toItem" class="empty-item-state">
+          <i class="fa fa-check-circle empty-icon target-empty-icon"></i>
+          <p>{{ 'No target item selected' | translate }}</p>
+          <span class="empty-hint">{{ 'Use the dropdown or browse button above to choose the target master item.' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison & Impact Preview (Displayed when both are chosen) -->
+  <div *ngIf="fromItem && toItem" class="comparison-card">
+    <div class="comparison-header">
+      <i class="fa fa-balance-scale"></i>
+      <h3>{{ 'Merge Comparison & Impact Preview' | translate }}</h3>
+    </div>
+    <div class="comparison-body">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>{{ 'Attribute' | translate }}</th>
+            <th class="col-source">{{ 'Source Item (Merge From)' | translate }}</th>
+            <th class="col-target">{{ 'Target Item (Merge To)' | translate }}</th>
+            <th class="col-result">{{ 'Consolidated State After Merge' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="attr-name">{{ 'Item ID' | translate }}</td>
+            <td class="col-source font-mono">#{{ fromItem.itemMasterItemId }}</td>
+            <td class="col-target font-mono">#{{ toItem.itemMasterItemId }}</td>
+            <td class="col-result font-mono font-bold">#{{ toItem.itemMasterItemId }} (Retained)</td>
+          </tr>
+          <tr>
+            <td class="attr-name">{{ 'Item Name' | translate }}</td>
+            <td class="col-source">{{ fromItem.itemMasterItemName }}</td>
+            <td class="col-target">{{ toItem.itemMasterItemName }}</td>
+            <td class="col-result font-bold">{{ toItem.itemMasterItemName }}</td>
+          </tr>
+          <tr>
+            <td class="attr-name">{{ 'Material Code' | translate }}</td>
+            <td class="col-source">{{ fromItem.itemMasterMaterialCode || '-' }}</td>
+            <td class="col-target">{{ toItem.itemMasterMaterialCode || '-' }}</td>
+            <td class="col-result font-bold">{{ toItem.itemMasterMaterialCode || '-' }}</td>
+          </tr>
+          <tr>
+            <td class="attr-name">{{ 'Part No' | translate }}</td>
+            <td class="col-source">{{ fromItem.itemMasterPartNo || '-' }}</td>
+            <td class="col-target">{{ toItem.itemMasterPartNo || '-' }}</td>
+            <td class="col-result">{{ toItem.itemMasterPartNo || '-' }}</td>
+          </tr>
+          <tr>
+            <td class="attr-name">{{ 'Unit Price' | translate }}</td>
+            <td class="col-source">{{ (fromItem.itemMasterUnitPrice || 0) | number:'1.2-2' }}</td>
+            <td class="col-target">{{ (toItem.itemMasterUnitPrice || 0) | number:'1.2-2' }}</td>
+            <td class="col-result font-bold">{{ (toItem.itemMasterUnitPrice || 0) | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td class="attr-name">{{ 'Post-Merge Status' | translate }}</td>
+            <td class="col-source"><span class="badge badge-source">{{ 'Deactivated / Archived' | translate }}</span></td>
+            <td class="col-target"><span class="badge badge-target">{{ 'Active (Combined)' | translate }}</span></td>
+            <td class="col-result"><span class="badge badge-target">{{ 'Fully Consolidated' | translate }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Merge Options Form -->
+  <div class="options-card" [formGroup]="mergeForm">
+    <div class="options-header">
+      <i class="fa fa-cogs"></i>
+      <h3>{{ 'Merge Options & Consolidation Settings' | translate }}</h3>
+    </div>
+
+    <div class="options-body">
+      <div class="checkbox-grid">
+        <div class="checkbox-item">
+          <p-checkbox
+            formControlName="transferStock"
+            [binary]="true"
+            label="Transfer current inventory balances and warehouse stock"
+          ></p-checkbox>
+        </div>
+
+        <div class="checkbox-item">
+          <p-checkbox
+            formControlName="updateSalesOrders"
+            [binary]="true"
+            label="Update open Customer Sales Orders & Quotations"
+          ></p-checkbox>
+        </div>
+
+        <div class="checkbox-item">
+          <p-checkbox
+            formControlName="updatePurchaseOrders"
+            [binary]="true"
+            label="Update Purchase Orders, Requisitions & GRNs"
+          ></p-checkbox>
+        </div>
+
+        <div class="checkbox-item">
+          <p-checkbox
+            formControlName="updateVouchers"
+            [binary]="true"
+            label="Consolidate historical sales & purchase vouchers"
+          ></p-checkbox>
+        </div>
+
+        <div class="checkbox-item">
+          <p-checkbox
+            formControlName="deactivateSource"
+            [binary]="true"
+            label="Deactivate / Archive source item after merge is complete"
+          ></p-checkbox>
+        </div>
+      </div>
+
+      <div class="remarks-section">
+        <label class="remarks-label">
+          <i class="fa fa-sticky-note-o"></i>
+          {{ 'Merge Audit Remarks / Reason' | translate }}
+        </label>
+        <textarea
+          formControlName="remarks"
+          pInputTextarea
+          rows="3"
+          placeholder="Enter reason for item merge (e.g., Duplicate item cleanup, SKU consolidation)..."
+          class="modern-textarea"
+        ></textarea>
+      </div>
+
+      <div class="execute-actions-container">
+        <button
+          pButton
+          type="button"
+          label="Execute Merge"
+          [icon]="isMerging ? 'fa fa-spin fa-spinner' : 'fa fa-compress'"
+          class="p-button-danger p-button-lg execute-btn"
+          [disabled]="!canExecuteMerge"
+          (click)="confirmAndExecuteMerge()"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Merge Activity History -->
+  <div *ngIf="mergeHistory.length > 0" class="history-card">
+    <div class="history-header">
+      <i class="fa fa-history"></i>
+      <h3>{{ 'Session Merge Activity' | translate }}</h3>
+    </div>
+    <div class="history-body">
+      <p-table [value]="mergeHistory" [responsive]="true" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'Time' | translate }}</th>
+            <th>{{ 'Source Item (From)' | translate }}</th>
+            <th>{{ 'Target Item (To)' | translate }}</th>
+            <th>{{ 'Stock Transferred' | translate }}</th>
+            <th>{{ 'Remarks' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-record>
+          <tr>
+            <td>{{ record.mergedAt | date:'medium' }}</td>
+            <td>
+              <strong>{{ record.sourceItemName }}</strong>
+              <span class="history-id">#{{ record.sourceItemId }}</span>
+            </td>
+            <td>
+              <strong>{{ record.targetItemName }}</strong>
+              <span class="history-id">#{{ record.targetItemId }}</span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="record.transferStock ? 'badge-target' : 'badge-source'">
+                {{ record.transferStock ? 'Yes' : 'No' }}
+              </span>
+            </td>
+            <td>{{ record.remarks || '-' }}</td>
+            <td>
+              <span class="status-pill status-target">{{ record.status }}</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- ITEM PICKER MODAL DIALOG -->
+<p-dialog
+  [header]="pickerTarget === 'from' ? 'Select Source Item (Merge From)' : 'Select Target Item (Merge To)'"
+  [(visible)]="showPickerModal"
+  [modal]="true"
+  [style]="{ width: '800px', maxWidth: '95vw' }"
+  [responsive]="true"
+  [closable]="true"
+  class="modern-dialog"
+>
+  <div class="dialog-body">
+    <!-- Search Bar in Dialog -->
+    <div class="dialog-search-bar">
+      <i class="fa fa-search search-icon"></i>
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="pickerSearchQuery"
+        (ngModelChange)="filterPickerItems()"
+        placeholder="Search items by Name, Material Code, Part No, Batch..."
+        class="modern-input"
+        autofocus
+      />
+    </div>
+
+    <!-- Items Table in Dialog -->
+    <div class="table-container">
+      <p-table
+        [value]="filteredPickerItems"
+        [paginator]="true"
+        [rows]="8"
+        [rowsPerPageOptions]="[8, 15, 30]"
+        styleClass="p-datatable-sm p-datatable-striped"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 80px;">{{ 'ID' | translate }}</th>
+            <th>{{ 'Item Name' | translate }}</th>
+            <th>{{ 'Material Code' | translate }}</th>
+            <th>{{ 'Part No' | translate }}</th>
+            <th>{{ 'Price' | translate }}</th>
+            <th style="width: 100px; text-align: center;">{{ 'Action' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr (dblclick)="selectItemFromPicker(item)" class="picker-row">
+            <td class="font-mono">#{{ item.itemMasterItemId }}</td>
+            <td><strong>{{ item.itemMasterItemName }}</strong></td>
+            <td>{{ item.itemMasterMaterialCode || '-' }}</td>
+            <td>{{ item.itemMasterPartNo || '-' }}</td>
+            <td class="font-bold">{{ (item.itemMasterUnitPrice || 0) | number:'1.2-2' }}</td>
+            <td style="text-align: center;">
+              <button
+                pButton
+                type="button"
+                label="Select"
+                icon="fa fa-check"
+                class="p-button-sm"
+                [ngClass]="pickerTarget === 'from' ? 'p-button-danger' : 'p-button-success'"
+                (click)="selectItemFromPicker(item)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem;">
+              {{ 'No matching items found.' | translate }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <p-footer>
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      icon="fa fa-times"
+      class="p-button-text"
+      (click)="closeItemPicker()"
+    ></button>
+  </p-footer>
+</p-dialog>

@@ -1,0 +1,544 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      [disabled]="!btnFlag?.new"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag?.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="VoucherAllocationFormSubmit()"
+      label="Save"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="LoadVoucherAllocationList()"
+      label="List"
+      icon="fa fa-list"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      (click)="cancel()"
+      class="ui-button-danger"
+      icon="fa fa-ban"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      (click)="ReleaseAllocations()"
+      label="Release"
+      icon="fa fa-close"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [routerLink]=""
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+    <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="VAForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Voucher Allocation' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-6">
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Voucher No:" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-4">
+              <input
+                pInputText
+                style="width: 100%"
+                formControlName="allocationVoucherVoucherNo"
+              />
+              <input
+                pInputText
+                style="width: 100%"
+                formControlName="allocationVoucherId"
+                [hidden]="true"
+              />
+            </div>
+
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Voucher Date:" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-4">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                formControlName="allocationVoucherVoucherDate"
+                style="width: 100%"
+                class="w-150"
+                [showIcon]="true"
+              >
+              </p-calendar>
+              <div
+                class="error"
+                *ngIf="
+                  f.allocationVoucherVoucherDate.touched &&
+                  f.allocationVoucherVoucherDate.invalid
+                "
+              >
+                Date Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center" style="justify-content: center">
+            <div class="p-col-12 p-md-3">
+              <h5
+                style="
+                  cursor: pointer;
+                  background: rgb(189, 128, 128);
+                  padding: 1vh;
+                  color: #d31c1c;
+                  border-radius: 3px;
+                "
+              >
+                <p-radioButton
+                  formControlName="RadioType"
+                  (onClick)="SelectionRatio()"
+                  [style]="{ cursor: 'pointer' }"
+                  name="RadioType"
+                  value="Suppliers"
+                >
+                </p-radioButton>
+                <label class="p-col-12 p-md-4" style="cursor: pointer"
+                  >Suppliers</label
+                >
+              </h5>
+            </div>
+            <div class="p-col-12 p-md-3">
+              <h5
+                style="
+                  cursor: pointer;
+                  background: rgb(121, 168, 125);
+                  padding: 1vh;
+                  color: #10421b;
+                  border-radius: 3px;
+                "
+              >
+                <p-radioButton
+                  formControlName="RadioType"
+                  name="RadioType"
+                  [style]="{ cursor: 'pointer' }"
+                  value="Customers"
+                  (onClick)="SelectionRatio()"
+                >
+                </p-radioButton>
+                <label class="p-col-12 p-md-4" style="cursor: pointer"
+                  >Customers</label
+                >
+              </h5>
+            </div>
+          </div>
+          <div
+            *ngIf="VAForm.controls['RadioType'].value == 'Customers'"
+            class="p-grid p-ai-center"
+          >
+            <label class="p-col-12 p-md-3" for="account">
+              <b>{{ "Select Customer:" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-5">
+              <p-dropdown
+                filter="true"
+                [options]="customerDropdown"
+                [style]="{ width: '100%' }"
+                placeholder="--- Select A/C ---"
+                formControlName="SelectCustomerAC"
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+            <span style="margin: 7px 9px !important">
+              <button
+                pButton
+                (click)="LoadAccountTransaction()"
+                type="button"
+                label="Find"
+                icon="fa fa-search"
+                class="ui-button-warning"
+              ></button
+            ></span>
+          </div>
+          <div
+            *ngIf="VAForm.controls['RadioType'].value == 'Suppliers'"
+            class="p-grid p-ai-center"
+          >
+            <label class="p-col-12 p-md-3" for="account">
+              <b>{{ "Select Supplier:" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-5">
+              <p-dropdown
+                filter="true"
+                [options]="supplierDropdown"
+                [style]="{ width: '100%' }"
+                placeholder="--- Select A/C ---"
+                formControlName="SelectSupplierAC"
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-2">
+              <button
+                pButton
+                (click)="LoadAccountTransaction()"
+                type="button"
+                label="Find"
+                icon="fa fa-search"
+                class="ui-button-warning"
+              ></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-col-12 p-md-6">
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Description:" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-7">
+              <textarea
+                rows="6"
+                class="w-100"
+                formControlName="allocationVoucherDescription"
+                pInputTextarea
+              ></textarea>
+              <!-- <div class="error"
+                                *ngIf="f.allocationVoucherDescription.touched && f.allocationVoucherDescription.invalid">
+                                allocationVoucherDescription Invalid
+                                Entry
+                            </div> -->
+            </div>
+            <div class="p-col-12 p-md-3">
+              <button
+                pButton
+                (click)="AutoAllocate()"
+                type="button"
+                label="Auto Allocate"
+                icon="fa fa-refresh"
+                class="ui-button-info"
+              ></button>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12 p-md-2">
+              <b> {{ "Total Debit:" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-2">
+              <input
+                [(ngModel)]="totalDebit"
+                readonly
+                [ngModelOptions]="{ standalone: true }"
+                type="text"
+                pInputText
+                class="w-100 end"
+              />
+            </div>
+            <div class="p-col-12 p-md-2">
+              <b> {{ "Total Credit:" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-2">
+              <input
+                [(ngModel)]="totalCredit"
+                readonly
+                [ngModelOptions]="{ standalone: true }"
+                type="text"
+                pInputText
+                class="w-100 end"
+              />
+            </div>
+            <div class="p-col-12 p-md-2">
+              <b> {{ "Balance:" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-2">
+              <input
+                [(ngModel)]="totalBalance"
+                readonly
+                [ngModelOptions]="{ standalone: true }"
+                type="text"
+                pInputText
+                class="w-100 end"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-panel>
+      <p-header>
+        {{ "Account" | translate }}
+      </p-header>
+
+      <p-table
+        [columns]="cols"
+        [value]="dataset"
+        [paginator]="true"
+        [rows]="10"
+      >
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngFor="let col of columns">
+              <span *ngIf="col.header == 'ID'"
+                ><input
+                  type="checkbox"
+                  [checked]="CheckAllSelected"
+                  class="check-box-all"
+                  (change)="CheckAllCheckBox($event)"
+              /></span>
+              <span *ngIf="col.header == 'Date'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'V No'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Type'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Debit'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Credit'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Allocation Amt'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Balance'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Net Allocation'">
+                {{ col.header }}
+              </span>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                [checked]="rowData.IsSelected"
+                [disabled]="!isRowSelectable(rowData)"
+                (change)="
+                  CheckEachCheckBox(
+                    $event,
+                    rowData.accountsTransactionsTransSno,
+                    'account'
+                  )
+                "
+                class="check-box"
+              />
+              <span *ngIf="!isRowSelectable(rowData)" class="allocated-status" style="margin-left: 0.5rem; color: #888; font-size: 0.85em;">Allocated</span>
+            </td>
+            <td>{{ rowData.accountsTransactionsTransDateString }}</td>
+            <td>{{ rowData.accountsTransactionsVoucherNo }}</td>
+            <td>{{ rowData.accountsTransactionsVoucherType }}</td>
+            <td class="end" style="background-color: #b1e4bc">
+              {{ rowData.accountsTransactionsDebit }}
+            </td>
+            <td class="end" style="background-color: #bfcbf1">
+              {{ rowData.accountsTransactionsCredit }}
+            </td>
+            <td class="end">{{ rowData.accountsTransactionsAllocDebit }}</td>
+            <td class="end">
+              <!-- {{ rowData.accountsTransactionsAllocationbalance }} -->
+                {{ getRemainingBalance(rowData) }}
+            </td>
+
+            <td pEditableColumn>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="rowData.netAllocation"
+                    [ngModelOptions]="{ standalone: true }"
+                    #netAllocationAmount
+                    [disabled]="true"
+                    (keyup)="
+                      onNetAllocationChange(
+                        $event,
+                        rowData.IsSelected,
+                        netAllocationAmount.value,
+                        rowData.accountsTransactionsTransSno
+                      )
+                    "
+                  />
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ rowData.netAllocation }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-panel>
+  </div>
+
+  <div class="card card-w-title">
+    <p-panel>
+      <p-header>
+        {{ "Voucher" | translate }}
+      </p-header>
+
+      <p-table
+        [columns]="cols"
+        [value]="datasetVoucher"
+        [paginator]="true"
+        [rows]="10"
+      >
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngFor="let col of columns">
+              <span *ngIf="col.header == 'ID'"
+                ><input
+                  type="checkbox"
+                  [checked]="CheckAllSelected"
+                  class="check-box-all"
+                  (change)="CheckAllCheckBoxVoucher($event)"
+              /></span>
+              <span *ngIf="col.header == 'Date'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'V No'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Type'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Debit'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Credit'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Allocation Amt'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Balance'">
+                {{ col.header }}
+              </span>
+              <span *ngIf="col.header == 'Net Allocation'">
+                {{ col.header }}
+              </span>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                [checked]="rowData.IsSelected"
+                [disabled]="!isRowSelectable(rowData)"
+                (change)="
+                  CheckEachCheckBox(
+                    $event,
+                    rowData.accountsTransactionsTransSno,
+                    'vouchers'
+                  )
+                "
+                class="check-box"
+              />
+              <span *ngIf="!isRowSelectable(rowData)" class="allocated-status" style="margin-left: 0.5rem; color: #888; font-size: 0.85em;">Allocated</span>
+            </td>
+            <td>{{ rowData.accountsTransactionsTransDateString }}</td>
+            <td>{{ rowData.accountsTransactionsVoucherNo }}</td>
+            <td>{{ rowData.accountsTransactionsVoucherType }}</td>
+            <td class="end" style="background-color: #b1e4bc">
+              {{ rowData.accountsTransactionsDebit }}
+            </td>
+            <td class="end" style="background-color: #bfcbf1">
+              {{ rowData.accountsTransactionsCredit }}
+            </td>
+            <td class="end">{{ rowData.accountsTransactionsAllocDebit }}</td>
+            <td class="end">
+              <!-- {{ rowData.accountsTransactionsAllocationbalance }} -->
+                  {{ getRemainingBalance(rowData) }}
+            </td>
+
+            <td pEditableColumn>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="rowData.netAllocation"
+                    [ngModelOptions]="{ standalone: true }"
+                    #netAllocationAmount
+                    [disabled]="!isRowSelectable(rowData)"
+                    (keyup)="
+                      onNetAllocationChange(
+                        $event,
+                        rowData.IsSelected,
+                        netAllocationAmount.value,
+                        rowData.accountsTransactionsTransSno
+                      )
+                    "
+                  />
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ rowData.netAllocation }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-panel>
+  </div>
+</div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

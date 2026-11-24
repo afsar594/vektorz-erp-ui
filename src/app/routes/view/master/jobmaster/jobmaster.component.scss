@@ -1,0 +1,451 @@
+.inputGroup {
+    margin: 4px 0;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.grid {
+    max-height: 500px;
+    overflow: auto;
+}
+ 
+.f-r {
+    float: right;
+}
+
+.min-panel {
+    min-height: 106px !important;
+}
+
+:host ::ng-deep .ui-table .ui-table-thead>tr>th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: -8px;
+    box-shadow: 1px 3px 6px 0 rgba(32, 33, 36, 0.10);
+}
+
+@media screen and (max-width: 64em) {
+    :host ::ng-deep .ui-table .ui-table-thead>tr>th {
+        top: -8px;
+    }
+}
+
+.ui-dropdown {
+    min-width: 50% !important;
+}
+
+
+table.border-table {
+    border-collapse: collapse;
+    border: .5px solid rgb(201, 204, 204);
+
+    th {
+        border: .5px solid rgb(201, 204, 204);
+        background-color: #d9cece;
+    }
+
+    td {
+        border: .5px solid rgb(201, 204, 204);
+        // padding: 8px;
+    }
+
+}
+
+#customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid;
+}
+
+#customers td {
+    // border-bottom: 1px solid;
+    padding: 8px;
+    text-align: start;
+}
+
+#customers th {
+    border-bottom: 1px solid;
+    padding: 8px;
+    text-align: start;
+}
+
+.info {
+    margin: 13px;
+    border-bottom: 2px solid;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.header {
+
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
+.report {
+    text-align: center;
+    border-top: 3px dotted;
+    border-bottom: 3px dotted;
+}
+
+.border {
+    border: .5px solid rgb(201, 204, 204);
+    margin-bottom: 5px;
+
+}
+
+.tableLR {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.disclaimer,
+.address p {
+    font-size: 10pt;
+}
+
+.signature-field {
+    padding-bottom: 24pt;
+    border-bottom: solid black 1pt;
+}
+
+.border {
+    border: .5px solid rgb(201, 204, 204);
+    margin-bottom: 5px;
+
+}
+////////print////
+// /* job-report.component.css */
+// .job-report-container {
+//     width: 100%;
+//     font-family: Arial, sans-serif;
+//     border: .5px solid rgb(201, 204, 204);
+//     /* padding: 10px; */
+//     background-color: #f9f9f9;
+//   }
+  
+  .job-report-row {
+    display: flex;
+    flex-wrap: wrap;
+    /* margin-bottom: 5px; */
+    margin: 12px;
+  }
+  
+  .job-report-label {
+    flex: 0 0 15%;
+    font-weight: bold;
+    padding-right: 10px;
+  }
+  
+  .job-report-value {
+    flex: 0 0 35%;
+    padding-right: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .job-report-label, .job-report-value {
+      flex: 0 0 100%;
+      margin-bottom: 5px;
+    }
+  }
+ 
+ .summary, .cost-center, .job-cost-analysis {
+    margin-bottom: 20px;  
+    border: 0.5px solid #c9cccc;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    border: .5px solid rgb(201, 204, 204);
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  h2, h3 {
+    margin-bottom: 10px;
+  }
+/* expenses-report.component.css */
+.expenses-report-container {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    border:.5px solid rgb(201, 204, 204);
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+  }
+  h2{
+    text-align: center;
+  }
+  h3 {
+    background-color: #ccc;
+    padding: 10px;
+    margin: 0;
+  }
+  
+  .expenses-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .expenses-table th, .expenses-table td {
+    border: .5px solid rgb(201, 204, 204);
+    padding: 8px;
+    text-align: left;
+    font-size: 12px;
+  }
+  
+  .expenses-table th {
+    background-color: #d3d3d3;
+  }
+  
+  .total-expenses-container {
+    width: 100%;
+    border-top: .5px solid rgb(201, 204, 204);
+    border-bottom: .5px solid rgb(201, 204, 204);
+    margin-top: 10px;
+    padding-top: 5px;
+  }
+  
+  .expenses-summary {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px 0;
+  }
+  
+  .total-label {
+    background-color: #d3d3d3;
+    padding: 5px 10px;
+    font-weight: bold;
+    margin-right: 20px;
+    text-align: center;
+  }
+  
+  .amount span {
+    margin-left: 10px;
+    font-weight: bold;
+  }
+  .flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Adjust this according to your layout needs */
+    /* Add any other necessary styling */
+}
+// .payment1{
+//   border: .5px solid rgb(201, 204, 204);
+//   width: 100%;
+//    margin-bottom:20px ;
+//   margin-top: 20px;
+//    font-size: 18px;
+//    padding-top: 10px;
+//    padding-bottom: 10px;
+//     }
+.payment1{
+  border: 2.5px solid rgb(220, 224, 224);
+  width: 100%;
+   margin-bottom:2% ;
+   margin-top: 2%;
+  padding-left:3%;
+  font-size: 16px; 
+    padding-top: 10px;
+   padding-bottom: 10px;
+    }
+    .flex-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between; /* Adjust this according to your layout needs */
+      /* Add any other necessary styling */
+  }
+  .flexcol {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .flexrow {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: start;
+      margin-right: 258px;
+    }
+    
+
+
+    
+    .report-container {
+      max-width: 100%;
+      margin: 20px auto;
+      background-color: #f9f9f9; /* Softer background */
+      padding: 30px; /* Increased padding */
+      border: 1px solid #ddd; /* Lighter border */
+      border-radius: 12px; /* Softer corners */
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Softer, larger shadow */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+  }
+  
+  h1 {
+      text-align: center;
+      font-size: 26px; /* Larger font for title */
+      font-weight: 600;
+      color: #333; /* Darker title color */
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid#ccc; /* Accent color for underline */
+  }
+  
+  h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+  }
+  
+  // .client-info, .survey-personnel, .equipment-deployed, .data-description {
+  //     margin-bottom: 25px; /* Increased spacing between sections */
+  // }
+
+
+  .client-info p {
+    display: flex; /* Makes <p> a flex container */
+    justify-content: space-between; /* Distributes space between elements */
+    margin-bottom: 10px; /* Adds margin between each paragraph */
+    line-height: 1.6;
+}
+
+.client-info strong {
+    min-width: 150px; /* Ensures all labels are aligned */
+    font-weight: bold;
+}
+
+.client-info span {
+    flex: 1; /* Allows span to take remaining space */
+    text-align: right; /* Aligns span content to the right */
+}
+
+
+  
+  .section-title {
+      font-weight: 700;
+      color: #ccc; /* Accent color */
+      text-transform: uppercase;
+      font-size: 18px;
+      margin-bottom: 10px;
+  }
+  
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+      font-size: 14px; /* Smaller table text */
+  }
+  
+  table, th, td {
+      border: 1px solid #ccc; /* Softer borders */
+  }
+  
+  th {
+      // background-color: #0056b3; /* Accent color for headers */
+      // color: white;
+      padding: 12px;
+  }
+  
+  td {
+      padding: 12px;
+  }  
+  .comments-section, .signatures-section {
+      margin-top: 30px;
+      text-align: start;
+      margin-left: 1px;
+      padding-top: 15px;
+      border-top: 2px solid #ccc; /* Accent color divider */
+  }
+  
+  .signatures {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+  }
+  
+  .signature-block {
+      text-align: left;
+      font-weight: 500;
+  }
+  
+  .footer {
+      text-align: center;
+      font-weight: 600;
+      color: #555;
+      margin-top: 40px;
+      padding-top: 15px;
+      border-top: 2px solid#ccc; /* Accent color divider */
+      font-size: 16px;
+  }
+  
+  button.p-button-primary {
+      background-color:#ccc;
+      border-color: #ccc;
+      color: white;
+      font-weight: bold;
+  }
+  .signature-line {
+    border-bottom: 1px solid#ccc; /* Black solid line */
+    width: 200px; /* Adjust width as needed */
+    margin-top: 50px; /* Space between name and signature line */
+}
+.width2{
+  width: 250px !important;
+}
+.bold{
+  font-size: 30px;
+
+}
+.width{
+  width: 1-px;
+}
+.logo{
+  height: 115px;
+  width: 115px;
+}
+
+.bt{
+  margin-left: 1200px;
+}
+.bold{
+  font-weight: bold;
+}
+.width{
+  width: 1-px;
+}
+.descrp{
+  width: 60%;
+}
+
+.no-border {
+  border: none  !important; /* Remove border */
+  outline: none !important; /* Remove outline on focus */
+  box-shadow: none !important; /* Remove any box shadow */
+}
+
+.trbg{
+  background-color: rgb(213, 222, 252);
+}

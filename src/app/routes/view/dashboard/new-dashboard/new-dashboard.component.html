@@ -1,0 +1,1073 @@
+<div class="sales-inventory-dashboard">
+  <!-- Header Section -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1 class="dashboard-title">Sales & Inventory Dashboard</h1>
+      <div class="header-controls">
+        <div class="date-indicator">
+          <i class="pi pi-calendar"></i>
+          <span>{{ selectedDate }}</span>
+        </div>
+        <div class="date-selector-wrapper" title="Select dashboard date range">
+          <p-calendar
+            #dashRangeCal
+            [(ngModel)]="selectedDateRange"
+            selectionMode="range"
+            [showIcon]="true"
+            icon="pi pi-calendar"
+            dateFormat="dd M yy"
+            [maxDate]="maxDashboardDate"
+            [readonlyInput]="true"
+            appendTo="body"
+            (ngModelChange)="onDashboardDateRangeChange($event)"
+            placeholder="Select date range"
+          ></p-calendar>
+        </div>
+        <div class="branch-selector-wrapper">
+          <select class="branch-select" [(ngModel)]="selectedBranch" (change)="onBranchChange($event)">
+            <option *ngFor="let branch of branches" [value]="branch.value">
+              {{ branch.label }}
+            </option>
+          </select>
+          <i class="pi pi-chevron-down branch-chevron"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Row 1: Primary 5 KPI Cards (Solid / Gradient) -->
+  <section class="kpi-primary-grid">
+    <!-- Card 1: Total Sales (Today) -->
+    <div class="kpi-primary-card card-blue">
+      <div class="card-icon-badge">
+        <i class="pi pi-file"></i>
+      </div>
+      <div class="card-text-group">
+        <span class="kpi-label">Total Sales ({{ todayCardLabel }})</span>
+        <h2 class="kpi-value">{{ formatCurrency(primaryMetrics.totalSalesToday) }}</h2>
+        <span class="kpi-trend trend-light">
+          {{ primaryMetrics.salesComparison }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Card 2: Total Purchases (Today) -->
+    <div class="kpi-primary-card card-green">
+      <div class="card-icon-badge">
+        <i class="pi pi-shopping-cart"></i>
+      </div>
+      <div class="card-text-group">
+        <span class="kpi-label">Total Purchases ({{ todayCardLabel }})</span>
+        <h2 class="kpi-value">{{ formatCurrency(primaryMetrics.totalPurchasesToday) }}</h2>
+        <span class="kpi-trend trend-light">
+          {{ primaryMetrics.purchaseComparison }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Card 3: Gross Profit (Today) -->
+    <div class="kpi-primary-card card-purple">
+      <div class="card-icon-badge">
+        <i class="pi pi-chart-bar"></i>
+      </div>
+      <div class="card-text-group">
+        <span class="kpi-label">Gross Profit ({{ todayCardLabel }})</span>
+        <h2 class="kpi-value">{{ formatCurrency(primaryMetrics.grossProfitToday) }}</h2>
+        <span class="kpi-trend trend-light">
+          {{ primaryMetrics.grossProfitComparison }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Card 4: Total Stock Value -->
+    <div class="kpi-primary-card card-cyan">
+      <div class="card-icon-badge">
+        <i class="pi pi-box"></i>
+      </div>
+      <div class="card-text-group">
+        <span class="kpi-label">Total Stock Value</span>
+        <h2 class="kpi-value">{{ formatCurrency(primaryMetrics.totalStockValue) }}</h2>
+        <span class="kpi-trend trend-light">
+          {{ primaryMetrics.stockComparison }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Card 5: Accounts Receivable -->
+    <div class="kpi-primary-card card-orange">
+      <div class="card-icon-badge">
+        <i class="pi pi-file-o"></i>
+      </div>
+      <div class="card-text-group">
+        <span class="kpi-label">Accounts Receivable</span>
+        <h2 class="kpi-value">{{ formatCurrency(primaryMetrics.accountsReceivable) }}</h2>
+        <span class="kpi-subtitle">
+          {{ primaryMetrics.arNote }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 2: Secondary 6 KPI Cards (White Cards) -->
+  <section class="kpi-secondary-grid">
+    <!-- Sec 1: Invoices -->
+    <div class="kpi-white-card">
+      <div class="white-icon-box icon-soft-blue">
+        <i class="pi pi-file"></i>
+      </div>
+      <div class="white-card-content">
+        <span class="secondary-label">Invoices (This Month)</span>
+        <div class="secondary-val-row">
+          <span class="secondary-value">{{ formatNumber(secondaryMetrics.invoicesThisMonth) }}</span>
+        </div>
+        <span class="secondary-trend trend-up" *ngIf="secondaryMetrics.invoicesGrowth">{{ secondaryMetrics.invoicesGrowth }}</span>
+      </div>
+    </div>
+
+    <!-- Sec 2: Avg. Invoice Value -->
+    <div class="kpi-white-card">
+      <div class="white-icon-box icon-soft-cyan">
+        <i class="pi pi-file-o"></i>
+      </div>
+      <div class="white-card-content">
+        <span class="secondary-label">Avg. Invoice Value</span>
+        <div class="secondary-val-row">
+          <span class="secondary-value">{{ formatCurrency(secondaryMetrics.avgInvoiceValue) }}</span>
+        </div>
+        <span class="secondary-trend trend-up" *ngIf="secondaryMetrics.avgInvoiceGrowth">{{ secondaryMetrics.avgInvoiceGrowth }}</span>
+      </div>
+    </div>
+
+    <!-- Sec 3: Cash Sales -->
+    <div class="kpi-white-card">
+      <div class="white-icon-box icon-soft-green">
+        <i class="pi pi-money-bill"></i>
+      </div>
+      <div class="white-card-content">
+        <span class="secondary-label">Cash Sales</span>
+        <div class="secondary-val-row">
+          <span class="secondary-value">{{ formatCurrency(secondaryMetrics.cashSales) }}</span>
+        </div>
+        <span class="secondary-subtext">{{ secondaryMetrics.cashSalesPercent }}</span>
+      </div>
+    </div>
+
+    <!-- Sec 4: Credit Sales -->
+    <div class="kpi-white-card">
+      <div class="white-icon-box icon-soft-teal">
+        <i class="pi pi-id-card"></i>
+      </div>
+      <div class="white-card-content">
+        <span class="secondary-label">Credit Sales</span>
+        <div class="secondary-val-row">
+          <span class="secondary-value">{{ formatCurrency(secondaryMetrics.creditSales) }}</span>
+        </div>
+        <span class="secondary-subtext">{{ secondaryMetrics.creditSalesPercent }}</span>
+      </div>
+    </div>
+
+    <!-- Sec 5: Sales Returns -->
+    <div class="kpi-white-card">
+      <div class="white-icon-box icon-soft-purple">
+        <i class="pi pi-replay"></i>
+      </div>
+      <div class="white-card-content">
+        <span class="secondary-label">Sales Returns</span>
+        <div class="secondary-val-row">
+          <span class="secondary-value">{{ formatCurrency(secondaryMetrics.salesReturns) }}</span>
+        </div>
+        <span class="secondary-subtext">{{ secondaryMetrics.salesReturnsPercent }}</span>
+      </div>
+    </div>
+
+    <!-- Sec 6: Net Sales -->
+    <div class="kpi-white-card">
+      <div class="white-icon-box icon-soft-emerald">
+        <i class="pi pi-chart-line"></i>
+      </div>
+      <div class="white-card-content">
+        <span class="secondary-label">Net Sales</span>
+        <div class="secondary-val-row">
+          <span class="secondary-value">{{ formatCurrency(secondaryMetrics.netSales) }}</span>
+        </div>
+        <span class="secondary-badge-text">{{ secondaryMetrics.grossMarginPercent }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 3: Sales Trend (col-8) & Sales by Group (col-4) -->
+  <section class="charts-row">
+    <!-- Chart 1: Sales Trend -->
+    <div class="dashboard-panel chart-sales-trend-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Sales Trend</h3>
+      </div>
+      <div class="panel-body chart-body">
+        <p-chart
+          *ngIf="salesTrendData"
+          type="bar"
+          [data]="salesTrendData"
+          [options]="salesTrendOptions"
+          height="220px"
+        ></p-chart>
+        <div class="chart-empty-note" *ngIf="!salesTrendData">No data</div>
+      </div>
+    </div>
+
+    <!-- Chart 2: Sales by Group -->
+    <div class="dashboard-panel chart-category-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Sales by Group</h3>
+      </div>
+      <div class="panel-body donut-chart-layout">
+        <!-- Donut with centered text -->
+        <div class="donut-chart-container">
+          <p-chart
+            *ngIf="categoryDonutData"
+            type="doughnut"
+            [data]="categoryDonutData"
+            [options]="categoryDonutOptions"
+            height="185px"
+            width="185px"
+          ></p-chart>
+          <div class="chart-empty-note" *ngIf="!categoryDonutData">No data</div>
+          <div class="donut-center-badge">
+            <ng-container *ngIf="categoryTotal > 0; else noCategoryData">
+              <span class="currency-label">AED</span>
+              <span class="center-main-val">{{ formatNumber(categoryTotal) }}</span>
+              <span class="center-sub-val">Total Sales</span>
+            </ng-container>
+            <ng-template #noCategoryData>
+              <span class="center-sub-val">No data</span>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Custom Category Legend List -->
+        <div class="category-legend-list">
+          <div class="category-legend-item" *ngFor="let item of categoryItems">
+            <div class="legend-dot-label">
+              <span class="legend-dot" [style.background-color]="item.color"></span>
+              <span class="item-label">{{ item.label }}</span>
+            </div>
+            <span class="item-percent">{{ item.percent }}%</span>
+            <span class="item-amount">{{ formatNumber(item.amount) }}</span>
+          </div>
+          <div class="category-empty-note" *ngIf="categoryItems.length === 0">
+            No data
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 3b: Sales by Branch (col-4), Stock Status (col-4) & Purchase Overview (col-4) -->
+  <section class="branch-stock-purchase-row">
+    <!-- Chart 2b: Sales by Branch -->
+    <div class="dashboard-panel chart-category-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Sales by Branch</h3>
+      </div>
+      <div class="panel-body donut-chart-layout">
+        <!-- Donut with centered text -->
+        <div class="donut-chart-container">
+          <p-chart
+            *ngIf="branchSalesData"
+            type="doughnut"
+            [data]="branchSalesData"
+            [options]="categoryDonutOptions"
+            height="185px"
+            width="185px"
+          ></p-chart>
+          <div class="chart-empty-note" *ngIf="!branchSalesData">No data</div>
+          <div class="donut-center-badge">
+            <ng-container *ngIf="branchTotal > 0; else noBranchData">
+              <span class="currency-label">AED</span>
+              <span class="center-main-val">{{ formatNumber(branchTotal) }}</span>
+              <span class="center-sub-val">Total Sales</span>
+            </ng-container>
+            <ng-template #noBranchData>
+              <span class="center-sub-val">No data</span>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Custom Branch Legend List -->
+        <div class="category-legend-list">
+          <div class="category-legend-item" *ngFor="let item of branchSalesItems">
+            <div class="legend-dot-label">
+              <span class="legend-dot" [style.background-color]="item.color"></span>
+              <span class="item-label">{{ item.label }}</span>
+            </div>
+            <span class="item-percent">{{ item.percent }}%</span>
+            <span class="item-amount">{{ formatNumber(item.amount) }}</span>
+          </div>
+          <div class="category-empty-note" *ngIf="branchSalesItems.length === 0">
+            No branch sales in this period.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 3: Stock Status -->
+    <div class="dashboard-panel chart-stock-status-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Stock Status</h3>
+      </div>
+      <div class="panel-body donut-chart-layout">
+        <!-- Donut with centered text -->
+        <div class="donut-chart-container">
+          <p-chart
+            *ngIf="stockStatusDonutData"
+            type="doughnut"
+            [data]="stockStatusDonutData"
+            [options]="stockStatusDonutOptions"
+            height="185px"
+            width="185px"
+          ></p-chart>
+          <div class="chart-empty-note" *ngIf="!stockStatusDonutData">No data</div>
+          <div class="donut-center-badge">
+            <ng-container *ngIf="dashboardLoaded; else noStockData">
+              <span class="center-sub-val">Total Items</span>
+              <span class="center-main-val">{{ totalStockItemsCount }}</span>
+            </ng-container>
+            <ng-template #noStockData>
+              <span class="center-sub-val">No data</span>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Stock Status Breakdown List -->
+        <div class="stock-breakdown-list">
+          <div class="stock-breakdown-item" *ngFor="let item of stockStatusItems">
+            <div class="legend-dot-label">
+              <span class="legend-dot" [style.background-color]="item.color"></span>
+              <span class="item-label">{{ item.label }}</span>
+            </div>
+            <span class="stock-item-count">{{ item.count }} ({{ item.percent }}%)</span>
+          </div>
+          <div class="category-empty-note" *ngIf="stockStatusItems.length === 0">
+            No stock data.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Purchase Overview Widget -->
+    <div class="dashboard-panel purchase-overview-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Purchase Overview</h3>
+      </div>
+      <div class="panel-body purchase-overview-body">
+        <div class="purchase-item-row" *ngFor="let item of purchaseOverviewItems">
+          <div class="purchase-left">
+            <div class="purchase-icon-circle" [ngClass]="item.iconBgClass">
+              <i [class]="item.icon"></i>
+            </div>
+            <span class="purchase-item-name">{{ item.title }}</span>
+          </div>
+          <div class="purchase-right">
+            <span class="purchase-amount">{{ item.amountOrCount }}</span>
+            <span
+              class="purchase-badge"
+              *ngIf="item.badgeText"
+              [ngClass]="{
+                'badge-up': item.badgeType === 'up',
+                'badge-down': item.badgeType === 'down',
+                'badge-exclamation': item.badgeType === 'alert'
+              }"
+            >
+              {{ item.badgeText }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 4: Top 10 Products (col-5) & Profit Analysis (col-7) -->
+  <section class="middle-row-grid">
+    <!-- Top 10 Products (by Sales) -->
+    <div class="dashboard-panel products-table-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Top 10 Products <span class="panel-subtitle-inline">(by Sales)</span></h3>
+      </div>
+      <div class="panel-body table-body-compact">
+        <table class="clean-table products-table">
+          <thead>
+            <tr>
+              <th class="th-rank">#</th>
+              <th class="th-name">Product Name</th>
+              <th class="th-qty">Qty Sold</th>
+              <th class="th-sales">Sales Amount</th>
+              <th class="th-profit">Profit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of topProducts">
+              <td class="td-rank">{{ item.rank }}</td>
+              <td class="td-name font-medium">{{ item.name }}</td>
+              <td class="td-qty text-muted">{{ formatNumber(item.qty) }}</td>
+              <td class="td-sales">{{ formatCurrency(item.salesAmount) }}</td>
+              <td class="td-profit text-muted">{{ formatCurrency(item.profit) }}</td>
+            </tr>
+            <tr *ngIf="topProducts.length === 0">
+              <td colspan="5" class="text-center text-muted">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Profit Analysis Chart -->
+    <div class="dashboard-panel profit-analysis-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Profit Analysis</h3>
+      </div>
+      <div class="panel-body chart-body">
+        <p-chart
+          *ngIf="profitAnalysisData"
+          type="bar"
+          [data]="profitAnalysisData"
+          [options]="profitAnalysisOptions"
+          height="280px"
+        ></p-chart>
+        <div class="chart-empty-note" *ngIf="!profitAnalysisData">No data</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 5: Top 5 Customers, Top 5 Suppliers, Alerts & Notifications -->
+  <section class="bottom-row-grid">
+    <!-- Top 5 Customers -->
+    <div class="dashboard-panel customers-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Top 5 Customers</h3>
+      </div>
+      <div class="panel-body table-body-compact">
+        <table class="clean-table">
+          <thead>
+            <tr>
+              <th class="th-rank">#</th>
+              <th>Customer</th>
+              <th class="th-sales">Total Sales</th>
+              <th class="th-outstanding">Outstanding</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of topCustomers">
+              <td class="td-rank">{{ item.rank }}</td>
+              <td class="font-medium">{{ item.name }}</td>
+              <td class="td-sales">{{ formatCurrency(item.totalSales) }}</td>
+              <td class="td-outstanding text-muted">{{ formatCurrency(item.outstanding) }}</td>
+            </tr>
+            <tr *ngIf="topCustomers.length === 0">
+              <td colspan="4" class="text-center text-muted">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Top 5 Suppliers -->
+    <div class="dashboard-panel suppliers-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Top 5 Suppliers</h3>
+      </div>
+      <div class="panel-body table-body-compact">
+        <table class="clean-table">
+          <thead>
+            <tr>
+              <th class="th-rank">#</th>
+              <th>Supplier</th>
+              <th class="th-sales">Purchase Amount</th>
+              <th class="th-outstanding">Outstanding</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of topSuppliers">
+              <td class="td-rank">{{ item.rank }}</td>
+              <td class="font-medium">{{ item.name }}</td>
+              <td class="td-sales">{{ formatCurrency(item.purchaseAmount) }}</td>
+              <td class="td-outstanding text-muted">{{ formatCurrency(item.outstanding) }}</td>
+            </tr>
+            <tr *ngIf="topSuppliers.length === 0">
+              <td colspan="4" class="text-center text-muted">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Alerts & Notifications -->
+    <div class="dashboard-panel alerts-panel">
+      <div class="alerts-header">
+        <div class="alerts-title-wrap">
+          <i class="pi pi-bell alerts-bell-icon"></i>
+          <span class="alerts-title">Alerts & Notifications</span>
+        </div>
+        <a class="view-all-link" href="javascript:void(0);">View All</a>
+      </div>
+      <div class="panel-body alerts-body">
+        <div
+          class="alert-row"
+          *ngFor="let alert of alertItems"
+          (click)="navigateToAlert(alert)"
+          [class.clickable]="alert.route"
+        >
+          <div class="alert-left">
+            <i [class]="alert.icon + ' ' + alert.iconClass"></i>
+            <span class="alert-name">{{ alert.title }}</span>
+          </div>
+          <div class="alert-right">
+            <span class="alert-count" [ngClass]="alert.badgeClass">{{ alert.countOrAmount }}</span>
+            <i class="pi pi-angle-right alert-arrow"></i>
+          </div>
+        </div>
+        <div class="category-empty-note" *ngIf="alertItems.length === 0">
+          No data
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 6: Split Summary & Workflow Approvals (from Older Dashboard) -->
+  <section class="operational-split-grid">
+    <!-- Card 1: Split Summary -->
+    <div class="dashboard-panel split-summary-panel">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="header-icon-badge icon-bg-blue">
+            <i class="pi pi-chart-line"></i>
+          </div>
+          <div class="header-text-group">
+            <h3 class="panel-title">{{ 'Split Summary' | translate }}</h3>
+            <span class="panel-subtitle">Financial movements & PDC 5-day liquidity summary</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body split-summary-body">
+        <div class="split-metrics-grid">
+          <!-- Item 1: Incoming PDC Received in 5 days -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-emerald">
+              <i class="pi pi-arrow-down-left"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Incoming PDC Amount (Recieved) in 5days' | translate }}</span>
+              <span class="split-val text-emerald">AED {{ incomingPdcReceived }}</span>
+            </div>
+          </div>
+
+          <!-- Item 2: Incoming PDC Issued in 5 days -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-amber">
+              <i class="pi pi-arrow-up-right"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Incoming PDC Amount (Issued) in 5days' | translate }}</span>
+              <span class="split-val text-amber">AED {{ incomingPdcIssue }}</span>
+            </div>
+          </div>
+
+          <!-- Item 3: Current Month Purchase -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-blue">
+              <i class="pi pi-shopping-cart"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Current Month Purchase' | translate }}</span>
+              <span class="split-val">AED {{ currentMonthPurchase }}</span>
+            </div>
+          </div>
+
+          <!-- Item 4: Current Month Sales -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-indigo">
+              <i class="pi pi-dollar"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Current Month Sales' | translate }}</span>
+              <span class="split-val">AED {{ currentMonthSales }}</span>
+            </div>
+          </div>
+
+          <!-- Item 5: Prev Month Purchase -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-slate">
+              <i class="pi pi-history"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Previous Month Purchase' | translate }}</span>
+              <span class="split-val text-muted">AED {{ prevMonthPurchase }}</span>
+            </div>
+          </div>
+
+          <!-- Item 6: Prev Month Sales -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-slate">
+              <i class="pi pi-clock"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Previous Month Sales' | translate }}</span>
+              <span class="split-val text-muted">AED {{ prevMonthSales }}</span>
+            </div>
+          </div>
+
+          <!-- Item 7: Current Month Expense -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-rose">
+              <i class="pi pi-minus-circle"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Current Month Expense' | translate }}</span>
+              <span class="split-val text-rose">AED {{ currMonthExpense }}</span>
+            </div>
+          </div>
+
+          <!-- Item 8: Prev Month Expense -->
+          <div class="split-metric-card">
+            <div class="split-icon-wrap icon-slate">
+              <i class="pi pi-calendar"></i>
+            </div>
+            <div class="split-details">
+              <span class="split-label">{{ 'Previous Month Expense' | translate }}</span>
+              <span class="split-val text-muted">AED {{ prevMonthExpense }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Workflow Approvals -->
+    <div class="dashboard-panel approvals-panel">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="header-icon-badge icon-bg-purple">
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <div class="header-text-group">
+            <h3 class="panel-title">{{ 'Approved/Pending' | translate }}</h3>
+            <span class="panel-subtitle">Action items requiring review</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body approvals-body">
+        <div class="workflow-cards-stack">
+          <!-- Item 1: Purchase Requisition Pending -->
+          <div
+            class="workflow-card-item"
+            (click)="routerNavigate('Purchase Requisition', 'Pending')"
+            role="button"
+            tabindex="0"
+          >
+            <div class="workflow-item-left">
+              <div class="workflow-icon-box bg-amber-soft">
+                <i class="pi pi-file-o text-amber-dark"></i>
+              </div>
+              <div class="workflow-item-info">
+                <span class="workflow-item-title">{{ 'Purchase Requisition Pending' | translate }}</span>
+                <span class="workflow-item-sub">Awaiting procurement review</span>
+              </div>
+            </div>
+            <div class="workflow-item-right">
+              <span class="workflow-badge badge-pending">{{ purchaseRequisitionCount }}</span>
+              <i class="pi pi-arrow-right workflow-chevron"></i>
+            </div>
+          </div>
+
+          <!-- Item 2: Purchase Order Pending -->
+          <div
+            class="workflow-card-item"
+            (click)="routerNavigate('Purchase Order', 'Pending')"
+            role="button"
+            tabindex="0"
+          >
+            <div class="workflow-item-left">
+              <div class="workflow-icon-box bg-orange-soft">
+                <i class="pi pi-shopping-cart text-orange-dark"></i>
+              </div>
+              <div class="workflow-item-info">
+                <span class="workflow-item-title">{{ 'Purchase Order Pending' | translate }}</span>
+                <span class="workflow-item-sub">Pending manager approval</span>
+              </div>
+            </div>
+            <div class="workflow-item-right">
+              <span class="workflow-badge badge-pending">{{ purchaseOrderCount }}</span>
+              <i class="pi pi-arrow-right workflow-chevron"></i>
+            </div>
+          </div>
+
+          <!-- Item 3: Order Approved -->
+          <div
+            class="workflow-card-item"
+            (click)="routerNavigate('Purchase Order', 'Approved')"
+            role="button"
+            tabindex="0"
+          >
+            <div class="workflow-item-left">
+              <div class="workflow-icon-box bg-emerald-soft">
+                <i class="pi pi-check text-emerald-dark"></i>
+              </div>
+              <div class="workflow-item-info">
+                <span class="workflow-item-title">{{ 'Order Approved' | translate }}</span>
+                <span class="workflow-item-sub">Ready for fulfillment</span>
+              </div>
+            </div>
+            <div class="workflow-item-right">
+              <span class="workflow-badge badge-approved">{{ approvedOrdersCount }}</span>
+              <i class="pi pi-arrow-right workflow-chevron"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 7: Multi-Tab Master Data Section (Classy & Prominent Modern Design) -->
+  <section class="master-tabs-section">
+    <div class="dashboard-panel master-tabs-panel prominent-table-card">
+      <!-- Prominent Header Bar with Segmented Tab Controls & Global Search -->
+      <div class="table-card-header">
+        <div class="header-main-row">
+          <!-- Segmented Tab Pills with record count badges -->
+          <div class="tabs-nav-group">
+            <button
+              type="button"
+              class="tab-pill-btn"
+              [class.active]="selectedTabIndex === 0"
+              (click)="selectTab(0)"
+            >
+              <i class="pi pi-building tab-icon"></i>
+              <span>{{ 'Suppliers' | translate }}</span>
+              <span class="tab-count-badge">{{ supplierData.length }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="tab-pill-btn"
+              [class.active]="selectedTabIndex === 1"
+              (click)="selectTab(1)"
+            >
+              <i class="pi pi-users tab-icon"></i>
+              <span>{{ 'Customers' | translate }}</span>
+              <span class="tab-count-badge">{{ customerData.length }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="tab-pill-btn"
+              [class.active]="selectedTabIndex === 2"
+              (click)="selectTab(2)"
+            >
+              <i class="pi pi-arrow-up-right tab-icon"></i>
+              <span>{{ 'PDC Issued' | translate }}</span>
+              <span class="tab-count-badge">{{ pdcIssueData.length }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="tab-pill-btn"
+              [class.active]="selectedTabIndex === 3"
+              (click)="selectTab(3)"
+            >
+              <i class="pi pi-arrow-down-left tab-icon"></i>
+              <span>{{ 'PDC Recieved' | translate }}</span>
+              <span class="tab-count-badge">{{ pdcReceiveData.length }}</span>
+            </button>
+          </div>
+
+          <!-- Classy Global Search Box -->
+          <div class="header-search-wrap">
+            <div class="sleek-search-box">
+              <i class="pi pi-search search-icon"></i>
+              <input
+                type="text"
+                class="sleek-search-input"
+                [placeholder]="
+                  selectedTabIndex === 0
+                    ? ('Search suppliers by name or amount...' | translate)
+                    : selectedTabIndex === 1
+                    ? ('Search customers by name or amount...' | translate)
+                    : ('Search PDC by party name, date or amount...' | translate)
+                "
+                (input)="onTableGlobalSearch($event.target.value)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Body Area -->
+      <div class="panel-body table-card-body">
+        <!-- Tab 0: Suppliers -->
+        <div *ngIf="selectedTabIndex === 0" class="table-responsive-wrapper">
+          <p-table
+            #tt1
+            [columns]="supplierCols"
+            [value]="supplierData"
+            [paginator]="true"
+            [rows]="10"
+            [loading]="isTabLoading"
+            styleClass="classy-erp-table"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="MA_AccName" class="th-entity">
+                  <div class="th-flex">
+                    <span>{{ 'SUPPLIER / ENTITY NAME' | translate }}</span>
+                    <p-sortIcon field="MA_AccName"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="Amount" class="th-amount">
+                  <div class="th-flex">
+                    <span>{{ 'BALANCE / AMOUNT' | translate }}</span>
+                    <p-sortIcon field="Amount"></p-sortIcon>
+                  </div>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+              <tr class="sleek-data-row">
+                <td class="td-entity">
+                  <div class="entity-cell-group">
+                    <div class="entity-avatar supplier-avatar">
+                      <span>{{ getEntityInitials(rowData.MA_AccName) }}</span>
+                    </div>
+                    <div class="entity-info-stack">
+                      <span class="entity-primary-name">{{ rowData.MA_AccName }}</span>
+                      <span class="entity-meta-tag">Supplier Account</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="td-amount">
+                  <span
+                    class="amount-display-pill"
+                    [ngClass]="{
+                      'amount-negative': isNegativeAmount(rowData.Amount),
+                      'amount-positive': !isNegativeAmount(rowData.Amount)
+                    }"
+                  >
+                    {{ formatTableAmount(rowData.Amount) }}
+                  </span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="2" class="empty-table-state">
+                  <i class="pi pi-inbox empty-icon"></i>
+                  <p class="empty-text">No suppliers found matching your query</p>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- Tab 1: Customers -->
+        <div *ngIf="selectedTabIndex === 1" class="table-responsive-wrapper">
+          <p-table
+            #tt2
+            [columns]="customerCols"
+            [value]="customerData"
+            [paginator]="true"
+            [rows]="10"
+            [loading]="isTabLoading"
+            styleClass="classy-erp-table"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="MA_AccName" class="th-entity">
+                  <div class="th-flex">
+                    <span>{{ 'CUSTOMER / CLIENT NAME' | translate }}</span>
+                    <p-sortIcon field="MA_AccName"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="Amount" class="th-amount">
+                  <div class="th-flex">
+                    <span>{{ 'RECEIVABLE / BALANCE' | translate }}</span>
+                    <p-sortIcon field="Amount"></p-sortIcon>
+                  </div>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+              <tr class="sleek-data-row">
+                <td class="td-entity">
+                  <div class="entity-cell-group">
+                    <div class="entity-avatar customer-avatar">
+                      <span>{{ getEntityInitials(rowData.MA_AccName) }}</span>
+                    </div>
+                    <div class="entity-info-stack">
+                      <span class="entity-primary-name">{{ rowData.MA_AccName }}</span>
+                      <span class="entity-meta-tag">Customer Account</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="td-amount">
+                  <span
+                    class="amount-display-pill"
+                    [ngClass]="{
+                      'amount-negative': isNegativeAmount(rowData.Amount),
+                      'amount-positive': !isNegativeAmount(rowData.Amount)
+                    }"
+                  >
+                    {{ formatTableAmount(rowData.Amount) }}
+                  </span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="2" class="empty-table-state">
+                  <i class="pi pi-inbox empty-icon"></i>
+                  <p class="empty-text">No customers found matching your query</p>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- Tab 2: PDC Issued -->
+        <div *ngIf="selectedTabIndex === 2" class="table-responsive-wrapper">
+          <p-table
+            #tt3
+            [columns]="pdcIssueCols"
+            [value]="pdcIssueData"
+            [paginator]="true"
+            [rows]="10"
+            [loading]="isTabLoading"
+            styleClass="classy-erp-table"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="PartyName" class="th-entity">
+                  <div class="th-flex">
+                    <span>{{ 'PARTY / BENEFICIARY' | translate }}</span>
+                    <p-sortIcon field="PartyName"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="PDate" class="th-date">
+                  <div class="th-flex">
+                    <span>{{ 'CHEQUE DATE' | translate }}</span>
+                    <p-sortIcon field="PDate"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="CAmount" class="th-amount">
+                  <div class="th-flex">
+                    <span>{{ 'CHEQUE AMOUNT' | translate }}</span>
+                    <p-sortIcon field="CAmount"></p-sortIcon>
+                  </div>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+              <tr class="sleek-data-row">
+                <td class="td-entity">
+                  <div class="entity-cell-group">
+                    <div class="entity-avatar pdc-issued-avatar">
+                      <span>{{ getEntityInitials(rowData.PartyName) }}</span>
+                    </div>
+                    <div class="entity-info-stack">
+                      <span class="entity-primary-name">{{ rowData.PartyName }}</span>
+                      <span class="entity-meta-tag">PDC Issued</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="td-date">
+                  <div class="date-chip-badge">
+                    <i class="pi pi-calendar"></i>
+                    <span>{{ formatTableDate(rowData.PDate) }}</span>
+                  </div>
+                </td>
+                <td class="td-amount">
+                  <span class="amount-display-pill pdc-issued-amount">
+                    {{ formatTableAmount(rowData.CAmount) }}
+                  </span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="3" class="empty-table-state">
+                  <i class="pi pi-inbox empty-icon"></i>
+                  <p class="empty-text">No PDC issued records found matching your query</p>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- Tab 3: PDC Recieved -->
+        <div *ngIf="selectedTabIndex === 3" class="table-responsive-wrapper">
+          <p-table
+            #tt4
+            [columns]="pdcReceiveCols"
+            [value]="pdcReceiveData"
+            [paginator]="true"
+            [rows]="10"
+            [loading]="isTabLoading"
+            styleClass="classy-erp-table"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="PartyName" class="th-entity">
+                  <div class="th-flex">
+                    <span>{{ 'PARTY / DRAWER' | translate }}</span>
+                    <p-sortIcon field="PartyName"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="PDate" class="th-date">
+                  <div class="th-flex">
+                    <span>{{ 'MATURITY DATE' | translate }}</span>
+                    <p-sortIcon field="PDate"></p-sortIcon>
+                  </div>
+                </th>
+                <th pSortableColumn="CAmount" class="th-amount">
+                  <div class="th-flex">
+                    <span>{{ 'CHEQUE AMOUNT' | translate }}</span>
+                    <p-sortIcon field="CAmount"></p-sortIcon>
+                  </div>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+              <tr class="sleek-data-row">
+                <td class="td-entity">
+                  <div class="entity-cell-group">
+                    <div class="entity-avatar pdc-received-avatar">
+                      <span>{{ getEntityInitials(rowData.PartyName) }}</span>
+                    </div>
+                    <div class="entity-info-stack">
+                      <span class="entity-primary-name">{{ rowData.PartyName }}</span>
+                      <span class="entity-meta-tag">PDC Received</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="td-date">
+                  <div class="date-chip-badge">
+                    <i class="pi pi-calendar"></i>
+                    <span>{{ formatTableDate(rowData.PDate) }}</span>
+                  </div>
+                </td>
+                <td class="td-amount">
+                  <span class="amount-display-pill pdc-received-amount">
+                    {{ formatTableAmount(rowData.CAmount) }}
+                  </span>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="3" class="empty-table-state">
+                  <i class="pi pi-inbox empty-icon"></i>
+                  <p class="empty-text">No PDC received records found matching your query</p>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

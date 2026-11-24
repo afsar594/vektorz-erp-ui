@@ -1,0 +1,157 @@
+<!-- <app-page-header *ngIf="listmode" [title]='title| translate'></app-page-header> -->
+<p-toolbar *ngIf="listmode">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      *ngIf="button"
+      label="New"
+      icon="pi pi-plus"
+      (click)="new()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      *ngIf="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      *ngIf="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      icon="fa fa-floppy-o"
+      [disabled]="!Permission?.Add || issaved"
+      (click)="saveItem()"
+      class="ui-button-success"
+    ></button>
+
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button
+      pButton
+      type="button"
+      *ngIf="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      routerLink="/master/item/list"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      (click)="delete()"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <!-- <button pButton type="button" icon="pi pi-search"></button>
+            <button pButton type="button" icon="pi pi-calendar" class="ui-button-success"></button>
+            <button pButton type="button" icon="pi pi-times" class="ui-button-danger"></button> -->
+    <button
+      pButton
+      *ngIf="button"
+      type="button"
+      label="Back"
+      routerLink="/master/chartofaccount/list"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="newaccountForm">
+  <div class="p-grid">
+    <!-- <div class="p-col-12"> -->
+
+    <div class="p-grid p-col-12 inputGroup">
+      <label class="p-col-12 p-md-12 p-lg-3" for="groupname">
+        {{ "Group Name" | translate }}</label
+      >
+      <div class="p-col-12 p-md-12 p-lg-9 p-0">
+        <p-dropdown
+          filter="true"
+          [readonly]="pageType == 'add' || !changeG"
+          class="w-100"
+          [options]="accountGroupSub"
+          formControlName="maRelativeNo"
+          filte
+        >
+        </p-dropdown>
+      </div>
+    </div>
+
+    <div class="p-grid p-col-12 inputGroup">
+      <label class="p-col-12 p-md-12 p-lg-3" for="groupname">
+        {{ "Account Name" | translate }}</label
+      >
+      <div class="p-col-12 p-md-12 p-lg-9 p-0">
+        <textarea
+          [readOnly]="changeG"
+          rows="2"
+          formControlName="maAccName"
+          pInputTextarea
+          autoResize="autoResize"
+        ></textarea>
+      </div>
+    </div>
+    <div class="p-grid p-col-12 inputGroup">
+      <label class="p-col-12 p-md-12 p-lg-3" for="weight">{{
+        "Ref Account " | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-9 p-0">
+        <input formControlName="maManualCode" id="weight" pInputText />
+      </div>
+    </div>
+
+    <div *ngIf="!changeG" class="p-grid p-col-12 inputGroup">
+      <label class="p-col-12 p-md-12 p-lg-3" for="datecreated">
+        {{ "Created Date" | translate }}
+      </label>
+
+      <div class="p-col-12 p-md-12 p-lg-9 p-0">
+        <p-calendar
+          appendTo="body"
+          dateFormat="dd/mm/yy"
+          [showButtonBar]="true"
+          [monthNavigator]="true"
+          [yearNavigator]="true"
+          yearRange="2000:2040"
+          class="w-100"
+          [(ngModel)]="date1"
+          [showIcon]="true"
+          useUtc
+          formControlName="maDateCreated"
+          id="datecreated"
+        >
+        </p-calendar>
+      </div>
+    </div>
+  </div>
+</div>
+<p-confirmDialog
+  key="confirm-key"
+  [(visible)]="confirmdialog"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>
+
+<p-toast></p-toast>

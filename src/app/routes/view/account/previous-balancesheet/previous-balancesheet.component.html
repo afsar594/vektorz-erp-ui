@@ -1,0 +1,131 @@
+<app-page-header [title]='title| translate'></app-page-header>
+
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" label="show" icon="fa fa-search" (click)="GetGridListData(null)"></button>
+        <button pButton type="button" (click)="OldBalanceSheetFormSubmit()" label="Save And Post To Account"
+            icon="fa fa-floppy-o"></button>
+    </div>
+    <div class="ui-toolbar-group-right">
+        <button pButton type="button" (click)="DownloadBalanceSheetPrint($event, 'Excel')" label="Excel"
+            icon="fa fa-plus"></button>
+
+        <!-- <button pButton type="button" label="New" icon="fa fa-file-excel-o" class="ui-button-success" (click)="New()"></button> -->
+        <!-- <button pButton type="button" label="Excel" icon="fa fa-file-excel-o" class="ui-bu/tton-success"></button> -->
+    </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="PBSForm">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Previous Balance Sheet Entry' | translate">
+            <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2 ">
+                    {{'Financial Period:' | translate}}
+                </label>
+                <div class="p-col-12 p-md-4">
+
+                    <!-- <p-dropdown [options]="FinacialPeriodArry" optionLabel="financialPeriodsStartDate"
+                        optionValue="financialPeriodsFsno" formControlName="OldBsMasterFsno"
+                        placeholder="-Financial Period-">
+                    </p-dropdown>
+                    <div class="error" *ngIf="f.OldBsMasterFsno.touched && f.OldBsMasterFsno.invalid">
+                        <span> Financial Period is Mandatory Field*</span>
+                    </div> -->
+
+
+                    <input pInputText style="width: 100%;" placeholder="-Financial Period--"
+                        formControlName="OldBsMasterFsno">
+                    <div class="error" *ngIf="f.OldBsMasterFsno.touched && f.OldBsMasterFsno.invalid">
+                        <span> Financial Period is Mandatory Field*</span>
+                    </div>
+                </div>
+                <label class="p-col-12 p-md-1 ">
+                    {{'Status :' | translate}}
+                </label>
+                <div class="p-col-12 p-md-4">
+                    <input pInputText style="width: 100%;" placeholder="-Status-" formControlName="Status">
+                    <div class="error" *ngIf="f.Status.touched && f.Status.invalid">
+                        <span>Status is Mandatory Field*</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2 ">
+                    {{'Ref. JV No :' | translate}}
+                </label>
+                <div class="p-col-12 p-md-4">
+                    <input pInputText style="width: 100%;" readonly placeholder="-Ref. JV No-"
+                        formControlName="OldBsMasterRefJv">
+                    <div class="error" *ngIf="f.OldBsMasterRefJv.touched && f.OldBsMasterRefJv.invalid">
+                        <span>JV is Mandatory Field*</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-w-title">
+                <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+                    <p-tabPanel [header]="'Balance Sheet' | translate">
+                        <div class="p-col-12">
+                            <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey"
+                                [settings]="balancesheet">
+
+                            </hot-table>
+                        </div>
+                    </p-tabPanel>
+                </p-tabView>
+            </div>
+
+            <div class="p-grid  p-fluid">
+                <div class="p-col-12">
+                    <p-panel>
+                        <p-header>
+                            <p-checkbox name="group1" label="Tally" binary="true" formControlName="TallyCheck">
+                            </p-checkbox>
+                        </p-header>
+                        <div class="p-grid p-ai-center">
+                            <label class="p-col-12 p-md-2 ">
+                                {{'Total Asset :' | translate}}
+                            </label>
+                            <div class="p-col-12 p-md-9">
+                                <input pInputText style="width: 100%;" formControlName="TotalAssetdbt"
+                                    placeholder="-Total Asset-">
+                            </div>
+                            <label class="p-col-12 p-md-2 ">
+                                {{'Total Liabilities :' | translate}}
+                            </label>
+                            <div class="p-col-12 p-md-9">
+                                <input pInputText style="width: 100%;" placeholder="-Total Liabilities-">
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+                <div class="p-col-12">
+                    <div class="p-grid p-ai-center">
+
+                        <label class="p-col-12 p-md-2 ">
+                            {{'Total Asset :' | translate}}
+                        </label>
+                        <div class="p-col-12 p-md-2">
+                            <input pInputText style="width: 100%;" readonly formControlName="TotalAssetcrd" />
+                        </div>
+                        <div class="p-col-12 p-md-3">
+                            <input pInputText style="width: 100%;" readonly formControlName="TotalAssetdbt" />
+                        </div>
+                        <label class="p-col-12 p-md-2">
+                            {{'Difference Total :' | translate}}
+                        </label>
+                        <div class="p-col-12 p-md-3">
+                            <input pInputText formControlName="DifferenceTotal" readonly style="width: 100%;" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>
+<p-toast></p-toast>
+
+<app-lookup [header]='"Look Up"' [dataArry]="dataList" [selectedItem]='selectItem' [columns]='lookupGridCustomerColumns'
+    (selectItemEvent)='selectsales($event)' (exitEvent)='exit($event)' [cell]='activeRow' (clearEvent)='clear($event)'
+    (hideDialogEvent)='hide($event)' [tableheader]="'Sales List'" [(show)]='showSalesLookUp'></app-lookup>

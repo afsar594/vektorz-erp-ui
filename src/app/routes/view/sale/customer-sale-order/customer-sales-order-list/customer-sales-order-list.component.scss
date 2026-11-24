@@ -1,0 +1,14 @@
+.customer-sales-order-list-container {
+  width: 100%;
+  padding: 0;
+
+  .card {
+    margin-bottom: 0 !important;
+    padding: 0.5rem !important;
+  }
+}
+
+:host ::ng-deep .ht_master .wtHolder {
+  overflow-y: auto !important;
+}
+

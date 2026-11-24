@@ -1,0 +1,157 @@
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="Find" icon="fa fa-search" (click)="filter()" class="ui-button-info"></button>
+    <button pButton type="button" label="Clear" icon="fa fa-sign-out" (click)="ClearFilter()"
+      class="ui-button-danger"></button>
+    <button pButton type="button" label="Print" icon="fa fa-print" (click)="displayPrint()"
+      class="ui-button-success"></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out" (click)="close()"
+      class="ui-button-danger"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [formGroup]="proformaForm">
+    <p-tabPanel [header]="'Proforma Invoice' | translate">
+      <p-panel>
+        <p-header>
+          <!-- <input type="checkbox" pInputCheck /> By Date -->
+          <p-checkbox formControlName="isDate" [binary]="true" label="Date Range"></p-checkbox>
+        </p-header>
+        <div class="p-grid">
+          <div class="p-col-12 p-md-2 p-lg-2">
+            <label for="fromDate"> Date From</label>
+          </div>
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+              [yearNavigator]="true" yearRange="2000:2040" useUtc id="dateFrom" [showIcon]="true"
+              [disabled]="!proformaForm.get('isDate').value" formControlName="dateFrom">
+            </p-calendar>
+          </div>
+          <div class="p-col-12 p-md-2 p-lg-2">
+            <label class="p-lg-8" style="padding-left: 20px" for="fromDate">To</label>
+          </div>
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true"
+              [disabled]="!proformaForm.get('isDate').value" [monthNavigator]="true" [yearNavigator]="true"
+              yearRange="2000:2040" useUtc id="dateTo" [showIcon]="true" formControlName="dateTo">
+            </p-calendar>
+          </div>
+
+          <div class="p-col-12 p-md-2 p-lg-2">
+            <b>{{ "L.P.O No" | translate }}</b>
+          </div>
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <input pInputText formControlName="LPONo" style="width: 100%" />
+            <div class="error" *ngIf="f.LPONo.touched && f.LPONo.invalid">
+              <span>L.P.O No. is Mandatory Field*</span>
+            </div>
+          </div>
+          <div class="p-col-12 p-md-2 p-lg-2">
+            <b>{{ "Customer" | translate }}</b>
+          </div>
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <p-dropdown filter="true" [options]="CustomerMasterList" [showClear]="true" [style]="{ width: '100%' }"
+              placeholder="---Customer---" formControlName="Customer">
+            </p-dropdown>
+            <div class="error" *ngIf="f.Search.touched && f.Search.invalid">
+              <span>Search is Mandatory Field*</span>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+      <div class="grid">
+        <div class="p-col-12">
+          <p-table #dt [value]="PIlist" [columns]="cols" [paginator]="true" [rows]="5">
+            <ng-template pTemplate="caption">
+              <div class="flexSearch">
+                <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Global Filter"
+                  (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                  {{ col.header | translate }}
+                  <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr style="cursor: pointer" *ngIf="item.proformaInvoiceDelStatus != true">
+
+                <td>{{ item.proformaInvoiceVoucherno }}</td>
+                <td>{{ item.proformaInvoiceDate | date : "dd/MM/yyyy" }}</td>
+                <td>{{ GetCustomer(item.proformaInvoiceCustCode) }}</td>
+                <td>{{ item.proformaInvoiceTotal }}</td>
+                <td>{{ item.proformaInvoiceLpoNo }}</td>
+                <td>
+                  <button pButton type="button" icon="pi pi-pencil" (click)="GetSavedPIDetails(item.proformaInvoiceId)"
+                    class="ui-button-info"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button pButton type="button" class="ui-button-primary" (click)="getPIList()" label="Print"
+    icon="fa fa-print"></button>
+
+  <div id="print" class="container w-100">
+    <div>
+      <h2>{{ stationmasterObj?.stationMasterStationName }}</h2>
+    </div>
+    <div class="flexrow">
+      <div class="flexcol">
+        <b>Address </b>
+        <b>Tel </b>
+        <b>Fax </b>
+        <b>Email </b>
+        <b>TRN</b>
+      </div>
+      <div class="flexcol">
+        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+      </div>
+      <div class="flexcol">
+        <div>{{ stationmasterObj?.stationMasterAddress }}&nbsp;</div>
+        <div>{{ stationmasterObj?.stationMasterTele1 }}&nbsp;</div>
+        <div>{{ stationmasterObj?.stationMasterFax }}&nbsp;</div>
+        <div>{{ stationmasterObj?.stationMasterEmail }}&nbsp;</div>
+        <div>
+          {{
+          stationmasterObj?.stationMasterVatNo
+          ? stationmasterObj?.stationMasterVatNo
+          : 104093336600003
+          }}&nbsp;
+        </div>
+      </div>
+    </div>
+    <table id="customers">
+      <tr>
+        <th>S O NO.</th>
+        <th>S O DATE</th>
+        <th>Customers</th>
+        <th>Job No.</th>
+        <th>L P O NO</th>
+        <th>L P O Date</th>
+        <th>Grand Total</th>
+      </tr>
+      <tr *ngFor="let item of PIlist">
+        <td>{{ item.proformaInvoiceDate }}</td>
+        <td>{{ item.proformaInvoiceLpoNo }}</td>
+        <td>{{ item.proformaInvoiceCustName }}</td>
+        <td>{{ item.proformaInvoiceTotal }}</td>
+        <td>{{ item.proformaInvoiceLpoNo }}</td>
+      </tr>
+    </table>
+  </div>
+</p-dialog>

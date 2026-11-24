@@ -1,0 +1,333 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Bank Reconcilation' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="new()"
+      label="New"
+      icon="fa fa-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="edit()"
+      label="Edit"
+      [disabled]="btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="save()"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <!-- <button pButton type="button" label="Update"[disabled]="!Permission?.Add" icon="fa fa-floppy-o" class="ui-button-warning"></button> -->
+    <button
+      pButton
+      type="button"
+      (click)="GetAllBR()"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      class="ui-button-danger"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title" [formGroup]="BRForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Bank Reconciliation' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-7">
+          <p-panel>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-1" for="account">
+                <b>{{ "No.:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-5">
+                <input pInputText formControlName="No" />
+                <div class="error" *ngIf="f.No.touched && f.No.invalid">
+                  No is Invalid Entry
+                </div>
+              </div>
+              <label class="p-col-12 p-md-1" for="account">
+                <b>{{ "Date:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-5">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  formControlName="Date"
+                  class="w-150"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div class="error" *ngIf="f.Date.touched && f.Date.invalid">
+                  Date Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">
+                <b>{{ "Narration:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-10">
+                <textarea
+                  [rows]="3"
+                  formControlName="Narration"
+                  pInputTextarea
+                ></textarea>
+                <div
+                  class="error"
+                  *ngIf="f.Narration.touched && f.Narration.invalid"
+                >
+                  Narration Invalid Entry
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="account">
+                <b>{{ "Reconciliation Till:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  formControlName="Reconciliation"
+                  class="w-200"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div
+                  class="error"
+                  *ngIf="f.Reconciliation.touched && f.Reconciliation.invalid"
+                >
+                  Reconciliation Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="account">
+                <b>{{ "Select Bank A/c:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-8">
+                <p-dropdown
+                  filter="true"
+                  placeholder="--- Select Bank A/C ---"
+                  [options]="accountList"
+                  formControlName="SelectAC"
+                  [showClear]="true"
+                  (onChange)="onAccountChange($event, 'id')"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="f.SelectAC.touched && f.SelectAC.invalid"
+                >
+                  Select A/C Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="account">
+                <b>{{ "Closing Balance:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-8">
+                <input
+                  pInputText
+                  disabled="true"
+                  formControlName="ClosingBalance"
+                />
+                <div
+                  class="error"
+                  *ngIf="f.ClosingBalance.touched && f.ClosingBalance.invalid"
+                >
+                  Closing Balance Invalid Entry
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<div class="card card-w-title">
+  <!-- [activeIndex]="index" (onChange)="handleChange($event)" -->
+  <p-tabView>
+    <p-tabPanel [header]="'Bank Reconciliation' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-8">
+          <p-panel>
+            <p-header>
+              {{ "Bank Ledger" | translate }}
+            </p-header>
+            <div class="grid">
+              <hot-table
+                [hotId]="hotid"
+                [data]="dataset"
+                [licenseKey]="licensekey"
+                [settings]="BankReconciliation"
+              >
+              </hot-table>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header>
+              {{ "Bank Statement" | translate }}
+            </p-header>
+            <!-- <hot-table [hotId]="hotid2" [data]="dataset2" [licenseKey]="licensekey"
+                            [settings]="BankStatement">
+                        </hot-table> -->
+            <p-table
+              #dt
+              [value]="dataset2"
+              dataKey="accountsTransactions_VoucherNo"
+              styleClass="ui-table-customers"
+              [rowHover]="true"
+              [columns]="cols"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="text-align: center; width: 20%">Voucher No</th>
+                  <th style="text-align: center; width: 20%">Debit</th>
+                  <th style="text-align: center; width: 20%">Credit</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item let-i="rowIndex">
+                <tr>
+                  <td style="text-align: center">
+                    {{ item?.reconciliationVoucherDetailsVno }}
+                  </td>
+                  <td style="text-align: center">
+                    {{ item?.reconciliationVoucherDetailsDebit }}
+                  </td>
+                  <td style="text-align: center">
+                    {{ item?.reconciliationVoucherDetailsCredit }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Bank Reconcilation Listt"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '70%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="savedBRlist"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="5"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flexSearch">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-list>
+      <tr>
+        <td>{{ list?.reconciliationVoucherId }}</td>
+        <td>
+          {{ list?.reconciliationVoucherBankStDate | date : "dd/MM/yyyy" }}
+        </td>
+        <td>{{ list?.reconciliationVoucherBankBalance | number }}</td>
+        <td>{{ list?.reconciliationVoucherNarration }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedBqDetails(list?.reconciliationVoucherId);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

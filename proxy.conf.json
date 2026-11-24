@@ -1,0 +1,10 @@
+
+{
+  "/api/cr/DynamicReportCall": {
+    "target": "http://103.74.54.207:8104/api/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
+

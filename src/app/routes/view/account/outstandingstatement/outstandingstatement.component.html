@@ -1,0 +1,610 @@
+<!-- <div class='matero-page-header'>
+    <div class='matero-page-header-inner'>
+        <h2 class='matero-page-title'>{{title}} </h2>
+    </div>
+</div> -->
+<app-page-header [nav]="[
+    { label: 'account' | translate },
+    { label: 'Outstanding Statement' | translate }
+  ]" [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="Show" [disabled]="!Permission?.View" (click)="ApplyAllFilter()"
+      icon="fa fa-search" class="ui-button-success"></button>
+    <button pButton type="button" (click)="displayPrint()" label="Print"
+      [disabled]="!Permission?.Print || !(dataset && dataset.length > 0)" icon="fa fa-print"
+      class="ui-button-info"></button>
+    <button pButton type="button" (click)="Export2Excel()" label="Export as Excel" icon="fa fa-file-excel-o"
+      class="ui-button-info"></button>
+    <button pButton type="button" (click)="Export2Word()" label="Export as Word " icon="fa fa-file-word-o"
+      class="ui-button-info"></button>
+    <button pButton type="button" label="Close" icon="fa fa-trash" class="ui-button-danger"></button>
+    <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"
+      class="ui-button-danger"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Outstanding Statement' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3"></div>
+              <div class="p-col-12 p-md-9">
+                <p-radioButton [(ngModel)]="radioType" [style]="{ cursor: 'pointer' }" name="RadioType"
+                  value="Supplier">
+                </p-radioButton>
+                <label class="p-col-12 p-md-5" style="cursor: pointer">Supplier</label>
+                <span style="margin-left: 50px"></span><p-radioButton [(ngModel)]="radioType"
+                  [style]="{ cursor: 'pointer' }" name="RadioType" value="Customer">
+                </p-radioButton>
+                <label class="p-col-12 p-md-4" style="cursor: pointer">Customer</label>
+              </div>
+            </div>
+            <div *ngIf="radioType == 'Supplier'" class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ 'Supplier Name' | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-dropdown filter="true" [options]="suppliers" placeholder="supplier" [(ngModel)]="selectedSupplier"
+                  (click)="resetSuppliersSelection()"></p-dropdown>
+              </div>
+            </div>
+            <div *ngIf="radioType == 'Customer'" class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ 'Customer Name' | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-dropdown filter="true" [options]="customers" [(ngModel)]="selectedCustomer" placeholder="Customer"
+                  (click)="resetCustomerSelection()"></p-dropdown>
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3"></div>
+              <div class="p-col-12 p-md-5">
+                <button type="button" (click)="ApplyAllFilter()" pButton label="Show Statement" filter="true"
+                  style="width: 100%; background-color: blueviolet"></button>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-5">
+          <p-panel style="height: 130px">
+            <p-header>
+              <b style="color: rgb(179, 136, 219)">
+                Print With In Date The Range</b>
+              <!-- <input type="checkbox" [(ngModel)]="isDateRange"> -->
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-1"></div>
+              <div class="p-col-12 p-md-4" style="margin-top: 5px">
+                <p-radioButton label="As On" [(ngModel)]="radioTypee" [style]="{ cursor: 'pointer' }" name="radioTypee"
+                  value="AsOn">
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <p-radioButton label="Date Range" [(ngModel)]="radioTypee" [style]="{ cursor: 'pointer' }"
+                  name="radioTypee" value="DateRange">
+                </p-radioButton>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center" *ngIf="radioTypee === 'DateRange'">
+              <div class="p-col-12 p-md-2">
+                <label>{{ 'From' | translate }}</label>
+              </div>
+              <div class="p-col">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" [(ngModel)]="startDate"
+                  style="width: 100%"></p-calendar>
+              </div>
+              <div class="p-col-12 p-md-2">
+                <label>{{ 'To' | translate }}</label>
+              </div>
+              <div class="p-col">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" [(ngModel)]="endDate"
+                  style="width: 100%"></p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center" *ngIf="radioTypee === 'AsOn'">
+              <div class="p-col-12 p-md-2">
+                <label>{{ 'As On' | translate }}</label>
+              </div>
+              <div class="p-col">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" [(ngModel)]="selectedAsOnDate"
+                  style="width: 120px"></p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <p-panel>
+            <p-header>
+              <b style="color: rgb(179, 136, 219)">{{ 'Formats' | translate }}</b>
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-12">
+                <p-radioButton [(ngModel)]="formatType" value="FormatOne" name="formatType"
+                  (click)="changeFormatType('FormatOne')">
+                </p-radioButton>
+                <label class="p-col-12 p-md-4" for="account">{{ 'Format 1' | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-12">
+                <p-radioButton [(ngModel)]="formatType" value="FormatTwo" name="formatType"
+                  (click)="changeFormatType('FormatTwo')">
+                </p-radioButton>
+                <label for="account" class="p-col-12 p-md-4">{{ 'Format 2' | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-12">
+                <p-radioButton [(ngModel)]="formatType" value="FormatThree" name="formatType"
+                  (click)="changeFormatType('FormatThree')">
+                </p-radioButton>
+                <label for="account" class="p-col-12 p-md-4">{{ 'Format 3' | translate }}</label>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title statement-table-card">
+    <div class="table-wrapper">
+      <p-table #dt [value]="dataset" [columns]="cols" [paginator]="true" [rows]="15"
+        [rowsPerPageOptions]="[10, 15, 25, 50, 100]" [loading]="loading" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [globalFilterFields]="[
+          'accountsTransactionsVoucherNo',
+          'accountsTransactionsVoucherType',
+          'accountsTransactionsTransDateString',
+          'accountsTransactionsDescription',
+          'refNo',
+          'accountsTransactionsDebit',
+          'accountsTransactionsCredit',
+          'settled',
+          'accountsTransactionsAllocBalance',
+          'accountstransactionsRunningBalance',
+          'accountstransactionsTotalDays'
+        ]" styleClass="p-datatable-striped p-datatable-sm modern-statement-table" [responsive]="true">
+        <!-- Caption / Table Header Toolbar -->
+        <ng-template pTemplate="caption">
+          <div class="table-header-container">
+            <div class="header-left">
+              <span class="table-title">
+                <i class="pi pi-table"></i>
+                {{ 'Outstanding Statement' | translate }}
+              </span>
+              <span class="record-count-badge" *ngIf="dataset && dataset.length > 0">
+                {{ dataset.length }} {{ (dataset.length === 1 ? 'Record' : 'Records') | translate }}
+              </span>
+              <span class="record-count-badge badge-empty" *ngIf="!dataset || dataset.length === 0">
+                0 {{ 'Records' | translate }}
+              </span>
+            </div>
+            <div class="header-right">
+              <span class="p-input-icon-left search-wrapper">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                  placeholder="Search voucher, type, ref..." class="table-search-input" />
+              </span>
+              <button pButton type="button" icon="pi pi-filter-slash" label="Reset"
+                class="p-button-outlined p-button-secondary p-button-sm reset-btn" (click)="dt.reset()"></button>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Table Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="accountsTransactionsVoucherNo" class="th-voucher-no">
+              {{ 'Voucher No' | translate }} <p-sortIcon field="accountsTransactionsVoucherNo"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountsTransactionsVoucherType" class="th-voucher-type">
+              {{ 'Voucher Type' | translate }} <p-sortIcon field="accountsTransactionsVoucherType"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountsTransactionsTransDate" class="th-date text-center">
+              {{ 'Date' | translate }} <p-sortIcon field="accountsTransactionsTransDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountsTransactionsDescription" class="th-desc">
+              {{ 'Description' | translate }} <p-sortIcon field="accountsTransactionsDescription"></p-sortIcon>
+            </th>
+            <th pSortableColumn="refNo" class="th-ref text-center">
+              {{ 'Ref No' | translate }} <p-sortIcon field="refNo"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountsTransactionsDebit" class="th-debit text-right">
+              {{ 'Debit' | translate }} <p-sortIcon field="accountsTransactionsDebit"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountsTransactionsCredit" class="th-credit text-right">
+              {{ 'Credit' | translate }} <p-sortIcon field="accountsTransactionsCredit"></p-sortIcon>
+            </th>
+            <th pSortableColumn="settled" class="th-settled text-right">
+              {{ 'Settled' | translate }} <p-sortIcon field="settled"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountsTransactionsAllocBalance" class="th-balance text-right">
+              {{ 'Balance' | translate }} <p-sortIcon field="accountsTransactionsAllocBalance"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountstransactionsRunningBalance" class="th-running text-right">
+              {{ 'Running Bal' | translate }} <p-sortIcon field="accountstransactionsRunningBalance"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accountstransactionsTotalDays" class="th-days text-center">
+              {{ 'Days' | translate }} <p-sortIcon field="accountstransactionsTotalDays"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <!-- Table Body -->
+        <ng-template pTemplate="body" let-item>
+          <tr (dblclick)="onRowDoubleClick($event, item)" class="statement-row">
+            <!-- Voucher No -->
+            <td class="td-voucher-no">
+              <a class="voucher-link"
+                (click)="viewAction(item.accountsTransactionsVoucherType, item.accountsTransactionsVoucherNo)"
+                title="Click to view voucher">
+                <i class="pi pi-external-link"></i>
+                {{ item.accountsTransactionsVoucherNo }}
+              </a>
+            </td>
+
+            <!-- Voucher Type -->
+            <td class="td-voucher-type">
+              <span class="voucher-type-pill">
+                {{ item.accountsTransactionsVoucherType }}
+              </span>
+            </td>
+
+            <!-- Date -->
+            <td class="td-date text-center">
+              {{ (item.accountsTransactionsTransDate || item.accountsTransactionsTransDateString) | date: 'dd/MM/yyyy'
+              }}
+            </td>
+
+            <!-- Description -->
+            <td class="td-desc" [title]="item.accountsTransactionsDescription || ''">
+              {{ item.accountsTransactionsDescription || '-' }}
+            </td>
+
+            <!-- Ref No -->
+            <td class="td-ref text-center">
+              {{ item.refNo || '-' }}
+            </td>
+
+            <!-- Debit -->
+            <td class="td-debit text-right amount-cell">
+              <span *ngIf="item.accountsTransactionsDebit && item.accountsTransactionsDebit != 0">
+                {{ item.accountsTransactionsDebit | number: '1.2-2' }}
+              </span>
+              <span *ngIf="!item.accountsTransactionsDebit || item.accountsTransactionsDebit == 0" class="muted-dash">
+                -
+              </span>
+            </td>
+
+            <!-- Credit -->
+            <td class="td-credit text-right amount-cell">
+              <span *ngIf="item.accountsTransactionsCredit && item.accountsTransactionsCredit != 0">
+                {{ item.accountsTransactionsCredit | number: '1.2-2' }}
+              </span>
+              <span *ngIf="!item.accountsTransactionsCredit || item.accountsTransactionsCredit == 0" class="muted-dash">
+                -
+              </span>
+            </td>
+
+            <!-- Settled (COLOR CODED - Emerald/Green Badge) -->
+            <td class="td-settled text-right settled-cell">
+              <span class="badge-settled" *ngIf="item.settled && item.settled != 0">
+                {{ item.settled | number: '1.2-2' }}
+              </span>
+              <span class="badge-settled-zero" *ngIf="!item.settled || item.settled == 0">
+                0.00
+              </span>
+            </td>
+
+            <!-- Balance (COLOR CODED - Warm Amber / Coral Badge) -->
+            <td class="td-balance text-right balance-cell">
+              <span class="badge-balance" [ngClass]="{
+                  'badge-balance-high': (item.accountsTransactionsAllocBalance || 0) > 5000,
+                  'badge-balance-mid': (item.accountsTransactionsAllocBalance || 0) > 1000 && (item.accountsTransactionsAllocBalance || 0) <= 5000
+                }" *ngIf="item.accountsTransactionsAllocBalance && item.accountsTransactionsAllocBalance != 0">
+                {{ item.accountsTransactionsAllocBalance | number: '1.2-2' }}
+              </span>
+              <span class="badge-balance-zero"
+                *ngIf="!item.accountsTransactionsAllocBalance || item.accountsTransactionsAllocBalance == 0">
+                0.00
+              </span>
+            </td>
+
+            <!-- Running Balance -->
+            <td class="td-running text-right running-bal-cell">
+              <span [ngClass]="getRunningBalClass(item.accountstransactionsRunningBalance)">
+                {{ item.accountstransactionsRunningBalance | number: '1.2-2' }}
+              </span>
+            </td>
+
+            <!-- Overdue Days -->
+            <td class="td-days text-center days-cell">
+              <span class="badge-days" [ngClass]="getDaysBadgeClass(item.accountstransactionsTotalDays)">
+                {{ item.accountstransactionsTotalDays != null ? item.accountstransactionsTotalDays : '-' }}
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Table Footer Totals Row -->
+        <ng-template pTemplate="footer">
+          <tr class="table-footer-row" *ngIf="dataset && dataset.length > 0">
+            <td colspan="5" class="total-label-cell">
+              <i class="pi pi-calculator mr-1"></i> {{ 'Total' | translate }}
+            </td>
+            <td class="text-right total-amount-cell">
+              {{ totalDebit | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-amount-cell">
+              {{ totalCredit | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-settled-cell">
+              <span class="badge-settled total-badge">
+                {{ totalSettled | number: '1.2-2' }}
+              </span>
+            </td>
+            <td class="text-right total-balance-cell">
+              <span class="badge-balance total-badge">
+                {{ totalAllocBalance | number: '1.2-2' }}
+              </span>
+            </td>
+            <td class="text-right total-running-cell">
+              {{ finalRunningBalance | number: '1.2-2' }}
+            </td>
+            <td class="text-center total-days-cell">
+              -
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="11" class="empty-table-cell">
+              <div class="empty-state-wrapper">
+                <div class="empty-icon-circle">
+                  <i class="pi pi-folder-open"></i>
+                </div>
+                <h4 class="empty-title">No Transactions Found</h4>
+                <p class="empty-desc">
+                  Select Customer/Supplier criteria above and click <strong>"Show Statement"</strong> to fetch
+                  outstanding statement entries.
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <!-- Modern Ageing Breakdown Cards -->
+  <div class="aging-cards-section">
+    <div class="aging-header">
+      <span class="aging-title"><i class="pi pi-chart-bar"></i> {{ 'Ageing Summary' | translate }}</span>
+      <span class="aging-subtitle">{{ 'Outstanding Bal' | translate }}</span>
+    </div>
+    <div class="aging-cards-grid">
+      <!-- 0 - 30 Days -->
+      <div class="aging-card card-0-30">
+        <div class="card-top">
+          <span class="card-label">{{ '0 - 30 Days' | translate }}</span>
+          <span class="card-badge badge-normal">{{ 'Current' | translate }}</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (ZeroToThirty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ 'Up to 1 month' | translate }}</div>
+      </div>
+
+      <!-- 31 - 60 Days -->
+      <div class="aging-card card-31-60">
+        <div class="card-top">
+          <span class="card-label">{{ '31 - 60 Days' | translate }}</span>
+          <span class="card-badge badge-attention">1-2 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (ThirtyOneToSixty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '1 to 2 months' | translate }}</div>
+      </div>
+
+      <!-- 61 - 90 Days -->
+      <div class="aging-card card-61-90">
+        <div class="card-top">
+          <span class="card-label">{{ '61 - 90 Days' | translate }}</span>
+          <span class="card-badge badge-warning">2-3 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (SixtyOneToNinety || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '2 to 3 months' | translate }}</div>
+      </div>
+
+      <!-- 91 - 180 Days -->
+      <div class="aging-card card-91-180">
+        <div class="card-top">
+          <span class="card-label">{{ '91 - 180 Days' | translate }}</span>
+          <span class="card-badge badge-alert">3-6 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (NinetyOneToOneEighty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '3 to 6 months' | translate }}</div>
+      </div>
+
+      <!-- 181 - 360 Days -->
+      <div class="aging-card card-181-360">
+        <div class="card-top">
+          <span class="card-label">{{ '181 - 360 Days' | translate }}</span>
+          <span class="card-badge badge-danger">6-12 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (OneEightyToThreeSixty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '6 months to 1 year' | translate }}</div>
+      </div>
+
+      <!-- Over 360 Days -->
+      <div class="aging-card card-over-360">
+        <div class="card-top">
+          <span class="card-label">{{ '> 360 Days' | translate }}</span>
+          <span class="card-badge badge-critical">{{ 'Critical' | translate }}</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (aboveThreeSixty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ 'Over 1 year overdue' | translate }}</div>
+      </div>
+    </div>
+  </div>
+  <br /><br />
+</div>
+
+<p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button pButton type="button" class="ui-button-primary" label="Print" (click)="printAsPDF()"
+    icon="fa fa-print"></button>
+  <div id="print">
+    <div class="print">
+      <div class="flex">
+        <div class="contain1">
+          <div class="center">
+            <!-- <img src="../../../../../assets/Images/logo-2.png" alt=""> -->
+            <img *ngIf="stationmasterObj?.logotype != 'Rectangular'" class="squreImg" [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              " />
+            <img *ngIf="stationmasterObj?.logotype == 'Rectangular'" class="rectImg" [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              " />
+          </div>
+        </div>
+
+        <div class="contain2">
+          <h2 class="namefont">
+            {{ stationmasterObj?.stationMasterStationName }}
+          </h2>
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Address" | translate }}</b>
+              <b class="spac1">{{ "Tel" | translate }} </b>
+              <b>{{ "Fax" | translate }} </b>
+              <b>{{ "Email" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div class="spac1">&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ stationmasterObj?.stationMasterAddress }}</div>
+              <div class="spac1">
+                {{ stationmasterObj?.stationMasterTele1 }}
+              </div>
+              <div>{{ stationmasterObj?.stationMasterFax }}</div>
+              <div>{{ stationmasterObj?.stationMasterEmail }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3 class="ab">Outstanding Details</h3>
+      <!-- <h3 class="ab">{{currentDate | date:'dd/MM/yyyy'}}</h3> -->
+      <div class="second">
+        <div class="row">
+          <h4 class="ad">
+            As on date :{{ selectedAsOnDate | date : "dd/MM/yyyy" }}
+          </h4>
+          <!-- <h4 class="ae">As on date. :   </h4> -->
+        </div>
+
+        <!-- <div style="display: flex;">
+                    <h4 class="ad">Acc. No :  
+                    </h4>
+                </div> -->
+      </div>
+      <table class="customers1">
+        <tr>
+          <th>Trans Date</th>
+          <th>Voucher No</th>
+          <th>Customer</th>
+          <th>Ref No</th>
+          <th>Amount</th>
+          <th>Settled</th>
+          <th>Balance</th>
+          <th>Running Bal</th>
+        </tr>
+        <tr *ngFor="let item of dataset">
+          <td>{{ item?.accountsTransactionsTransDateString }}</td>
+          <td>{{ item?.accountsTransactionsVoucherNo }}</td>
+          <td>{{ item?.accountsTransactionsAccName }}</td>
+          <td>{{ item?.refNo }}</td>
+          <td>
+            {{
+            ((item?.settled != null ? item?.settled : (item?.accountsTransactionsAllocDebit ||
+            item?.accountsTransactionsAllocCredit || 0)) +
+            (item?.accountsTransactionsAllocBalance || 0)) | number : "1.2-2"
+            }}
+          </td>
+          <td>{{ (item?.settled != null ? item?.settled : (item?.accountsTransactionsAllocDebit ||
+            item?.accountsTransactionsAllocCredit || 0)) | number : "1.2-2" }}</td>
+          <td>
+            {{ item?.accountsTransactionsAllocBalance | number : "1.2-2" }}
+          </td>
+          <td>
+            {{ item?.accountstransactionsRunningBalance | number : "1.2-2" }}
+          </td>
+        </tr>
+      </table>
+      <!-- <p>A E D</p> -->
+
+      <br /><br />
+      <table class="customers">
+        <tr>
+          <th style="background-color: green; text-align: center; color: white" colspan="6">
+            Ageing Details
+          </th>
+        </tr>
+        <tr>
+          <th>0-31</th>
+          <th>31-60</th>
+          <th>61-90</th>
+          <th>91-180</th>
+          <th>181-360</th>
+          <th>360</th>
+        </tr>
+        <tr>
+          <td>
+            {{ listResponse?.zeroToThirty }}
+          </td>
+          <td>
+            {{ listResponse?.thirtyOneToSixty }}
+          </td>
+          <td>
+            {{ listResponse?.sixtyOneToNinety }}
+          </td>
+          <td>
+            {{ listResponse?.ninetyOneToOneEighty }}
+          </td>
+          <td>
+            {{ listResponse?.oneEightyToThreeSixty }}
+          </td>
+          <td>
+            {{ listResponse?.aboveThreeSixty }}
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <!-- </div> -->
+</p-dialog>

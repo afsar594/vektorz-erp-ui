@@ -1,0 +1,193 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="fa fa-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="edit()"
+      [disabled]="!btnFlag?.edit || !Permission?.Edit"
+      label="Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="submitFinshedProduct()"
+      [label]="btnFlag?.save ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add || btnFlag?.new"
+      label="Save"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      class="ui-button-info"
+    ></button>
+    <!-- <button pButton type="button" [disabled]='!btnFlag?.cancel' label="Cancel" class="ui-button-danger" icon="fa fa-ban"></button> -->
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search" class="ui-button-warning"></button> -->
+    <!-- <button pButton type="button" label="Print" icon="fa fa-print" class="ui-button-success"></button> -->
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag?.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-close"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="FPEForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Finished Product Entry' | translate">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Voucher No:" | translate }}</b>
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <input
+                pInputText
+                style="width: 100%"
+                formControlName="VoucherNo"
+              />
+              <div
+                class="error"
+                *ngIf="f.VoucherNo.touched && f.VoucherNo.invalid"
+              >
+                Voucher No is Invalid Entry
+              </div>
+            </div>
+
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ " Voucher Date:" | translate }}</b>
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                formControlName="Date"
+                style="width: 100%"
+                [showIcon]="true"
+              >
+              </p-calendar>
+              <div class="error" *ngIf="f.Date.touched && f.Date.invalid">
+                Date Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Location:" | translate }}</b>
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="Location"
+                [options]="locationList"
+                [filter]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.Location.touched && f.Location.invalid"
+              >
+                Location Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Narration:" | translate }}</b>
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <textarea
+                style="min-height: 60px; width: 100%; margin-top: 5px"
+                formControlName="Narration"
+                pInputTextarea
+              ></textarea>
+              <div
+                class="error"
+                *ngIf="f.Narration.touched && f.Narration.invalid"
+              >
+                Narration Invalid Entry
+              </div>
+            </div>
+          </div>
+          <!-- <div class="p-grid">
+                        <label class="p-col-1 p-md-1 p-lg-1 " for="account">
+                            <b>{{'Narration:' | translate}}</b>
+                        </label>
+                        <div class="p-col-5 p-md-5 p-lg-5">
+                            <textarea style="min-height:60px;width:100%;margin-top:5px;" formControlName="Narration"
+                                pInputTextarea></textarea>
+                            <div class="error" *ngIf="f.Narration.touched && f.Narration.invalid"> Narration Invalid
+                                Entry
+                            </div>
+                        </div>
+                    </div> -->
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Finished Product Entry' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="Productentry"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+
+<app-lookup
+  [header]="'Look Up'"
+  [dataArry]="dataList"
+  [selectedItem]="selectItem"
+  [columns]="lookupGridColumns"
+  (selectItemEvent)="selectsales($event)"
+  (exitEvent)="exit($event)"
+  [cell]="activeRow"
+  (clearEvent)="clear($event)"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'"
+  [(show)]="showSalesLookUp"
+></app-lookup>
+
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>
+
+<!-- <p-toast></p-toast> -->
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

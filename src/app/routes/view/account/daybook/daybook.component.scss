@@ -1,0 +1,80 @@
+* {
+  margin: 0%;
+  padding: 0%;
+}
+
+.day {
+  // height: 255px;
+  width: 80%;
+  margin: auto;
+  font-family: italic !important;
+  border-radius: 15px;
+}
+
+.flex{
+  display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+.book {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 80.5%;
+  margin-left: 10%;
+  // margin-top: 10vh;
+}
+
+.book td,
+.book th {
+  border: 1px solid #a1a3a5;
+  padding: 8px;
+}
+
+.book tr:nth-child(even) {
+  background-color: rgb(175, 224, 204);
+}
+
+.book tr:hover {
+  background-color: rgb(199, 216, 209);
+  font-family: italic !important;
+}
+
+.book th {
+  font-family: italic !important;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: rgb(89, 224, 168);
+  color: black;
+
+}
+
+.abs {
+  text-align: right;
+}
+.signature-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.customer-signature {
+  order: 1;
+  /* Specifies the order of the flex items */
+}
+
+.authorized-signature {
+  order: 2;
+  /* Specifies the order of the flex items */
+}
+.page-footer {
+  position: running(footer);
+  border: none;
+  bottom: 0;
+  width: 80.5%;
+  margin-left: 10%;
+   visibility: hidden;
+   padding-top: 30px;
+}

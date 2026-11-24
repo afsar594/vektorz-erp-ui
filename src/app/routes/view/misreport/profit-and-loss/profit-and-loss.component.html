@@ -1,0 +1,673 @@
+<!-- <app-page-header
+    [title]='title| translate'></app-page-header> -->
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Profit and Loss' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="ApplyFilter()"
+      label="Show"
+      [disabled]="!Permission?.View && isShow"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="displayPrint()"
+      label="Print"
+      icon="fa fa-print"
+      [disabled]="!Permission?.Print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="GetGridListDataPrintSummary(null)"
+      label="Print Summary"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-light fa-print"
+      class="ui-button-primery"
+    ></button>
+    <!-- <button pButton type="button" (click)="GetGridListDataPrintSimple(null)" label="Print Simple" icon="fa fa-print" [disabled]="!Permission?.Print" -->
+    <!-- class="ui-button-success"></button> -->
+    <button
+      pButton
+      type="button"
+      (click)="GetGridListDataMonthly(null)"
+      label="Month Wise"
+      icon="fa fa-calendar"
+      [disabled]="!Permission?.Print"
+      class="ui-button-primery"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Clear"
+      (click)="Clear()"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Export"
+      icon="fa fa-file"
+      class="ui-button-success"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="printSimpleReport()"
+      label="Print Simple"
+      icon="fa fa-calendar"
+      [disabled]="!Permission?.Print"
+      class="ui-button-primery"
+    ></button>
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Profit And Loss' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header>
+              <input [(ngModel)]="isDate" type="checkbox" pInputCheck />
+              {{ "By Date" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ "Date From" | translate }}</label>
+              </div>
+              <div class="p-col-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [disabled]="!isDate"
+                  [(ngModel)]="startDate"
+                  id="dateFrom"
+                  useUtc
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ "Date To" | translate }}</label>
+              </div>
+              <div class="p-col-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [disabled]="!isDate"
+                  [(ngModel)]="endDate"
+                  id="dateTo"
+                  useUtc
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-4">
+                <p-radioButton
+                  name="dateType"
+                  label="Date"
+                  inputId="date"
+                  value="dateRange"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-radioButton
+                  name="dateType"
+                  label="Month"
+                  inputId="month"
+                  value="dateRange"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-radioButton
+                  name="dateType"
+                  inputId="year"
+                  label="Year"
+                  value="dateRange"
+                >
+                </p-radioButton>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-8">
+          <p-panel>
+            <p-header>
+              {{ "Filters" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-2">
+                <label style="color: rgb(236, 54, 54)"
+                  ><strong>{{ "Location" | translate }}</strong></label
+                >
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-dropdown
+                  filter="true"
+                  [options]="locationList"
+                  placeholder="--- Select Location ---"
+                  optionLabel="locationMasterLocationName"
+                  [showClear]="true"
+                >
+                </p-dropdown>
+              </div>
+              <!-- </div>
+                            <div class="p-grid p-ai-center"> -->
+              <div class="p-col-12 p-md-2">
+                <label style="color: rgb(236, 54, 54)"
+                  ><strong>{{ "Cost center" | translate }}</strong></label
+                >
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-dropdown
+                  filter="true"
+                  [options]="costCenterList"
+                  placeholder="--- Select Cost Center ---"
+                  optionLabel="costCenterMasterCostCenterName"
+                  [showClear]="true"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-6">
+                <p-checkbox label="Months"></p-checkbox>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <p-checkbox label="Full Year"></p-checkbox>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-6">
+                <p-checkbox label="Hide Zero Balance"></p-checkbox>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <p-checkbox label="Print Group Wise"></p-checkbox>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+    <div class="card card-w-title">
+      <div id="example1" class="hot"></div>
+      <!-- <div class="grid">
+            <div class="p-col-12">
+                <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="profitAndLoss">
+                </hot-table>
+            </div>
+        </div> -->
+    </div>
+  </p-tabView>
+</div>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreviewMW"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div
+    id="printMonth"
+    style="font-family: italic !important; justify-content: center"
+  >
+    <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+    <h2>Address: {{ stationmasterObj?.stationMasterAddress }}</h2>
+    <h3>Profit And Loss Months Summary</h3>
+    <h4>{{ currentDate | date : "dd/MM/yyyy" }}</h4>
+    <div class="child">
+      <table class="MPL">
+        <tr>
+          <th class="sim"></th>
+          <!-- <th *ngFor="let item of incomes">{{item}}</th> -->
+          <th>Acc No</th>
+          <th>Account Name</th>
+          <th>jan</th>
+          <th>feb</th>
+          <th>mar</th>
+          <th>april</th>
+          <th>May</th>
+          <th>Jun</th>
+          <th>Jul</th>
+          <th>Aug</th>
+          <th>Sep</th>
+          <th>Oct</th>
+          <th>Nov</th>
+          <th>dec</th>
+          <th>Total</th>
+        </tr>
+        <tr *ngFor="let item of incomes">
+          <td class="inc">Income</td>
+          <td *ngIf="item?.accName != 'Total Expense'">{{ item?.accName }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'" colspan="2">
+            {{ item?.accName }}
+          </td>
+          <td *ngIf="item?.accName != 'Total Expense'">{{ item?.accNo }}</td>
+          <td>{{ item?.jan }}</td>
+          <td>{{ item?.feb }}</td>
+          <td>{{ item?.march }}</td>
+          <td>{{ item?.april }}</td>
+          <td>{{ item?.may }}</td>
+          <td>{{ item?.june }}</td>
+          <td>{{ item?.july }}</td>
+          <td>{{ item?.aug }}</td>
+          <td>{{ item?.sept }}</td>
+          <td>{{ item?.oct }}</td>
+          <td>{{ item?.nov }}</td>
+          <td>{{ item?.dec }}</td>
+          <td>{{ item?.total }}</td>
+        </tr>
+        <tr *ngFor="let item of Expenses">
+          <td class="exp">Expenses</td>
+          <td *ngIf="item?.accName != 'Total Expense'">{{ item?.accName }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'" colspan="2">
+            {{ item?.accName }}
+          </td>
+          <td *ngIf="item?.accName != 'Total Expense'">{{ item?.accNo }}</td>
+          <td>{{ item?.jan }}</td>
+          <td>{{ item?.feb }}</td>
+          <td>{{ item?.march }}</td>
+          <td>{{ item?.april }}</td>
+          <td>{{ item?.may }}</td>
+          <td>{{ item?.june }}</td>
+          <td>{{ item?.july }}</td>
+          <td>{{ item?.aug }}</td>
+          <td>{{ item?.sept }}</td>
+          <td>{{ item?.oct }}</td>
+          <td>{{ item?.nov }}</td>
+          <td>{{ item?.dec }}</td>
+          <td>{{ item?.total }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="child">
+      <table class="PLM">
+        <tr>
+          <th class="sim"></th>
+          <th>jan</th>
+          <th>feb</th>
+          <th>march</th>
+          <th>april</th>
+          <th>May</th>
+          <th>Jun</th>
+          <th>Jul</th>
+          <th>Aug</th>
+          <th>Sep</th>
+          <th>Oct</th>
+          <th>Nov</th>
+          <th>dec</th>
+          <th>Total</th>
+        </tr>
+        <tr *ngFor="let item of dataset1">
+          <td class="inc" *ngIf="item?.accName == 'Total Expense'">Income</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.jan }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.feb }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.march }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.april }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.may }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.june }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.july }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.aug }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.sept }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.oct }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.nov }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.dec }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.total }}</td>
+        </tr>
+        <tr *ngFor="let item of dataset1">
+          <td class="exp" *ngIf="item?.accName == 'Total Expense'">Expenses</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.jan }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.feb }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.march }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.april }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.may }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.june }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.july }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.aug }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.sept }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.oct }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.nov }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.dec }}</td>
+          <td *ngIf="item?.accName == 'Total Expense'">{{ item?.total }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="dispalyMonthpreviewsummary"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div
+    id="printsummary"
+    style="font-family: italic !important; justify-content: center"
+  >
+    <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+    <h2>Address: {{ stationmasterObj?.stationMasterAddress }}</h2>
+    <h3>Profit And Loss Summary</h3>
+    <h4>{{ currentDate | date : "dd/MM/yyyy" }}</h4>
+    <div>
+      <table>
+        <tr>
+          <th class="aa">Particulars</th>
+          <th class="bb">Debit</th>
+          <th class="cc">Credit</th>
+          <th class="dd">Balance</th>
+        </tr>
+        <tr>
+          <th class="aac" colspan="4">Income</th>
+        </tr>
+
+        <tr *ngFor="let item1 of summary?.incomes">
+          <!-- <td> Incom</td> -->
+          <td>{{ item1?.accName }}</td>
+
+          <td>{{ item1?.credit }}</td>
+          <td>{{ item1?.debit }}</td>
+          <td>{{ item1?.runningBalance }}</td>
+          <!-- <td>{{item1?.debit}}</td> -->
+        </tr>
+        <tr>
+          <th class="aad" colspan="4">Expenses</th>
+        </tr>
+        <tr *ngFor="let item1 of summary?.expenses">
+          <!-- <td> Incom</td> -->
+          <td>{{ item1?.accName }}</td>
+
+          <td>{{ item1?.credit }}</td>
+          <td>{{ item1?.debit }}</td>
+          <td>{{ item1?.runningBalance }}</td>
+          <!-- <td>{{item1?.debit}}</td> -->
+        </tr>
+        <!-- <tbody>
+                    <tr class="bbf">
+                        <td colspan="4"> Total</td>
+                    </tr>
+                </tbody>
+                <tbody *ngFor="let item of Total">
+                    <tr *ngFor="let item3 of item?.__children">
+                        <td> Total</td>
+                        <td>{{item3?.amount}}</td>
+                        <td>{{item3?.credit}}</td>
+                        <td>{{item3?.debit}}</td>
+                    </tr>
+                </tbody> -->
+      </table>
+    </div>
+    <div class="total">
+      <p class="income">Total Income: {{ summary?.totalIncome }}</p>
+      <p class="expanse">Total Expanse: {{ summary?.totalExpense }}</p>
+    </div>
+    <div class="net">NetLoss : {{ summary?.netLoss }}</div>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+
+  <div id="print" style="font-family: italic !important">
+    <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+    <h2>Addrss: {{ stationmasterObj?.stationMasterAddress }}</h2>
+    <h3>Profit And Loss Summary</h3>
+    <h4>{{ currentDate | date : "dd/MM/yyyy" }}</h4>
+    <div>
+      <table>
+        <tr>
+          <th class="aa" colspan="2">Particulars</th>
+          <th class="bb">Debit</th>
+          <th class="cc">Credit</th>
+          <th class="dd">Balance</th>
+        </tr>
+        <tr>
+          <th class="aac" colspan="5">Income</th>
+        </tr>
+
+        <tr *ngFor="let item1 of incomes">
+          <td>{{ item1.head }}</td>
+          <td>{{ item1?.accName }}</td>
+
+          <td>{{ item1?.debit }}</td>
+          <td>{{ item1?.credit }}</td>
+          <td>{{ item1?.credit - item1?.debit }}</td>
+          <!-- <td>{{item1?.debit}}</td> -->
+        </tr>
+
+        <tr>
+          <th class="aad" colspan="5">Expenses</th>
+        </tr>
+
+        <tr *ngFor="let item2 of Expenses">
+          <td>{{ item2.head }}</td>
+          <td>{{ item2?.accName }}</td>
+          <td>{{ item2?.debit }}</td>
+          <td>{{ item2?.credit }}</td>
+          <td>{{ item2?.credit - item2?.debit }}</td>
+        </tr>
+
+        <tbody>
+          <tr class="bbf">
+            <td colspan="5">Total</td>
+          </tr>
+        </tbody>
+
+        <tr>
+          <td>Total</td>
+          <td></td>
+          <td>{{ Total?.totalSalesDebit }}</td>
+          <td>{{ Total?.totalSalesCredit }}</td>
+          <td>{{ Total?.totalSalesCredit - Total?.totalSalesDebit }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="total">
+      <p class="income">Total Income: {{ totalincome }}</p>
+
+      <p class="expanse">Total Expanse: {{ totalexpense }}</p>
+    </div>
+    <div class="net">NetLoss : {{ netLoss }}</div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="dispalyMonthpreviewsimple"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div
+    id="printsimple"
+    style="font-family: italic !important; justify-content: center"
+  >
+    <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+    <h2>{{ stationmasterObj?.stationMasterAddress }}</h2>
+    <h2>{{ stationmasterObj?.stationMasterEmail }}</h2>
+    <h3>Profit And Loss Summary</h3>
+    <h4>{{ currentDate | date : "dd/MM/yyyy" }}</h4>
+    <!-- <table class="profit">
+            <tr>
+                <th>Particulars</th>
+                <th>(AED)</th>
+            </tr>
+            <tr>
+                <td rowspan="8">
+                    <p>Sales</p>
+                    <p>Less:Cost Of Production</p>
+                    <p class="gross">Gross Profit</p>
+                    <p>Add:Other Income</p>
+                    <p>Less:General & Admin Exp.</p>
+                    <p class="opera">Profit From Operations</p>
+                    <p>Less: Bank & Finance Charges</p>
+                    <p class="net">Net Profit/Loss</p>
+
+                </td>
+                <td rowspan="8">
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="total1">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="total2">0.00</p>
+                </td>
+            </tr>
+        </table> -->
+    <table class="profit">
+      <tr>
+        <td colspan="5" style="text-align: center">Income</td>
+      </tr>
+      <tr>
+        <th class="aa" colspan="2">Particulars</th>
+        <th class="bb">Debit</th>
+        <th class="cc">Credit</th>
+        <th class="dd">Balance</th>
+      </tr>
+
+      <tr *ngFor="let item of simple?.incomes">
+        <td colspan="2">{{ item.accName }}</td>
+        <td>{{ item.debit }}</td>
+        <td>{{ item.credit }}</td>
+        <td>{{ item.amount }}</td>
+        <!-- <td rowspan="8">
+                    <p>Sales</p>
+                    <p>Less:Cost Of Production</p>
+                    <p class="gross">Gross Profit</p>
+                    <p>Add:Other Income</p>
+                    <p>Less:General & Admin Exp.</p>
+                    <p class="opera">Profit From Operations</p>
+                    <p>Less: Bank & Finance Charges</p>
+                    <p class="net">Net Profit/Loss</p>
+
+                </td>
+                <td rowspan="8">
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="total1">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="ae">0.00</p>
+                    <p class="total2">0.00</p>
+                </td> -->
+      </tr>
+      <tr>
+        <td colspan="2">Total</td>
+        <td></td>
+        <td>{{ totalincomedebit }}</td>
+
+        <td>{{ totalincomecredit }}</td>
+        <td>{{ totalincomecredit - totalincomedebit }}</td>
+        <!-- <td>{{}}</td> -->
+      </tr>
+      <tr>
+        <td colspan="4" style="text-align: center">Expences</td>
+      </tr>
+      <tr *ngFor="let item of simple?.expenses">
+        <!-- <td class="aa" colspan="2">{{item}}</td> -->
+        <td class="aa" colspan="2">{{ item.accName }}</td>
+        <td class="bb">{{ item.debit }}</td>
+        <td class="cc">{{ item.credit }}</td>
+        <td class="dd">{{ item.amount }}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Total</td>
+        <td></td>
+        <td>{{ totalexpensedebit }}</td>
+        <td>{{ totalexpensecredit }}</td>
+        <td>{{ totalexpensecredit - totalexpensedebit }}</td>
+        <!-- <td>{{}}</td> -->
+      </tr>
+    </table>
+  </div>
+</p-dialog>

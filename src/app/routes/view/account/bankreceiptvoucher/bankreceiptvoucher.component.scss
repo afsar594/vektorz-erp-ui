@@ -1,0 +1,236 @@
+
+table.border-table {
+
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+}
+
+
+.inputGroup {
+    margin: 4px 0;
+}
+
+.w-100{
+    width: 100%;
+}
+.p-0{
+    padding: 0;
+}
+.grid {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.f-r {
+    float: right;
+}
+
+.min-panel {
+    min-height: 106px !important;
+}
+
+:host ::ng-deep .ui-table .ui-table-thead > tr > th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: -8px;
+    box-shadow: 1px 3px 6px 0 rgba(32,33,36,0.10);
+}
+
+@media screen and (max-width: 64em) {
+    :host ::ng-deep .ui-table .ui-table-thead > tr > th {
+        top: -8px;
+    }
+}
+.contain1 {
+    border: 2.5px solid rgb(201, 204, 204);
+    width: 91%;
+    margin-bottom: 5px;
+    border-radius: 1px;
+    margin-top: 5px;
+    padding: 16px;
+    box-shadow: 5px 5px rgb(201, 204, 204);
+  }
+   
+  .flex {
+    display: flex;
+    gap: 2px;
+    /* Adjusted the gap value here */
+    padding-left: 13%;
+    margin-top: -42px;
+    margin-bottom: 5px;
+   }
+  .flex1 {
+    display: flex;
+    gap: 2px;
+    /* Adjusted the gap value here */
+    padding-left: 13%;
+    padding-top:  2px;
+    margin-bottom: 5px;
+  }
+  .payment1 {
+    width: 45%;
+    margin-bottom: 5px;
+    border-radius: 1px;
+    margin-top: 15px;
+    padding-bottom: 30px;
+    padding: 8px;
+  }
+  
+  .payment2 {
+    width: 45%;
+    margin-bottom: 33px;
+    border-radius: 1px;
+    margin-top: 2px;
+    padding-bottom: 30px;
+    padding-left: 255px;
+    margin-left: 10px;
+}
+  .center{
+    text-align: center;
+  }
+  #customers {
+    // font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+  }
+  
+  #customers td,
+  #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    // text-align: center;
+  }
+  
+  #customers tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  #customers tr:hover {
+    background-color: #ddd;
+  }
+  
+  #customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #bcc0bf;
+    color: rgb(0, 0, 0);
+    text-align: left;
+  }
+  
+  .table {
+    border: 1px solid rgb(201, 204, 204);
+    border-radius: 2px;
+    margin-top: 2px;
+    margin-left: 13%;
+    width: 79.5%;
+  
+  
+  }
+  
+  .row {
+    display: flex;
+    flex-direction: row;
+    gap: 120px;
+    margin-left: 5px;
+    align-items: center;
+    /* Adjust alignment as needed */
+  }
+  
+  
+  .signature-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+  }
+  
+  .customer-signature {
+    order: 1;
+    /* Specifies the order of the flex items */
+  }
+  
+  .authorized-signature {
+    order: 2;
+    /* Specifies the order of the flex items */
+  }
+  
+  .page-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    visibility: hidden;
+    border-top: 1px solid black;
+  }
+  
+  .alignEnd {
+    align-items: end;
+  }
+  
+  .page {
+    page-break-after: always;
+  }
+  
+  @page {
+    margin: 20mm
+  }
+  
+  @media print {
+    thead {
+      display: table-header-group;
+    }
+  
+    tfoot {
+      display: table-footer-group;
+    }
+  
+    button {
+      display: none;
+    }
+  
+    body {
+      margin: 0;
+    }
+  
+  }
+  .print {
+          
+    margin: auto !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .voucher {
+    display: flex;
+    align-items: center;
+  }
+  
+  .voucher b {
+    margin-right: 5px; /* Adjust as needed */
+  }
+  .date {
+    display: flex;
+    align-items: center; 
+    padding-right: 18%;
+  }
+  
+  .date b {
+    margin-right: -24px; /* Adjust as needed */
+  }
+  .inflex{
+     display: flex; 
+      justify-content: space-between; 
+      margin-bottom: 3px; 
+  }
+  .space{
+    margin-left: 3px;
+    margin-right: 63px;  }
+  .space1{
+    margin-left: 57px;
+    margin-right: 61px;
+}
+.main1{
+    margin-left: 13%;
+}
+  
+  

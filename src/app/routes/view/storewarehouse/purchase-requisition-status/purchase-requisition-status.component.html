@@ -1,0 +1,170 @@
+<p-toolbar>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      (click)="show()"
+      label="Show"
+      icon="pi pi-search"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-success"
+      [disabled]="!(selectedCustomers.length > 0)"
+      (click)="export()"
+      label="Export"
+      icon="fa fa-download"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear"
+      icon="fa fa-ban"
+      (click)="clearfilter()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="close()"
+      label="Close"
+      icon="pi pi-close"
+    ></button>
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title" [formGroup]="purchaseRequisatonStatus">
+  <!-- <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Purchase Requisition Status'| translate"> -->
+  <div class="p-grid">
+    <div class="p-col-6">
+      <div class="p-grid">
+        <label class="p-col-12 p-md-12 p-lg-3">{{ "Job" | translate }}</label>
+        <div class="p-col-12 p-md-12 p-lg-9">
+          <p-dropdown
+            filter="true"
+            [options]="jobList"
+            formControlName="jobId"
+            placeholder="Select Job"
+            optionLabel=""
+            [showClear]="true"
+          ></p-dropdown>
+        </div>
+        <label *ngIf="showloc" class="p-col-12 p-md-12 p-lg-3">{{
+          "Location" | translate
+        }}</label>
+        <div *ngIf="showloc" class="p-col-12 p-md-12 p-lg-9">
+          <p-dropdown
+            filter="true"
+            [options]="locationList"
+            formControlName="locationId"
+            placeholder="Select Locaton"
+            optionLabel=""
+            [showClear]="true"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-6">
+      <p-panel>
+        <p-header>
+          <p-checkbox
+            formControlName="isDate"
+            [binary]="true"
+            label="ByDate"
+          ></p-checkbox>
+        </p-header>
+        <div class="p-grid">
+          <label class="p-col-12 p-md-12 p-lg-1">{{
+            "From" | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-11">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              showIcon="true"
+              formControlName="DateFrom"
+              class="w-200"
+              [disabled]="!purchaseRequisatonStatus.get('isDate').value"
+            >
+            </p-calendar>
+          </div>
+        </div>
+        <div class="p-grid">
+          <label class="p-col-12 p-md-12 p-lg-1">{{ "To" | translate }}</label>
+          <div class="p-col-12 p-md-12 p-lg-11">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              showIcon="true"
+              formControlName="DateTO"
+              class="w-200"
+              [disabled]="!purchaseRequisatonStatus.get('isDate').value"
+            >
+            </p-calendar>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+  <div class="p-sm-12 p-md-12 p-lg-12">
+    <p-table
+      #dt
+      [value]="purchaseRequisitionarry"
+      [(selection)]="selectedCustomers"
+      dataKey="id"
+      styleClass="ui-table-customers"
+      [rowHover]="true"
+      [rows]="5"
+      [paginator]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-customer>
+        <tr class="ui-selectable-row" (click)="toggleSelection(customer)">
+          <td [ngClass]="'text-center'">
+            <input
+              type="checkbox"
+              class="check"
+              [checked]="isSelected(customer)"
+            />
+          </td>
+          <!-- <td>{{customer?.part_No}}</td> -->
+          <td>{{ customer?.srNo }}</td>
+          <td>{{ customer?.date | date : "dd/MM/yyyy" }}</td>
+          <td>{{ customer?.supplierName }}</td>
+          <td>{{ customer?.item_Name }}</td>
+          <td>{{ customer?.jobname }}</td>
+          <td>{{ customer?.unit }}</td>
+          <td [ngClass]="'text-right'">{{ customer?.srq?.toFixed(2) }}</td>
+          <td [ngClass]="'text-right'">{{ customer?.delQty?.toFixed(2) }}</td>
+          <td [ngClass]="'text-right'">{{ customer?.balQty?.toFixed(2) }}</td>
+          <td [ngClass]="'text-right'">{{ customer?.stock?.toFixed(2) }}</td>
+          <td>{{ customer?.customerQuotationDetailsRemarks }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- </p-tabPanel>
+    </p-tabView> -->
+</div>

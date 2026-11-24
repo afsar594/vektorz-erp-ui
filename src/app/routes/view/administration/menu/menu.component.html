@@ -1,0 +1,147 @@
+<app-page-header [title]="title | translate"></app-page-header>
+
+<button
+  pButton
+  type="button"
+  label="Save"
+  icon="pi pi-plus"
+  (click)="Save()"
+></button>
+<button
+  pButton
+  type="button"
+  label="Update"
+  (click)="Update()"
+  icon="fa fa-pencil"
+  class="ui-button-success"
+></button>
+
+<div class="card card-w-title">
+  <div class="p-grid">
+    <div class="p-col-3">
+      <div class="card flex justify-content-center">
+        <!-- <p-tree [value]="files" styleClass="ui-sidebar-sm" [contextMenu]="cm"(onNodeSelect)="onNodeSelect($event)" (onNodeSelect)='getItemData($event)' onNodeUnselect='getItemData($event)'></p-tree> -->
+        <p-contextMenu #cm [model]="items"></p-contextMenu>
+
+        <p-tree
+          [value]="files"
+          (onNodeSelect)="getItemData($event)"
+          onNodeUnselect="getItemData($event)"
+          selectionMode="single"
+          [(selection)]="selectedFile"
+          [metaKeySelection]="false"
+          (onNodeContextMenuSelect)="contextMenuSelection($event.node, cm)"
+          [contextMenu]="cm"
+          (onNodeExpand)="loadNode($event)"
+          [filter]="true"
+        >
+        </p-tree>
+      </div>
+    </div>
+    <div class="p-col-9" [formGroup]="MenuFormGroup">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Menu' | translate">
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Title" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <input
+                pInputText
+                class="w-100"
+                formControlName="title"
+                placeholder="--Title--"
+              />
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Parent ID" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                placeholder="Parent ID"
+                formControlName="ParentId"
+              ></p-dropdown>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Controller" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <input
+                pInputText
+                class="w-100"
+                formControlName="controller"
+                placeholder="--Controller--"
+              />
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Action" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <input
+                pInputText
+                class="w-100"
+                formControlName="Action"
+                placeholder="--Action--"
+              />
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Route Url" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <input
+                pInputText
+                class="w-100"
+                formControlName="RoutUrl"
+                placeholder="--Route Url--"
+              />
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Icon" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <input
+                pInputText
+                class="w-100"
+                formControlName="Icon"
+                placeholder="--Icon--"
+              />
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Order" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <input
+                pInputText
+                class="w-100"
+                formControlName="Order"
+                placeholder="--Order--"
+              />
+            </div>
+
+            <label class="p-col-1 p-md-1 p-lg-1">
+              <b>{{ "Page" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <input
+                pInputText
+                class="w-100"
+                formControlName="Page"
+                placeholder="--Page--"
+              />
+            </div>
+          </div>
+          <br />
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>

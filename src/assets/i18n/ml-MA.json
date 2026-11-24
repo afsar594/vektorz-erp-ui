@@ -1,0 +1,20 @@
+{
+    "applicationTitle": "Inspire Systems ERP",
+    "Dashboard": "ഡാഷ്ബോർഡ്",
+    "Master": "മാസ്റ്റർ",
+    "Currency": "കറൻസി",
+    "Country Name": "രാജ്യത്തിന്റെ പേര്",
+    "Country": "രാജ്യം",
+    "Customer": "ഉപഭോക്താവ്",
+    "Add New Customer": "പുതിയ ഉപഭോക്താവിനെ ചേർക്കുക",
+    "View Customer": "ഉപഭോക്താവിനെ കാണുക",
+    "Supplier": "വിതരണക്കാരൻ",
+    "Supplier Name": "വിതരണക്കാരന്റെ പേര്",
+    "Action":"പ്രവർത്തനം",
+    "Account":"അക്കൗണ്ടുകൾ",
+    "Store And WareHouses" : "സ്റ്റോറും വെയർഹോസുകളും",
+    "Sales": "വിൽപ്പന",
+    "Procurement": "സംഭരണം",
+    "MIS Report":"MIS റിപ്പോർട്ടുകൾ",
+    "Administration": "അഡ്‌മിനിസ്‌ട്രേഷൻ"
+}

@@ -1,0 +1,490 @@
+<app-page-header
+  [nav]="[
+    { label: 'storewarehouse' | translate },
+    { label: 'Stock adjustment' | translate }
+  ]"
+  title="Stock Adjustment Voucher"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      icon="pi pi-plus"
+      (click)="newForm()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      (click)="edit()"
+      label="Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      [disabled]="btnFlag.cancel"
+      (click)="cancelAll()"
+      class="ui-button-danger"
+      label="Cancel"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="saveStockAdjustment()"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="showMaximizableDialog()"
+      label="List"
+      icon="fa fa-list"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      (click)="delete()"
+      class="ui-button-danger"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.delete"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="ExitNew()"
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title" [formGroup]="StockAdjustmentFormGroup">
+  <p-panel>
+    <p-header> Stock Adjustment </p-header>
+
+    <div class="p-grid">
+      <label class="p-col-12 p-md-12 p-lg-1" for="VoucherNo">{{
+        "Voucher No" | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-2">
+        <input
+          class="w-100"
+          readonly
+          pInputText
+          formControlName="stockAdjustmentVoucherSaNo"
+        />
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-1"></div>
+
+      <label class="p-col-12 p-md-12 p-lg-1" for="Date">{{
+        "Date" | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-3">
+        <p-calendar
+          appendTo="body"
+          dateFormat="dd/mm/yy"
+          [showButtonBar]="true"
+          [monthNavigator]="true"
+          [yearNavigator]="true"
+          yearRange="2000:2040"
+          [showIcon]="true"
+          class="w-100"
+          useUtc
+          formControlName="stockAdjustmentVoucherSaDate"
+        >
+        </p-calendar>
+      </div>
+    </div>
+
+    <div class="p-grid">
+      <label class="p-col-12 p-md-12 p-lg-1" for="Location">{{
+        "Location" | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-2">
+        <p-dropdown
+          filter="true"
+          class="w-100"
+          [readonly]="LOCKlOCATION"
+          formControlName="stockAdjustmentVoucherLocationId"
+          (onChange)="GetStockByLocation()"
+          [options]="locationList"
+        >
+        </p-dropdown>
+      </div>
+
+      <div class="p-col-12 p-md-12 p-lg-1"></div>
+      <label class="p-col-12 p-md-12 p-lg-1" for="AsOnDate">{{
+        "As On Date" | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-3">
+        <p-calendar
+          appendTo="body"
+          dateFormat="dd/mm/yy"
+          [showButtonBar]="true"
+          [monthNavigator]="true"
+          [yearNavigator]="true"
+          yearRange="2000:2040"
+          (onSelect)="GetStockByLocation()"
+          [showIcon]="true"
+          class="w-100"
+          useUtc
+          formControlName="stockAdjustmentVoucherSAAsOnDate"
+        >
+        </p-calendar>
+      </div>
+    </div>
+    <div class="p-grid">
+      <label class="p-col-12 p-md-12 p-lg-1" for="rptItem">{{
+        "Item Group" | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-2">
+        <p-dropdown
+          filter="true"
+          clear="true"
+          class="w-100"
+    
+          formControlName="stockAdjustmentGroupId"
+          id="rptItem"
+          [options]="ItemMasterGroupList"
+          filter="true"
+          (onChange)="onItemGroupChange($event)"
+        >
+        </p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-1"></div>
+      <label class="p-col-12 p-md-12 p-lg-1" for="Remarks">{{
+        "Remarks" | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-3">
+        <textarea
+          rows="2"
+          class="w-100"
+          pInputText
+          formControlName="stockAdjustmentVoucherSaRemarks"
+        ></textarea>
+      </div>
+    </div>
+  </p-panel>
+
+  <div class="p-sm-12 p-md-12 p-lg-12">
+    <p-panel>
+      <p-header>
+        {{ "Stock Adjustment Details" | translate }}
+      </p-header>
+      <div class="grid">
+        <div class="p-col-12 tbl-maxheight">
+          <div class="p-col-12 tbl-maxheight">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="stockAdjustmententry"
+            >
+            </hot-table>
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-8"></div>
+          <div class="p-col-4 p-grid">
+            <label class="p-col-3" for="account">
+              <b>{{ "Total Adj QTY" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-0">
+              <input
+                class="w-100 end"
+                readonly
+                formControlName="stockAdjustmentVoucherTotQty"
+                readonly
+                pInputText
+              />
+            </div>
+            <label class="p-col-3" for="account">
+              <b>{{ "Total Amount" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-0">
+              <input
+                class="w-100 end"
+                readonly
+                formControlName="stockAdjustmentVoucherTotAmount"
+                readonly
+                pInputText
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+</div>
+
+<p-dialog
+  header="Item List"
+  [(visible)]="showItemList"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card">
+    <p-table
+      #itmList
+      [value]="itemList"
+      [columns]="itemListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of itemListcols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.itemMasterItemId }}
+          </td>
+          <!-- <td style="cursor: pointer;" (click)="selectItem(item)">{{item.itemMasterPartNo}}</td> -->
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.itemMasterBarcode }}
+          </td>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.itemMasterItemName }}
+          </td>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.itemMasterCurrentStock }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Stock Adjustment List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt1
+    [value]="stockAdjustmentarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt1.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-salesvoucher_list>
+      <tr>
+        <td>{{ salesvoucher_list.stockAdjustmentVoucherSaNo }}</td>
+        <td>
+          {{
+            salesvoucher_list.stockAdjustmentVoucherSaDate | date : "dd/MM/yyyy"
+          }}
+        </td>
+        <td>{{ salesvoucher_list.stockAdjustmentVoucherSaRemarks }}</td>
+        <!-- <td>{{salesvoucher_list.currencyMasterCurrencyName}}</td>
+                <td>{{salesvoucher_list.salesVoucherDescription}}</td>
+                <td>{{salesvoucher_list.salesVoucherTotalGrossAmount}}</td>
+                <td>{{salesvoucher_list.salesVoucherTotalDisAmount}}</td>
+                <td>{{salesvoucher_list.salesVoucherVatAmt}}</td>
+                <td>{{salesvoucher_list.salesVoucherVatRoundSign}}</td>
+                <td>{{salesvoucher_list.salesVoucherVatRountAmt}}</td>
+                <td>{{salesvoucher_list.salesVoucherNetAmount}}</td> -->
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedStockAdjustmentDetails(
+                salesvoucher_list.stockAdjustmentVoucherSaId
+              );
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-dialog
+  header="Unit List"
+  [(visible)]="showUnitList"
+  [modal]="true"
+  [style]="{ width: '35%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card">
+    <p-table
+      #itmList
+      [value]="unitList"
+      [columns]="unitListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of unitListcols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitMasterUnitId || item.UnitMasterUnitId }}
+          </td>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitMasterUnitShortName || item.UnitMasterUnitShortName }}
+          </td>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitMasterUnitFullName || item.UnitMasterUnitFullName || item.unitMasterUnitShortName || item.UnitMasterUnitShortName }}
+          </td>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitDetailsConversionType || item.UnitDetailsConversionType || 1 }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>
+<p-dialog
+  header="Job List"
+  [(visible)]="showJobList"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <!-- -->
+  <div class="card">
+    <p-table #itmList [value]="jobArray" [paginator]="true" [rows]="10">
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Job Id</th>
+          <th>Job Name</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-job>
+        <tr>
+          <td style="cursor: pointer" (click)="selectJOb(job)">
+            {{ job.jobMasterJobId }}
+          </td>
+          <td style="cursor: pointer" (click)="selectJOb(job)">
+            {{ job.jobMasterJobName }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

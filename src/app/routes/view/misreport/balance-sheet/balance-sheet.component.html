@@ -1,0 +1,485 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Balance Sheet' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="ApplyFilter()"
+      label="Show"
+      icon="fa fa-search"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Excel"
+      (click)="printAsExcel()"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="ExcelSummary"
+      (click)="printAsExcelSummary()"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <button
+        pButton
+        type="button"
+        label="Print"
+        [disabled]="!Permission?.Print"
+        (click)="displayPrint()"
+        icon="fa fa-print"
+        class="ui-button-success"
+      ></button>
+      <div class="ui-inputgroup">
+        <input type="text" pInputText placeholder="Search" />
+        <button pButton type="button" icon="pi pi-search"></button>
+      </div>
+    </div>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="' Balance Sheet' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-8">
+          <p-panel>
+            <p-header>
+              <p-checkbox label="By Date"></p-checkbox>
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label for="Balancesheet">
+                  <b>{{ "Financial Period Start Date:" | translate }}</b>
+                </label>
+              </div>
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  [(ngModel)]="financialStartDate"
+                  class="w-100"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label for="Balancesheet">
+                  <b>{{ "Financial Period End Date:" | translate }}</b>
+                </label>
+              </div>
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  [(ngModel)]="financialEndDate"
+                  useUtc
+                  class="w-100"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header> Type </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-6">
+                <p-radioButton
+                  name="summary"
+                  label="Summary View"
+                  [(ngModel)]="detailOrSummary"
+                  value="summary"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <p-radioButton
+                  name="detail"
+                  label="Detailed View"
+                  [(ngModel)]="detailOrSummary"
+                  value="detail"
+                >
+                </p-radioButton>
+              </div>
+            </div>
+            <div class="p-col-12 p-md-12">
+              <p-checkbox label="Hide Zero Balance"></p-checkbox>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <div id="example1" class="hot" style="width: 100%"></div>
+  </div>
+</div>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div
+    id="printdetail"
+    *ngIf="!showPrintSummary"
+    style="
+      font-family: italic !important;
+      justify-content: center;
+      justify-content: center;
+    "
+  >
+    <!-- <div class="">
+            <h1>{{stationmasterObj?.stationMasterStationName}}</h1>
+            <br><br>
+            <h3>Address: {{stationmasterObj?.stationMasterAddress}}</h3>
+            <h3>Tel : {{stationmasterObj?.stationMasterTele1}} </h3>
+            <h3>Fax : {{stationmasterObj?.stationMasterFax}}</h3>
+            <h3>Email : {{stationmasterObj?.stationMasterEmail}}</h3>
+            <h3>{{currentDate}}</h3>
+        </div> -->
+    <div style="margin-left: 113px">
+      <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+      <br />
+      <table>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Address</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">
+            {{ stationmasterObj?.stationMasterAddress }}
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Tel</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">
+            {{ stationmasterObj?.stationMasterTele1 }}
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Fax</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">{{ stationmasterObj?.stationMasterFax }}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Email</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">
+            {{ stationmasterObj?.stationMasterEmail }}
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Date</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">{{ currentDate | date : "dd/MM/yyyy" }}</td>
+        </tr>
+      </table>
+    </div>
+    <div
+      class="card p-col-10"
+      style="background-color: #fff; height: 100vh; margin: auto"
+    >
+      <div class="p-grid p-ai-center">
+        <div
+          class="p-col-10"
+          style="
+            background-color: green;
+            color: #fff;
+            font-size: 14pt;
+            margin: left 4px;
+          "
+        >
+          Particulars
+        </div>
+        <div class="deignsize2">(AED)</div>
+      </div>
+      <div
+        style="
+          position: absolute;
+          width: 2px;
+          height: 90vh;
+          right: 15rem;
+          top: 25rem;
+        "
+      ></div>
+      <div
+        style="background-color: #c8cec9"
+        *ngFor="let dataObject of sourceDataObject"
+      >
+        <div
+          style="
+            font-family: Arial, Helvetica, sans-serif;
+            color: navy;
+            font-size: 14pt;
+            font-weight: 600;
+          "
+        >
+          {{ dataObject?.mainHead }}
+        </div>
+        <div *ngFor="let head of dataObject?.__children">
+          <!-- <div class="card"> -->
+          <h4
+            *ngIf="
+              head?.head != 'Total Assets' &&
+              head?.head != 'Total Equity' &&
+              head?.head != 'Total Liabilities'
+            "
+            style="
+              font-family: Arial, Helvetica, sans-serif;
+              color: grey;
+              font-size: 12pt;
+              font-weight: 600;
+            "
+          >
+            {{ head?.head }}
+          </h4>
+          <!-- </div> -->
+          <div *ngFor="let head1 of head?.__children">
+            <div style="display: flex; justify-content: space-between">
+              <h4>{{ head1?.head }}</h4>
+              <h4 style="margin-right: 4rem">{{ head1?.amount }}</h4>
+            </div>
+            <div *ngFor="let head2 of head1?.__children">
+              <div></div>
+              <div
+                style="
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 12pt;
+                "
+              >
+                {{ head2?.accName }}
+              </div>
+              <div
+                style="
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 12pt;
+                "
+              >
+                {{ head2?.amount }}
+              </div>
+            </div>
+          </div>
+          <br />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="printdetail2"
+    *ngIf="showPrintSummary"
+    style="font-family: italic !important"
+  >
+    <!-- <div class="" style="margin-left: 30px;">
+            <h1>{{stationmasterObj?.stationMasterStationName}}</h1>
+            <br><br>
+            <h3>Address: {{stationmasterObj?.stationMasterAddress}}</h3>
+            <h3>Tel : {{stationmasterObj?.stationMasterTele1}} </h3>
+            <h3>Fax : {{stationmasterObj?.stationMasterFax}}</h3>
+            <h3>Email : {{stationmasterObj?.stationMasterEmail}}</h3>
+            <h3>{{currentDate | date:'dd/MM/yyyy'}}</h3>
+        </div> -->
+    <div style="margin-left: 113px">
+      <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+      <br />
+      <table>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Address</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">
+            {{ stationmasterObj?.stationMasterAddress }}
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Tel</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">
+            {{ stationmasterObj?.stationMasterTele1 }}
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Fax</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">{{ stationmasterObj?.stationMasterFax }}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Email</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">
+            {{ stationmasterObj?.stationMasterEmail }}
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px">Date</td>
+          <td style="font-weight: bold; padding: 8px">:</td>
+          <td style="padding: 8px">{{ currentDate | date : "dd/MM/yyyy" }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div
+      class="card p-col-10"
+      style="background-color: #fff; margin: auto; height: 100vh"
+    >
+      <div class="p-grid p-ai-center">
+        <div
+          class="p-col-10"
+          style="
+            background-color: green;
+            color: #fff;
+            font-size: 14pt;
+            margin: left 4px;
+          "
+        >
+          Particulars
+        </div>
+        <div class="designsize2">Amount</div>
+      </div>
+      <div
+        style="background-color: #c8cec9"
+        *ngFor="let dataObject of sourceDataObject"
+      >
+        <div
+          style="
+            font-family: Arial, Helvetica, sans-serif;
+            color: navy;
+            font-size: 14pt;
+            font-weight: 600;
+          "
+        >
+          {{ dataObject?.head }}
+        </div>
+        <div *ngFor="let head of dataObject?.__children">
+          <!-- <div class="card"> -->
+          <h4
+            *ngIf="
+              head?.head != 'Total Assets' &&
+              head?.head != 'Total Equity' &&
+              head?.head != 'Total Liabilities'
+            "
+            style="
+              font-family: Arial, Helvetica, sans-serif;
+              color: grey;
+              font-size: 12pt;
+              font-weight: 600;
+            "
+          >
+            {{ head?.accName }} : &nbsp; {{ head?.amount }}
+          </h4>
+          <!-- </div> -->
+          <div
+            style="border: 1px solid #fff; margin-top: 0% !important"
+            *ngFor="let head1 of head?.__children"
+          >
+            <!-- <div class="p-grid  p-ai-center" *ngFor="let head2 of head1?.__children"> -->
+            <div
+              style="
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 12pt;
+                display: flex;
+              "
+            >
+              <div style="display: block">
+                <h5>Acc Name</h5>
+                <h5>
+                  {{ head1?.accName }}
+                </h5>
+              </div>
+            </div>
+            <div
+              style="
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 12pt;
+                display: flex;
+              "
+            >
+              <div style="display: block">
+                <h5>Amount</h5>
+                <h5>
+                  {{ head1?.amount }}
+                </h5>
+              </div>
+            </div>
+            <div
+              style="
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 12pt;
+                display: flex;
+              "
+            >
+              <div style="display: block">
+                <h5>Credit</h5>
+                <h5>
+                  {{ head1?.credit }}
+                </h5>
+              </div>
+            </div>
+            <div
+              style="
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 12pt;
+                display: flex;
+              "
+            >
+              <div style="display: block">
+                <h5>Debit</h5>
+                <h5>
+                  {{ head1?.debit }}
+                </h5>
+              </div>
+            </div>
+            <!-- </div> -->
+          </div>
+          <br />
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>

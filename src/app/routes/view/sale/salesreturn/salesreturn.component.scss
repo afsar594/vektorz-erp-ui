@@ -1,0 +1,207 @@
+html,
+body {
+  height: 100%;
+}
+// ::ng-deep{
+//     .ui-calendar {
+//         width: 99% !important;
+//       }
+//     }
+header {
+  border: 2px solid blue;
+  text-align: center;
+}
+
+section {
+  border: 2px solid red;
+  min-height: 100%;
+  text-align: center;
+}
+
+footer {
+  border: 2px solid green;
+  text-align: center;
+}
+
+.inputGroup {
+  margin: 4px 0;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+.grid {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.f-r {
+  float: right;
+}
+
+.min-panel {
+  min-height: 106px !important;
+}
+
+:host ::ng-deep {
+  .ui-table .ui-table-thead > tr > th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: -8px;
+    box-shadow: 1px 3px 6px 0 rgba(32, 33, 36, 0.1);
+  }
+  // .ui-calendar.ui-calendar-w-btn .ui-datepicker-trigger.ui-button {
+  //     width: 3.357em !important;
+  // }
+}
+
+@media screen and (max-width: 64em) {
+  :host ::ng-deep .ui-table .ui-table-thead > tr > th {
+    top: -8px;
+  }
+}
+
+.ui-dropdown {
+  min-width: 50% !important;
+}
+
+table.border-table {
+  border-collapse: collapse;
+  border: 1px solid black;
+
+  th {
+    border: 1px solid black;
+    background-color: #d9cece;
+  }
+
+  td {
+    border: 1px solid black;
+    // padding: 8px;
+  }
+}
+
+// #customers {
+//     font-family: Arial, Helvetica, sans-serif;
+//     border-collapse: collapse;
+//     width: 100%;
+//     border: 1px solid;
+// }
+
+// #customers td {
+//     border-bottom: 1px solid;
+//     padding: 8px;
+// }
+
+// #customers th {
+//     border: 1px solid;
+//     padding: 8px;
+// }
+
+// .info {
+//     margin: 13px;
+//     border-bottom: 2px solid;
+//     display: flex;
+//     justify-content: center;
+//     gap: 5px;
+// }
+
+.header {
+  margin: auto;
+  display: block;
+  text-align: center;
+}
+
+.border {
+  border: 1px solid rgb(219, 216, 216);
+  margin-bottom: 5px;
+}
+
+.tableLR {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.disclaimer,
+.address p {
+  font-size: 10pt;
+}
+
+.signature-field {
+  padding-bottom: 24pt;
+  border-bottom: solid black 1pt;
+}
+
+// .header {
+//     position: fixed;
+
+//     top: 0;
+// }
+
+// .content {
+//     margin: auto;
+// }
+
+// .footer {
+//     position: fixed;
+//     bottom: 0;
+// }
+// @page {
+//     size: A4;
+//     margin: 2cm;
+// }
+
+// .invoice-container {
+//     width: 210mm;
+//     / 210mm is the width of A4 paper /
+//     margin: 0 auto;
+// }
+
+// .invoice-header {
+//     text-align: center;
+//     padding: 20px;
+//     border-bottom: 1px solid #ddd;
+// }
+
+// .invoice-body {
+//     padding: 20px;
+// }
+
+// .invoice-footer {
+//     text-align: center;
+//     padding: 20px;
+//     border-top: 1px solid #ddd;
+// }
+.global-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.global-filter-input {
+  width: 300px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.page-info {
+  margin: 0 15px;
+  font-weight: bold;
+}

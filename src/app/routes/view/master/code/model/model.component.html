@@ -1,0 +1,113 @@
+<app-page-header [nav]='breadcumbmodel' [title]='title| translate'></app-page-header>
+<div class="toolbar">
+    <div class="ui-toolbar-group-left">
+      <button pButton type="button" [label]="'New' | translate" (click)='new()' icon="pi pi-plus"></button>
+      <button pButton type="button" [label]="'Edit' | translate" (click)='edit()'
+        [disabled]='!btnFlag?.edit || !Permission?.Edit' icon="fa fa-pencil" class="ui-button-success"></button>
+  
+      <button pButton type="button" class="ui-button-danger" [disabled]='!btnFlag?.cancel' [label]="'Cancel' | translate"
+         icon="fa fa-ban"></button>
+         
+      <button pButton type="button" class="ui-button-success" (click)='saveModel()'
+      [disabled]='!btnFlag.save || !Permission?.Add' label="Save" icon="fa fa-floppy-o"></button>
+     
+      <button pButton type="button" class="ui-button-success" (click)='saveModel()'
+      [disabled]='!btnFlag.update || !Permission.Edit' label="Update" icon="fa fa-floppy-o"></button>
+       
+      <button pButton type="button" class="ui-button-danger" (click)='delete()'
+        [disabled]='!btnFlag.delete || !Permission.Delete' label="Delete" icon="fa fa-trash"></button>
+  
+    </div>
+      <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Exit" (click)='ExitNew()' icon="fa fa-sign-out"></button> 
+       
+    </div>
+  </div>
+<div class="card card-w-title" [formGroup]='modelFormGroup'>
+    <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Model Name' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText [placeholder]="'Model Name' |translate" formControlName='modelMasterName'  maxlength="50" style="border-color: black; width: 300px;">
+ <div class="error" *ngIf="f.modelMasterName.errors 
+            && (f.modelMasterName.dirty || f.modelMasterName.touched)">
+                <span *ngIf="f.modelMasterName.errors.required">
+                    {{'Model Name is Mandatory Field*' | translate}}</span>
+            </div>
+
+        </div>
+   
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Type' | translate}}</div>
+
+        <div class="p-col-12 p-md-12 p-lg-3">
+         <p-dropdown filter="true" [placeholder]="'Type'| translate" [options]="typeListNew"  [filter]="true"  formControlName='modelMasterTypeId'  [style]="{'width': '100%'}" ></p-dropdown>
+        <div class="error" *ngIf="f.modelMasterTypeId.errors 
+        && (f.modelMasterTypeId.dirty || f.modelMasterTypeId.touched)">
+            <span *ngIf="f.modelMasterTypeId.errors.required">
+                {{'Type is Mandatory Field*' | translate}}</span>
+        </div>  
+    </div>
+
+
+
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Inactive' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+           
+            <p-checkbox    [binary]="true"  formControlName='modelMasterStatus'>{{'Inactive' | translate}}</p-checkbox>
+        </div>
+
+
+    </div>
+
+  
+    
+    <!-- <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-offset-1 p-lg-6">
+            <button pButton class="ui-button-info" [disabled]="!Permission?.Add" [label]='btnlabel| translate' (click)='saveModel()'></button>
+            <button pButton class="ui-button-warning" [label]='"Clear"| translate' (click)='reset()'></button></div>
+    </div>  -->
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <p-table [value]="modelList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th colspan="1" style="text-align: center;">{{'Code' | translate }}</th>
+                        <th colspan="7" style= "text-align: left ;">{{'Name' | translate}}</th>
+                        <th colspan="1" style="text-align: center;">{{'Inactive' | translate}}</th>
+                       
+                        
+                        <th th colspan="1" style="text-align: center;">{{'Action' | translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-model>
+                    <tr>
+                        <td colspan="1" style="text-align: center;">{{model.modelMasterId}}</td>
+                        <td colspan="7" style= "text-align: left ;   white-space:pre-wrap; word-wrap:break-word; ">{{model.modelMasterName}}</td>
+                        <td colspan="1" style="text-align: center;">
+
+                            <ng-container   *ngIf="model.modelMasterStatus===false">
+                                <input   type="checkbox" [checked]=false [disabled]=true style="border-color: red;" >  
+                            </ng-container>
+
+                            <ng-container   *ngIf="model.modelMasterStatus===true">
+                                <input   type="checkbox" [checked]=true [disabled]=true style="border-color: red;" >  
+                            </ng-container>
+
+                        </td>
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(model)'
+                                iconPos="left"></button>
+                            <!-- <button pButton type="button" icon="pi pi-trash" (click)='removeModel(model)'
+                                iconPos="left"></button> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>

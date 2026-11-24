@@ -1,0 +1,157 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="Show" (click)="search()"></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear"
+      (click)="Clear()"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+<div class="card card-w-title">
+  <p-panel>
+    <p-header>
+      {{ "GRN Pending List" | translate }}
+    </p-header>
+    <div class="p-grid inputGroup" style="margin-bottom: 10px">
+      <!-- <div class="p-col-12 p-md-12 p-lg-4 p-0"></div> -->
+
+      <label class="p-col-12 p-md-12 p-lg-1" for="account">{{
+        "Supplier" | translate
+      }}</label>
+      <div class="p-col-12 p-md-12 p-lg-3 p-0">
+        <input
+          readonly
+          (click)="getAllSupplierMaster()"
+          style="width: 100%"
+          type="text"
+          #suppCtrl
+          pInputText
+          placeholder="Select Supplier"
+          [(ngModel)]="SelectedSupplier"
+        />
+      </div>
+    </div>
+    <p-table
+      #POList
+      [value]="PODataList"
+      [columns]="cols"
+      [paginator]="true"
+      [rows]="8"
+      class="custom-th-header"
+    >
+      <ng-template pTemplate="caption">
+        <div class="p-grid flexSearch">
+          <div class="p-col-4"></div>
+          <div class="p-col-4">
+            <div style="text-align: right; display: flex">
+              <i class="pi pi-search" style="margin: 10px"></i>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                placeholder="Global Filter"
+                (input)="POList.filterGlobal($event.target.value, 'contains')"
+              />
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>PO No</th>
+          <th>PO dId</th>
+          <th>Supplier</th>
+          <th>Date</th>
+          <th>Material Name</th>
+          <th>Unit</th>
+          <th>PO Qty</th>
+          <th>Delivered Qty</th>
+          <th>Balance Qty</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.PONo }}</td>
+          <td class="center">{{ item.podId }}</td>
+
+          <td>{{ item.supplierName }}</td>
+          <td>{{ item.date | date : "dd/MM/yyyy" }}</td>
+          <td>{{ item.materialName }}</td>
+          <td>{{ item.unitName }}</td>
+          <td class="end">{{ item.poQty }}</td>
+          <td class="end">{{ item?.dQty }}</td>
+          <td class="end">{{ item?.bQty }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-panel>
+</div>
+
+<p-dialog
+  header="Suppliers Lookup"
+  [(visible)]="displaySupplierList"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="SupplierMasterArray"
+    [columns]="supplierCols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of supplierCols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-suppliers>
+      <tr style="cursor: pointer" (click)="selectSupplier(suppliers)">
+        <td>{{ suppliers.suppliersMasterSupplierId }}</td>
+        <td>{{ suppliers.suppliersMasterSupplierName }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

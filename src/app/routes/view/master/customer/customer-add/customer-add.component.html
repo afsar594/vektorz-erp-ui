@@ -1,0 +1,768 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Customer Master' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'Edit' | translate"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="saveCustomer()"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'List' | translate"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      [label]="'Delete' | translate"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="p-inputgroup">
+      <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
+      <button pButton type="button" icon="pi pi-search"></button>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!btnFlag.edit || !Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+
+    <!-- <p-checkbox label="Suppress Allocation in Print"></p-checkbox> -->
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="customeraddFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Customer Master' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-7">
+          <p-panel>
+            <p-header>
+              {{ "Customer Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Customer ID" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    readonly
+                    formControlName="customerMasterCustomerNo"
+                    id="custid"
+                    pInputText
+                  />
+                </div>
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "InActive" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <p-checkbox>
+                    {{ "InActive" | translate }}
+                  </p-checkbox>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="custtype">{{
+                  "Type" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerMasterCustomerCustType"
+                    [options]="CustTypeList"
+                  >
+                  </p-dropdown>
+                </div>
+
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Ref. Acc No." | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    readonly
+                    formControlName="customerMasterCustomerReffAcNo"
+                    id="refno"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno"
+                  >{{ "Cust Name" | translate }}
+                  <span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-10">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerName"
+                    id="custname"
+                    pInputText
+                    maxlength="250"
+                  />
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.customerMasterCustomerName.errors &&
+                      (f.customerMasterCustomerName.dirty ||
+                        f.customerMasterCustomerName.touched)
+                    "
+                  >
+                    <span *ngIf="f.customerMasterCustomerName.errors.required">
+                      Name is Mandatory Field*</span
+                    >
+                    <span *ngIf="f.customerMasterCustomerName.errors.maxlength">
+                      Limit is 250 characters*
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <!-- Cust Group Label -->
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Cust Group" | translate
+                }}</label>
+
+                <!-- Dropdown and Button -->
+                <div class="p-col-12 p-md-10">
+                  <div class="ui-inputgroup w-100">
+                    <p-dropdown
+                      filter="true"
+                      class="w-100"
+                      formControlName="customerMasterCustomerCtTypeId"
+                      [options]="custGroupList"
+                    >
+                    </p-dropdown>
+                    <button
+                      pButton
+                      type="button"
+                      (click)="handleCustomerClick()"
+                      [disabled]="isButtonDisabled"
+                      icon="pi pi-search"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Contact Person" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerContactPerson"
+                    id="contper"
+                    pInputText
+                    [maxlength]="100"
+                  />
+                  <div
+      class="error"
+      *ngIf="
+        f.customerMasterCustomerContactPerson.errors?.maxlength &&
+        (f.customerMasterCustomerContactPerson.dirty || f.customerMasterCustomerContactPerson.touched)
+      "
+    >
+      <span cloth="error">Maximum 100 characters allowed*</span>
+    </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Country" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerMasterCustomerCountryId"
+                    [options]="countryList"
+                    (onChange)="onCountryChange($event)"
+                    [filter]="true"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.customerMasterCustomerCountryId.errors &&
+                      (f.customerMasterCustomerCountryId.dirty ||
+                        f.customerMasterCustomerCountryId.touched)
+                    "
+                  >
+                    <span
+                      *ngIf="f.customerMasterCustomerCountryId.errors.required"
+                    >
+                      Name is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "City" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerMasterCustomerCityId"
+                    [options]="citylistNew"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Address" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <!-- <input class="w-100" formControlName='customerMasterCustomerAddress'
+                                       id="contper" pInputText> -->
+                  <textarea
+                    rows="2"
+                    cols="30"
+                    pInputTextarea
+                    class="supplier"
+                    pInputText
+                    placeholder="Address"
+                    formControlName="customerMasterCustomerAddress"
+                    [maxLength]="500"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Location" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerMasterCustomerLocation"
+                    [options]="locationList"
+                  >
+                  </p-dropdown>
+                </div>
+
+                <!-- </div>
+                                  <div class="p-grid p-ai-center"> -->
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Fax" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerFax"
+                    id="fax"
+                    [maxLength]="30"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "P.O. Box" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerPoBox"
+                    id="pobox"
+                    [maxLength]="50"
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Email" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerEmail"
+                    id="email"
+                    pInputText
+                  />
+                  <div class="error"
+    *ngIf="
+      f.customerMasterCustomerEmail.errors &&
+      (f.customerMasterCustomerEmail.dirty || f.customerMasterCustomerEmail.touched)
+    "
+  >
+    <span *ngIf="f.customerMasterCustomerEmail.errors.email">
+      Please enter a valid email address*
+    </span>
+    </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Telephone 1" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerTel1"
+                    id="tel"
+                    pInputText
+                    [maxlength]="30"
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Telephone 2" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerTel2"
+                    id="telad"
+                    pInputText
+                     [maxlength]="30"
+                  />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Mobile" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerMobile"
+                    id="mobile"
+                    pInputText
+                    [maxlength]="30"
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Whats App.No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerWhatsAppNo"
+                    id="contper"
+                    pInputText
+                    [maxLength]="30"
+                  />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Join Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    [showIcon]="true"
+                    useUtc
+                    formControlName="customerMasterCustomerJoinDate"
+                    id="joindate"
+                  >
+                  </p-calendar>
+                </div>
+
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Blacklist" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <span>
+                    <input
+                      type="checkbox"
+                      class="w-100"
+                      formControlName="customerMasterCustomerBlackList"
+                      id="cracno"
+                  /></span>
+                  <!-- <p-checkbox class="w-100" formControlName='customerMasterCustomerBlackList'
+                                        id="Blist">
+                                    </p-checkbox> -->
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Website" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerWebSite"
+                    id="website"
+                    [maxLength]="50"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="currency">{{
+                  "Currency" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerMasterCustomerCurrencyId"
+                    [options]="currencyList"
+                  >
+                  </p-dropdown>
+                </div>
+
+                <label
+                  class="p-col-12 p-md-2"
+                  *ngIf="!HIDEPrice_Level"
+                  for="voucherno"
+                  >{{ "Price Level" | translate }}</label
+                >
+                <div class="p-col-12 p-md-4" *ngIf="!HIDEPrice_Level">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerMasterCustomerPriceLevelId"
+                    [options]="pricelevelList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Remarks" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <textarea
+                    class="w-100"
+                    rows="2"
+                    formControlName="customerMasterCustomerRemarks"
+                    id="narration"
+                    pInputText
+                    [maxLength]="1000"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Credit Limit" | translate
+                }}</label>
+                <div class="p-col-12 p-md-2">
+                  <input
+                    type="number"
+                    class="w-100"
+                    formControlName="customerMasterCustomerCreditLimit"
+                    id="crlimit"
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Credit Days" | translate
+                }}</label>
+                <div class="p-col-12 p-md-2">
+                  <input
+                    type="number"
+                    class="w-100"
+                    formControlName="customerMasterCustomerCreditDays"
+                    id="crdays"
+                    pInputText
+                  />
+                </div>
+
+                <!-- <label class="p-col-12 p-md-2"
+                                    for="voucherdate">{{'Credit Days'| translate}}</label>
+                                    <div class="p-col-12 p-md-2">
+                                        <div class="p-col-12 p-md-2">
+                                            <input class="w-100" formControlName='openingVoucherMasterId'
+                                            id="voucherno" pInputText>
+                                        </div>
+                                        
+                                    </div> -->
+
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Create Account." | translate
+                }}</label>
+                <div class="p-col-12 p-md-2">
+                  <span>
+                    <input
+                      type="checkbox"
+                      class="w-100"
+                      formControlName="isCreateAccount"
+                      id="cracno"
+                  /></span>
+                  <!-- <p-checkbox [formControl]="customeraddFormGroup.controls['isCreateAccount']"></p-checkbox> -->
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "VAT No." | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerVatNo"
+                    id="vatno"
+                    pInputText
+                    [maxLength]="30"
+                  />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Arabic Name" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <input
+                    class="w-100"
+                    formControlName="customerMasterCustomerArabicName"
+                    id="arname"
+                    [maxLength]="100"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              {{ "Customer Contact Details" | translate }}
+            </p-header>
+            <div class="grid">
+              <hot-table
+                [hotId]="hotid"
+                [licenseKey]="licensekey"
+                [settings]="customercontactentry"
+              ></hot-table>
+            </div>
+          </p-panel>
+
+          <div *ngIf="!HIDEDEPARTMENT" class="p-sm-12 p-md-12 p-lg-12">
+            <p-panel>
+              <p-header>
+                {{ "Department Details" | translate }}
+              </p-header>
+              <div class="grid">
+                <!-- <div class=" p-col-12 tbl-maxheight"> -->
+                <hot-table
+                  [hotId]="hotdepid"
+                  [licenseKey]="licensekey"
+                  [settings]="customerdepartmententry"
+                ></hot-table>
+                <!-- </div> -->
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Customer List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="customerMasterArry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+    dataKey="customerMasterCustomerNo"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flexSearch">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-Cust>
+      <tr>
+        <td>{{ Cust.customerMasterCustomerNo }}</td>
+        <td>{{ Cust.customerMasterCustomerName }}</td>
+        <td>{{ Cust.customerMasterCustomerContactPerson }}</td>
+        <td>{{ getCurrency(Cust.customerMasterCustomerCurrencyId) }}</td>
+        <td>{{ getCountry(Cust.customerMasterCustomerCountryId) }}</td>
+
+        <td>{{ getLocationName(Cust.customerMasterCustomerLocation) }}</td>
+        <td>{{ Cust.customerMasterCustomerAddress }}</td>
+        <!-- <td >{{getCustType(Cust.customerMasterCustomerCtTypeId)}}</td> -->
+        <td>{{ Cust.customerMasterCustomerVatNo }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedCustomers(Cust.customerMasterCustomerNo);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+
+<div [formGroup]="ModelFormGroup">
+  <p-dialog
+    header="Customer Group"
+    [(visible)]="showCustomerGroup"
+    [style]="{ width: '50vw' }"
+    [baseZIndex]="10000"
+  >
+    <div class="card card-w-title">
+      <p-toolbar>
+        <div class="ui-toolbar-group-left">
+          <button
+            pButton
+            type="button"
+            label="Add"
+            (click)="saveModel()"
+            icon="fa fa-plus"
+            class="ui-button-success"
+          ></button>
+        </div>
+      </p-toolbar>
+      <div>
+        <div class="p-grid">
+          <div class="p-col-2 p-md-2 p-lg-2">
+            <label><b>Customer Group</b></label>
+          </div>
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <input
+              class="space"
+              type="text"
+              formControlName="customerTypeName"
+              pInputText
+              [style]="{ width: '90%' }"
+              placeholder="Customer Group"
+            />
+            <div
+              class="error"
+              *ngIf="
+                f2.customerTypeName.errors &&
+                (f2.customerTypeName.dirty || f2.customerTypeName.touched)
+              "
+            >
+              <span *ngIf="f2.customerTypeName.errors.required"
+                >Customer Group is a mandatory field*</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template pTemplate="footer"></ng-template>
+  </p-dialog>
+</div>

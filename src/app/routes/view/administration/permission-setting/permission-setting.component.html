@@ -1,0 +1,110 @@
+<app-page-header [title]='title| translate'></app-page-header>
+
+<div class="p-grid">
+    <div class="p-col-3 permission">
+        <div class="card flex justify-content-center">
+            <p-tree class="w-full md:w-30rem" [value]="files" selectionMode="single"  [(selection)]="selectedFile"
+            (onNodeSelect)="getItemData($event)" (onNodeUnselect)="getItemData($event)"></p-tree>
+        </div>
+    </div>
+    <div class="p-col-9 setting">
+        <p-toolbar>
+            <div class="ui-toolbar-group-left">
+                <button pButton type="button" (click)="edit()" label="Edit" icon="fa fa-pencil" class="ui-button-info"></button>
+                <button pButton type="button" [disabled]='!btnFlag.update' label="Save" (click)="updatePermission()" class="ui-button-success" icon="fa fa-floppy-o"></button>
+                <button pButton type="button" [disabled]='!btnFlag.cancel' label="Cancel" icon="fa fa-close" class="ui-button-warning"></button>
+                <button pButton type="button" label="Exit" class="ui-button-danger" icon="fa fa-sign-out"></button>
+            </div>
+            <div class="ui-toolbar-group-right">
+                <button pButton type="button" label="Update From Master" class="ui-button-gray" ></button>
+            </div>
+        </p-toolbar>
+       <div class="card">
+    <div class="d-flex justify-content-end">
+        <div class="p-grid" >
+         <div class="p-grid p-col-6"></div>
+         <!-- <div class="p-grid p-col-6">
+            <div class="p-col-2"><p-checkbox  [disabled]='!btnFlag.update'  [binary]="true" (onChange)="updateList($event.checked, 'allow')"  label="Allow" ></p-checkbox></div>
+            <div class="p-col-2"><p-checkbox  [disabled]='!btnFlag.update'[binary]="true" (onChange)="updateList($event.checked,'add')" label="Add" ></p-checkbox></div>
+            <div class="p-col-2"><p-checkbox  [disabled]='!btnFlag.update'[binary]="true" (onChange)="updateList($event.checked,'edit')" label="Edit"></p-checkbox></div>
+            <div class="p-col-2"><p-checkbox  [disabled]='!btnFlag.update'[binary]="true" (onChange)="updateList($event.checked,'delete')"  label="Delete"></p-checkbox></div>
+            <div class="p-col-2"><p-checkbox  [disabled]='!btnFlag.update' [binary]="true"(onChange)="updateList($event.checked,'print')" label="Print" ></p-checkbox></div>
+            <div class="p-col-2"><p-checkbox  [disabled]='!btnFlag.update'[binary]="true" (onChange)="updateList($event.checked,'view')"  label="View" ></p-checkbox></div>
+         </div> -->
+        
+        </div>
+    </div>
+</div>
+
+       <div class="card card-w-title">
+    <p-panel header="Permission Settings">
+        <!-- Checkbox header section -->
+        <div class="p-col-12" style="margin-bottom: 1rem;">
+            <div class="p-d-flex p-ai-center">
+                <div class="p-mr-3">
+                    <p-checkbox [(ngModel)]="allowAll" binary="true" (onChange)="onSelectionChange($event, 'workGroupPermissionsUallow')"></p-checkbox>
+                    <label class="p-ml-2">Allow</label>
+                </div>
+                <div class="p-mr-3">
+                    <p-checkbox [(ngModel)]="addAll" binary="true"  (onChange)="onSelectionChange($event, 'workGroupPermissionsUadd')" ></p-checkbox>
+                    <label class="p-ml-2">Add</label>
+                </div>
+                <div class="p-mr-3">
+                    <p-checkbox [(ngModel)]="editAll" binary="true" (onChange)="onSelectionChange($event, 'workGroupPermissionsUedit')"></p-checkbox>
+                    <label class="p-ml-2">Edit</label>
+                </div>
+                <div class="p-mr-3">
+                    <p-checkbox [(ngModel)]="deleteAll" binary="true" (onChange)="onSelectionChange($event, 'workGroupPermissionsUdelete')"></p-checkbox>
+                    <label class="p-ml-2">Delete</label>
+                </div>
+                <div class="p-mr-3">
+                    <p-checkbox [(ngModel)]="viewAll" binary="true" (onChange)="onSelectionChange($event, 'workGroupPermissionsUview')"></p-checkbox>
+                    <label class="p-ml-2">View</label>
+                </div>
+                <div class="p-mr-3">
+                    <p-checkbox [(ngModel)]="printAll" binary="true" (onChange)="onSelectionChange($event, 'workGroupPermissionsUprint')"></p-checkbox>
+                    <label class="p-ml-2">Print</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <!-- <p-table [columns]="cols" [value]="permissionSetting" [(selection)]="permissionSetting" dataKey="vin">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3em">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns">
+                            <p-checkbox [(ngModel)]="rowData[col.field]"></p-checkbox>
+
+                            {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+              
+            </p-table> -->
+            
+            <div class="p-col-12">
+                <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey" [settings]="permission">
+
+                </hot-table>
+            </div>
+        </div>
+    </p-panel>
+</div>
+
+    </div>
+    <p-toast></p-toast>
+    <p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>

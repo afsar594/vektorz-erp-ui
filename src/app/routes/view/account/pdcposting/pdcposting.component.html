@@ -1,0 +1,368 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Find"
+      [disabled]="!Permission?.View"
+      (click)="
+        tabIndex == 0
+          ? getFilteredPDCList(pdcFilterForm.get('pdcType')?.value || 'Received')
+          : getFilteredPDCPostedList(pdcFilterForm.get('pdcType')?.value || 'Received')
+      "
+      icon="pi pi-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      (click)="
+        tabIndex == 0
+          ? getPDCList()
+          : tabIndex == 1
+          ? getPDCPostReturnList('C')
+          : getPDCPostReturnList('R')
+      "
+      icon="pi pi-list"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      label="Post Pdc"
+      (click)="postPdc()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      label="Return Pdc"
+      (click)="returnPdc()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      label="Release Pdc"
+      (click)="releasePdc()"
+      icon="fa fa-ban"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <div class="p-grid p-fluid" [formGroup]="pdcFilterForm">
+    <div class="p-col-12 p-md-2">
+      <p-panel>
+        <p-header>
+          {{ "PDC Type" | translate }}
+        </p-header>
+        <h5
+          style="
+            cursor: pointer;
+            background: dodgerblue;
+            padding: 1vh;
+            color: #fff;
+            border-radius: 3px;
+          "
+        >
+          <p-radioButton
+            [style]="{ cursor: 'pointer' }"
+            (click)="getFilteredPDCList('RECEIVED')"
+            name="PDCType"
+            inputId="received"
+            value="Received"
+            formControlName="pdcType"
+          >
+          </p-radioButton>
+          <label
+            class="p-col-12 p-md-2"
+            style="cursor: pointer"
+            for="PDC_Type"
+            (click)="getFilteredPDCList('Received')"
+            >Received</label
+          >
+        </h5>
+        <h5
+          style="
+            cursor: pointer;
+            background: orangered;
+            padding: 1vh;
+            color: #fff;
+            border-radius: 3px;
+          "
+        >
+          <p-radioButton
+            [style]="{ cursor: 'pointer' }"
+            (click)="getFilteredPDCList('ISSUED')"
+            name="PDCType"
+            inputId="issued"
+            value="Issued"
+            formControlName="pdcType"
+          >
+          </p-radioButton>
+          <label
+            class="p-col-12 p-md-2"
+            style="cursor: pointer"
+            for="PDC_Type"
+            (click)="getFilteredPDCList('Issued')"
+            >Issued</label
+          >
+        </h5>
+      </p-panel>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <p-panel>
+        <p-header>
+          {{ "Posting Date" | translate }}
+        </p-header>
+        <p-calendar
+          appendTo="body"
+          dateFormat="dd/mm/yy"
+          [showButtonBar]="true"
+          [monthNavigator]="true"
+          [yearNavigator]="true"
+          yearRange="2000:2040"
+          class="w-100"
+          useUtc
+          [showIcon]="true"
+          id="PDCPostingDate"
+          formControlName="postingDate"
+        >
+        </p-calendar>
+      </p-panel>
+    </div>
+    <div class="p-col-12 p-md-6">
+      <p-panel>
+        <p-header>
+          {{ "Date Range" | translate }}
+        </p-header>
+        <div class="p-grid p-ai-center" style="padding-left: 0.5em; padding-top: 0.5em;">
+          <input type="checkbox" id="useDateFilter" [(ngModel)]="useDateFilter" [ngModelOptions]="{standalone: true}" (change)="onDateFilterChange()" style="cursor: pointer;" />
+          <label for="useDateFilter" style="margin-left: 0.5em; cursor: pointer;">Filter by date range</label>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-3">
+            <label>{{ "Date From" | translate }}</label>
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              class="w-100"
+              [showIcon]="true"
+              useUtc
+              id="PDCPostingDateFrom"
+              formControlName="dateFrom"
+            >
+            </p-calendar>
+          </div>
+          <div class="p-col-12 p-md-2">
+            <label style="margin-left: 2vh">{{ "Date To" | translate }}</label>
+          </div>
+          <div class="p-col-12 p-md-4">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              class="w-100"
+              [showIcon]="true"
+              useUtc
+              id="PDCPostingDateTo"
+              formControlName="dateTo"
+            >
+            </p-calendar>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-3">
+            <label>{{ "Search Key Words" | translate }}</label>
+          </div>
+          <div class="p-col-12 p-md-9">
+            <input
+              type="text"
+              pInputText
+              class="w-100"
+              formControlName="searchWord"
+            />
+          </div>
+        </div>
+      </p-panel>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <p-panel>
+        <p-header>
+          {{ "Search Type" | translate }}
+        </p-header>
+        <div class="p-grid p-ai-center">
+          <h5
+            style="
+              cursor: pointer;
+              background: darkred;
+              width: 100%;
+              padding: 1vh;
+              color: #fff;
+              border-radius: 3px;
+            "
+          >
+            <p-radioButton
+              [style]="{ cursor: 'pointer' }"
+              name="PDCType"
+              formControlName="srchType"
+              inputId="all"
+              value="All"
+            >
+            </p-radioButton>
+            <label
+              class="p-col-12 p-md-12"
+              style="cursor: pointer"
+              for="PDC_Type"
+              >All</label
+            >
+          </h5>
+        </div>
+        <div class="p-grid p-ai-center">
+          <h5
+            style="
+              cursor: pointer;
+              background: darkred;
+              width: 100%;
+              padding: 1vh;
+              color: #fff;
+              border-radius: 3px;
+            "
+          >
+            <p-radioButton
+              [style]="{ cursor: 'pointer' }"
+              name="PDCType"
+              formControlName="srchType"
+              inputId="customers"
+              value="Customers"
+            >
+            </p-radioButton>
+            <label
+              class="p-col-12 p-md-12"
+              style="cursor: pointer"
+              for="PDC_Type"
+              >Customers</label
+            >
+          </h5>
+        </div>
+        <div class="p-grid p-ai-center">
+          <h5
+            style="
+              cursor: pointer;
+              background: darkred;
+              width: 100%;
+              padding: 1vh;
+              color: #fff;
+              border-radius: 3px;
+            "
+          >
+            <p-radioButton
+              [style]="{ cursor: 'pointer' }"
+              name="PDCType"
+              formControlName="srchType"
+              inputId="suppliers"
+              value="Suppliers"
+            >
+            </p-radioButton>
+            <label
+              class="p-col-12 p-md-12"
+              style="cursor: pointer"
+              for="PDC_Type"
+              >Suppliers</label
+            >
+          </h5>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+</div>
+<div class="card card-w-title">
+  <p-tabView (onChange)="switchHeaders($event)" [(activeIndex)]="tabIndex">
+    <p-tabPanel [header]="'PDC List' | translate">
+      <p-panel>
+        <p-header>
+          {{ "PDC List" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="PDCListGrid"
+          ></hot-table>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+    <p-tabPanel [header]="'PDC Posted List' | translate">
+      <div class="grid">
+        <hot-table
+          [hotId]="hotidPdcPosted"
+          [licenseKey]="licensekey"
+          [settings]="PDCPostedListGrid"
+        ></hot-table>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'PDC Returned List' | translate">
+      <p-panel>
+        <p-header>
+          {{ "PDC Returned List" | translate }}
+        </p-header>
+        <hot-table
+          [hotId]="hotidPdcRL"
+          [licenseKey]="licensekey"
+          [settings]="returnlist"
+        ></hot-table>
+      </p-panel>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<div class="p-grid p-ai-center">
+  <div class="p-col-12 p-md-8"></div>
+  <label class="p-col-12 p-md-1"
+    ><b>{{ "Total No" | translate }}</b></label
+  >
+  <div class="p-col-12 p-md-3 p-0">
+    <input class="w-100" placeholder="Total" pInputText />
+  </div>
+</div>
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="PDCListConfirm"
+></p-confirmDialog>

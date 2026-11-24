@@ -1,0 +1,532 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"> </app-page-header>
+<div>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button pButton type="button" (click)="new()" label="New" icon="pi pi-plus" class="ui-button-info"></button>
+      <button pButton type="button" [disabled]="!btnFlag.edit || !Permission?.Edit" label="Edit" (click)="edit()"
+        icon="fa fa-pencil" class="ui-button-success"></button>
+      <button pButton type="button" [disabled]="!btnFlag.cancel" (click)="cancelAll()" class="ui-button-danger"
+        label="Cancel" icon="fa fa-ban"></button>
+      <button pButton type="button" [label]="btnFlag.save == true ? 'Save' : 'Update'" (click)="PIreq()"
+        [disabled]="!Permission?.Add || btnFlag.new" icon="fa fa-floppy-o" class="ui-button-success"
+        label="Saveeee"></button>
+      <button pButton type="button" (click)="proformaList()" label="List" icon="fa fa-list"
+        [disabled]="!Permission?.View" class="ui-button-info"></button>
+
+      <button pButton type="button" (click)="deletePI()" class="ui-button-danger" label="Delete"
+        [disabled]="!btnFlag.delete || !Permission?.Delete" icon="fa fa-trash"></button>
+
+      <button pButton type="button" class="ui-button-primary" label="SaleTamplate" icon="fa fa-print"></button>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <button pButton type="button" (click)="loaddropdown(true)" icon="fa fa-refresh"
+        class="ui-button-success"></button>
+      <p-splitButton icon="fa fa-print" [model]="printbtn" label="Print Report"
+        [disabled]="!btnFlag.edit || !Permission.Print" styleClass="p-button-outlined mr-2 mb-2">
+      </p-splitButton>
+
+      <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"></button>
+    </div>
+  </p-toolbar>
+  <br />
+
+  <div [formGroup]="PIForm">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Proforma Invoice' | translate">
+        <div class="card p-20">
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Voucher No" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="VoucherNo" readonly />
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "ID" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="ID" placeholder="---ID---" readonly />
+              <div class="error" *ngIf="f.ID.touched && f.ID.invalid">
+                ID is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Item" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="item" placeholder="---Item---" />
+            </div>
+          </div>
+
+          <!-- /// -->
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Location" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <p-dropdown filter="true" [options]="locationList" [showClear]="true" filter="true"
+                [style]="{ width: '100%' }" placeholder="---Location---" formControlName="Location">
+              </p-dropdown>
+              <div class="error" *ngIf="f.Location.touched && f.Location.invalid">
+                Location is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "P.I No." | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="PINo" readonly
+                placeholder="---P.I No.---" />
+              <div class="error" *ngIf="f.PINo.touched && f.PINo.invalid">
+                P.I No is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Project Ref No" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="projectRefNo"
+                placeholder="---Project Ref No.---" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Customer" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <!-- <p-dropdown filter="true" [options]="CustomerMasterList" [showClear]="true" 
+                                [style]="{width: '100%'}" placeholder="---Customer---" formControlName="Customer"
+                                >
+                            </p-dropdown> -->
+              <p-dropdown filter="true" [options]="CustomerMasterList" [showClear]="true" [style]="{ width: '100%' }"
+                placeholder="---Customer---" formControlName="Customer" (onChange)="onCustomerSelect($event)">
+              </p-dropdown>
+              <div class="error" *ngIf="f.Customer.touched && f.Customer.invalid">
+                Customer is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "P.I Date" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                [yearNavigator]="true" yearRange="2000:2040" useUtc [showIcon]="true" formControlName="PIDate">
+              </p-calendar>
+              <div class="error" *ngIf="f.PIDate.touched && f.PIDate.invalid">
+                PIDate is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Delivery Required On" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="deliveryRequriedOn"
+                placeholder="---Delivery Required On---" />
+
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Sales Man" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <p-dropdown filter="true" [options]="SalesManMasterList" [showClear]="true" [style]="{ width: '100%' }"
+                placeholder="--- SalesMan ---" formControlName="SalesMan">
+              </p-dropdown>
+              <div class="error" *ngIf="f.SalesMan.touched && f.SalesMan.invalid">
+                SalesMan is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "L.P.O No" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText style="width: 100%" formControlName="LPONo" placeholder="---L.P.O No---" />
+              <div class="error" *ngIf="f.LPONo.touched && f.LPONo.invalid">
+                LPO No is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Terms of Delivery" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="termsofDelivery"
+                placeholder="---Terms of Delivery---" />
+            </div>
+
+
+          </div>
+
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Currency" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <p-dropdown filter="true" [options]="currencyList" [showClear]="true" [style]="{ width: '100%' }"
+                placeholder="--- Currency---" formControlName="Currency">
+              </p-dropdown>
+              <div class="error" *ngIf="f.Currency.touched && f.Currency.invalid">
+                Currency is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Remarks" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <textarea pTextArea formControlName="Remarks" [style]="{ width: '100%' }"></textarea>
+            </div>
+            <div class="error" *ngIf="f.Remarks.touched && f.Remarks.invalid">
+              Remarks is Invalid Entry
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "Payment Terms" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <input pInputText [style]="{ width: '100%' }" formControlName="paymentterm"
+                placeholder="---Payment Terms---" />
+            </div>
+
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1">
+              {{ "L.P.O Date" | translate }}
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3 p-0">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                [yearNavigator]="true" yearRange="2000:2040" useUtc [showIcon]="true" formControlName="LpoDate">
+              </p-calendar>
+              <div class="error" *ngIf="f.LpoDate.touched && f.LpoDate.invalid">
+                LpoDate is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1" *ngIf="!JOBCOST">
+              {{ "Select a Job" | translate }}
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-3 p-0" *ngIf="!JOBCOST">
+              <p-dropdown filter="true" [options]="jobList" [showClear]="true" [style]="{ width: '100%' }"
+                placeholder="--- SelectaJob ---" formControlName="SelectaJob">
+              </p-dropdown>
+            </div>
+
+            <div class="p-col-2 p-md-2 p-lg-2  ml-2 p-0">
+              <button pButton type="button" class="ui-button-danger" label="Browse Image..."
+                style="color: rgb(245, 239, 239)"></button>
+            </div>
+            <div class="p-col-2 p-md-2 p-lg-2 p-0">
+              <button pButton type="button" label="Browse For Sales Order" icon="pi pi-search"></button>
+            </div>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+    <div class="card card-w-title">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Proforma Invoice' | translate">
+          <div class="grid">
+            <div class="p-col-12">
+              <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey" [settings]="ProformaInvoiceEntry">
+              </hot-table>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12 p-md-6 p-lg-8"></div>
+            <div class="p-col-12 p-md-6 p-lg-4">
+              <div class="p-grid">
+                <div class="p-col-3">
+                  {{ "Discount:" }}
+                </div>
+                <div class="p-col-2">
+                  <input type="text" (change)="changeDiscountPer()" pInputText formControlName="pITotalDisPer"
+                    class="w-100" />
+                </div>
+                <div class="p-col-1">%</div>
+
+                <div class="p-col-6">
+                  <input type="text" (change)="changeDiscountAmnt()" formControlName="pITotalDisAmount" pInputText
+                    class="w-100" />
+                </div>
+              </div>
+
+              <div class="p-grid">
+                <div class="p-col-3">
+                  {{ "Total:" }}
+                </div>
+                <div class="p-col-9">
+                  <input type="text" [value]="GetGrossTotal()" readonly formControlName="pIGrossAmount" pInputText
+                    class="w-100" />
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">
+                  {{ "VAT:" }}
+                </div>
+                <div class="p-col-2">
+                  <input type="text" formControlName="pIVatPer" pInputText class="w-100" />
+                </div>
+                <div class="p-col-1">%</div>
+
+                <div class="p-col-6">
+                  <input type="text" [value]="getVatAmount()" formControlName="pIVatAmt" pInputText class="w-100" />
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">
+                  {{ "Net Total:" }}
+                </div>
+                <div class="p-col-9">
+                  <input type="text" [value]="getNetTotal()" readonly formControlName="pITotalActualAmount" pInputText
+                    class="w-100" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+
+  <ng-container *ngIf="showSalesLookUp">
+    <app-lookup [header]="'Look Up'" [dataArry]="dataList" [isServerSearch]="isServerSearch" [selectedItem]="selectItem"
+      [columns]="lookupGridColumns" (selectItemEvent)="selectsales($event)" (exitEvent)="exit($event)"
+      [cell]="activeRow" (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" [tableheader]="'Sales List'"
+      (searchEvent)="onSearch($event)" [(show)]="showSalesLookUp"></app-lookup>
+  </ng-container>
+
+
+  <p-confirmDialog [transitionOptions]="'0ms'" header="Confirmation" icon="pi pi-exclamation-triangle">
+  </p-confirmDialog>
+  <p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+  <!-- <p-toast></p-toast> -->
+
+  <p-toast [style]="{ marginTop: '80px' }"></p-toast>
+
+  <p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '90%' }"
+    [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+    <button pButton type="button" class="ui-button-primary" (click)="getPIReport()" label="Print"
+      icon="fa fa-print"></button>
+
+    <div id="print" class="container w-100">
+      <div class="flex">
+        <div class="contain1">
+          <div class="center" style="text-align: left; margin-top: -28px">
+            <!-- <img src="../../../../../assets/Images/logo-2.png" /> -->
+
+            <img *ngIf="stationmasterObj?.logotype != 'Rectangular'" class="squreImg" [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              " />
+            <img *ngIf="stationmasterObj?.logotype == 'Rectangular'" class="rectImg" [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              " />
+          </div>
+        </div>
+        <div class="contain2">
+          <h1 class="cross">PROFORMA INVOICE</h1>
+
+          <table class="table">
+            <tr>
+              <td>
+                <h2 class="tfe" style="
+                    font-family: Tahoma;
+                    font-size: 15px;
+                    font-weight: bold;
+                  ">
+                  Invoice No.
+                </h2>
+              </td>
+              <td class="tfe check_1" style="
+                  font-family: Tahoma;
+                  font-size: 15px;
+                  font-weight: normal;
+                ">
+                {{ proformaInvoice?.proformaInvoiceLpoNo }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h2 class="tfe" style="
+                    font-family: Tahoma;
+                    font-size: 15px;
+                    font-weight: bold;
+                  ">
+                  Date
+                </h2>
+              </td>
+              <td style="font-family: Tahoma; font-size: 15px">
+                {{
+                proformaInvoice?.proformaInvoiceLpoDate | date : "dd/MM/yyyy"
+                }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex">
+        <div class="bank1">
+          <div class="flexrow" style="padding-top: 10px">
+            <div class="flexcol">
+              <div style="font-family: Tahoma; font-weight: bold; font-size: 15px">
+                CUSTOMER
+              </div>
+
+              <div style="font-family: Tahoma; font-weight: bold; font-size: 15px">
+                Customer
+              </div>
+              <div style="font-family: Tahoma; font-weight: bold; font-size: 15px">
+                Contact Person
+              </div>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+              <div style="font-family: Tahoma; font-size: 15px; margin-top: -4px">
+                {{ GetCustomer(proformaInvoice?.proformaInvoiceCustName) }}
+              </div>
+              <div style="font-family: Tahoma; font-size: 15px">
+                {{ proformaInvoice?.contectPerson }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin: 3px"></div>
+        <div class="bank2">
+          <div class="flexrow">
+            <div class="flexcol"></div>
+            <!-- <div class="flexcol">
+                            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+
+                        </div> -->
+            <div class="flexcol" style="margin-left: 4px">
+              <div style="font-family: Tahoma; font-weight: bold; font-size: 15px">
+                SHIP TO
+              </div>
+              <div style="font-family: Tahoma; font-weight: bold; font-size: 15px">
+                {{ stationmasterObj?.stationMasterStationName }},
+                {{ stationmasterObj?.stationMasterAddress }}
+              </div>
+              <div style="
+                  font-family: Tahoma;
+                  font-size: 15px;
+                  font-weight: normal;
+                ">
+                {{ stationmasterObj?.stationMasterCity }}
+              </div>
+              <div style="
+                  font-family: Tahoma;
+                  font-size: 15px;
+                  font-weight: normal;
+                ">
+                {{ stationmasterObj?.stationMasterPostOffice }}
+              </div>
+              <div style="
+                  font-family: Tahoma;
+                  font-size: 15px;
+                  font-weight: normal;
+                ">
+                {{ stationmasterObj?.stationMasterAddress }},
+                {{ stationmasterObj?.stationMasterCountry }}
+              </div>
+              <div style="
+                  font-family: Tahoma;
+                  font-size: 15px;
+                  font-weight: normal;
+                ">
+                Tel. {{ stationmasterObj?.stationMasterTele1 }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tbh">
+        <table id="customers">
+          <tr>
+            <th style="width: 100px">S#</th>
+            <th style="width: 300px; text-align: left">Description</th>
+            <th style="width: 100px">Unit</th>
+            <th style="width: 100px">Qty</th>
+            <th style="width: 100px">Unit Price</th>
+            <th style="width: 100px">Amount</th>
+          </tr>
+          <tr *ngFor="
+              let item of proformaInvoice?.proformaInvoiceDetails;
+              let i = index
+            ">
+            <td style="text-align: center">{{ i + 1 }}</td>
+            <td style="text-align: left">
+              {{ getItemMasterName(item?.proformaInvoiceDetailsItemId) }}
+            </td>
+            <td style="text-align: center">
+              {{ getUnitName(item?.proformaInvoiceDetailsUnitId) }}
+            </td>
+            <td style="text-align: center">
+              {{ item?.proformaInvoiceDetailsQty }}
+            </td>
+            <td style="text-align: center">
+              {{ item?.proformaInvoiceDetailsUnitPrice }}
+            </td>
+            <td style="text-align: center">
+              {{ item?.proformaInvoiceDetailsAmount }}
+            </td>
+          </tr>
+          <!-- <tr class="spacer">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> -->
+        </table>
+        <br />
+        <div class="fix">
+          <div class="lft" *ngIf="showAmountInWords">
+            <p class="rup" style="margin-top: 75px">
+              <strong>&nbsp; Amount In Words </strong>: <br />
+              &nbsp;&nbsp;{{
+              convertNumberToWordsWithDecimal(
+              proformaInvoice?.proformaInvoiceGrandTotal
+              )
+              }}
+            </p>
+          </div>
+          <table class="rit" style="width: 25%">
+            <tr>
+              <td>Subtotal</td>
+              <td style="text-align: right">
+                {{ proformaInvoice?.proformaInvoiceTotal }}
+              </td>
+            </tr>
+            <tr>
+              <td>Discount</td>
+              <td style="text-align: right">
+                {{ proformaInvoice?.proformaInvoiceDiscountAmount.toFixed(2) }}
+              </td>
+            </tr>
+            <tr>
+              <td>VAT</td>
+              <td style="text-align: right">{{ getVatAmount().toFixed(2) }}</td>
+            </tr>
+            <tr>
+              <td><strong>Net Amount</strong></td>
+              <td style="text-align: right">
+                {{ proformaInvoice?.proformaInvoiceGrandTotal }}
+              </td>
+            </tr>
+          </table>
+        </div>
+        <br />
+      </div>
+    </div>
+    <!-- </div> -->
+  </p-dialog>
+</div>

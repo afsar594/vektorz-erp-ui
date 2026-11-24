@@ -1,0 +1,1021 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      label="Add"
+      icon="pi pi-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      [disabled]="!Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      [disabled]="!Permission?.Delete"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="fa fa-floppy-o"
+      [disabled]="!Permission?.Add"
+      class="ui-button-success"
+      label="Save"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print Profile"
+      icon="fa fa-print"
+      [disabled]="!Permission?.Print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print Profile"
+      icon="fa fa-print"
+      [disabled]="!Permission?.Print"
+      class="ui-button-danger"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+
+<div class="card">
+  <div class="p-grid p-ai-center">
+    <div class="p-col-12">
+      <p-panel>
+        <p-header> </p-header>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Company" | translate }}
+          </div>
+          <div class="p-col-12 p-md-5">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Select Company---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Staff Code" | translate }}
+          </div>
+          <div class="p-col-12 p-md-5">
+            <input
+              class="w-100"
+              type="text"
+              placeholder="---Select Company---"
+              pInputText
+            />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Fiel No" | translate }}
+          </div>
+          <div class="p-col-12 p-md-5">
+            <input
+              class="w-100"
+              type="text"
+              placeholder="---Select Company---"
+              pInputText
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "VisaCompany" | translate }}
+          </div>
+          <div class="p-col-12 p-md-5">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Visa Company ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Details 1' | translate">
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "First Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Middle Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Last Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input class="w-100" type="text" pInputText />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Full Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Family Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Father Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input class="w-100" type="text" pInputText />
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Material Status" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              options=""
+              placeholder="Status"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="p-col-12 p-md-1">
+            {{ "Language" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              options=""
+              placeholder=" --- Select language---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Date Of Birth" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              id="dateFrom"
+              useUtc
+              dateFormat="dd-mm-yy"
+              [style]="{ width: '100%' }"
+            ></p-calendar>
+          </div>
+          <div class="p-col-12 p-md-1" style="color: red">
+            {{ "Enroll No" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input
+              class="w-100"
+              style="background-color: red; text-decoration: white"
+              type="text"
+              pInputText
+              placeholder="---Enroll No---"
+            />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1" style="color: rgb(199, 11, 174)">
+            {{ "Nationality" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              options=""
+              placeholder="---Nationality---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1" style="color: rgb(199, 11, 174)">
+            {{ "Designation" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Designation---"
+            />
+          </div>
+          <div class="p-col-12 p-md-2">
+            {{ "Visa Designation" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Visa Designation---"
+            />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1" style="color: rgb(199, 11, 174)">
+            {{ "Sub Department" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input
+              class="w-100"
+              type="text"
+              placeholder="---Sub Department---"
+              pInputText
+            />
+          </div>
+          <div class="p-col-12 p-md-1" style="color: rgb(199, 11, 174)">
+            {{ "Department" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input
+              class="w-100"
+              type="text"
+              placeholder="---Department---"
+              pInputText
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            <input
+              style="width: 50%; text-align: center"
+              type="text"
+              placeholder="  ....  "
+              pInputText
+            />
+          </div>
+
+          <div class="p-col-12 p-md-1">
+            {{ "Blood Group" | translate }}
+          </div>
+          <div class="p-col-12 p-md-1">
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              options=""
+              placeholder="Group"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Religion" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              options=""
+              placeholder="---Religion---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Transfer Type" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Transfer Type---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Bank" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="--Bank--"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            <input
+              style="width: 50%; text-align: center"
+              type="text"
+              placeholder="  ....  "
+              pInputText
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Bank Acc No." | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Acc No.---"
+            />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Person Id(WPS)" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Person Id(WPS)---"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "IBAN(WPS)" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---IBAN(WPS)---"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Active Status" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Active---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1" style="color: red">
+            {{ "Last Working Day" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              id="dateFrom"
+              useUtc
+              dateFormat="dd-mm-yy"
+              [style]="{ width: '100%' }"
+            ></p-calendar>
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1" style="color: rgb(199, 11, 174)">
+            {{ "Date of Join" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              id="dateFrom"
+              useUtc
+              dateFormat="dd-mm-yy"
+              [style]="{ width: '100%' }"
+            ></p-calendar>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Location" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Location---"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            <input
+              style="width: 50%; text-align: center"
+              type="text"
+              placeholder="...."
+              pInputText
+            />
+          </div>
+          <div class="p-col-12 p-md-1" style="color: red">
+            {{ "Currency" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Currency---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Sex" | translate }}
+          </div>
+          <div class="p-col-12 p-md-1">
+            <p-radioButton
+              name="particularVoucher"
+              inputId="dateRange"
+              value="dateRange"
+            >
+            </p-radioButton>
+            <label for="particularVoucher">Male</label>
+          </div>
+          <div class="p-col-12 p-md-1">
+            <p-radioButton
+              name="particularVoucher"
+              inputId="dateRange"
+              value="dateRange"
+            >
+            </p-radioButton>
+            <label for="particularVoucher">Female</label>
+          </div>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Details 2' | translate">
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Cadre" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Cadre---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Grade lavel" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Grade lavel---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Previous Emp" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-1" style="color: blueviolet">
+            {{ "Experience In Yrs" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "QualifiCation 1" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---QualifiCation 1---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "QualifiCation 2" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---QualifiCation 2---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "QualifiCation 3" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---QualifiCation 3---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            <input
+              style="width: 50%; text-align: center"
+              type="text"
+              placeholder="...."
+              pInputText
+            />
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Ticket Frequency" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Ticket Frequency---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1" style="color: brown">
+            {{ "Normal Hour" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder=" --- Normal Hour---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-checkbox
+              label="Eligible For OT"
+              style="color: rgb(236, 33, 26)"
+            ></p-checkbox>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Staff Type" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Staff Type---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            <input
+              style="width: 50%; text-align: center"
+              type="text"
+              placeholder="...."
+              pInputText
+            />
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Agent" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Agent---"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Supervisor" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="--Supervisor--"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Site Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Site Name---"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            <input
+              style="width: 50%; text-align: center"
+              type="text"
+              placeholder="...."
+              pInputText
+            />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1">
+            {{ "Shift Type" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Shift Type---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Shift Name" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="---Shift Name---"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Vehicle" | translate }}
+          </div>
+          <div class="p-col-12 p-md-3">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="------Vehicle---"
+            />
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-1" style="color: blueviolet">
+            {{ "Port Of Entry" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <input
+              class="w-100"
+              type="text"
+              pInputText
+              placeholder="---Port Of Entry---"
+            />
+          </div>
+          <div class="p-col-12 p-md-1">
+            {{ "Date of Entry" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              id="dateFrom"
+              useUtc
+              dateFormat="dd-mm-yy"
+              [style]="{ width: '100%' }"
+            ></p-calendar>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [licenseKey]="licensekey"
+              [settings]="detail"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Details 3' | translate">
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2">
+            {{ "Sponsor" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            {{ "Visa Type" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Visa Type ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2">
+            {{ "Contract Type" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Contract Type ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            {{ "Accomodation" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Accomodation ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            {{ "Employee QID" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            {{ "Employee Visa ID" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2" style="color: rgb(240, 47, 47)">
+            {{ "Gratuity Start Date" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input type="checkbox" pInputCheck /><p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              id="dateFrom"
+              useUtc
+              dateFormat="dd-mm-yy"
+            ></p-calendar>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2" style="color: rgb(92, 8, 8)">
+            {{ "Leave Salary Amount Policy" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Leave Salary Amount Policy ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-2" style="color: rgb(15, 126, 42)">
+            {{ "Gratuity Amount Policy" | translate }}
+          </div>
+          <div class="p-col-12 p-md-4">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Gratuity Amount Policy ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2" style="color: rgb(15, 126, 42)">
+            {{ "Overtime Amount Policy" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2" style="color: rgb(240, 47, 47)">
+            {{ "Job Cost Amount" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2" style="color: rgb(240, 47, 47)">
+            {{ "Standby Gratuity Amount" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            {{ "Routing Code" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            {{ "UID No" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2" style="color: blueviolet">
+            {{ "Camp" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2" style="color: rgb(15, 126, 42)">
+            {{ "Payroll Cycle" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Gratuity Amount Policy ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div class="p-col-12 p-md-2" style="color: rgb(15, 126, 42)">
+            {{ "Wages Calculation Method" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <p-dropdown
+              filter="true"
+              [style]="{ width: '100%' }"
+              options=""
+              placeholder="------- Select Gratuity Amount Policy ------"
+              [showClear]="true"
+              optionLabel=""
+            >
+            </p-dropdown>
+          </div>
+          <div
+            class="p-col-4"
+            style="background-color: red; text-decoration-color: white"
+          >
+            <input type="checkbox" pInputCheck />{{
+              "Do not process payroll" | translate
+            }}<br />
+            <input type="checkbox" pInputCheck />{{
+              "Not eligible for Gratuity" | translate
+            }}
+          </div>
+        </div>
+
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-2">
+            {{ "Ot Rate" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2">
+            {{ "Target Hours" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+          <div class="p-col-12 p-md-2">
+            {{ "Probation Period (Days)" | translate }}
+          </div>
+          <div class="p-col-12 p-md-2">
+            <input class="w-100" type="text" pInputText />
+          </div>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Reports' | translate"> </p-tabPanel>
+  </p-tabView>
+</div>

@@ -1,0 +1,133 @@
+<app-page-header [nav]='[{label: "account"| translate},{label: "Purchase Return Report"| translate}]'
+[title]='title| translate'></app-page-header>
+
+<div class="toolbar">
+    <div>
+        <button pButton type="button" class="ui-button-danger" [disabled]='!btnFlag?.cancel' label="Cancel"
+            (click)="cancel()" icon="fa fa-ban"></button>
+            <button pButton type="button" class="ui-button-danger" [disabled]='!Permission?.Add'  label="Save"
+            icon="fa fa-ban"></button>
+        <button pButton type="button" [disabled]='!Permission?.View' [label]="'List' | translate" icon="fa fa-list" (click)="showMaximizableDialog()"
+            class="ui-button-info"></button>
+
+    </div>
+    <div>
+       
+        <button pButton type="button"   label="Print" [disabled]='!btnFlag.edit || !Permission.Print'
+         icon="fa fa-print" class="ui-button-success"></button>
+
+        <button pButton type="button" label="Exit" (click)=ExitNew() icon="fa fa-sign-out"></button>
+
+    
+    </div>
+</div>
+
+<div class="card card-w-title" [formGroup]='purchaseReturnFormGroup'>
+<p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Purchase Return Report'| translate">
+  
+        <p-panel>
+            <p-header>
+                {{'Purchase Return Report(Summary)'| translate}}
+            </p-header>
+            <div class="grid">
+                <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="purchasereturn_entry"
+                    [data]="purchasereturn_entryDataset"></hot-table>
+            </div>
+
+        </p-panel>
+    </p-tabPanel>
+  
+    <p-tabPanel [header]="'Purchase Return Report(Table)'| translate">
+
+        <p-panel>
+            <p-header>
+                {{'Purchase Return Report(Table)'| translate}}
+            </p-header>
+            <div class="grid">
+                   
+            <div>
+
+
+ 
+    <p-table #dt [value]="reportPurchaseReturnarry" [columns]="cols" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+                <i class="pi pi-search" style="margin:6px 6px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Global Filter"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let col of cols" [ngStyle]="{'width':'150px'}" [pSortableColumn]="col.field">{{col.header|translate}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+    
+        <ng-template pTemplate="body" let-purchasereturn_list>
+            <tr>
+                <td>{{purchasereturn_list.purchaseReturnNo}}</td>
+                <td>{{purchasereturn_list.purchaseReturnDate |date: 'dd/MM/y'}} </td>
+                <td>{{purchasereturn_list.purchaseReturnType}}</td>
+                <td>{{purchasereturn_list.suppliersMasterSupplierName}}</td>
+                <td>{{purchasereturn_list.purchaseReturnPartyName}}</td>
+                <td>{{purchasereturn_list.purchaseReturnPartyVatNo}}</td>
+                <td>{{purchasereturn_list.purchaseReturnSupInvNo}}</td>
+               <td>{{purchasereturn_list.purchaseReturnExcludeVat}}</td>
+                <td>{{purchasereturn_list.currencyMasterCurrencyName}}</td>
+                <td>{{purchasereturn_list.jobMasterJobName}}</td>
+                <td>{{purchasereturn_list.locationMasterLocationName}}</td>
+    
+    
+                <td>{{purchasereturn_list.purchaseReturnTotalGrossAmount}}</td>
+                <td>{{purchasereturn_list.purchaseReturnTotalItemDisAmount}}</td>
+                <td>{{purchasereturn_list.purchaseReturnTotalDisPer}}</td>
+                <td>{{purchasereturn_list.purchaseReturnTotalDisAmount}}</td>
+                <td>{{purchasereturn_list.purchaseReturnTotalActualAmount}}</td>
+                <td>{{purchasereturn_list.purchaseReturnVatPer}}</td>
+                <td>{{purchasereturn_list.purchaseReturnVatAmt}}</td>
+           
+               <td>{{purchasereturn_list.purchaseReturnVatRountAmt}}</td>
+                <td>{{purchasereturn_list.purchaseReturnNetAmount}}</td>
+                <td>{{purchasereturn_list.purchaseReturnDetailsMatId}}</td>
+                <td>{{purchasereturn_list.itemMasterPartNo}}</td>
+    
+          
+                <td>{{purchasereturn_list.itemMasterItemName}}</td>
+                <td>{{purchasereturn_list.purchaseReturnDetailsItemName}}</td>
+                <td>{{purchasereturn_list.purchaseReturnDetailsUnitName}}</td>
+                <td>{{purchasereturn_list.purchaseReturnDetailsQuantity}}</td>
+    
+                <td>{{purchasereturn_list.purchaseReturnDetailsRate}}</td>
+                <td>{{purchasereturn_list.purchaseReturnDetailsDiscAmount}}</td>
+                <td>{{purchasereturn_list.purchaseReturnDetailsNetAmt}}</td>
+                 
+    
+                <!-- <td>
+                    <button pButton type="button" icon="pi pi-pencil"
+                        (click)='GetSavedPurchaseReturnDetails(purchasereturn_list.purchaseReturnNo);displayMaximizable=false;'
+                        class="ui-button-info"></button>
+                </td> -->
+            </tr>
+        </ng-template>
+    </p-table>
+
+    </div>  
+    
+    <!-- </p-dialog> -->
+
+            </div>
+
+        </p-panel>
+
+    </p-tabPanel>
+    
+</p-tabView>
+</div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>

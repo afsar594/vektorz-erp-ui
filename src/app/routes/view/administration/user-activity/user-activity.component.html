@@ -1,0 +1,308 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      [label]="'Show'"
+      (click)="show()"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'Clear Selection'"
+      (click)="clear()"
+      icon="fa fa-pencil"
+      class="ui-button-warning"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'Print'"
+      icon="fa fa-print"
+      (click)="displayPrint()"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'Exit'"
+      (click)="ExitNew()"
+      icon="fa fa-close"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+  <p-tabPanel
+    [header]="'User Track Report' | translate"
+    [formGroup]="UserTrackingReport"
+  >
+    <div class="p-grid">
+      <div class="p-col-6 p-md-6 p-lg-6">
+        <div class="p-grid">
+          <label class="p-col-2 p-md-2 p-lg-2" for="account">
+            <b>{{ "User Name:" | translate }}</b>
+          </label>
+          <div class="p-col-10 p-md-10 p-lg-10">
+            <p-dropdown
+              filter="true"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              formControlName="UserNameId"
+              [options]="UserNamelist"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="p-grid">
+          <label class="p-col-2 p-md-2 p-lg-2" for="account">
+            <b>{{ "Action:" | translate }}</b>
+          </label>
+          <div class="p-col-10 p-md-10 p-lg-10">
+            <p-dropdown
+              filter="true"
+              [filter]="true"
+              [options]="ActionTypelist"
+              filterBy="name"
+              [showClear]="true"
+              formControlName="ActionId"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="p-grid">
+          <label class="p-col-2 p-md-2 p-lg-2" for="account">
+            <b>{{ "Voucher Type :" | translate }}</b>
+          </label>
+          <div class="p-col-10 p-md-10 p-lg-10">
+            <p-dropdown
+              filter="true"
+              [filter]="true"
+              filterBy="name"
+              [options]="vouchertypelist"
+              filter="true"
+              [showClear]="true"
+              formControlName="VocherTypeId"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-6">
+        <p-panel>
+          <p-header>
+            <!-- <p-checkbox label="By Date"></p-checkbox> -->
+            <p-checkbox
+              formControlName="isDate"
+              [binary]="true"
+              label="ByDate"
+            ></p-checkbox>
+          </p-header>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-1">{{
+              "From" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-11">
+              <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc [showIcon]="true"></p-calendar> -->
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                showIcon="true"
+                useUtc
+                formControlName="DateFrom"
+                class="w-200"
+                [disabled]="!UserTrackingReport.get('isDate').value"
+              >
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-1">{{
+              "To" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-11">
+              <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc [showIcon]="true"></p-calendar> -->
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                showIcon="true"
+                useUtc
+                formControlName="DateTo"
+                class="w-200"
+                [disabled]="!UserTrackingReport.get('isDate').value"
+              >
+              </p-calendar>
+            </div>
+          </div>
+        </p-panel>
+      </div>
+      <!-- <div class="p-col-6 p-md-6 p-lg-6">
+                <p-panel>
+                    <p-header>By Date</p-header>
+                    <div class="p-grid">
+                        <div class="p-col-2 p-md-2 p-lg-2">
+                            <label for="account">
+                                <b>{{'Date From' | translate}}</b>
+                            </label>
+
+                        </div>
+                        <div class="p-col-10 p-md-10 p-lg-10">
+                            <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" showIcon="true" useUtc class="w-100">
+                            </p-calendar>
+                        </div>
+                    </div>
+                    <div class="p-grid">
+                        <div class="p-col-2 p-md-2 p-lg-2">
+                            <label for="account">
+                                <b>{{'Date To' | translate}}</b>
+                            </label>
+
+                        </div>
+                        <div class="p-col-10 p-md-10 p-lg-10">
+                            <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" showIcon="true" useUtc class="w-100">
+                            </p-calendar>
+                        </div>
+                    </div>
+                </p-panel>
+            </div> -->
+    </div>
+
+    <div class="card card-w-title">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Details' | translate">
+          <div class="grid">
+            <div class="p-col-12">
+              <hot-table
+                [hotId]="hotid"
+                [data]="dataset"
+                [licenseKey]="licensekey"
+                [settings]="usertrack"
+              ></hot-table>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </p-tabPanel>
+</p-tabView>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '70%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+
+  <div id="contentToConvertSv">
+    <!-- <body> -->
+    <div class="print page">
+      <div class="company">
+        <div class="flexrow gaprow w-100">
+          <div class="flexcol w-80">
+            <div style="margin-left: 20%">
+              <h2 class="flexcol">
+                {{ stationmasterObj?.stationMasterStationName }}
+              </h2>
+
+              <div class="flexrow">
+                <div class="flexcol">
+                  <b>{{ "Address" | translate }}</b>
+                  <b>{{ "Tel" | translate }} </b>
+                  <b>{{ "Fax" | translate }} </b>
+                  <b>{{ "TRN" | translate }} </b>
+                  <b>{{ "Email" | translate }} </b>
+                </div>
+                <div class="flexcol">
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="flexcol">
+                  <div>{{ stationmasterObj?.stationMasterAddress }}&nbsp;</div>
+                  <div>{{ stationmasterObj?.stationMasterTele1 }}&nbsp;</div>
+                  <div>{{ stationmasterObj?.stationMasterFax }}&nbsp;</div>
+                  <div>
+                    {{
+                      stationmasterObj?.stationMasterVatNo
+                        ? stationmasterObj?.stationMasterVatNo
+                        : 104093336600003
+                    }}&nbsp;
+                  </div>
+                  <div>{{ stationmasterObj?.stationMasterEmail }}&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flexcol w-20">
+            <div class>
+              <!-- <img src="../../../../../assets/Images/BabAlsharq.jpg" /> -->
+              <img
+                *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+                class="squreImg"
+                [src]="
+                  'data:image/png;base64,' +
+                  stationmasterObj?.stationMasterLogoImg
+                "
+              />
+              <img
+                *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+                class="rectImg"
+                [src]="
+                  'data:image/png;base64,' +
+                  stationmasterObj?.stationMasterLogoImg
+                "
+              />
+            </div>
+          </div>
+        </div>
+        <div class="heading">
+          <h2>User Activity Report</h2>
+        </div>
+        <table id="customers">
+          <tr>
+            <th>User Name</th>
+            <th>Invoice Type</th>
+            <th>Actions</th>
+            <th>Change Date</th>
+          </tr>
+          <tr *ngFor="let item of reportList">
+            <td>{{ item.userName }}</td>
+            <td>{{ item.vP_Type }}</td>
+            <td>{{ item.vP_Action }}</td>
+            <td>{{ item.change_Dt | date : "dd/MM/yyyy" }}</td>
+          </tr>
+          <tr *ngFor="let row of emptyRows">
+            <td *ngFor="let col of columns"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</p-dialog>

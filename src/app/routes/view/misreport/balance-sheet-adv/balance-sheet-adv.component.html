@@ -1,0 +1,174 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Balance Sheet' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Generate"
+      icon="pi pi-play"
+      (click)="loadBalanceSheet()"
+      class="ui-button-success"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <p-splitButton
+      icon="fa fa-print"
+      [model]="printbtns"
+      label="Print Report"
+      styleClass="p-button-outlined mr-2 mb-2"
+    >
+    </p-splitButton>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Balance Sheet' | translate">
+      <div class="p-grid p-fluid">
+        <!-- 🗓️ Date Filters -->
+        <div class="p-col-12 p-md-8">
+          <p-panel>
+            <p-header>
+              <p-checkbox
+                name="byDate"
+                label="By Date"
+                [(ngModel)]="byDate"
+                (ngModelChange)="onByDateChange($event)"
+                [binary]="true"
+              >
+              </p-checkbox>
+            </p-header>
+
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-4">
+                <label><b>Financial Period Start Date:</b></label>
+              </div>
+              <div class="p-col-12 p-md-8">
+                <p-calendar
+                  appendTo="body"
+                  [(ngModel)]="financialStartDate"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [showIcon]="true"
+                  [disabled]="!byDate"
+                  useUtc="true"
+                  class="w-100"
+                >
+                </p-calendar>
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-4">
+                <label><b>Financial Period End Date:</b></label>
+              </div>
+              <div class="p-col-12 p-md-8">
+                <p-calendar
+                  appendTo="body"
+                  [(ngModel)]="financialEndDate"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [showIcon]="true"
+                  [disabled]="!byDate"
+                  useUtc="true"
+                  class="w-100"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+
+        <!-- View Options -->
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header>Type</p-header>
+
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-6">
+                <p-radioButton
+                  name="viewType"
+                  label="Summary View"
+                  [(ngModel)]="isSummaryView"
+                  [value]="true"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-6">
+                <p-radioButton
+                  name="viewType"
+                  label="Detailed View"
+                  [(ngModel)]="isSummaryView"
+                  [value]="false"
+                >
+                </p-radioButton>
+              </div>
+            </div>
+
+            <div class="p-col-12 p-md-12">
+              <p-checkbox
+                label="Hide Zero Balance"
+                [(ngModel)]="includeZero"
+                [binary]="true"
+              >
+              </p-checkbox>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <!-- 📊 Statement grid. Rows come straight from the API in statement order:
+       MAINHEAD -> Head column, SUBHEAD -> Sub Head column,
+       RELATIVEHEAD -> Group column,
+       DETAIL / RELATIVE_TOTAL / MAIN_TOTAL / GRAND_TOTAL / CHECK
+         -> Account column + Debit / Credit / Balance. -->
+  <div class="card card-w-title mt-3" *ngIf="displayRows?.length">
+    <p-table [value]="displayRows" styleClass="p-datatable-sm balance-sheet-table statement-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="row-num"></th>
+          <th colspan="4" class="text-center">Particulars</th>
+          <th class="text-center">Acc No</th>
+          <th class="text-right">Debit</th>
+          <th class="text-right">Credit</th>
+          <th class="text-right">Balance</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row let-i="rowIndex">
+        <tr [ngClass]="rowClass(row)">
+          <td class="row-num">{{ i + 1 }}</td>
+          <td>{{ row.kind === 'HEAD' ? row.label : '' }}</td>
+          <td>{{ row.kind === 'SUBHEAD' ? row.label : '' }}</td>
+          <td>{{ row.kind === 'GROUP' ? row.label : '' }}</td>
+          <td>{{ row.kind === 'LINE' ? row.label : '' }}</td>
+          <td>{{ row.kind === 'LINE' ? row.accNo : '' }}</td>
+          <td class="end">
+            {{ row.kind === 'LINE' && row.totalDebit !== null ? (row.totalDebit | number : "1.2-2") : '' }}
+          </td>
+          <td class="end">
+            {{ row.kind === 'LINE' && row.totalCredit !== null ? (row.totalCredit | number : "1.2-2") : '' }}
+          </td>
+          <td class="end">
+            {{ row.kind === 'LINE' && row.balance !== null ? (row.balance | number : "1.2-2") : '' }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

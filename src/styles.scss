@@ -1,0 +1,812 @@
+@import "~handsontable/dist/handsontable.full.css";
+@import "~primeng/resources/primeng.min.css";
+// @import "~@fullcalendar/daygrid/main.min.css";
+// @import "~@fullcalendar/timegrid/main.min.css";
+// @import "~quill/dist/quill.snow.css";
+@import "~font-awesome/css/font-awesome.min.css";
+@import "~primeicons/primeicons.css";
+// @import "~primeflex/primeflex.css";
+
+.p-dialog-mask {
+  z-index: 10000 !important;
+}
+$cdk-z-index-overlay-container: 1000 !default;
+$cdk-z-index-overlay: 1000 !default;
+$cdk-z-index-overlay-backdrop: 1000 !default;
+
+// Background color for all of the backdrops
+$cdk-overlay-dark-backdrop-background: rgba(0, 0, 0, 0.32) !default;
+
+// Default backdrop animation is based on the Material Design swift-ease-out.
+$backdrop-animation-duration: 400ms !default;
+$backdrop-animation-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1) !default;
+
+@mixin cdk-overlay() {
+  .cdk-overlay-container,
+  .cdk-global-overlay-wrapper {
+    // Disable events from being captured on the overlay container.
+    pointer-events: none;
+
+    // The container should be the size of the viewport.
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  // The overlay-container is an invisible element which contains all individual overlays.
+  .cdk-overlay-container {
+    position: fixed;
+    z-index: $cdk-z-index-overlay-container;
+
+    &:empty {
+      // Hide the element when it doesn't have any child nodes. This doesn't
+      // include overlays that have been detached, rather than disposed.
+      display: none;
+    }
+  }
+
+  // We use an extra wrapper element in order to use make the overlay itself a flex item.
+  // This makes centering the overlay easy without running into the subpixel rendering
+  // problems tied to using `transform` and without interfering with the other position
+  // strategies.
+  .cdk-global-overlay-wrapper {
+    display: flex;
+    position: absolute;
+    z-index: $cdk-z-index-overlay;
+  }
+
+  // A single overlay pane.
+  .cdk-overlay-pane {
+    // Note: it's important for this one to start off `absolute`,
+    // in order for us to be able to measure it correctly.
+    position: absolute;
+    pointer-events: auto;
+    box-sizing: border-box;
+    z-index: $cdk-z-index-overlay;
+
+    // For connected-position overlays, we set `display: flex` in
+    // order to force `max-width` and `max-height` to take effect.
+    display: flex;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .cdk-overlay-backdrop {
+    // TODO(jelbourn): reuse sidenav fullscreen mixin.
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    z-index: $cdk-z-index-overlay-backdrop;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity $backdrop-animation-duration
+      $backdrop-animation-timing-function;
+    opacity: 0;
+
+    &.cdk-overlay-backdrop-showing {
+      opacity: 1;
+
+      // In high contrast mode the rgba background will become solid so we need to fall back
+      // to making it opaque using `opacity`. Note that we can't use the `cdk-high-contrast`
+      // mixin, because we can't normalize the import path to the _a11y.scss both for the
+      // source and when this file is distributed. See #10908.
+      @media screen and (-ms-high-contrast: active) {
+        opacity: 0.6;
+      }
+    }
+  }
+
+  .cdk-overlay-dark-backdrop {
+    background: $cdk-overlay-dark-backdrop-background;
+  }
+
+  .cdk-overlay-transparent-backdrop {
+    // Note: as of Firefox 57, having the backdrop be `background: none` will prevent it from
+    // capturing the user's mouse scroll events. Since we also can't use something like
+    // `rgba(0, 0, 0, 0)`, we work around the inconsistency by not setting the background at
+    // all and using `opacity` to make the element transparent.
+    &,
+    &.cdk-overlay-backdrop-showing {
+      opacity: 0;
+    }
+  }
+
+  // Overlay parent element used with the connected position strategy. Used to constrain the
+  // overlay element's size to fit within the viewport.
+  .cdk-overlay-connected-position-bounding-box {
+    position: absolute;
+    z-index: $cdk-z-index-overlay;
+
+    // We use `display: flex` on this element exclusively for centering connected overlays.
+    // When *not* centering, a top/left/bottom/right will be set which overrides the normal
+    // flex layout.
+    display: flex;
+
+    // We use the `column` direction here to avoid some flexbox issues in Edge
+    // when using the "grow after open" options.
+    flex-direction: column;
+
+    // Add some dimensions so the element has an `innerText` which some people depend on in tests.
+    min-width: 1px;
+    min-height: 1px;
+  }
+
+  // Used when disabling global scrolling.
+  .cdk-global-scrollblock {
+    position: fixed;
+
+    // Necessary for the content not to lose its width. Note that we're using 100%, instead of
+    // 100vw, because 100vw includes the width plus the scrollbar, whereas 100% is the width
+    // that the element had before we made it `fixed`.
+    width: 100%;
+
+    // Note: this will always add a scrollbar to whatever element it is on, which can
+    // potentially result in double scrollbars. It shouldn't be an issue, because we won't
+    // block scrolling on a page that doesn't have a scrollbar in the first place.
+    overflow-y: scroll;
+  }
+}
+::ng-deep {
+  .ui-table table {
+    font-size: 12px;
+  }
+}
+
+@include cdk-overlay();
+
+body::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+  /* width of the entire scrollbar */
+}
+
+.error {
+  font-size: 10px;
+  color: red;
+}
+.ui-calendar.ui-calendar-w-btn {
+  width: calc(100% - 2.357em) !important;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #3e6d7e;
+  /* color of the scroll thumb */
+  border-radius: 20px;
+  /* roundness of the scroll thumb */
+  min-height: 20px;
+  border: 2px solid #246f8b;
+  /* creates padding around scroll thumb */
+}
+
+body {
+  scrollbar-width: thin;
+  /* "auto" or "thin"  */
+  scrollbar-color: #0d526b #f1f1f1;
+  /* scroll thumb & track */
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #0d526b #f1f1f1;
+}
+
+/* Works on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #3e6d7e;
+  min-height: 20px;
+  border-radius: 20px;
+  border: 3px solid #246f8b;
+}
+
+button {
+  margin-right: 5px !important;
+}
+
+.error {
+  font-size: 10px;
+  color: red;
+}
+
+.ui-dropdown-label-container {
+  width: 100%;
+  padding-right: 0;
+}
+
+.ui-dropdown {
+  width: 100%;
+}
+
+.ui-dropdown {
+  display: inline-flex;
+  position: relative;
+  cursor: pointer;
+  min-width: 0 !important;
+}
+
+// Opened dropdown panel must match the closed field width; long option text
+// truncates with an ellipsis instead of widening the panel (and scrolling the page).
+body .ui-dropdown-panel {
+  min-width: 100% !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  left: 0 !important;
+  box-sizing: border-box;
+
+  .ui-dropdown-items,
+  .ui-dropdown-item,
+  .ui-dropdown-item-group {
+    overflow: hidden;
+  }
+
+  .ui-dropdown-item,
+  .ui-dropdown-item-group {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .ui-dropdown-item > span,
+  .ui-dropdown-item-group > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ui-dropdown-filter-container .ui-dropdown-filter {
+    width: 100%;
+  }
+}
+
+.ui-autocomplete {
+  width: 100%;
+  display: inline-flex;
+
+  .ui-autocomplete-input {
+    width: 100%;
+  }
+}
+
+.autoComplete-drop {
+  .ui-autocomplete-input {
+    width: 87%;
+  }
+}
+
+.w-80 {
+  width: 80% !important;
+}
+.w-20 {
+  width: 20% !important;
+}
+
+.w-50 {
+  width: 315px !important;
+}
+
+.space {
+  padding-left: 37px;
+}
+
+.ui-inputtext {
+  width: 100% !important;
+  // margin-left: 15px;
+}
+
+.w-100 {
+  width: 100% !important;
+}
+.wp-50 {
+  width: 50% !important;
+}
+
+.w-9 {
+  width: 94%;
+}
+
+.p-inputgroup {
+  display: inline-flex;
+}
+
+// .inputGroup {
+//   margin: 5px 0;
+// }
+
+.p-0 {
+  padding: 0;
+}
+
+.rowwidth {
+  width: 50%;
+}
+
+.p-grid {
+  // margin-left: 5px;
+  // margin-right: 5px; add class another intead of p-grid in other comopnent
+  // margin-left: 0%;
+  // margin-right: 0%;
+  margin: 0%;
+  padding: 0%;
+}
+
+.top {
+  margin-top: 5px;
+}
+
+.btn {
+  min-width: 230px !important;
+  padding: 2px;
+  margin-top: 10px;
+}
+
+.dev {
+  padding-left: 25px;
+  padding-right: 10px;
+}
+
+// .p-lg-2 {
+//   padding-right: 10px;
+// }
+
+.PL {
+  padding-left: 5px;
+}
+
+.p-lg-2 {
+  // width: 16.6667%;
+  padding-top: 9px !important;
+  // padding-left: 5px;
+  // padding-right: 5px;
+}
+
+.ui-tabview .ui-tabview-panel {
+  padding: 0 !important;
+  border: none !important;
+}
+
+.ui-inputnumber {
+  display: flex !important;
+}
+
+.handsontable tr th,
+.handsontable tr th {
+  background-image: linear-gradient(
+    to bottom right,
+    #60dbf11a,
+    rgb(203, 230, 237)
+  );
+  //background-color:  !important;
+}
+
+.handsontable tr:nth-child(even) td,
+.handsontable tr:nth-child(even) td * {
+  background: rgba(190, 236, 248, 0.25) !important;
+}
+
+.handsontable tbody th.ht__highlight,
+.handsontable thead th.ht__highlight {
+  background-image: linear-gradient(
+    to bottom right,
+    #f1a1601a,
+    #f1a160
+  ) !important;
+}
+
+// body .ui-button.ui-button-icon-only {
+//   width: 3.997em !important;
+// }
+.flexSearch {
+  display: flex;
+}
+
+// --------------------------PRINT--------------------------
+
+table.border-table {
+  border-radius: 5px;
+
+  th,
+  td {
+    border: 1px solid #b1aeae;
+
+    padding: 8px;
+  }
+}
+
+#customers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  border: 1px #b1aeae solid;
+  border-radius: 5px;
+  width: 100%;
+}
+
+#customers td {
+  // border-left: 1px solid ;
+  // border-right: ipx solid;
+  border-right: 1px solid #b1aeae;
+
+  padding: 8px;
+}
+
+.center {
+  text-align: center !important;
+}
+
+#customers th {
+  border: 1px solid #b1aeae;
+  padding: 8px;
+  text-align: start;
+}
+
+.w50 {
+  width: 70px !important;
+}
+
+.SvTotal {
+  justify-content: flex-end;
+  margin: 5px;
+  padding: 5px;
+  display: flex;
+  gap: 30px;
+  width: 84%;
+}
+
+.SvTotalC {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: start;
+  gap: 17px;
+}
+
+.mrg {
+  margin: 10px 0;
+}
+
+.print {
+  height: auto;
+  // width: 80%;
+  margin: auto !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flexcol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.border {
+  border: 1px #b1aeae solid;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 15px;
+}
+
+.rowgap {
+  gap: 50%;
+}
+
+.printImg {
+  width: 500px;
+  height: 100px;
+}
+
+.flexSpaceBetween {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+
+.end {
+  text-align: end;
+}
+
+.colname {
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+// ----------------------------PRINT-----------------------
+.ui-widget-overlay {
+  z-index: 899 !important; /* or any other value you prefer */
+}
+
+.ui-dialog {
+  z-index: 900 !important; /* or any other value you prefer */
+}
+
+.layout-wrapper.layout-menu-horizontal .topbar {
+  z-index: 799 !important;
+}
+// ------------------------print image -------------------
+.rectImg {
+  height: 140px;
+  width: 217px;
+}
+
+.squreImg {
+  height: 189px;
+  width: 129px;
+}
+
+// ------------------------print image -------------------
+.required {
+  margin-left: 1px;
+  color: red;
+}
+.bold-font,
+.custom-th-header {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+.custom-th-header.htRight {
+  text-align: center;
+  justify-content: flex-end;
+}
+
+.custom-th-header.htLeft {
+  text-align: left;
+  justify-content: flex-start;
+}
+.pi-pencil,
+.pi-eye,
+.pi-trash {
+  font-size: 20px !important;
+  cursor: pointer !important;
+}
+
+.handsontable .iconbton {
+  .pi,
+  .pi-pencil,
+  .pi-eye,
+  .pi-trash {
+    font-size: 13px !important;
+  }
+}
+
+.handsontable .changeType,
+.handsontable button.changeType {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.handsontable th.afterHiddenColumn:before,
+.handsontable th.beforeHiddenColumn:after {
+  display: none !important;
+  content: "" !important;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.page-info {
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+.pagination-controls button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-controls select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.p-datepicker {
+  z-index: 11000 !important; // must be higher than dialog baseZIndex
+}
+
+/* Tree Folder Icons - Windows Explorer Yellow */
+.ui-tree, .p-tree {
+  .ui-treenode-icon, .p-treenode-icon {
+    &.fa-folder,
+    &.fa-folder-open,
+    &.fa-folder-o,
+    &.fa-folder-open-o,
+    &.pi-folder,
+    &.pi-folder-open {
+      color: #ffb900 !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   RTL (Right-to-Left) Styles for Arabic Internationalization
+   ========================================================================== */
+html[dir="rtl"],
+body[dir="rtl"],
+.rtl {
+  direction: rtl;
+  text-align: right;
+
+  /* Toolbars */
+  .ui-toolbar-group-left {
+    float: right !important;
+    text-align: right;
+  }
+
+  .ui-toolbar-group-right {
+    float: left !important;
+    text-align: left;
+  }
+
+  /* Form labels & Inputs */
+  .p-field label,
+  .p-grid label {
+    text-align: right;
+  }
+
+  /* PrimeNG Dialogs */
+  .p-dialog .p-dialog-header .p-dialog-header-icons {
+    margin-right: auto;
+    margin-left: 0;
+  }
+
+  /* Tables */
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      text-align: right;
+      &:last-child {
+        text-align: center;
+      }
+    }
+    .p-datatable-tbody > tr > td {
+      text-align: right;
+      &:last-child {
+        text-align: center;
+      }
+    }
+  }
+
+  /* Text alignments in tables */
+  .text-right {
+    text-align: left !important;
+  }
+  .text-left {
+    text-align: right !important;
+  }
+
+  /* Numerical and Currency Fields preserve LTR readability */
+  .currency,
+  .amount,
+  .badge-balance-high,
+  .badge-balance-mid,
+  .phone-number,
+  .acc-no,
+  .date-val {
+    direction: ltr !important;
+    display: inline-block;
+  }
+
+  /* SplitButtons */
+  .p-splitbutton {
+    .p-button:first-child {
+      border-radius: 0 4px 4px 0 !important;
+    }
+    .p-splitbutton-menubutton {
+      border-radius: 4px 0 0 4px !important;
+    }
+  }
+
+  /* Dropdown overlays */
+  .p-dropdown .p-dropdown-trigger {
+    right: auto !important;
+    left: 0 !important;
+  }
+
+  /* TabViews */
+  .p-tabview-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  /* Handsontable stays LTR */
+  .handsontable {
+    direction: ltr !important;
+  }
+
+  /* MegaMenu Navigation Tabs */
+  .ui-megamenu {
+    direction: rtl;
+    .ui-megamenu-root-list {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+    .ui-menuitem-link {
+      text-align: right;
+      .ui-menuitem-icon {
+        margin-left: 0.5em !important;
+        margin-right: 0 !important;
+      }
+      .ui-submenu-icon {
+        margin-right: 0.5em !important;
+        margin-left: 0 !important;
+      }
+    }
+    .ui-megamenu-panel {
+      text-align: right;
+    }
+  }
+
+  /* Dashboard RTL Layout */
+  .dashboard {
+    .overview-box {
+      .overview-box-name {
+        text-align: right;
+      }
+    }
+    .contacts ul li {
+      .contact-info {
+        text-align: right;
+        float: right;
+        margin-right: 8px;
+        margin-left: 0;
+      }
+      .contact-actions {
+        float: left !important;
+      }
+      img {
+        float: right;
+      }
+    }
+    p-header {
+      div[style*="float: left"] {
+        float: right !important;
+      }
+      div[style*="float: right"] {
+        float: left !important;
+      }
+    }
+  }
+}
+
+

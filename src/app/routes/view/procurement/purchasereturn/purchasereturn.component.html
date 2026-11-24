@@ -1,0 +1,1074 @@
+<!-- <p>purchasereturn works!</p> -->
+
+<app-page-header
+  [nav]="[
+    { label: 'procurement' | translate },
+    { label: 'purchase return' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add"
+      (click)="savePurchaseReturn()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="GetPurchaseReturnListModel()"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission.Delete"
+      [disabled]="!btnFlag.delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="callDropdowns(true)"
+      icon="fa fa-refresh"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      (click)="displayPrint()"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      [disabled]="!btnFlag.edit"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+    <!--  <div class="p-inputgroup">
+
+            <input type="text" pInputText [(ngModel)]='search' placeholder="Search">
+            <button pButton type="button" (click)=GetSavedPurchaseReturnDetails(search) icon="pi pi-search"></button>
+        </div> -->
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="purchaseReturnFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Purchase Return Entry' | translate">
+      <div class="p-grid p-sm-12 p-md-12 p-lg-12">
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Return Voucher Details" | translate }}
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-4" for="voucherno">{{
+                "Rtn Vou No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 w-full">
+                <input
+                  class="w-100"
+                  readonly
+                  formControlName="purchaseReturnNo"
+                  id="voucherno"
+                  pInputText
+                />
+
+                <div class="error" *ngIf="f.purchaseReturnDate.errors"></div>
+              </div>
+              <p-message
+                severity="error"
+                *ngIf="f.purchaseReturnNo?.errors?.Exist && !btnFlag.update"
+                text="Voucher No is exist"
+              >
+              </p-message>
+
+              <label class="p-col-12 p-md-12 p-lg-4" for="voucherno"
+                >{{ "Pur VOU No" | translate
+                }}<span class="required">*</span></label
+              >
+              <div class="p-col-12 p-md-12 p-lg-8 w-full p-inputgroup">
+                <div class="ui-inputgroup w-100">
+                  <input
+                    class="w-100"
+                    id="purchaseReturnGrno"
+                    formControlName="purchaseReturnGrno"
+                    pInputText
+                  />
+                  <button
+                    pButton
+                    type="button"
+                    (click)="GetPurchaseVoucherList()"
+                    icon="pi pi-search"
+                    [disabled]="
+                      purchaseReturnFormGroup.get('purchaseReturnGrno')
+                        ?.disabled
+                    "
+                  ></button>
+                </div>
+              </div>
+
+              <label class="p-col-12 p-md-12 p-lg-4" for="voucherdate"
+                >{{ "Rtn Vou Date" | translate
+                }}<span class="required">*</span></label
+              >
+              <div class="p-col-12 p-md-12 p-lg-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  class="w-100"
+                  [showIcon]="true"
+                  useUtc
+                  formControlName="purchaseReturnDate"
+                  id="voucherdate"
+                >
+                </p-calendar>
+
+                <div
+                  class="error"
+                  *ngIf="
+                    f.purchaseReturnDate.errors &&
+                    (f.purchaseReturnDate.dirty || f.purchaseReturnDate.touched)
+                  "
+                >
+                  <span *ngIf="f.purchaseReturnDate.errors.required">
+                    Return Voucher date is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+
+              <label class="p-col-12 p-md-12 p-lg-4" for="voucherdate">{{
+                "Pur Vou Date" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  class="w-100"
+                  [showIcon]="true"
+                  useUtc
+                  id="purchaseReturnGrdate"
+                  formControlName="purchaseReturnGrdate"
+                >
+                </p-calendar>
+              </div></div
+          ></p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Purchase Return Details" | translate }}
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-4" for="account">{{
+                "Invoice Type" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="purchaseReturnType"
+                  placeholder="Invoice Type"
+                  [options]="v_typeList"
+                  value="CREDIT"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.purchaseReturnType.errors &&
+                    (f.purchaseReturnType.dirty || f.purchaseReturnType.touched)
+                  "
+                >
+                  <span *ngIf="f.purchaseReturnType.errors.required">
+                    Invoice Type is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+              <label class="p-col-12 p-md-12 p-lg-4" for="location">{{
+                "Location" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8">
+                <p-dropdown
+                   filter="true"
+                   class="w-100"
+                   formControlName="purchaseReturnLocationId"
+                   [options]="locationList"
+                   filter="true"
+                   placeholder="Location"
+                   [disabled]="locationLocked"
+                 >
+                 </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.purchaseReturnLocationId.errors &&
+                    (f.purchaseReturnLocationId.dirty ||
+                      f.purchaseReturnLocationId.touched)
+                  "
+                >
+                  <span *ngIf="f.purchaseReturnLocationId.errors.required">
+                    Location is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+              <label class="p-col-12 p-md-12 p-lg-4" for="account">{{
+                "Sup Inv No" | translate
+              }}</label>
+
+              <div class="p-col-12 p-md-12 p-lg-8 w-full">
+                <input type="text" pInputText style="width: 100%" />
+              </div>
+              <label class="p-col-12 p-md-12 p-lg-4" for="account">{{
+                "Supplier" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 w-full p-inputgroup">
+                <div class="ui-inputgroup w-100">
+                  <input
+                    type="text"
+                    #suppCtrl
+                    pInputText
+                    placeholder="Supplier"
+                  />
+                  <button
+                    pButton
+                    type="button"
+                    pRipple
+                    (click)="openSupplier()"
+                    icon="pi pi-search"
+                  ></button>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Details" | translate }}
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-4" for="vatno">{{
+                "VAT No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8">
+                <input
+                  class="w-100"
+                  id="purchaseReturnPartyVatNo"
+                  formControlName="purchaseReturnPartyVatNo"
+                  readonly
+                  maxlength="50"
+                  pInputText
+                />
+              </div>
+              <div class="p-col-12">
+                <input type="checkbox" pInputCheck /> Exclude VAT
+              </div>
+              <label class="p-col-12 p-md-12 p-lg-1" for="narration"
+                >{{ "Remark" | translate
+                }}<span class="required">*</span></label
+              >
+              <div class="p-col-12 p-md-12">
+                <textarea
+                  [rows]="2"
+                  class="w-100"
+                  formControlName="purchaseReturnDescription"
+                  id="narration"
+                  pInputText
+                ></textarea>
+
+                <div
+                  class="error"
+                  *ngIf="
+                    f.purchaseReturnDescription.errors &&
+                    (f.purchaseReturnDescription.dirty ||
+                      f.purchaseReturnDescription.touched)
+                  "
+                >
+                  <span *ngIf="f.purchaseReturnDescription.errors.required">
+                    Remark is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <p-panel>
+        <p-header>
+          {{ "Item Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="purchasereturn_entry"
+            [data]="purchasereturn_entryDataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+      <!-- <app-lookup [header]='"Look Up"' [dataArry]="dataList" [selectedItem]='selectItem'
+                [columns]='lookupGridColumns' (selectItemEvent)='selectprocurements($event)' (exitEvent)='exit($event)'
+                [cell]='activeRow' (clearEvent)='clear($event)' (hideDialogEvent)='hide($event)'
+                [tableheader]="'Procurements List'" [(show)]='showProcurementsLookUp'></app-lookup>
+
+            <app-lookup [header]='"Look Up"' [selectedItem]='selectItem' [eleReference]='elementReference'
+                [dataArry]="dataList" (exitEvent)='exit($event)' (clearEvent)='clear($event)'
+                [formControlName]='control' [columns]='lookupGridColumns' (selectItemEvent)='selectControl($event)'
+                (hideDialogEvent)='hide($event)' [tableheader]="'Procurements List'"
+                [(show)]='formControlLookUp'></app-lookup> -->
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Procurements List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+
+      <div class="p-grid">
+        <div class="p-col-4 p-offset-8">
+          <div class="p-col-12 p-grid">
+            <label class="p-col-3 p-col-align-end" for="account">
+              <b>{{ "Total Gross:" | translate }}</b>
+            </label>
+            <div class="p-col-9 p-col-align-end p-0">
+              <input
+                class="w-100"
+                id="purchaseReturnTotalGrossAmount"
+                formControlName="purchaseReturnTotalGrossAmount"
+                readonly
+                style="border-color: black; text-align: right"
+                pInputText
+              />
+            </div>
+          </div>
+        </div>
+        <div class="p-col-10 p-offset-2">
+          <div class="p-grid">
+            <label class="p-col-1" for="account">
+              <b>{{ "Discount:" | translate }}</b>
+            </label>
+            <div class="p-col-2">
+              <input
+                class="w-100"
+                readonly
+                id="purchaseReturnTotalDisAmount"
+                formControlName="purchaseReturnTotalDisAmount"
+                style="border-color: black; text-align: right"
+                pInputText
+              />
+            </div>
+
+            <label class="p-col-1" for="account">
+              <b>{{ "Round Off: " | translate }}</b>
+            </label>
+
+            <div class="p-col-1">
+              <input
+                class="w-100"
+                id="purchaseReturnVatRountAmt"
+                formControlName="purchaseReturnVatRountAmt"
+                pInputText
+              />
+            </div>
+            <div>
+              <b>{{ "%" | translate }}</b>
+            </div>
+            <div class="p-col-1">
+              <input
+                class="w-100"
+                id="purchaseReturnTotalDisPer"
+                formControlName="purchaseReturnTotalDisPer"
+                style="border-color: black; text-align: right"
+                pInputText
+              />
+            </div>
+            <label class="p-col-1" for="account">
+              <b>{{ "%5 VAT:" | translate }}</b>
+            </label>
+            <div class="p-col-1">
+              <input
+                class="w-100"
+                id="purchaseReturnVatAmt"
+                formControlName="purchaseReturnVatAmt"
+                style="border-color: black"
+                pInputText
+              />
+            </div>
+
+            <label class="p-col-1" for="account">
+              <b>{{ "Net Total:" | translate }}</b>
+            </label>
+            <div class="p-col-2">
+              <input
+                class="w-100"
+                id="purchaseReturnNetAmount"
+                formControlName="purchaseReturnNetAmount"
+                style="border-color: black"
+                pInputText
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+              }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+        Content 3
+    </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<ng-container *ngIf="displayMaximizable">
+  <p-dialog
+    header="Purchase Return List"
+    [(visible)]="displayMaximizable"
+    [modal]="true"
+    [style]="{ width: '90%' }"
+    [maximizable]="true"
+    [baseZIndex]="10000"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <div class="grid">
+        <div class="p-col-12">
+          <div class="p-col-12">
+            <div class="p-grid">
+              <div class="p-col-3"></div>
+              <div class="p-col-6">
+                <div style="text-align: right; display: flex">
+                  <!-- <i class="pi pi-search" style="margin: 4px 4px 0 0"></i> -->
+                  <input
+                    type="text"
+                    pInputText
+                    [(ngModel)]="globalPurchaseReturnSearch"
+                    size="50"
+                    placeholder="Global Search"
+                    style="width: auto; margin-right: 10px"
+                  />
+                  <button
+                    type="submit"
+                    pButton
+                    label="Search"
+                    icon="pi pi-search"
+                    (click)="globalSearchPurchaseReturn()"
+                  ></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Handsontable replacing p-table -->
+          <hot-table
+            [hotId]="'hotidPR'"
+            [data]="purchaseReturnarry"
+            [licenseKey]="licensekey"
+            [settings]="PurchaseReturnConfig"
+          ></hot-table>
+
+          <!-- Pagination Controls -->
+          <div class="pagination-controls" style="margin-top: 5px">
+            <button
+              (click)="previousPage('returnList')"
+              [disabled]="currentPage <= 1"
+            >
+              Previous
+            </button>
+
+            <span class="page-info">
+              Page {{ currentPage }} of {{ totalPages }} ({{ totalRecords }}
+              records)
+            </span>
+
+            <button
+              (click)="nextPage('returnList')"
+              [disabled]="currentPage == totalPages || totalRecords == 0"
+            >
+              Next
+            </button>
+
+            <select
+              [(ngModel)]="pageSize"
+              (change)="onPageSizeChange('returnList')"
+              [disabled]="totalRecords <= 0"
+            >
+              <option *ngFor="let option of pageOption" [value]="option">
+                {{ option }} per page
+              </option>
+            </select>
+          </div>
+        </div>
+      </div></p-tabView
+    >
+  </p-dialog>
+</ng-container>
+<ng-container *ngIf="displayPurchaseOrder">
+  <p-dialog
+    header="Purchase List"
+    [(visible)]="displayPurchaseOrder"
+    [modal]="true"
+    [style]="{ width: '90%' }"
+    [maximizable]="true"
+    [baseZIndex]="10000"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div class="p-col-12">
+      <p-panel>
+        <p-header>
+          <!-- {{'Sales Voucher List'| translate}} -->
+          <button
+            type="submit"
+            pButton
+            label="Find"
+            icon="pi pi-search"
+            (click)="ApplyPurchaseVoucherFilter()"
+          ></button>
+          <button
+            pButton
+            type="button"
+            label="Clear"
+            (click)="ClearFilter()"
+            icon="fa fa-pencil"
+            class="ui-button-success"
+          ></button>
+        </p-header>
+        <form [formGroup]="PurchasereturnFilterForm">
+          <div class="p-grid">
+            <div class="p-col-6 p-md-6 p-lg-6">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                  "Voucher No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="purchaseReturnVoucherNo"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="account"
+                  >{{ "Invoice Type" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="purchaseReturnType"
+                    placeholder="Invoice Type"
+                    [options]="v_typeList"
+                    value="CREDIT"
+                  >
+                  </p-dropdown>
+                </div>
+                <!-- <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'Location/Mobile' | translate }}</label>
+                        <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                          <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId" [options]="locationList" ></p-dropdown>
+                          <div class="error" *ngIf="f.salesVoucherLocationId.errors && (f.salesVoucherLocationId.dirty || f.salesVoucherLocationId.touched)">
+                            <span *ngIf="f.salesVoucherLocationId.errors.required">Location is Mandatory Field*</span>
+                          </div>
+                        </div> -->
+              </div>
+              <div class="p-grid inputGroup">
+                <!-- <label class="p-col-12 p-md-12 p-lg-2" for="vatno">{{ 'LPO No' | translate }}</label>
+                      <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                        <input class="w-100" formControlName="lpoNo" placeholder="LPO No" maxlength="50" pInputText>
+                      </div> -->
+              </div>
+              <div class="p-grid inputGroup">
+                <!-- <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'Voucher No' | translate }}</label>
+                      <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                        <input class="w-100" formControlName="voucherNo" placeholder="Voucher No" pInputText>
+                      </div> -->
+              </div>
+            </div>
+            <div class="p-col-6 p-md-6 p-lg-6">
+              <div class="p-grid inputGroup"></div>
+              <p-panel>
+                <p-header>
+                  <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                  <p-checkbox
+                    formControlName="isDate"
+                    [binary]="true"
+                    label="Date Range"
+                  ></p-checkbox>
+                </p-header>
+                <div class="p-grid inputGroup">
+                  <label class="p-col-12 p-md-12 p-lg-2">{{
+                    "From Date" | translate
+                  }}</label>
+                  <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                    <p-calendar
+                      appendTo="body"
+                      dateFormat="dd/mm/yy"
+                      [showButtonBar]="true"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2040"
+                      formControlName="fromDate"
+                      [showIcon]="true"
+                      [disabled]="!PurchasereturnFilterForm.get('isDate').value"
+                      class="w-100"
+                      useUtc
+                    ></p-calendar>
+                  </div>
+                </div>
+                <div class="p-grid inputGroup">
+                  <label class="p-col-12 p-md-12 p-lg-2">{{
+                    "To Date" | translate
+                  }}</label>
+                  <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                    <p-calendar
+                      appendTo="body"
+                      dateFormat="dd/mm/yy"
+                      [showButtonBar]="true"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2040"
+                      formControlName="toDate"
+                      [showIcon]="true"
+                      [disabled]="!PurchasereturnFilterForm.get('isDate').value"
+                      class="w-100"
+                      useUtc
+                    ></p-calendar>
+                  </div>
+                </div>
+              </p-panel>
+            </div>
+          </div>
+        </form>
+      </p-panel>
+    </div>
+    <div class="grid">
+      <div class="p-col-12">
+        <div class="p-col-12">
+          <div class="p-grid">
+            <div class="p-col-3"></div>
+            <div class="p-col-6">
+              <div style="text-align: right; display: flex">
+                <!-- <i class="pi pi-search" style="margin: 4px 4px 0 0"></i> -->
+                <input
+                  type="text"
+                  pInputText
+                  [(ngModel)]="globalPurchaseVoucherSearch"
+                  size="50"
+                  placeholder="Global Search"
+                  style="width: auto; margin-right: 10px"
+                />
+                <button
+                  type="submit"
+                  pButton
+                  label="Search"
+                  icon="pi pi-search"
+                  (click)="globalSearchPurchaseVocuher()"
+                ></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Handsontable replacing p-table -->
+        <hot-table
+          [hotId]="'hotidPV'"
+          [data]="purchaseVoucherarry"
+          [licenseKey]="licensekey"
+          [settings]="PurchaseVoucherConfig"
+        ></hot-table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+          <button
+            (click)="previousPage('voucherList')"
+            [disabled]="currentPage <= 1"
+          >
+            Previous
+          </button>
+
+          <span class="page-info">
+            Page {{ currentPage }} of {{ totalPages }} ({{ totalRecords }}
+            records)
+          </span>
+
+          <button
+            (click)="nextPage('voucherList')"
+            [disabled]="currentPage == totalPages || totalRecords == 0"
+          >
+            Next
+          </button>
+
+          <select
+            [(ngModel)]="pageSize"
+            (change)="onPageSizeChange('voucherList')"
+            [disabled]="totalRecords <= 0"
+          >
+            <option *ngFor="let option of pageOption" [value]="option">
+              {{ option }} per page
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</ng-container>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div>
+    <div id="print" style="justify-content: center">
+      <div style="justify-content: center" class="w-100">
+        <div style="margin: auto !important; border-bottom: 0px solid">
+          <div class="flex">
+            <div class="contain2">
+              <div class="vouhead">
+                <h2>{{ "Purchase Return" | translate }}</h2>
+              </div>
+              <div class="flexrow">
+                <table style="width: 100%">
+                  <tr>
+                    <td><b>Address:</b></td>
+                    <td>{{ stationmasterObj?.stationMasterAddress }}</td>
+                  </tr>
+
+                  <tr>
+                    <td><b>Tel:</b></td>
+                    <td>{{ stationmasterObj?.stationMasterTele1 }}</td>
+                  </tr>
+
+                  <tr>
+                    <td><b>Fax:</b></td>
+                    <td>{{ stationmasterObj?.stationMasterFax }}</td>
+                  </tr>
+
+                  <tr>
+                    <td><b>Email:</b></td>
+                    <td>{{ stationmasterObj?.stationMasterEmail }}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="contain1">
+              <div class="center">
+                <!-- <img src="../../../../../assets/Images/logo-2.png" /> -->
+                <img
+                  *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+                  class="squreImg"
+                  [src]="
+                    'data:image/png;base64,' +
+                    stationmasterObj?.stationMasterLogoImg
+                  "
+                />
+                <img
+                  *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+                  class="rectImg"
+                  [src]="
+                    'data:image/png;base64,' +
+                    stationmasterObj?.stationMasterLogoImg
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="middle">
+          <div style="border-top: 1px solid">
+            <div class="heading">
+              <h2>Purchase Return</h2>
+            </div>
+            <table id="customers">
+              <tr style="text-align: left">
+                <th>PR No.</th>
+                <th>PR Date</th>
+                <th>PV Date</th>
+                <th>Sup No</th>
+              </tr>
+              <tr style="text-align: left">
+                <td>{{ savedPurchaseReturn?.purchaseReturnNo }}</td>
+                <td>
+                  {{
+                    savedPurchaseReturn?.purchaseReturnDate
+                      | date : "dd/MM/yyyy"
+                  }}
+                </td>
+                <td></td>
+                <td>{{ savedPurchaseReturn?.purchaseReturnSupInvNo }}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="border">
+            <div class="flexrow">
+              <table style="width: 35%">
+                <tr>
+                  <td>
+                    <b> {{ "Supplier Name" | translate }} </b> :
+                  </td>
+                  <td>
+                    <div>
+                      {{ savedPurchaseReturn?.purchaseReturnPartyName }}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <b> {{ "PV Type" | translate }} </b> :
+                  </td>
+                  <td>
+                    <div>{{ savedPurchaseReturn?.purchaseReturnType }}</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div style="min-height: 350px">
+            <table id="customers" class="w-100">
+              <tr style="text-align: left">
+                <th>{{ "S No. " | translate }}</th>
+                <th>{{ "PartNo" | translate }}</th>
+                <th>{{ "Material " | translate }}</th>
+                <th>{{ "Quantity " | translate }}</th>
+                <th>{{ "Unit " | translate }}</th>
+                <th>{{ "Price" | translate }}</th>
+                <th>{{ "Amount" | translate }}</th>
+              </tr>
+              <tr
+                *ngFor="
+                  let purchaseReturn of savedPurchaseReturn?.purchaseReturnDetails;
+                  let i = index
+                "
+              >
+                <td>{{ 1 + i }}</td>
+                <td>{{ purchaseReturn?.purchaseReturnDetailsPrId }}</td>
+                <td>
+                  <span *ngIf="ItemMasterArray?.length > 0">{{
+                    getItemMasterName(
+                      purchaseReturn?.purchaseReturnDetailsMatId
+                    )
+                  }}</span>
+                </td>
+                <td>{{ purchaseReturn?.purchaseReturnDetailsQuantity }}</td>
+                <td>
+                  <span *ngIf="units?.length > 0">{{
+                    getUnitName(purchaseReturn?.purchaseReturnDetailsUnitId)
+                  }}</span>
+                </td>
+
+                <td>
+                  {{
+                    purchaseReturn?.purchaseReturnDetailsRate | number : "0.2"
+                  }}
+                </td>
+
+                <td>
+                  {{
+                    purchaseReturn?.purchaseReturnDetailsDiscAmount
+                      | number : "0.2"
+                  }}
+                </td>
+              </tr>
+              <tr
+                *ngFor="
+                  let _ of [].constructor(
+                    getEmptyRowCount(
+                      savedPurchaseReturn?.purchaseReturnDetails?.length
+                    )
+                  );
+                  let i = index
+                "
+              >
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <!-- <td>&nbsp;</td> -->
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+
+              <tr>
+                <th colspan="5"></th>
+                <th>
+                  <div class="tableLR">
+                    <div>GrossTotal:</div>
+                    <div>Disc :</div>
+                    <div>Sub Total :</div>
+                    <div>VAT 5% :</div>
+                    <div>Net Total :</div>
+                  </div>
+                </th>
+                <td>
+                  <div class="tableLR">
+                    <div>
+                      {{ savedPurchaseReturn?.purchaseReturnTotalGrossAmount }}
+                    </div>
+                    <div style="border-bottom: 1px solid">
+                      {{
+                        savedPurchaseReturn?.purchaseReturnTotalItemDisAmount
+                      }}
+                    </div>
+                    <div>
+                      {{ savedPurchaseReturn?.purchaseReturnTotalActualAmount }}
+                    </div>
+                    <div>{{ savedPurchaseReturn?.purchaseReturnVatPer }}%</div>
+                    <div>
+                      {{ savedPurchaseReturn?.purchaseReturnTotalActualAmount }}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="7">
+                  <div style="text-align: start">Remark :</div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="checkby">
+            <span class="sn">Prepared By</span>
+            <span class="sn">Checked By</span>
+            <span class="sn">Store Keeper</span>
+            <span class="sn">Received By</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>

@@ -1,0 +1,409 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      icon="fa fa-pencil"
+      class="ui-button-info"
+    ></button>
+    <!-- <button pButton type="button" label="Cancel" (click)='cancel()' icon="fa fa-trash" -->
+    <!-- class="ui-button-warning"></but/ton> -->
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="onSubmit()"
+      icon="fa fa-save"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Station Voucher' | translate">
+      <div class="p-grid" [formGroup]="stationMasterForm">
+        <div class="p-sm-12 p-md-6 p-lg-6">
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Station Name" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-10">
+              <input
+                class="w-100"
+                pInputText
+                formControlName="stationMasterStationName"
+              />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Country" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-10">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="stationMasterCountry"
+                [options]="countryList"
+                (onChange)="onCountryChange($event)"
+                [filter]="true"
+              >
+              </p-dropdown>
+              <!-- <div class="error" *ngIf="stationMasterForm.controls.stationMasterCountry.errors 
+                       && (stationMasterForm.controls.dirty || stationMasterForm.controls.touched)">
+                           <span>
+                               Name is Mandatory Field*</span>
+                       </div> -->
+              <!-- <input  class="w-100" pInputText formControlName="stationMasterStationName" > -->
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "City" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-10">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="stationMasterCity"
+                [options]="citylistNew"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Address" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-10">
+              <input
+                class="w-100"
+                pInputText
+                formControlName="stationMasterAddress"
+              />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Phone" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-5">
+              <input
+                class="w-100"
+                pInputText
+                formControlName="stationMasterTele1"
+              />
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-5">
+              <input
+                class="w-100"
+                pInputText
+                formControlName="stationMasterTele2"
+              />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-12">
+              <div class="p-grid">
+                <div class="p-sm-12 p-md-12 p-lg-2">
+                  <label>{{ "Fax" | translate }}</label>
+                </div>
+                <div
+                  class="p-sm-12 p-md-12 p-lg-10"
+                  style="padding-left: 2px; margin-left: 0px"
+                >
+                  <input
+                    class="w-100"
+                    pInputText
+                    formControlName="stationMasterFax"
+                  />
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-sm-12 p-md-12 p-lg-2">
+                  <label>{{ "Vat" | translate }}</label>
+                </div>
+                <div
+                  class="p-sm-12 p-md-12 p-lg-10"
+                  style="padding-left: 2px; margin-left: 0px"
+                >
+                  <input
+                    class="w-100"
+                    pInputText
+                    formControlName="stationMasterVatNo"
+                  />
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-sm-12 p-md-12 p-lg-2">
+                  <label>{{ "Email" | translate }}</label>
+                </div>
+                <div
+                  class="p-sm-12 p-md-12 p-lg-10"
+                  style="padding-left: 2px; margin-left: 0px"
+                >
+                  <input
+                    class="w-100"
+                    pInputText
+                    formControlName="stationMasterEmail"
+                  />
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-sm-12 p-md-12 p-lg-2">
+                  <label>{{ "WebSite" | translate }}</label>
+                </div>
+                <div
+                  class="p-sm-12 p-md-12 p-lg-10"
+                  style="padding-left: 2px; margin-left: 0px"
+                >
+                  <input
+                    class="w-100"
+                    pInputText
+                    formControlName="stationMasterWebSite"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Post Office" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-10">
+              <input
+                class="w-100"
+                pInputText
+                pInputText
+                formControlName="stationMasterPostOffice"
+              />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Logo Path" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-9">
+              <input
+                class="w-100"
+                pInputText
+                formControlName="stationMasterLogoPath"
+              />
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-1">
+              <div class="p-sm-12 p-md-12 p-lg-1">
+                <label for="Logo"> Logo </label>
+                <input
+                  id="Logo"
+                  type="file"
+                  class="w-100"
+                  style="display: none"
+                  (change)="onLogoSelected($event)"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Sign Path" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-9">
+              <input
+                class="w-100"
+                pInputText
+                formControlName="stationMasterSignPath"
+              />
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-1">
+              <!-- <input  class="w-100" pInputText> -->
+              <div class="p-sm-12 p-md-12 p-lg-1">
+                <label for="Sign"> Sign </label>
+                <input
+                  id="Sign"
+                  type="file"
+                  class="w-100"
+                  style="display: none"
+                  (change)="onSignSelected($event)"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2">
+              <label>{{ "Seal Path" | translate }}</label>
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-9">
+              <input
+                class="w-100"
+                pInputText
+                formControlName="stationMasterStationName"
+              />
+            </div>
+            <div class="p-sm-12 p-md-12 p-lg-1">
+              <!-- <input  class="w-100" pInputText> -->
+              <div class="p-sm-12 p-md-12 p-lg-1">
+                <label for="Seal">Seal </label>
+                <input
+                  id="Seal"
+                  type="file"
+                  class="w-100"
+                  style="display: none"
+                  (change)="onSealSelected($event)"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-sm-12 p-md-12 p-lg-2"></div>
+            <div class="p-sm-12 p-md-12 p-lg-8">
+              <p-checkbox label="CHECK TO TRN"></p-checkbox>
+            </div>
+          </div>
+          <!-- <div class="p-grid">
+                        <div class=" p-sm-12 p-md-12 p-lg-2">
+                            <label>{{'Vat No.'| translate}}</label>
+                        </div>
+                        <div class=" p-sm-12 p-md-12 p-lg-10">
+                            <input  class="w-100" pInputText formControlName="stationMasterVatNo">
+                        </div>
+                    </div> -->
+        </div>
+        <div class="p-sm-12 p-md-6 p-lg-6">
+          <p-panel>
+            <p-header> Bank Details </p-header>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "Bank name" | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <input class="w-100" formControlName="bankName" pInputText />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "Account Name" | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <input formControlName="accountName" class="w-100" pInputText />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "Account No." | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <input formControlName="accountNo" class="w-100" pInputText />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "IBAN" | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <input formControlName="iban" class="w-100" pInputText />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "Swift Code" | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <input formControlName="swiftCode" class="w-100" pInputText />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "Branch" | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <input formControlName="bankBranch" class="w-100" pInputText />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "Currency" | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <input
+                  formControlName="bankCurrency"
+                  class="w-100"
+                  pInputText
+                />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-sm-12 p-md-12 p-lg-2">
+                <label>{{ "LogoType" | translate }}</label>
+              </div>
+              <div class="p-sm-12 p-md-12 p-lg-10">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="logotype"
+                  [options]="logoTypes"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </p-panel>
+          <div class="p-sm-12 p-md-12 p-lg-12">
+            <div class="p-grid">
+              <div
+                class="p-sm-4 p-md-4 p-lg-4"
+                style="text-align: center; font-weight: bold"
+              >
+                <div class="sign">
+                  <div class="p-col-12">
+                    <img
+                      [src]="
+                        stationMasterForm.controls.stationMasterLogoImg.value
+                      "
+                      alt="Selected Image"
+                      style="width: 150px; height: 100px"
+                    />
+                  </div>
+                </div>
+                <span class="p-2">
+                  <input type="file" (change)="onSelectFile($event)"
+                /></span>
+              </div>
+              <div
+                style="text-align: center; font-weight: bold"
+                class="p-sm-4 p-md-4 p-lg-4"
+              >
+                <div class="sign"></div>
+                <span>Sign</span>
+              </div>
+              <div
+                class="p-sm-4 p-md-4 p-lg-4"
+                style="text-align: center; font-weight: bold"
+              >
+                <div class="sign"></div>
+                <span>Seal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

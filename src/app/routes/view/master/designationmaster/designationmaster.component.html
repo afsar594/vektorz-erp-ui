@@ -1,0 +1,90 @@
+<app-page-header [title]='title'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" label="New" (click)="new()" class=" p-button-info" icon="fa fa-plus"></button>
+        <button pButton type="button" (click)="Edit()" [disabled]='!btnFlag.edit' label="Edit" class=" p-button-primary"
+            icon="fa fa-pencil"></button>
+        <button *ngIf="btnFlag?.save" pButton type="button" (click)="insertDesignstion()" label="Save" [disabled]='!btnFlag.new'
+            icon="fa fa-floppy-o" class="p-button-success"></button>
+        <button *ngIf="btnFlag?.update"  pButton type="button" (click)="updateDesignation()" label="Update" [disabled]='!btnFlag.new'
+            icon="fa fa-floppy-o" class="p-button-success"></button>
+
+        <button pButton type="button" (click)="getAllDesignation()" label="List" icon="fa fa-list"
+            class="p-button-info"></button>
+        <button pButton type="button" [disabled]='!btnFlag.delete' label="Delete" (click)="onDelete()"
+            class=" p-button-danger" icon="fa fa-close"></button>
+
+    </div>
+
+    <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Exit" icon="fa fa-sign-out" class="p-button-primary"></button>
+    </div>
+</p-toolbar>
+<br><br>
+
+<div class="card card-w-title" [formGroup]='designationForm'>
+    <div class="p-grid">
+        <div class="p-col-2 p-md-2 p-md-2">
+            <label>Designation Code:</label>
+        </div>
+        <div class="p-col-4 p-md-4 p-md-4">
+            <input type="text" readonly pInputText style="width: 100%;" formControlName="designationId"
+                placeholder="--Designation Code--" />
+
+        </div>
+    </div>
+    <div class="p-grid">
+        <div class="p-col-2 p-md-2 p-md-2">
+            <label>Designation Name:  <span class="required">*</span></label>
+        </div>
+        <div class="p-col-4 p-md-4 p-md-4">
+            <input type="text" pInputText style="width: 100%;" formControlName="designation"
+                placeholder="--Designation Name--" />
+            <div class="error" *ngIf="f.designation.touched ">
+                <span *ngIf=" f.designation.touched  && f.designation.invalid">Visa
+                    designation is Required</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-grid">
+        <div class="p-col-2 p-md-2 p-md-2">
+            <label>Short Name: <span class="required">*</span></label>
+        </div>
+        <div class="p-col-4 p-md-4 p-md-4">
+            <input type="text" pInputText style="width: 100%;" formControlName="shortName"
+                placeholder="--Short Name--" />
+            <div class="error" *ngIf="f.shortName.touched ">
+                <span *ngIf="f.shortName.touched  && f.shortName.invalid">Short Name is
+                    Required</span>
+            </div>
+        </div>
+    </div>
+
+    <p-panel header="Designation List">
+        <p-table [value]="designationList" [columns]="cols" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Designation Code</th>
+                    <th>Designation</th>
+                    <th>ShortName</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item.designationId}}</td>
+                    <td>{{item.designation}}</td>
+                    <td>{{item.shortName}}</td>
+                    <td>
+                        <button pButton type="button" class="ui-button-info" icon="fa fa-pencil"
+                            (click)="selectForEdit(item)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-panel>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>

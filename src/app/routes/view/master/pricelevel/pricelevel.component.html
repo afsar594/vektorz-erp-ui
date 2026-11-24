@@ -1,0 +1,85 @@
+<app-page-header [nav]='breadcumbmodel' [title]='title'></app-page-header>
+
+<div class="toolbar">
+    <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+        <button pButton type="button" [label]="'New' | translate" (click)='new()' icon="pi pi-plus"></button>
+      <button pButton type="button" [label]="'Edit' | translate" (click)='edit()'
+        [disabled]='!btnFlag?.edit || !Permission?.Edit' icon="fa fa-pencil" class="ui-button-success"></button>
+  
+      <button pButton type="button" class="ui-button-danger" [disabled]='!btnFlag?.cancel' [label]="'Cancel' | translate"
+         icon="fa fa-ban"></button>
+         
+      <button pButton type="button" class="ui-button-success" (click)='savePriceLevel()'
+      [disabled]='!btnFlag.save || !Permission?.Add' label="Save" icon="fa fa-floppy-o"></button>
+     
+      <button pButton type="button" class="ui-button-success" (click)='savePriceLevel()'
+      [disabled]='!btnFlag.update || !Permission.Edit' label="Update" icon="fa fa-floppy-o"></button>
+       
+      <button pButton type="button" class="ui-button-danger" (click)='delete()'
+        [disabled]='!btnFlag.delete || !Permission.Delete' label="Delete" icon="fa fa-trash"></button>
+  
+    </div>
+      <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Exit" (click)='ExitNew()' icon="fa fa-sign-out"></button> 
+       
+    </div>
+  </div>
+
+<div class="card card-w-title" [formGroup]='PriceLevelFormGroup'>
+    <div class="p-grid p-ai-center">
+
+        <div class="p-col-12 p-md-2"></div>
+        <div class="p-col-12 p-md-1">
+            <label>{{'Price Level' | translate}}</label>
+        </div>
+        <div class="p-col-12 p-md-6">
+            <input pInputText placeholder="Price Level" formControlName='priceLevelMasterPriceLevelName'
+                style="width: 100%;">
+
+            <div class="error" *ngIf="f.priceLevelMasterPriceLevelName.errors 
+            && (f.priceLevelMasterPriceLevelName.dirty || f.priceLevelMasterPriceLevelName.touched)">
+                <span *ngIf="f.priceLevelMasterPriceLevelName.errors.required">
+                    Please Enter the Price Level*
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-5"></div>
+        <div class="p-col-12 p-md-4">
+            <button pButton class="ui-button-info" [disabled]="!Permission?.Add" [label]='btnlabel'
+                (click)='savePriceLevel()'></button>
+            <button pButton class="ui-button-warning" label='Clear' (click)='reset()'></button>
+        </div>
+    </div>  -->
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <p-table [value]="priceLevelList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>{{'Code'| translate}}</th>
+                        <th>{{'Price Level' | translate}}</th>
+                        <th>{{'Action' | translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-PriceLevel>
+                    <tr>
+                        <td>{{PriceLevel.priceLevelMasterPriceLevelId}}</td>
+                        <td>{{PriceLevel.priceLevelMasterPriceLevelName}}</td>
+
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(PriceLevel)'
+                                iconPos="left"></button>
+                            <!-- <button pButton type="button" icon="pi pi-trash" (click)='removePriceLevel(PriceLevel)'
+                                iconPos="left"></button> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    ></p-confirmDialog>

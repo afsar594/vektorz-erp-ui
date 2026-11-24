@@ -1,0 +1,589 @@
+<div class="sales-issue-wrapper">
+  <!-- Top Header Bar -->
+  <header class="sales-header">
+    <div class="header-left">
+      <div class="cart-icon-badge">
+        <i class="fa fa-shopping-cart"></i>
+      </div>
+      <div class="header-title-block">
+        <h1 class="header-title">Sales / Issue</h1>
+        <p class="header-subtitle">Manage sales transactions, view product details, check stock and history — all in one place.</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Date & Invoice Number Fields -->
+      <div class="header-meta-group">
+        <div class="meta-field">
+          <label class="meta-label">Date</label>
+          <div class="meta-input-wrap">
+            <input type="text" [(ngModel)]="invoice.date" class="meta-input font-mono" />
+            <i class="fa fa-calendar meta-icon"></i>
+          </div>
+        </div>
+
+        <div class="meta-field">
+          <label class="meta-label">Invoice No.</label>
+          <div class="meta-input-wrap">
+            <input type="text" [(ngModel)]="invoice.invoiceNo" class="meta-input font-mono font-bold" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="header-actions-group">
+        <button class="btn-top-action btn-new" (click)="newInvoice()" title="Create New Invoice">
+          <i class="fa fa-file-text-o"></i>
+          <span>New</span>
+        </button>
+        <button class="btn-top-action btn-save" (click)="saveInvoice()" title="Save Invoice">
+          <i class="fa fa-floppy-o"></i>
+          <span>Save</span>
+        </button>
+        <button class="btn-top-action btn-print" (click)="printInvoice()" title="Print Invoice">
+          <i class="fa fa-print"></i>
+          <span>Print</span>
+        </button>
+        <button class="btn-top-action btn-cancel" (click)="cancelInvoice()" title="Cancel Entry">
+          <i class="fa fa-times"></i>
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <div class="sales-workspace">
+    <!-- Invoice Form Header Row -->
+    <section class="invoice-form-card">
+      <div class="form-inputs-row">
+        <!-- Customer -->
+        <div class="form-field-item field-customer">
+          <label class="field-label">Customer</label>
+          <div class="input-with-action">
+            <input type="text" [(ngModel)]="invoice.customer" class="form-control" />
+            <button class="btn-field-icon" title="Search Customers">
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contact No -->
+        <div class="form-field-item field-contact">
+          <label class="field-label">Contact No.</label>
+          <input type="text" [(ngModel)]="invoice.contactNo" class="form-control font-mono" />
+        </div>
+
+        <!-- Reference -->
+        <div class="form-field-item field-ref">
+          <label class="field-label">Reference</label>
+          <input type="text" [(ngModel)]="invoice.reference" class="form-control font-mono" />
+        </div>
+
+        <!-- Payment Terms -->
+        <div class="form-field-item field-terms">
+          <label class="field-label">Payment Terms</label>
+          <select [(ngModel)]="invoice.paymentTerms" class="form-control select-control">
+            <option *ngFor="let term of paymentTermsList" [value]="term">{{ term }}</option>
+          </select>
+        </div>
+
+        <!-- Sales Person -->
+        <div class="form-field-item field-salesperson">
+          <label class="field-label">Sales Person</label>
+          <select [(ngModel)]="invoice.salesPerson" class="form-control select-control">
+            <option *ngFor="let sp of salesPersonList" [value]="sp">{{ sp }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Top Financial Summary Badges -->
+      <div class="header-summary-kpis">
+        <div class="summary-kpi-card">
+          <span class="kpi-label">Total Items</span>
+          <span class="kpi-value font-mono">{{ totalItemsCount }}</span>
+        </div>
+
+        <div class="summary-kpi-card">
+          <span class="kpi-label">Total Qty</span>
+          <span class="kpi-value font-mono">{{ totalQuantity }}</span>
+        </div>
+
+        <div class="summary-kpi-card kpi-grand-total">
+          <span class="kpi-label">Grand Total (OMR)</span>
+          <span class="kpi-value font-mono">{{ formatNumber(grandTotal) }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Split Main View: Left Items & Footer / Right Product Details -->
+    <div class="main-split-row">
+      <!-- LEFT SECTION (Table & Footer) -->
+      <div class="left-section-col">
+        <!-- Item Search & Action Toolbar -->
+        <div class="item-toolbar-row">
+          <div class="item-search-wrapper">
+            <i class="fa fa-search search-icon"></i>
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              (focus)="onSearchFocus()"
+              (blur)="onSearchBlur()"
+              placeholder="Search by Part No, Description, or Barcode..."
+              class="item-search-input"
+            />
+
+            <!-- Autocomplete Dropdown -->
+            <div class="catalog-dropdown" *ngIf="showItemSearchDropdown && filteredCatalog.length > 0">
+              <div
+                *ngFor="let prod of filteredCatalog"
+                class="catalog-dropdown-item"
+                (mousedown)="addCatalogItemToInvoice(prod)"
+              >
+                <div class="prod-thumb">
+                  <img [src]="prod.imageUrl" [alt]="prod.partNo" />
+                </div>
+                <div class="prod-details">
+                  <div class="prod-part font-mono">{{ prod.partNo }} <span class="prod-brand">{{ prod.brand }}</span></div>
+                  <div class="prod-desc">{{ prod.description }}</div>
+                </div>
+                <div class="prod-price font-mono">
+                  OMR {{ formatNumber(prod.unitPrice) }}
+                  <span class="prod-stock">Stock: {{ prod.inStock }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="item-action-buttons">
+            <button class="btn-action-green" (click)="openAddItemModal()" title="Add Item">
+              <i class="fa fa-plus-circle"></i>
+              <span>Add Item</span>
+            </button>
+            <button class="btn-action-blue" (click)="openEditItemModal()" title="Edit Selected Item">
+              <i class="fa fa-pencil"></i>
+              <span>Edit</span>
+            </button>
+            <button class="btn-action-red" (click)="removeItem()" title="Remove Selected Item">
+              <i class="fa fa-trash"></i>
+              <span>Remove</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sales Line Items Table -->
+        <div class="items-table-container">
+          <table class="sales-items-table">
+            <thead>
+              <tr>
+                <th class="th-num">#</th>
+                <th class="text-left">Part No.</th>
+                <th class="text-left">Description</th>
+                <th class="text-left">Brand</th>
+                <th class="text-center">Qty</th>
+                <th class="text-right">Unit Price (OMR)</th>
+                <th class="text-center">Discount %</th>
+                <th class="text-right">Total (OMR)</th>
+                <th class="text-center th-history">History</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let item of lineItems; let i = index"
+                [class.active-row]="selectedItem && selectedItem.id === item.id"
+                (click)="selectItem(item)"
+              >
+                <td class="text-center font-bold text-muted">{{ i + 1 }}</td>
+                <td class="text-left font-mono font-bold part-no-cell">{{ item.partNo }}</td>
+                <td class="text-left desc-cell">{{ item.description }}</td>
+                <td class="text-left font-medium">{{ item.brand }}</td>
+                <td class="text-center font-mono font-bold">{{ item.qty }}</td>
+                <td class="text-right font-mono">{{ formatNumber(item.unitPrice) }}</td>
+                <td class="text-center font-mono">{{ item.discountPct }}</td>
+                <td class="text-right font-mono font-bold text-slate-900">{{ formatNumber(item.total) }}</td>
+                <td class="text-center th-history">
+                  <button class="btn-history-icon" (click)="selectItemAndTab(item, 'history')" title="View Transaction History">
+                    <i class="fa fa-clock-o"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="lineItems.length === 0">
+                <td colspan="9" class="empty-table-notice">
+                  <i class="fa fa-shopping-cart"></i>
+                  <p>No items added to this invoice yet.</p>
+                  <span>Use the search bar above or click "+ Add Item" to populate line items.</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bottom Grid (Notes, Totals Summary, Quick Actions) -->
+        <div class="table-footer-grid">
+          <!-- 1. Notes Box -->
+          <div class="footer-box notes-box">
+            <div class="box-header">
+              <i class="fa fa-file-text-o"></i>
+              <span class="box-title">Notes</span>
+            </div>
+            <textarea
+              [(ngModel)]="invoice.notes"
+              rows="3"
+              class="notes-textarea"
+              placeholder="Enter any additional notes here..."
+            ></textarea>
+          </div>
+
+          <!-- 2. Totals Summary Box -->
+          <div class="footer-box totals-summary-box">
+            <div class="totals-line">
+              <span class="tot-label">Sub Total</span>
+              <span class="tot-val font-mono">{{ formatNumber(subTotal) }}</span>
+            </div>
+            <div class="totals-line">
+              <span class="tot-label">Discount</span>
+              <span class="tot-val font-mono">{{ formatNumber(totalDiscount) }}</span>
+            </div>
+            <div class="totals-line">
+              <span class="tot-label">Tax (5%)</span>
+              <span class="tot-val font-mono">{{ formatNumber(taxAmount) }}</span>
+            </div>
+            <div class="totals-grand-bar">
+              <span class="grand-label">Grand Total (OMR)</span>
+              <span class="grand-val font-mono">{{ formatNumber(grandTotal) }}</span>
+            </div>
+          </div>
+
+          <!-- 3. Four Quick Action Colored Tiles -->
+          <div class="quick-tiles-grid">
+            <!-- Tile 1: Product Details (Blue) -->
+            <button class="quick-tile tile-blue" (click)="openQuickAction('product')">
+              <i class="fa fa-cube tile-icon"></i>
+              <span class="tile-label">Product Details</span>
+            </button>
+
+            <!-- Tile 2: Inventory (Green) -->
+            <button class="quick-tile tile-green" (click)="openQuickAction('inventory')">
+              <i class="fa fa-cubes tile-icon"></i>
+              <span class="tile-label">Inventory</span>
+            </button>
+
+            <!-- Tile 3: Transaction History (Purple) -->
+            <button class="quick-tile tile-purple" (click)="openQuickAction('history')">
+              <i class="fa fa-clock-o tile-icon"></i>
+              <span class="tile-label">Transaction History</span>
+            </button>
+
+            <!-- Tile 4: Stock Movement (Orange) -->
+            <button class="quick-tile tile-orange" (click)="openQuickAction('movement')">
+              <i class="fa fa-exchange tile-icon"></i>
+              <span class="tile-label">Stock Movement</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SECTION: Product Details Side Panel -->
+      <aside class="right-details-col">
+        <div class="side-panel-card">
+          <div class="side-panel-header">
+            <h2 class="side-panel-title">Product Details</h2>
+          </div>
+
+          <div class="side-panel-body" *ngIf="selectedItem">
+            <!-- Upper Details: Thumbnail + Specifications -->
+            <div class="product-glance-row">
+              <div class="product-thumb-frame">
+                <img [src]="selectedItem.imageUrl" [alt]="selectedItem.description" />
+              </div>
+
+              <div class="product-meta-block">
+                <h3 class="product-part-no font-mono">{{ selectedItem.partNo }}</h3>
+                <p class="product-desc-line">{{ selectedItem.description }}</p>
+
+                <div class="product-specs-list">
+                  <div class="spec-row">
+                    <span class="spec-k">Brand</span>
+                    <span class="spec-v">{{ selectedItem.brand }}</span>
+                  </div>
+                  <div class="spec-row">
+                    <span class="spec-k">Category</span>
+                    <span class="spec-v">{{ selectedItem.category }}</span>
+                  </div>
+                  <div class="spec-row">
+                    <span class="spec-k">Unit</span>
+                    <span class="spec-v">{{ selectedItem.unit }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Stock Metrics (3 Horizontal Cards) -->
+            <div class="stock-metrics-row">
+              <div class="metric-badge in-stock-badge">
+                <span class="badge-label">In Stock</span>
+                <span class="badge-val font-mono">{{ selectedItem.inStock }}</span>
+              </div>
+
+              <div class="metric-badge reorder-badge">
+                <span class="badge-label">Reorder Level</span>
+                <span class="badge-val font-mono">{{ selectedItem.reorderLevel }}</span>
+              </div>
+
+              <div class="metric-badge location-badge">
+                <span class="badge-label">Location</span>
+                <span class="badge-val font-mono">{{ selectedItem.location }}</span>
+              </div>
+            </div>
+
+            <!-- Side Tabs Navigation -->
+            <div class="side-tabs-nav">
+              <button
+                class="side-tab-btn"
+                [class.active]="activeSideTab === 'history'"
+                (click)="setSideTab('history')"
+              >
+                History
+              </button>
+              <button
+                class="side-tab-btn"
+                [class.active]="activeSideTab === 'price'"
+                (click)="setSideTab('price')"
+              >
+                Price
+              </button>
+              <button
+                class="side-tab-btn"
+                [class.active]="activeSideTab === 'images'"
+                (click)="setSideTab('images')"
+              >
+                Images
+              </button>
+              <button
+                class="side-tab-btn"
+                [class.active]="activeSideTab === 'remarks'"
+                (click)="setSideTab('remarks')"
+              >
+                Remarks
+              </button>
+            </div>
+
+            <!-- Side Tab Content Area -->
+            <div class="side-tab-content">
+              <!-- History Tab -->
+              <div *ngIf="activeSideTab === 'history'" class="history-tab-pane">
+                <table class="mini-sub-table">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Date</th>
+                      <th class="text-left">Transaction</th>
+                      <th class="text-center">Qty</th>
+                      <th class="text-right">Ref No.</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let h of selectedItem.history">
+                      <td class="font-mono text-muted text-xs">{{ h.date }}</td>
+                      <td class="font-medium text-xs">{{ h.type }}</td>
+                      <td class="text-center font-mono font-bold text-xs" [class.negative-qty]="h.qty < 0" [class.positive-qty]="h.qty > 0">
+                        {{ h.qty > 0 ? '+' + h.qty : h.qty }}
+                      </td>
+                      <td class="text-right font-mono text-xs text-primary font-bold">{{ h.refNo }}</td>
+                    </tr>
+                    <tr *ngIf="!selectedItem.history || selectedItem.history.length === 0">
+                      <td colspan="4" class="text-center py-4 text-muted text-xs">No recent transactions recorded</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Price Tab -->
+              <div *ngIf="activeSideTab === 'price'" class="price-tab-pane">
+                <table class="mini-sub-table">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Price Tier</th>
+                      <th class="text-right">Rate (OMR)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let tier of selectedItem.priceTiers">
+                      <td class="font-medium text-xs">{{ tier.tier }}</td>
+                      <td class="text-right font-mono font-bold text-primary text-xs">{{ formatNumber(tier.price) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Images Tab -->
+              <div *ngIf="activeSideTab === 'images'" class="images-tab-pane">
+                <div class="large-image-preview">
+                  <img [src]="selectedItem.imageUrl" [alt]="selectedItem.description" />
+                </div>
+                <div class="image-caption font-mono text-center text-xs text-muted">
+                  {{ selectedItem.partNo }} - High Resolution
+                </div>
+              </div>
+
+              <!-- Remarks Tab -->
+              <div *ngIf="activeSideTab === 'remarks'" class="remarks-tab-pane">
+                <div class="remarks-quote-box">
+                  <p class="remarks-text">{{ selectedItem.remarks || 'Standard warehouse item. No special handling instructions recorded.' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-panel-body empty-side-body" *ngIf="!selectedItem">
+            <i class="fa fa-mouse-pointer"></i>
+            <p>Select any item row in the table to inspect details</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Bottom System Status Bar -->
+  <footer class="sales-status-bar">
+    <div class="status-left">
+      <i class="fa fa-info-circle"></i>
+      <span>Apex Industrial Supply | Spare Parts Management System</span>
+    </div>
+    <div class="status-right">
+      <span>Version 1.0.0</span>
+      <span class="status-sep">|</span>
+      <i class="fa fa-clock-o"></i>
+      <span>{{ invoice.date }} 14:32</span>
+    </div>
+  </footer>
+
+  <!-- Modal Dialog: Add / Edit Line Item -->
+  <div class="modal-backdrop" *ngIf="showItemDialog" (click)="closeItemModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa" [ngClass]="isEditMode ? 'fa-pencil' : 'fa-plus-circle'"></i>
+          {{ isEditMode ? 'Edit Line Item' : 'Add Item to Invoice' }}
+        </h3>
+        <button class="btn-close-modal" (click)="closeItemModal()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-form-grid">
+          <div class="form-group">
+            <label class="modal-label">Part Number *</label>
+            <input type="text" [(ngModel)]="itemForm.partNo" placeholder="e.g. BGA.6206.C3" class="modal-input font-mono" />
+          </div>
+
+          <div class="form-group">
+            <label class="modal-label">Brand</label>
+            <input type="text" [(ngModel)]="itemForm.brand" placeholder="e.g. SKF" class="modal-input" />
+          </div>
+
+          <div class="form-group span-2">
+            <label class="modal-label">Description</label>
+            <input type="text" [(ngModel)]="itemForm.description" placeholder="e.g. Ball Bearing 6206 C3" class="modal-input" />
+          </div>
+
+          <div class="form-group">
+            <label class="modal-label">Quantity *</label>
+            <input type="number" min="1" [(ngModel)]="itemForm.qty" class="modal-input font-mono" />
+          </div>
+
+          <div class="form-group">
+            <label class="modal-label">Unit Price (OMR) *</label>
+            <input type="number" min="0" step="0.01" [(ngModel)]="itemForm.unitPrice" class="modal-input font-mono" />
+          </div>
+
+          <div class="form-group">
+            <label class="modal-label">Discount %</label>
+            <input type="number" min="0" max="100" [(ngModel)]="itemForm.discountPct" class="modal-input font-mono" />
+          </div>
+
+          <div class="form-group">
+            <label class="modal-label">Computed Total</label>
+            <div class="computed-total-box font-mono font-bold">
+              OMR {{ formatNumber(computedItemTotal) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" (click)="closeItemModal()">Cancel</button>
+        <button class="btn-modal-save" (click)="saveItemForm()">
+          <i class="fa fa-check"></i> {{ isEditMode ? 'Update Item' : 'Add to Invoice' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Action Detail Modal -->
+  <div class="modal-backdrop" *ngIf="showQuickActionModal" (click)="closeQuickActionModal()">
+    <div class="modal-card modal-quick-action" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa fa-info-circle"></i>
+          {{ quickActionTitle }}
+        </h3>
+        <button class="btn-close-modal" (click)="closeQuickActionModal()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="quickActionType === 'product' && selectedItem">
+          <p><strong>Part Number:</strong> {{ selectedItem.partNo }}</p>
+          <p><strong>Description:</strong> {{ selectedItem.description }}</p>
+          <p><strong>Brand:</strong> {{ selectedItem.brand }} | <strong>Category:</strong> {{ selectedItem.category }}</p>
+          <p><strong>Location:</strong> {{ selectedItem.location }} | <strong>Current Stock:</strong> {{ selectedItem.inStock }} {{ selectedItem.unit }}</p>
+          <p><strong>List Price:</strong> OMR {{ formatNumber(selectedItem.unitPrice) }}</p>
+        </div>
+        <div *ngIf="quickActionType === 'inventory' && selectedItem">
+          <table class="mini-sub-table">
+            <thead>
+              <tr>
+                <th>Branch Location</th>
+                <th class="text-right">On Hand</th>
+                <th class="text-right">Available</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Muscat Head Office</td><td class="text-right font-mono">{{ calcBranchStock(selectedItem.inStock, 0.6) }}</td><td class="text-right font-mono font-bold text-success">{{ calcBranchStock(selectedItem.inStock, 0.55) }}</td></tr>
+              <tr><td>Sohar Industrial Hub</td><td class="text-right font-mono">{{ calcBranchStock(selectedItem.inStock, 0.25) }}</td><td class="text-right font-mono font-bold text-success">{{ calcBranchStock(selectedItem.inStock, 0.25) }}</td></tr>
+              <tr><td>Salalah Port Warehouse</td><td class="text-right font-mono">{{ selectedItem.inStock - calcBranchStock(selectedItem.inStock, 0.85) }}</td><td class="text-right font-mono font-bold text-success">{{ selectedItem.inStock - calcBranchStock(selectedItem.inStock, 0.85) }}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="quickActionType === 'history' && selectedItem">
+          <p class="text-muted text-xs mb-2">Audit trail of transactions for Part {{ selectedItem.partNo }}:</p>
+          <table class="mini-sub-table">
+            <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Ref</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let h of selectedItem.history">
+                <td class="font-mono text-xs">{{ h.date }}</td>
+                <td>{{ h.type }}</td>
+                <td class="font-mono font-bold" [class.negative-qty]="h.qty < 0" [class.positive-qty]="h.qty > 0">{{ h.qty }}</td>
+                <td class="font-mono">{{ h.refNo }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="quickActionType === 'movement'">
+          <p><strong>Latest Transfer:</strong> TR-2025-081 from Muscat HO to Sohar Branch (15 Units)</p>
+          <p><strong>Status:</strong> Dispatched and Received in Bin A1-02.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-save" (click)="closeQuickActionModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Feedback -->
+  <div class="sales-toast-notification" *ngIf="showNotification">
+    <i class="fa fa-check-circle"></i>
+    <span>{{ notificationMessage }}</span>
+  </div>
+</div>

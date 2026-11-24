@@ -1,0 +1,48 @@
+export interface  PurchaseVoucherDetails { 
+    
+    purchaseVoucherDetailsPurcahseDetailsId?:number;
+    purchaseVoucherDetailsVoucherNo?:string;
+    purchaseVoucherDetailsBatchCode?:string;
+    purchaseVoucherDetailsSno?:number;
+    purchaseVoucherDetailsMaterialId?:number;
+    purchaseVoucherDetailsRate?:number;
+    purchaseVoucherDetailsQuantity?:number;
+    purchaseVoucherDetailsAmount?:number;  
+    purchaseVoucherDetailsFcAmount?:number;
+    purchaseVoucherDetailsRemarks?:string;
+    purchaseVoucherDetailsUnit?:string;
+    purchaseVoucherDetailsUnitId?:number;
+    purchaseVoucherDetailsManufactureDate?:Date;
+    purchaseVoucherDetailsExpiryDate?:Date;
+    purchaseVoucherDetailsAssetAcc?:string;
+    purchaseVoucherDetailsFsno?:number;
+    purchaseVoucherDetailsLoacationId?:number;
+    purchaseVoucherDetailsSalesPrice1?:number;
+    purchaseVoucherDetailsSalesPrice2?:number;
+    purchaseVoucherDetailsSalesPrice3?:number;
+    purchaseVoucherDetailsCompanyId?:number;
+    purchaseVoucherDetailsLpoId?:number;
+    purchaseVoucherDetailsGrnNo?:string;
+    purchaseVoucherDetailsPodId?:number;
+    purchaseVoucherDetailsIsEdit?:Boolean;
+    purchaseVoucherDetailsLandingCost?:number;
+    purchaseVoucherDetailsLandingCostLocalCurrency?:number;
+    purchaseVoucherDetailsFoc?:number;
+    purchaseVoucherDetailsVatAmount?:number;
+    purchaseVoucherDetailsFcSmRate?:number;
+    purchaseVoucherDetailsFcSmAmount?:number;
+    purchaseVoucherDetailsDiscountAmoutPurchase?:number;
+    purchaseVoucherDetailsItemName?:string;
+    purchaseVoucherDetailsGrossAmount?:number;
+    purchaseVoucherDetailsVatPercentage?:number;
+    purchaseVoucherDetailsNetAmount?:number;
+    purchaseVoucherDetailsRfqId?:number;
+    purchaseVoucherDetailsRfqdId?:number;
+    purchaseVoucherDetailsPrId?:number;
+    purchaseVoucherDetailsPrdId?:number;
+    purchaseVoucherDetailsPoId?:number;
+    purchaseVoucherDetailsQtnId?:number;
+    purchaseVoucherDetailsQtndId?:number;
+    purchaseVoucherDetailsDelStatus?:Boolean;
+    
+}

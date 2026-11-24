@@ -1,0 +1,18 @@
+ 
+.container {
+    position: relative;
+    padding-top: 6px;
+    padding-bottom: 50px;
+    border: 1px solid rgb(112, 112, 112);
+  }
+  
+  .left-button {
+    position: absolute;
+    left: 82%; /* You can adjust the top value to vertically center the button or use other methods for vertical alignment */
+    transform: translateX(-50%);
+    margin-bottom: 25px;
+  }
+ .clk{
+    color: rgb(180, 178, 176);
+    padding-left:2%;
+ } 

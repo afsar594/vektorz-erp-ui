@@ -1,0 +1,92 @@
+<div class="matero-page-header">
+    <div class="matero-page-header-inner">
+        <h2 class="matero-page-title">{{title}}</h2>
+    </div>
+</div>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" label="New" (click)="new()" class=" ui-button-info" icon="fa fa-plus"></button>
+        <button pButton type="button" [disabled]='!btnFlag.edit' label="Edit" (click)="edit()" class=" ui-button-primary" icon="fa fa-pencil"></button>
+        <!-- <button pButton type="button" [disabled]='!btnFlag.cancel' label="Cancel" class=" ui-button-warning" icon="fa fa-ban"></button> -->
+        <button pButton type="button" [label]="btnFlag.save == true ? 'Save': 'Update'" (click)="save()" class=" ui-button-success"
+            icon="fa fa-floppy-o"></button>
+        <button pButton type="button" (click)="showList()" label="List" icon="fa fa-list" class="ui-button-info"></button>
+        <button pButton type="button"  [disabled]='!btnFlag.delete' (click)="delete()" label="Delete" class=" ui-button-danger" icon="fa fa-close"></button>
+        <button pButton type="button" [routerLink]="['/dashboard']" label="Exit" icon="fa fa-sign-out" class="ui-button-warning"></button>
+
+    </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="Document_TypeFormGroup">
+    <p-tabView [activeIndex]=index (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Document Type' | translate">
+            <div class="p-grid  p-ai-center">
+                <div class="p-col-12 p-md-2">
+                    <label>Document Type Code:</label>
+                </div>
+                <div class="p-col-12 p-md-4">
+                    <input type="text" formControlName="documentvoucherNo" readonly pInputText style="width: 100%;"
+                        placeholder="-- Code--" />
+                </div>
+                <div class="p-col-12 p-md-3">
+                    <p-checkbox label="Application Document" [binary]="true" formControlName="appDocument"></p-checkbox>
+
+                </div>
+            </div>
+            <div class="p-grid  p-ai-center">
+                <div class="p-col-12 p-md-2">
+                    <label> Document Type:</label>
+                </div>
+                <div class="p-col-12 p-md-7">
+                    <input type="text" formControlName="documentType" pInputText style="width: 100%;"
+                        placeholder="--Type--" />
+                </div>
+            </div>
+            <div class="p-grid  p-ai-center">
+                <div class="p-col-12 p-md-2">
+                </div>
+                <div class="p-col-12 p-md-2">
+                    <p-checkbox label="Default Document" [binary]="true" formControlName="defaultType"></p-checkbox>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+<p-dialog header="Document Type List" [(visible)]="displayMaximizable" [modal]="true" [style]="{width: '90%'}"
+    [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    
+    <p-table #dt [value]="documentTypes" [columns]="cols" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+                <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Global Filter"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let col of cols" [pSortableColumn]="col.field">{{col.header|translate}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item?.documentTypeId}}</td>
+                <td>{{item?.documentType}}</td>
+                <td>{{item?.defaultType}}</td>
+                <td>{{item?.appDocument}}</td>
+                <td >
+               
+                    <button pButton type="button" icon="pi pi-pencil"
+                        (click)='GetSavedDetails(item?.documentTypeId);displayMaximizable=false;'
+                        class="ui-button-info"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+</p-dialog>
+
+<p-toast ></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>

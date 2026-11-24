@@ -1,0 +1,135 @@
+<div class="matero-page-header">
+  <div class="matero-page-header-inner">
+    <h2 class="matero-page-title">{{ title }}</h2>
+  </div>
+</div>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="show()"
+      label="Show"
+      icon="fa fa-print"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Clear"
+      (click)="clear()"
+      icon="fa fa-close"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="DocumentReportFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="' Document Report' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-6">
+          <div class="p-grid p-align-center">
+            <div class="p-col-12 p-md-3">
+              <label>{{ "Company" | translate }}</label>
+            </div>
+            <div class="p-col-12 p-md-9">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="CompanyId"
+                [options]="companiesList"
+              ></p-dropdown>
+            </div>
+          </div>
+
+          <div class="p-grid p-align-center">
+            <div class="p-col-12 p-md-3">
+              <label>{{ "Document Type" | translate }}</label>
+            </div>
+            <div class="p-col-12 p-md-9">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="DocumentTypeId"
+                [options]="documentTypeList"
+                placeholder="--Select DocumentType--"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              <div class="p-col-12 p-md-12">
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="ByDate"
+                ></p-checkbox>
+              </div>
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-2 p-md-2 p-lg-2">
+                <b>{{ "Date From" | translate }}</b>
+              </div>
+              <div class="p-col-10 p-md-10 p-lg-10">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  formControlName="dateFrom"
+                  class="w-200"
+                  [disabled]="!DocumentReportFormGroup.get('isDate').value"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-2 p-md-2 p-lg-2">
+                <b>{{ "Date To" | translate }}</b>
+              </div>
+              <div class="p-col-10 p-md-10 p-lg-10">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  formControlName="dateTo"
+                  class="w-200"
+                  [disabled]="!DocumentReportFormGroup.get('isDate').value"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="p-col-12 p-md-12">
+    <div class="card card-w-title">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'COT Details' | translate">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid1"
+              [licenseKey]="licensekey"
+              [data]="DataList"
+              [settings]="document1"
+            ></hot-table>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>

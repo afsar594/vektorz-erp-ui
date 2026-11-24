@@ -1,0 +1,169 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+
+<div class="card card-w-title">
+  <div class="p-grid">
+    <div class="p-col-3 tree" #treeContainer>
+      <div class="tree-search-sticky">
+        <div class="ui-tree-filter-container tree-search-box" [class.has-value]="treeSearchTerm">
+          <input
+            type="text"
+            autocomplete="off"
+            class="ui-tree-filter ui-inputtext ui-widget ui-state-default ui-corner-all"
+            [(ngModel)]="treeSearchTerm"
+            (ngModelChange)="onTreeSearchChange($event)"
+            (keydown)="onSearchKeydown($event)"
+          />
+          <button
+            *ngIf="treeSearchTerm"
+            type="button"
+            class="tree-search-clear"
+            title="Clear search"
+            (click)="clearTreeSearch()"
+          >
+            <span class="pi pi-times"></span>
+          </button>
+          <span class="ui-tree-filter-icon pi pi-search"></span>
+        </div>
+
+        <div class="tree-search-status" *ngIf="isTreeSearchActive">
+          <span class="tree-search-count" *ngIf="matchedNodes.length > 0">
+            {{ activeMatchIndex + 1 }} / {{ matchedNodes.length }}
+            {{ matchedNodes.length === 1 ? 'match' : 'matches' }}
+          </span>
+          <span class="tree-search-count no-match" *ngIf="matchedNodes.length === 0">
+            No matching folder or account
+          </span>
+          <div class="tree-search-nav" *ngIf="matchedNodes.length > 1">
+            <button
+              type="button"
+              class="tree-nav-btn"
+              title="Previous match (Shift+Enter)"
+              (click)="navigateMatch(-1)"
+            >
+              <span class="pi pi-chevron-up"></span>
+            </button>
+            <button
+              type="button"
+              class="tree-nav-btn"
+              title="Next match (Enter)"
+              (click)="navigateMatch(1)"
+            >
+              <span class="pi pi-chevron-down"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p-tree [value]="files" (onNodeSelect)="getItemData($event)" (onNodeUnselect)="getItemData($event)"
+        selectionMode="single" [(selection)]="selectedFile" [metaKeySelection]="true"
+        (onNodeContextMenuSelect)="onRightClick($event, cm)" [contextMenu]="cm" (onNodeExpand)="loadNode($event)">
+        <ng-template let-node pTemplate="default">
+          <ng-container *ngIf="matchedLabelParts.get(node) as parts; else plainLabel">
+            <span class="tree-node-label-text">
+              <ng-container *ngFor="let part of parts">
+                <mark class="tree-search-mark" *ngIf="part.matched; else normalPart">{{ part.text }}</mark>
+                <ng-template #normalPart>{{ part.text }}</ng-template>
+              </ng-container>
+            </span>
+          </ng-container>
+          <ng-template #plainLabel>{{ node.label }}</ng-template>
+        </ng-template>
+      </p-tree>
+      <p-contextMenu #cm [model]="items"></p-contextMenu>
+    </div>
+    <div class="p-grid p-col-9 p-0">
+      <p-panel class="p-col-12 p-md-12 p-lg-6">
+        <p-header> Search </p-header>
+
+        <div class="p-grid top">
+          <div class="p-grid p-col-12 inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-3" for="findItem">
+              {{ "Find Account" | translate }}
+            </label>
+            <div class="p-col-12 p-md-12 p-lg-9 p-0">
+              <input id="findItem" (input)="findItem.length > 3 && show()" pInputText [(ngModel)]="findItem" />
+            </div>
+          </div>
+
+          <div class="p-grid p-col-12 inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-3" for="findGroup">
+              {{ "Find Group" | translate }}
+            </label>
+            <div class="p-col-12 p-md-12 p-lg-9 p-0">
+              <input class="p-col-12 p-md-12 p-lg-12" id="findGroup" pInputText [(ngModel)]="findGroup" />
+            </div>
+          </div>
+
+          <div class="p-grid p-col-12 inputGroup">
+            <div class="p-col-12 p-md-12 p-lg-offset-5 p-lg-8">
+              <button pButton class="ui-button-info btn-margin-auto" [label]="'Search' | translate"
+                (click)="show()"></button>
+              <button pButton class="ui-button-info btn-margin-auto" [label]="'Exit ' | translate"
+                (click)="ExitNew()"></button>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+      <p-panel class="p-col-12 p-md-12 p-lg-6">
+        <p-header>
+          <div class="ui-toolbar-group-left">Details</div>
+        </p-header>
+        <app-entry [listmode]="false" [ItemData]="accountData" [groupData]="allGroups"></app-entry>
+      </p-panel>
+    </div>
+  </div>
+</div>
+
+<p-dialog header="Item Group" [modal]="true" [formGroup]="AccountMasterGrpFormGroup" [(visible)]="displayBasic"
+  [style]="{ width: '40%' }">
+  <div class="p-grid inputGroup" style="margin-bottom: 15px">
+    <label class="p-col-12 p-md-12 p-lg-4" for="weight">{{
+      "Parent Group" | translate
+      }}</label>
+    <div *ngIf="!gChange" class="p-col-12 p-md-12 p-lg-8">
+      <input readonly formControlName="itemMasterAccountName" id="weight" pInputText />
+    </div>
+
+    <p-dropdown filter="true" *ngIf="gChange" [filter]="true" class="p-col-12 p-md-12 p-lg-8"
+      [options]="accountGroupSub" formControlName="itemMasterAccountNo">
+    </p-dropdown>
+  </div>
+
+  <div class="p-grid inputGroup">
+    <label class="p-col-12 p-md-12 p-lg-4" for="weight">{{
+      "Group Account No" | translate
+      }}</label>
+    <div class="p-col-12 p-md-12 p-lg-8">
+      <input formControlName="maAccNo" readonly id="weight" pInputText />
+    </div>
+  </div>
+
+  <div class="p-grid inputGroup">
+    <label class="p-col-12 p-md-12 p-lg-4" for="weight">{{
+      "Group Name" | translate
+      }}</label>
+    <div class="p-col-12 p-md-12 p-lg-8">
+      <input [readOnly]="gChange" formControlName="maAccName" id="weight" pInputText />
+    </div>
+  </div>
+  <div class="p-grid inputGroup" style="margin-bottom: 15px">
+    <label class="p-col-12 p-md-12 p-lg-4" for="weight">{{
+      "Ref Account " | translate
+      }}</label>
+    <div class="p-col-12 p-md-12 p-lg-8">
+      <input formControlName="maManualCode" id="weight" pInputText />
+    </div>
+  </div>
+  <p-footer>
+    <button type="button" pButton icon="pi pi-plus" (click)="displayBasic = false" label="New"></button>
+    <button type="button" pButton icon="pi pi-times" (click)="displayBasic = false" label="Edit"></button>
+    <button type="button" pButton icon="pi pi-check" class="ui-button-success"
+      (click)="displayBasic = false; saveGroup()" label="Save"></button>
+  </p-footer>
+</p-dialog>
+<p-toast></p-toast>
+<app-lookup [header]="'Accounts Lookup'" [selectedItem]="selectItem" [eleReference]="elementReference"
+  [dataArry]="dataList" [isServerSearch]="true" [formControlName]="control" (exitEvent)="exit($event)"
+  (clearEvent)="clear($event)" [columns]="lookupColumns" (selectItemEvent)="selectedtItem($event)"
+  (hideDialogEvent)="hide($event)" [tableheader]="'Available Items'" [(show)]="showControlLookUp"
+  (searchEvent)="onModelChange($event)"></app-lookup>

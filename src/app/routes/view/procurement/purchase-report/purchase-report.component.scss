@@ -1,0 +1,32 @@
+.printingTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.printingTable th {
+    background: #5e86b3;
+    color: #fff;
+    font-size: 14pt;
+}
+
+.printingTable th,
+.printingTable td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.printingTable tr:nth-child(even) {
+    background: #efefef;
+}
+
+.printingTable td{
+    font-size: 12pt;
+}
+.printingTable tr:hover {
+    background: #dcedf1;
+}
+
+.table{
+    width: 100vw;
+    height: 50%;
+}

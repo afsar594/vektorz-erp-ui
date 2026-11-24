@@ -1,0 +1,77 @@
+<p-toolbar>
+    <div class="ui-toolbar-group-right">
+        <button pButton type="button" class="ui-button-info" (click)="show()" label="Show" icon="pi pi-search"></button>
+        <button pButton type="button" class="ui-button-danger" label="Clear" icon="fa fa-ban"
+            (click)="clearfilter()"></button>
+        <button pButton type="button" class="ui-button-danger" (click)="close()" label="Close"
+            icon="pi pi-close"></button>
+    </div>
+</p-toolbar>
+
+<div class="card card-w-title" [formGroup]="PRform">
+    <!-- <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Purchase Requisition Status'| translate"> -->
+    <div class="p-grid">
+        <div class="p-col-6">
+            <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-1">{{
+                    "From" | translate
+                    }}</label>
+                <div class="p-col-12 p-md-12 p-lg-11">
+                    <input class="w-100" formControlName="voucherNo" id="refno" pInputText />
+                </div>
+            </div>
+        </div>
+        <div class="p-col-6">
+            <p-panel>
+                <p-header>
+                    <p-checkbox formControlName="isDate" [binary]="true" label="ByDate"></p-checkbox>
+                </p-header>
+                <div class="p-grid">
+                    <label class="p-col-12 p-md-12 p-lg-1">{{
+                        "From" | translate
+                        }}</label>
+                    <div class="p-col-12 p-md-12 p-lg-11">
+                        <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                            [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true"
+                            formControlName="fromDate" class="w-200" [disabled]="!PRform.get('isDate').value">
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="p-grid">
+                    <label class="p-col-12 p-md-12 p-lg-1">{{ "To" | translate }}</label>
+                    <div class="p-col-12 p-md-12 p-lg-11">
+                        <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                            [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" formControlName="toDate"
+                            class="w-200" [disabled]="!PRform.get('isDate').value">
+                        </p-calendar>
+                    </div>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+    <div class="p-sm-12 p-md-12 p-lg-12">
+        <p-table #dt [value]="PRarry" dataKey="id" styleClass="ui-table-customers" [rowHover]="true" [rows]="5"
+            [paginator]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                        {{ col.header | translate }}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-request>
+                <tr class="ui-selectable-row" (click)="toggleSelection(request)">
+
+                    <td>{{ request?.paymentRequestSno }}</td>
+                    <td>{{ request?.paymentRequestVoucherNo }}</td>
+                    <td>{{ request?.paymentRequestDate | date : "dd/MM/yyyy" }}</td>
+
+                    <td>{{ request?.paymentRequestDbAmount }}</td>
+                    <td>{{ request?.paymentRequestNarration }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

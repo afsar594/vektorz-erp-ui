@@ -1,0 +1,375 @@
+<app-page-header title="Approvals"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-success"
+      label="Show"
+      icon="fa fa-search"
+      (click)="POApprovalList(true)"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      routerLink="dashboard"
+      label="Exit"
+      icon="fa fa-save"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <div class="p-grid">
+    <div class="p-col-12">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Approvals' | translate">
+          <div class="p-grid" [formGroup]="FilterForm">
+            <div class="p-col-6 p-grid">
+              <label class="p-col-2 p-md-2 p-lg-3" for="account" FormControl>
+                <b>{{ "Search String" | translate }}</b>
+              </label>
+              <div class="p-col-9 p-md-9p-md-9">
+                <p-multiSelect
+                  [options]="approvalDropdown"
+                  [style]="{ width: '100%' }"
+                  (onChange)="onSelectionChange($event)"
+                  [(ngModel)]="selectedApproval"
+                ></p-multiSelect>
+              </div>
+
+              <label class="p-col-2 p-md-2 p-lg-3" for="job"
+                ><b>{{ "Job" | translate }}</b></label
+              >
+
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="JobId"
+                  [options]="jobList"
+                >
+                </p-dropdown>
+              </div>
+              <label class="p-col-2 p-md-2 p-lg-3" for="job"
+                ><b>{{ "Status" | translate }}</b></label
+              >
+
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="status"
+                  [options]="Approval"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <p-panel class="p-col-6">
+              <p-header>
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="Date Range"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-2 p-lg-3">{{
+                  "From Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10 p-lg-9 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="fromDate"
+                    showButtonBar="true"
+                    [showIcon]="true"
+                    [disabled]="!FilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-2 p-lg-3">{{
+                  "To Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10 p-lg-9 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="toDate"
+                    showButtonBar="true"
+                    [showIcon]="true"
+                    [disabled]="!FilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+          <br />
+          <div class="card card-w-title">
+            <div class="grid">
+              <p-table
+                #dt
+                [value]="approvalList"
+                [columns]="cols"
+                dataKey="voucherId"
+              >
+                <!-- Set dataKey here -->
+                <ng-template pTemplate="caption">
+                  <div class="flexSearch">
+                    <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                    <input
+                      type="text"
+                      pInputText
+                      size="50"
+                      placeholder="Global Filter"
+                      (input)="dt.filterGlobal($event.target.value, 'contains')"
+                      style="width: auto"
+                    />
+                  </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 3em"></th>
+                    <th
+                      [ngStyle]="{
+                        width:
+                          col.field === 'voucherType'
+                            ? '140px'
+                            : col.field === 'amount'
+                            ? '70px'
+                            : col.field === 'View'
+                            ? '140px'
+                            : '100px'
+                      }"
+                      *ngFor="let col of cols"
+                      [pSortableColumn]="col.field"
+                    >
+                      {{ col.header | translate }}
+                      <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                    </th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-list let-expanded="expanded">
+                  <tr>
+                    <td>
+                      <a href="#" [pRowToggler]="list">
+                        <i
+                          [ngClass]="
+                            expanded
+                              ? 'pi pi-chevron-down'
+                              : 'pi pi-chevron-right'
+                          "
+                        ></i>
+                      </a>
+                    </td>
+                    <td>{{ list.type }}</td>
+                    <td>{{ list.voucherNo }}</td>
+                    <td>{{ list.voucherDate | date : "dd/MM/yyyy" }}</td>
+                    <td>{{ list.supplier }}</td>
+                    <td>{{ list.jobname }}</td>
+                    <td class="end">{{ list.amount }}</td>
+                    <!-- <td>{{ list.modifiedDate | date:'dd/MM/yyyy'}}</td> -->
+                    <!-- <td>{{ list.approver }}</td> -->
+                    <td
+                      [ngClass]="list.status === 'Approved' ? 'green' : 'red'"
+                    >
+                      <strong>{{ list.status }}</strong>
+                    </td>
+                    <td class="center">
+                      <p-splitButton
+                        [icon]="
+                          list.status === 'Approved'
+                            ? 'pi pi-check'
+                            : 'pi pi-cog'
+                        "
+                        [model]="getSplitButtonItems(list)"
+                        [disabled]="
+                          list.status === 'Approved' ||
+                          list.status === 'Rejected'
+                        "
+                        styleClass="p-button-outlined mr-2 mb-2"
+                      >
+                      </p-splitButton>
+                    </td>
+
+                    <td class="center">
+                      <button
+                        pButton
+                        type="button"
+                        icon="pi pi-eye"
+                        (click)="
+                          viewAction(
+                            list.voucherType,
+                            list.voucherId,
+                            list.status,
+                            list.voucherNo
+                          )
+                        "
+                        class="ui-button-info"
+                      ></button>
+                      <button
+                        pButton
+                        type="button"
+                        icon="pi pi-print"
+                        (click)="
+                          crystalReport(list.voucherType, list.voucherId)
+                        "
+                      ></button>
+                      <button
+                        *ngIf="list.voucherType != 6"
+                        pButton
+                        type="button"
+                        icon="pi pi-download"
+                        (click)="
+                          downloadAllDocuments(
+                            list.voucherNo,
+                            list.voucherId,
+                            list.voucherType
+                          )
+                        "
+                      ></button>
+                    </td>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="rowexpansion" let-list>
+                  <tr>
+                    <td colspan="8">
+                      <div class="p-2">
+                        <p-table [value]="list.voucherApprovers" dataKey="id">
+                          <!-- Set dataKey for sub-table -->
+                          <ng-template pTemplate="header">
+                            <tr>
+                              <th>Level</th>
+                              <th>Approver</th>
+                              <th>Status</th>
+                              <th>Remarks</th>
+                              <th>#</th>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-detail>
+                            <tr>
+                              <td>Level {{ detail.approverLevel }}</td>
+                              <td>{{ getuser(detail.approverId) }}</td>
+                              <td
+                                [ngClass]="
+                                  detail.status === 'Approved' ? 'green' : 'red'
+                                "
+                              >
+                                {{ getstatus(detail.status) }}
+                              </td>
+                              <td>{{ detail.remarks }}</td>
+                              <td>
+                                <button
+                                  pButton
+                                  type="button"
+                                  icon="pi pi-envelope"
+                                  class="p-button-sm p-button-text p-button-primary"
+                                  pTooltip="Resend Email"
+                                  tooltipPosition="top"
+                                  [disabled]="!isLevel3AndApproved(list)"
+                                  (click)="
+                                    resendEmail(
+                                      list.voucherType,
+                                      list.voucherId,
+                                      detail
+                                    )
+                                  "
+                                ></button>
+                                <!-- <button
+                                  pButton
+                                  type="button"
+                                  icon="pi pi-envelope"
+                                  class="p-button-sm p-button-text p-button-primary"
+                                  pTooltip="Resend Email"
+                                  tooltipPosition="top"
+                                  [disabled]="!isButtonEnabled(list, detail)"
+                                  (click)="
+                                    resendEmail(
+                                      list.voucherType,
+                                      list.voucherId,
+                                      detail
+                                    )
+                                  "
+                                ></button> -->
+                              </td>
+                            </tr>
+                          </ng-template>
+                        </p-table>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+<p-toast></p-toast>
+
+<p-dialog
+  header="Confirmation"
+  [baseZIndex]="100"
+  [(visible)]="showtest"
+  [style]="{ width: '30%' }"
+>
+  <div class="modal-overlay">
+    <div class="modal">
+      <textarea
+        rows="2"
+        [(ngModel)]="remarks"
+        [ngModelOptions]="{ standalone: true }"
+        pInputTextarea
+      ></textarea>
+
+      <p>Do you want to continue?</p>
+      <div class="modal-actions end">
+        <button
+          pButton
+          type="button"
+          (click)="onConfirm()"
+          label="Yes"
+          icon="pi pi-close"
+        ></button>
+        <button
+          pButton
+          type="button"
+          class="ui-button-danger"
+          (click)="onCancel()"
+          label="No"
+          icon="pi pi-close"
+        ></button>
+      </div>
+    </div>
+    <!-- <button (click)="onConfirm()">Yes</button>
+        <button (click)="onCancel()">No</button> -->
+  </div>
+</p-dialog>

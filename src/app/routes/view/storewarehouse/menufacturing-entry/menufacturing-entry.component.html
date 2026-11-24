@@ -1,0 +1,561 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Menufacturing Entry' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      icon="pi pi-plus"
+      (click)="createNew()"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      (click)="edit()"
+      label="Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="btnFlag.cancel"
+      (click)="cancelAll()"
+      class="ui-button-danger"
+      label="Cancel"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="fa fa-floppy-o"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="onSave()"
+      class="ui-button-success"
+      [disabled]="btnFlag.save ? !Permission?.Add : !Permission?.Edit"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      icon="fa fa-list"
+      [disabled]="!Permission?.View"
+      (click)="showEntryList()"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Delete"
+      [disabled]="!Permission?.Delete"
+      (click)="deleteEntry()"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <button
+        pButton
+        type="button"
+        (click)="displayPrint()"
+        [disabled]="!Permission?.Print"
+        label="Print"
+        icon="fa fa-print"
+        class="ui-button-success"
+        (click)="print()"
+      ></button>
+      <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+    </div>
+  </div>
+</div>
+
+<main class="manufacturing-page" [formGroup]="menufacturingEntryGroup">
+  <section class="form-card">
+   
+    <div class="">
+      <div class="entry-row entry-row-primary">
+        <div class="">
+          <label for="menufacturingEntryNo">{{ "ME.No." | translate }}</label>
+          <input pInputText formControlName="menufacturingEntryNo" #menufacturingEntryNo id="menufacturingEntryNo" />
+        </div>
+        <div class="">
+          <label>{{ "item" | translate }}</label>
+          <p-dropdown filter="true" class="w-100" placeholder="---Item---" formControlName="menufacturingEntryLocationIdTo" [options]="ItemMasterList" [filter]="true" (onChange)="onItemChange($event)"></p-dropdown>
+        </div>
+        <div class="">
+          <label>{{ "Quantity" | translate }}</label>
+          <input pInputText type="number" min="0.000001" step="any" formControlName="quantity" (input)="onQuantityChange($event.target.value)" />
+        </div>
+      </div>
+      <div class="entry-row entry-row-secondary">
+        <div class="entry-field date-field">
+          <label for="menufacturingEntryDate">{{ "Date" | translate }}</label>
+          <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc formControlName="menufacturingEntryStDate" id="menufacturingEntryDate"></p-calendar>
+          <div class="error" *ngIf="f.menufacturingEntryStDate.touched && f.menufacturingEntryStDate.invalid">
+            <span>menufacturingEntry Date is Mandatory Field*</span>
+          </div>
+        </div>
+        <div class="entry-field remarks-field">
+          <label>{{ "Remarks" | translate }}</label>
+          <textarea [rows]="3" formControlName="menufacturingEntryNarration" pInputTextarea></textarea>
+        </div>
+      </div>
+    </div>
+      <div class="section-heading"><h2>{{ "Details" | translate }}</h2></div>
+    <div class="grid table-wrap">
+      <hot-table
+        [hotId]="hotid"
+        [data]="dataset"
+        [licenseKey]="licensekey"
+        [settings]="menufacturingEntry_Entry"
+      >
+      </hot-table>
+    </div>
+    <div class="total-row">
+      <label for="firstname3">Total:</label>
+      <div class="total-input">
+          <input
+            id="firstname3"
+            type="text"
+            formControlName="menufacturingEntryDetailsTotal"
+            pInputText
+          />
+        </div>
+      </div>
+  </section>
+  <!-- <section class="form-card data-card">
+  
+  </section> -->
+</main>
+<p-dialog
+  header="Customers"
+  [(visible)]="showCustomerList"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <p-table
+      #dt
+      [value]="customerList"
+      [columns]="cols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr [style]="{ cursor: 'pointer' }" (click)="selectCustomer(item)">
+          <td>{{ item.customerMasterCustomerTitle }}</td>
+          <td>{{ item.customerMasterCustomerName }}</td>
+          <td>{{ item.customerMasterCustomerEmail }}</td>
+          <td>{{ item.customerMasterCustomerTel1 }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Item List"
+  [(visible)]="showItemList"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <p-table
+      #itmList
+      [value]="itemList"
+      [columns]="itemListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of itemListcols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.item_Master_Batch_Code }}
+          </td>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.item_Master_Part_No }}
+          </td>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.item_Master_Barcode }}
+          </td>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.item_Master_Item_Name }}
+          </td>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.stock }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Unit List"
+  [(visible)]="showUnitList"
+  [modal]="true"
+  [style]="{ width: '25%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <p-table
+      #itmList
+      [value]="unitList"
+      [columns]="unitListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of unitListcols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitMasterUnitId }}
+          </td>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitMasterUnitFullName }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Menufacturing Entry List"
+  [(visible)]="showmenufacturingEntryList"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card">
+    <p-table
+      #stList
+      [value]="menufacturingEntryList"
+      [columns]="menufacturingEntryListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="stList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th
+            *ngFor="let col of menufacturingEntryListcols"
+            [pSortableColumn]="col.field"
+          >
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="cursor: pointer">{{ item.mE_Id_N }}</td>
+          <td style="cursor: pointer">
+            {{ item.mE_RF_V }}
+          </td>
+        
+          <td style="cursor: pointer">
+            {{ item.mE_Item_ID }}
+          </td>
+          <td style="cursor: pointer">
+            {{ item.mE_Remarks_V }}
+          </td>
+          <!-- <td style="cursor: pointer">{{ item.manufactureItemsMasterDetails?.length || 0 }}</td> -->
+          <td>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              class="ui-button-info"
+              (click)="GetSavedmenufactureDetails(item.mE_Id_N); showmenufacturingEntryList=false"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<!-- <p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{width: '90%'}"
+    [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+    <button pButton type="button" class="ui-button-info" (click)="printAsPDF()">
+        print
+    </button>
+    <div>
+        <div id="contentToConvertSv" style="justify-content: center">
+            <div style="justify-content: center; " class="p-grid">
+                <div class="p-col-10 p-grid" style="width: 80%; margin: auto !important;">
+                    <h1 class="p-col-12">{{stationmasterObj?.stationMasterStationName}}</h1>
+                    <div class="p-col-1"><strong>Address </strong> </div>
+                    <div class="p-col-1">:</div>
+                    <div class="p-col-10">{{stationmasterObj?.stationMasterAddress}}</div>
+
+                    <div class="p-col-1"><strong>Tel </strong> </div>
+                    <div class="p-col-1">:</div>
+
+                    <div class="p-col-10"> {{stationmasterObj?.stationMasterTele1}} </div>
+
+                    <div class="p-col-1"><strong>Fax </strong> </div>
+                    <div class="p-col-1">:</div>
+
+                    <div class="p-col-10"> {{stationmasterObj?.stationMasterFax}}</div>
+
+                    <div class="p-col-1"><strong>Email </strong> </div>
+                    <div class="p-col-1">:</div>
+
+                    <div class="p-col-10">{{stationmasterObj?.stationMasterEmail}}</div>
+                </div>
+                <div class="p-col-10 printTitle">
+                    <h2> {{'Stock  Transfer' | translate}}</h2>
+                </div>
+                <div class=" p-col-10">
+                    <table class="border-table w-100">
+                        <tr>
+                            <th>V No.</th>
+                            <th>SR Date</th>
+                            <th>Job</th>
+                            <th>Location From</th>
+                            <th>Locaton To</th>
+                        </tr>
+                        <tr>
+                            <td>{{savedSalesReturn?.salesReturnNo}} </td>
+                            <td>{{savedSalesReturn?.salesReturnDate}} </td>
+                            <td>{{savedSalesReturn?.salesReturnDate | date:'dd/MM/yyyy'}} </td>
+                            <td>{{savedSalesReturn?.salesReturnSvno}} </td>
+                            <td>{{savedSalesReturn?.salesReturnPartyId}}</td>
+                            <td></td>
+    
+                        </tr>
+                    </table>
+                </div>
+                <div class=" p-col-10 w-80">
+                    <span>Remark :</span>
+                    <span></span>
+                </div>
+
+                <div class="p-col-10">
+
+                    <table id="customers">
+                        <tr>
+                            <th>SI No.</th>
+                            <th>{{'Part No '| translate}}</th>
+                            <th style="width: 200px;">{{'Name' | translate}}</th>
+                            <th>{{'Koren Language '| translate}}</th>
+                            <th>{{'Packing '| translate}}</th>
+                            <th>{{'Unit'| translate}}</th>
+                            <th>{{'Price'| translate}}</th>
+                            <th>{{'Quantity'| translate}}</th>
+                            <th>{{'Total'| translate}}</th>
+                        </tr>\
+                        
+                    <tr>
+                        <td class="br" colspan="7"></td>
+                        <td class="br">
+                          
+                                <div>Total:</div>
+                                
+                            
+                        </td>
+                        <td class="br">
+                            
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <td class="br"colspan="9">
+                            
+                            <div class="tableF">
+                                <div>Customer Signature</div>
+                                <div> Approved By</div>
+                                <div>{{stationmasterObj?.stationMasterStationName}} </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</p-dialog> -->
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

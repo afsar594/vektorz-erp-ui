@@ -1,0 +1,56 @@
+import { EnumApprovalStatus } from '../../view/procurement/apprval/ApprovalFilterModel';
+import { CustomerQuotationDetails } from './CustomerQuotationDetails';
+
+export interface CustomerQuotation {
+  approvalStatus?: EnumApprovalStatus;
+  customerQuotationVoucherNo: any;
+  customerQuotationQId?: number;
+  customerQuotationQuotationId?: string;
+  customerQuotationQuotationAddition?: number;
+  customerQuotationQuotationRoot?: number;
+  customerQuotationQuotationDate?: Date;
+  customerQuotationQuotationValidDate?: Date;
+  customerQuotationCustomerId?: number;
+  customerQuotationEnquiryId?: number;
+  customerQuotationRemarks?: string;
+  customerQuotationLocationId?: number;
+  customerQuotationDiscountPercentage?: number;
+  customerQuotationDiscountAmountTotal?: number;
+  customerQuotationGrossTotal?: number;
+  customerQuotationNetTotal?: number;
+  customerQuotationSalesManId?: number;
+  customerQuotationCurrencyId?: number;
+  customerQuotationJobId?: number;
+  customerQuotationSubject?: string;
+  customerQuotationNote?: string;
+  customerQuotationWarranty?: string;
+  customerQuotationTraining?: string;
+  customerQuotationTechnicalDetails?: string;
+  customerQuotationTerms?: string;
+  customerQuotationDeliveryTimeDate?: Date;
+  customerQuotationPacking?: string;
+  customerQuotationQuality?: string;
+  customerQuotationHeader?: string;
+  customerQuotationFooter?: string;
+  customerQuotationQuotationStatusId?: number;
+  customerQuotationFsno?: number;
+  customerQuotationIsClose?: Boolean;
+  customerQuotationEnquiryNo?: string;
+  customerQuotationVoucherType?: number;
+  customerQuotationCashCustomerName?: string;
+  customerQuotationContactPersonV?: string;
+  customerQuotationDiscountAmount?: number;
+  customerQuotationVendorId?: number;
+  customerQuotationTypeId?: number;
+  customerQuotationModelId?: number;
+  customerQuotationVatPercentage?: number;
+  customerQuotationVatAmount?: number;
+  customerQuotationQuotationEnquiryN?: number;
+  customerQuotationReviseQuotation?: boolean;
+  customerQuotationProjectName?: string;
+  customerQuotationProjectRef?: string;
+  customerQuotationGrossProfitTotal?: number;
+
+  customerQuotationDetails: CustomerQuotationDetails[];
+  customerQuotationDelStatus?: Boolean;
+}

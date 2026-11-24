@@ -1,0 +1,138 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      [disabled]="!Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="p-button-secondary"
+      (click)="exportStockAgeingReport()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print2"
+      icon="fa fa-print"
+      class="p-button-secondary"
+      (click)="exportStockAgeingReport()"
+    ></button>
+    <button
+      pButton
+      class="ui-button-warning"
+      label="Clear"
+      icon="fa fa-ban"
+      (click)="clearStockAgeingReport()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="listStockAgeingReport()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Delete"
+      [disabled]="!Permission?.Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <p-checkbox
+      label="Show Items With Stock"
+      [(ngModel)]="showItemsWithStock"
+      [binary]="true"
+    ></p-checkbox>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="ItemFormGroup">
+  <div class="p-grid">
+    <label class="p-col-6 p-md-12 p-lg-1" for="itemName">{{
+      "ASON " | translate
+    }}</label>
+    <div class="p-col-6 p-md-12 p-lg-2 p-1">
+      <p-calendar
+        appendTo="body"
+        dateFormat="dd/mm/yy"
+        [showButtonBar]="true"
+        [monthNavigator]="true"
+        [yearNavigator]="true"
+        yearRange="2000:2040"
+        class="w-100"
+        useUtc
+        formControlName="DateFrom"
+        id="dateFrom"
+      >
+      </p-calendar>
+      <div
+        class="error"
+        *ngIf="f.DateFrom.errors && (f.DateFrom.dirty || f.DateFrom.touched)"
+      >
+        <span *ngIf="f.DateFrom.errors.required">
+          Item is Mandatory Field*</span
+        >
+      </div>
+    </div>
+    <div class="p-col-12 p-md-12 p-lg-1">{{ "Item Group" | translate }}</div>
+    <div class="p-col-12 p-md-12 p-lg-2">
+      <p-dropdown
+        filter="true"
+        [options]="itemGroupList"
+        placeholder="ALL"
+        formControlName="ItemGroup"
+        (onChange)="onItemGroupChange($event)"
+        [showClear]="true"
+      >
+      </p-dropdown>
+    </div>
+    <div class="p-col-12 p-md-12 p-lg-1">{{ "Item" | translate }}</div>
+    <div class="p-col-12 p-md-12 p-lg-2">
+      <p-dropdown
+        filter="true"
+        [options]="itemList"
+        placeholder="ALL"
+        formControlName="ItemName"
+        [showClear]="true"
+      >
+      </p-dropdown>
+    </div>
+    <div class="p-col-12 p-md-12 p-lg-1">{{ "Location" | translate }}</div>
+    <div class="p-col-12 p-md-12 p-lg-2">
+      <p-dropdown
+        filter="true"
+        [options]="locationList"
+        placeholder="ALL"
+        formControlName="Location"
+        [showClear]="true"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="p-col-12">
+      <hot-table
+        [hotId]="hotid"
+        [data]="dataset"
+        [licenseKey]="licensekey"
+        [settings]="stockLedgerReport"
+      >
+      </hot-table>
+    </div>
+  </div>
+</div>
+

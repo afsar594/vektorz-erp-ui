@@ -1,0 +1,382 @@
+<!-- <p>job-invoice works!</p> -->
+<app-page-header [nav]="[{ label: 'account' | translate }, { label: 'Job Item' | translate }]"
+  [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="New" (click)="new()" icon="pi pi-plus" class="ui-button-info"></button>
+    <button pButton type="button" [disabled]="!btnFlag.edit || !Permission?.Edit" label="Edit" icon="fa fa-pencil"
+      class="ui-button-success" (click)="edit()"></button>
+    <button pButton type="button" icon="fa fa-floppy-o" class="ui-button-success" [disabled]="!Permission?.Add"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'" (click)="savejobInvoice()"></button>
+    <button pButton type="button" label="List" [disabled]="!Permission?.View" icon="fa fa-list" class="ui-button-info"
+      (click)="getJobInvoiceListing()"></button>
+    <button pButton type="button" class="ui-button-danger" (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete" label="Delete" icon="fa fa-trash"></button>
+    <button pButton type="button" class="ui-button-danger" label="Cancel" icon="fa fa-ban"></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <!-- <button pButton type="button" [disabled]='!btnFlag.edit || !Permission?.Add' (click)='displayPrintPreview = true'
+      label="Print" icon="fa fa-print" class="ui-button-success" ></button> -->
+
+    <button pButton type="button" [disabled]="!btnFlag.edit || !Permission?.Print" label="Print Formatted Report"
+      (click)="crystalReport()" icon="fa fa-print" class="ui-button-success"></button>
+    <button pButton type="button" (click)="ExitNew()" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="JobInvoiceFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Job Invoice Entry' | translate">
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Voucher No:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-2">
+          <input [readonly]="!enableVNo" pInputText formControlName="jobInvoiceVoucherNo" />
+        </div>
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Date:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-2">
+          <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+            [yearNavigator]="true" useUtc yearRange="2000:2040" showIcon="true" useUtc
+            formControlName="jobInvoiceVoucherDate" optionLabel="value">
+          </p-calendar>
+        </div>
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "LPO No:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-2">
+          <input pInputText formControlName="jobInvoiceLpoNo" optionLabel="value" />
+        </div>
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "LPO Date:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-2">
+          <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+            [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" formControlName="jobInvoiceLpoDate"
+            optionLabel="value">
+          </p-calendar>
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Select a Job:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5 flexSearch">
+          <p-dropdown filter="true" class="w-100" formControlName="jobInvoiceJobId" [options]="jobList">
+          </p-dropdown>
+        </div>
+
+        <label *ngIf="JOBCOST" class="p-col-1 p-md-1" for="account">
+          {{ "Cont.Person:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5" *ngIf="JOBCOST">
+          <input pInputText style="width: 100%" formControlName="jobInvoiceCustomerName" />
+        </div>
+
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Sales Man:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5">
+          <div>
+            <p-dropdown filter="true" class="w-100" formControlName="jobInvoiceSalesManId"
+              [options]="SalesManMasterList">
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Customer:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5">
+          <p-dropdown filter="true" formControlName="jobInvoiceCustomerId" [options]="CustomerMasterList"
+            (onChange)="getRetentionAndAdvanceAccount($event)">
+          </p-dropdown>
+          <div class="error" *ngIf="
+              f.jobInvoiceCustomerId.errors &&
+              (f.jobInvoiceCustomerId.dirty || f.jobInvoiceCustomerId.touched)
+            ">
+            <span *ngIf="f.jobInvoiceCustomerId.errors.required">
+              Customer is Mandatory Field*</span>
+          </div>
+        </div>
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Location:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5">
+          <p-dropdown filter="true" class="w-100" formControlName="jobInvoiceLocationId" [options]="locationList">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Currency:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5">
+          <p-dropdown filter="true" class="w-100" formControlName="jobInvoiceCurrencyId" [options]="currencyList">
+          </p-dropdown>
+        </div>
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Sales Acc:" | translate }}</label>
+        <div class="p-col-12 p-md-5">
+          <p-dropdown filter="true" formControlName="jobInvoiceSalesAccount" [options]="accountList">
+          </p-dropdown>
+
+          <div class="error" *ngIf="
+              f.jobInvoiceSalesAccount.errors &&
+              (f.jobInvoiceSalesAccount.dirty ||
+                f.jobInvoiceSalesAccount.touched)
+            ">
+            <span *ngIf="f.jobInvoiceSalesAccount.errors.required">
+              Customer is Mandatory Field*</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Remarks:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5">
+          <textarea pInputTextarea formControlName="jobInvoiceRemarks" style="width: 95%"></textarea>
+          <!-- <div class="error" *ngIf="f.remarks.touched && f.remarks.invalid">Invalid Entry</div> -->
+        </div>
+        <label *ngIf="!JOBCOST" class="p-col-1 p-md-1" for="account">
+          {{ "Cont.Person:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5" *ngIf="!JOBCOST">
+          <input pInputText style="width: 100%" formControlName="jobInvoiceCustomerName" />
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Cust Addr:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5">
+          <textarea pInputTextarea formControlName="jobInvoiceCustomerAddress" style="width: 95%"></textarea>
+        </div>
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Invoice Type:" | translate }}
+        </label>
+        <div class="p-col-12 p-md-5">
+          <p-dropdown filter="true" class="w-100" formControlName="invoicetype" [options]="v_typeList">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="card card-w-title">
+        <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+          <p-tabPanel [header]="'Details' | translate">
+            <div class="grid">
+              <div class="p-col-12">
+                <hot-table [hotId]="hotid" [data]="JobInvoice_EntryDataset" [licenseKey]="licensekey"
+                  [settings]="JobInvoice_Entry">
+                </hot-table>
+              </div>
+            </div>
+
+            <div class="p-grid p-fluid" style="margin-top: 2vh">
+              <div class="p-col-12 p-md-8"></div>
+              <div class="p-col-12 p-md-4">
+                <div class="p-grid p-ai-center">
+                  <div class="p-col-12 p-md-4" for="account">
+                    {{ "Total Gross.Amt" | translate }}
+                  </div>
+                  <div class="p-col-12 p-md-8 p-0">
+                    <input readonly class="end" id="total" formControlName="jobInvoiceGrossAmount" type="text"
+                      pInputText />
+                  </div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <div class="p-col-12 p-md-4" for="account">
+                    {{ "Discount" | translate }}
+                  </div>
+                  <div class="p-col-12 p-md-8 p-0">
+                    <input id="total" class="end" readonly formControlName="jobInvoiceDiscount" type="text"
+                      pInputText />
+                  </div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <div class="p-col-12 p-md-4" for="account">
+                    {{ "Retention" | translate }}
+                  </div>
+                  <div class="p-col-12 p-md-8 p-0">
+                    <input id="total" class="end" (change)="GetTotal()" formControlName="jobInvoiceRetention"
+                      type="text" pInputText />
+                  </div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <div class="p-col-12 p-md-4" for="account">
+                    {{ "Advance" | translate }}
+                  </div>
+                  <div class="p-col-12 p-md-8 p-0">
+                    <input id="total" (change)="GetTotal()" class="end" formControlName="jobInvoiceAdvance" type="text"
+                      pInputText />
+                  </div>
+                </div>
+                <div *ngIf="VatCalculation == true" class="p-col-12 p-grid p-ai-center">
+                  <label class="p-col-12 p-md-4" for="account">
+                    {{ "VAT " | translate }}
+                  </label>
+                  <div class="p-col-12 p-md-2 p-0">
+                    <input class="w-100 end" formControlName="jobInvoiceVat" (change)="GetTotal()" pInputText />
+                  </div>
+                  <span class="p-col-12 p-md-1">
+                    {{ "%" | translate }}
+                  </span>
+                  <div class="p-col-12 p-md-5 p-0">
+                    <input class="w-100 end" formControlName="jobInvoiceVatAmt" (change)="GetTotal()" readonly
+                      pInputText />
+                  </div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <div class="p-col-12 p-md-4" for="account">
+                    {{ "Net.Amt" | translate }}
+                  </div>
+                  <div class="p-col-12 p-md-8 p-0">
+                    <input class="end" id="total" readonly formControlName="jobInvoiceNetAmount" type="text"
+                      pInputText />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </p-tabPanel>
+
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+                }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog header="Unit List" [(visible)]="unitListing" [modal]="true" [style]="{ width: '30%' }" [maximizable]="true"
+  [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <p-table #uList [value]="unitList" [columns]="unitCols" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="uList.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of unitCols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr (click)="selectUnit(item)">
+        <td>{{ item.unitMasterUnitShortName }}</td>
+        <td>
+          <a href="javascript:void(0)">{{
+            item.unitMasterUnitFullName
+            }}</a>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+
+<p-dialog header="Job Invoice" [(visible)]="showJobInvoiceList" [modal]="true" [style]="{ width: '80%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <p-table #jiList [value]="jobInvoiceList" [columns]="jobInvoiceCols" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="jiList.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of jobInvoiceCols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>
+          <a href="javascript:void(0)">{{ item.jobInvoiceVoucherNo }}</a>
+        </td>
+        <td>{{ item.jobInvoiceVoucherDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ getCustomerdetails(item.jobInvoiceCustomerId )}}</td>
+        <td>{{ getlocationName(item.jobInvoiceLocationId) }}</td>
+        <td>{{ item.jobInvoiceGrossAmount }}</td>
+        <td>{{ item.jobInvoiceDiscount }}</td>
+        <td>{{ item.jobInvoiceNetAmount }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedJobInvoiceDetails(item?.jobInvoiceId);
+              showJobInvoiceList = false
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog header="Item List" [(visible)]="showItemList" [modal]="true" [style]="{ width: '50%' }" [maximizable]="true"
+  [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <p-table #dt3 [value]="ItemList" [columns]="items" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter" (input)="onSearch($event.target.value)"
+          style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of items" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr (click)="SetItemValue(item)">
+        <td>{{ item.itemMasterItemId }}</td>
+        <td>
+          <a href="javascript:void(0)">{{
+            item.itemMasterItemName
+            }}</a>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="SaveConfirm"></p-confirmDialog>

@@ -1,0 +1,17 @@
+.ltr{
+    direction: ltr;
+}
+
+.rtl{
+    direction: rtl;   
+    // .handsontable table{
+    //     direction: rtl;
+    //     text-align: right;
+    //     }
+    //     .handsontableInput {
+    //         text-align: right;
+    //     } 
+    .handsontable{
+        direction: ltr !important;
+    }
+}

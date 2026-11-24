@@ -1,0 +1,23 @@
+<!-- <div class="layout-menu-wrapper" [ngClass]="{'layout-menu-wrapper-active': app.menuActive}" (click)="onMenuClick()">
+    <div class="layout-menu-container">
+        <ul class="layout-menu">
+            <li app-menuitem *ngFor="let item of model; let i = index;" [item]="item" [index]="i" [root]="true"></li>
+        </ul>
+    </div>
+</div> -->
+<!-- <p-megaMenu [model]="model" [styleClass]="'layout-menu-wrapper'" [ngClass]="{'layout-menu-wrapper-active': app.menuActive}" (click)="onMenuClick()"></p-megaMenu> -->
+<!-- <p-megaMenu [styleClass]="'layout-menu-wrapper'" [ngClass]="{'layout-menu-wrapper-active': app.menuActive}" (click)="onMenuClick()">
+    <ng-template let-item let-i="index" ngFor [ngForOf]="model">
+     Use 'item' to access each element in 'model' and 'i' for the index
+        <div>{{ i }}: {{ item }}</div>
+    </ng-template>
+</p-megaMenu> -->
+<!-- <p-megaMenu [model]="model" [styleClass]="{'layout-menu-wrapper-active': app.menuActive}" (onClick)="onMenuClick()"></p-megaMenu> -->
+
+<!-- <div class="card">
+    <p-megaMenu [model]="items"></p-megaMenu>
+</div> -->
+<!-- <p-megaMenu  class="custom-mega-menu" [model]="items" orientation="horizontal">
+</p-megaMenu> -->
+<p-megaMenu [model]="items"  class="p-megamenu" >
+</p-megaMenu>

@@ -1,0 +1,203 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button pButton type="button" label="New" icon="pi pi-plus"></button>
+    <button
+      pButton
+      type="button"
+      (click)="onSave()"
+      [disabled]="!Permission?.Add"
+      label="Save"
+      icon="pi pi-save"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="onEdit()"
+      [disabled]="!Permission?.View"
+      label="list"
+      icon="fa fa-list"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="onCancel()"
+      class="ui-button-danger"
+      label="Exit"
+      icon="fa fa-ban"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="loyalityForm">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Loyalty' | translate">
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1">Loyalty Name</label>
+        <div class="p-col-12 p-md-5">
+          <input
+            pInputText
+            placeholder=""
+            type="text"
+            formControlName="tM_Type"
+          />
+          <!-- <div class="error" *ngIf="submitted && f.tM_Type.errors">
+                    <span *ngIf="submitted && f.tM_Type.errors && f.tM_Type.errors.required">Tax Type is
+                    Required</span>
+                    </div> -->
+        </div>
+        <label class="p-col-12 p-md-1">Loyalty Date</label>
+        <div class="p-col-12 p-md-5">
+          <p-calendar
+            appendTo="body"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2000:2040"
+            [showIcon]="true"
+            useUtc
+            id="rptDtpFrom"
+            formControlName="rptDtpFrom"
+          >
+          </p-calendar>
+        </div>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              <b>Point of Calculation</b>
+            </p-header>
+
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="Basis">{{
+                "On the Basis" | translate
+              }}</label>
+              <div class="p-col-12 p-md-8">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="rptAccount"
+                  id="Basis"
+                  [options]
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4">Customer will be awarded</label>
+              <div class="p-col-12 p-md-8">
+                <input
+                  pInputText
+                  placeholder=""
+                  type="number"
+                  formControlName="tM_CGST"
+                />
+                <!-- <div class="error" *ngIf="submitted && f.tM_CGST.errors">
+                    <span *ngIf="submitted && f.tM_CGST.errors && f.tM_CGST.errors.required">Tax CGST is
+                        Required</span>
+                </div> -->
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4"
+                >Point(s) for a sale of every</label
+              >
+              <div class="p-col-12 p-md-8">
+                <input
+                  pInputText
+                  placeholder=""
+                  type="number"
+                  formControlName="tM_SGST"
+                />
+                <!-- <div class="error" *ngIf="submitted && f.tM_SGST.errors">
+                                    <span *ngIf="submitted && f.tM_SGST.errors && f.tM_SGST.errors.required">Tax SGST is
+                            Required</span>
+                                 </div> -->
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              <b>Redemption Calculation </b>
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3">Awarded points</label>
+              <div class="p-col-12 p-md-9">
+                <input
+                  pInputText
+                  placeholder=""
+                  type="number"
+                  formControlName="tM_CGST"
+                />
+                <div class="error" *ngIf="submitted && f.tM_CGST.errors">
+                  <span
+                    *ngIf="
+                      submitted && f.tM_CGST.errors && f.tM_CGST.errors.required
+                    "
+                    >Tax CGST is Required</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3">1 reward Point =</label>
+              <div class="p-col-12 p-md-9">
+                <input
+                  pInputText
+                  placeholder=""
+                  type="number"
+                  formControlName="tM_SGST"
+                />
+                <!-- <div class="error" *ngIf="submitted && f.tM_SGST.errors">
+                                    <span *ngIf="submitted && f.tM_SGST.errors && f.tM_SGST.errors.required">Tax SGST is
+                                Required</span>
+                                  </div> -->
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <!--                             <div class="p-grid p-ai-center">
+        <div class="p-col-12">
+            <div class='matero-page-header'>
+                <div class="matero-page-header-inner">
+                    <h2 class="matero-page-title">Tax List</h2>
+                </div>
+            </div>
+            <p-table [value]="this.apiService.TaxMasterArray">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Tax Type</th>
+                        <th>Tax Name</th>
+                        <th>Tax Percentage</th>
+                        <th>Tax CGST</th>
+                        <th>Tax SGST</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{item.tM_Type}}</td>
+                        <td>{{item.tM_Name}}</td>
+                        <td>{{item.tM_Percentage}}</td>
+                        <td>{{item.tM_CGST}}</td>
+                        <td>{{item.tM_SGST}}</td>
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)='onPatchValue(item)'
+                                iconPos="left"></button>
+                            <button pButton type="button" icon="pi pi-trash" (click)='onDelete(item)'
+                                iconPos="left"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div> -->
+    </p-tabPanel>
+  </p-tabView>
+</div>

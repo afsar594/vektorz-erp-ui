@@ -1,0 +1,154 @@
+<div class="p-col-12">
+  <p-panel>
+    <p-header>
+      <input
+        (click)="toggleDate()"
+        [(ngModel)]="enableDate"
+        type="checkbox"
+        pInputCheck
+      />
+      By Date
+    </p-header>
+    <div
+      class="p-grid"
+      style="
+        font-weight: bold;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #cccc;
+      "
+    >
+      <div class="p-col-4">
+        <p-radioButton
+          name="dateFilter"
+          id="months"
+          class="p-col-12 p-md-12 p-lg-4"
+          label="{{ 'Month' | translate }}"
+          [value]="DateFilterType.MONTH"
+          [(ngModel)]="selectedDateFilter"
+          [disabled]="!enableDate"
+        ></p-radioButton>
+      </div>
+      <div class="p-col-4">
+        <p-radioButton
+          name="dateFilter"
+          id="year"
+          class="p-col-12 p-md-12 p-lg-4"
+          label="{{ 'Year' | translate }}"
+          [value]="DateFilterType.YEAR"
+          [(ngModel)]="selectedDateFilter"
+          [disabled]="!enableDate"
+        ></p-radioButton>
+      </div>
+      <div class="p-col-4">
+        <p-radioButton
+          name="dateFilter"
+          id="custom"
+          class="p-col-12 p-md-12 p-lg-4"
+          label="{{ 'Custom' | translate }}"
+          [value]="DateFilterType.CUSTOM"
+          [(ngModel)]="selectedDateFilter"
+          [disabled]="!enableDate"
+        ></p-radioButton>
+      </div>
+    </div>
+    <div style="height: 50px">
+      <ng-container *ngIf="selectedDateFilter == 'month'">
+        <div class="p-grid">
+          <div class="p-col-1"></div>
+          <div class="p-col-5">
+            <p-radioButton
+              name="monthFilter"
+              id="thisMonth"
+              class="p-col-12 p-md-12 p-lg-4"
+              [value]="monthFilterType.ThisMonth"
+              [(ngModel)]="selectedMonth"
+              label="{{ 'Current Month' | translate }}"
+              [disabled]="!enableDate"
+            ></p-radioButton>
+          </div>
+          <div class="p-col-6">
+            <p-radioButton
+              name="monthFilter"
+              id="previousMonth"
+              [value]="monthFilterType.PreviousMonth"
+              [(ngModel)]="selectedMonth"
+              class="p-col-12 p-md-12 p-lg-4"
+              label="{{ 'Previous Month' | translate }}"
+              [disabled]="!enableDate"
+            ></p-radioButton>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="selectedDateFilter == 'year'">
+        <div class="p-grid inputGroup">
+          <div class="p-col-2"></div>
+          <label class="p-col-3" style="margin-top: 8px">Select Year</label>
+          <div class="p-col-5">
+            <p-dropdown
+              filter="true"
+              [options]="yearList"
+              [(ngModel)]="selectedYear"
+              name=""
+              [ngModelOptions]="{ standalone: true }"
+              id="years"
+              placeholder="---- Select Year ----"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="selectedDateFilter == 'custom'">
+        <div style="display: flex">
+          <div class="p-grid">
+            <div class="p-col-3" style="margin-top: 8px">
+              <label for="fromDate">From </label>
+            </div>
+            <div class="p-col-9">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                id="dateFrom"
+                showButtonBar="true"
+                [showIcon]="true"
+                [(ngModel)]="dateFrom"
+                name="dateFrom"
+                [disabled]="!enableDate"
+                [ngModelOptions]="{ standalone: true }"
+              >
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2" style="margin-top: 8px">
+              <label for="fromDate">To </label>
+            </div>
+            <div class="p-col-10">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                id="dateTo"
+                showButtonBar="true"
+                [showIcon]="true"
+                [(ngModel)]="dateTo"
+                name="dateTo"
+                [disabled]="!enableDate"
+                [ngModelOptions]="{ standalone: true }"
+              >
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </p-panel>
+</div>

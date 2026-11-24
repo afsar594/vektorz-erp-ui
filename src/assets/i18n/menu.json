@@ -1,0 +1,2000 @@
+[
+  {
+    "id": 2,
+    "label": "Dashboard",
+    "target": "Index",
+    "url": "dashboard",
+    "icon": "fa fa-fw fa-home",
+    "title": "Dashboard",
+    "items": []
+  },
+  {
+    "id": 3,
+    "label": "Master",
+    "target": "Index",
+    "url": "master",
+    "icon": "fa fa-fw fa-gg",
+    "title": "Master",
+    "items": [
+      {
+        "id": 5,
+        "label": "Master",
+        "target": "Index",
+        "url": "Submaster",
+        "icon": "fa fa-fw fa-gg",
+        "title": "Master",
+        "items": [
+          {
+            "id": 37,
+            "label": "Job Master",
+            "target": "JobMaster",
+            "url": "/master/jobmaster-ace",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Job Master",
+            "items": []
+          },
+          {
+            "id": 4,
+            "label": "List Master",
+            "target": "Index",
+            "url": "master/list-master",
+            "icon": "fa fa-fw fa-gg",
+            "title": "List Master",
+            "items": []
+          },
+          {
+            "id": 39,
+            "label": "Customer",
+            "target": "Customer",
+            "url": "/master/customer/add",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer",
+            "items": []
+          },
+          {
+            "id": 11,
+            "label": "Item Master",
+            "target": "ItemMaster",
+            "url": "master/item/list",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Item Master",
+            "items": []
+          },
+          {
+            "id": 9911,
+            "label": "Product Inquiry",
+            "target": "ProductInquiry",
+            "url": "master/product-inquiry",
+            "icon": "fa fa-fw fa-search",
+            "title": "Product Inquiry",
+            "items": []
+          },
+          {
+            "id": 12,
+            "label": "Price Level Master",
+            "target": "PriceLevelMaster",
+            "url": "master/pricelevel",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Price Level Master",
+            "items": []
+          },
+          {
+            "id": 13,
+            "label": "Loyalty Master",
+            "target": "LoyaltyMaster",
+            "url": "master/loyalty",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Loyalty Master",
+            "items": []
+          },
+          {
+            "id": 14,
+            "label": "Department Master",
+            "target": "DepartmentMaster",
+            "url": "master/department",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Department Master",
+            "items": []
+          },
+          {
+            "id": 226,
+            "label": "Asset Master",
+            "target": "Asset Master",
+            "url": "master/asset-management",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Asset Master",
+            "items": []
+          },
+          {
+            "id": 259,
+            "label": "Cost Estimation Items",
+            "target": "cost-estimation-items",
+            "url": "master/cost-estimation-master",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Cost Estimation Items",
+            "items": []
+          },
+          {
+            "id": 253,
+            "label": "Customer Type",
+            "target": "",
+            "url": "/master/customertype",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Customer Type",
+            "items": []
+          },
+          {
+            "id": 257,
+            "label": "Designation Master",
+            "target": "",
+            "url": "/master/designationmaster",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Designation Master",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "label": "Detail",
+        "target": "Detail",
+        "url": "",
+        "icon": "fa fa-fw fa-gg",
+        "title": "Detail",
+        "items": [
+          {
+            "id": 16,
+            "label": "Currency",
+            "target": "Detail",
+            "url": "master/currency",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Currency",
+            "items": []
+          },
+          {
+            "id": 17,
+            "label": "Country",
+            "target": "Country",
+            "url": "/master/country",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Country",
+            "items": []
+          },
+          {
+            "id": 25,
+            "label": "Supplier Master",
+            "target": "SupplierMaster",
+            "url": "/master/supplier",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Supplier Master",
+            "items": []
+          },
+          {
+            "id": 26,
+            "label": "Supplier List",
+            "target": "SupplierList",
+            "url": "/master/supplier-list",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Supplier List",
+            "items": []
+          },
+          {
+            "id": 27,
+            "label": "Staff Detail",
+            "target": "StaffDetail",
+            "url": "/master/staff-details",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Staff Detail",
+            "items": []
+          },
+          {
+            "id": 28,
+            "label": "Location",
+            "target": "Location",
+            "url": "/master/location",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Location",
+            "items": []
+          },
+          {
+            "id": 29,
+            "label": "City",
+            "target": "City",
+            "url": "/master/city",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "City",
+            "items": []
+          },
+          {
+            "id": 30,
+            "label": "Budget",
+            "target": "Budget",
+            "url": "/master/budget",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Budget",
+            "items": []
+          },
+          {
+            "id": 31,
+            "label": "Cost Center",
+            "target": "CostCenter",
+            "url": "/master/costcenter",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Cost Center",
+            "items": []
+          },
+          {
+            "id": 32,
+            "label": "Business Type",
+            "target": "BusinessType",
+            "url": "/master/businesstype",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Business Type",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 40,
+        "label": "A/C",
+        "target": "A/C",
+        "url": "",
+        "icon": "",
+        "title": "A/C",
+        "items": [
+          {
+            "id": 41,
+            "label": "Chart Of Accounts",
+            "target": "ChartOfAccounts",
+            "url": "/master/chartofaccount",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Chart Of Accounts",
+            "items": []
+          },
+          {
+            "id": 42,
+            "label": "Account Manual Code Entry",
+            "target": "AccountManualCodeEntry",
+            "url": "/master/accountmanualcodentry",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Account Manual Code Entry",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 43,
+        "label": "Sales",
+        "target": "Sales",
+        "url": "",
+        "icon": "",
+        "title": "Sales",
+        "items": [
+          {
+            "id": 44,
+            "label": "Salesman",
+            "target": "Salesman",
+            "url": "/master/salesman",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Salesman",
+            "items": []
+          },
+          {
+            "id": 45,
+            "label": "Sales Processing",
+            "target": "SalesProcessing",
+            "url": "/master/salesprocessing",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Sales Processing",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 46,
+        "label": "Settings",
+        "target": "Settings",
+        "url": "",
+        "icon": "",
+        "title": "Settings",
+        "items": [
+          {
+            "id": 47,
+            "label": "Change password",
+            "target": "Changepassword",
+            "url": "/master/changepassword",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Change password",
+            "items": []
+          },
+          {
+            "id": 48,
+            "label": "Email Settings",
+            "target": "EmailSettings",
+            "url": "/master/emailsettings",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Email Settings",
+            "items": []
+          },
+          {
+            "id": 49,
+            "label": "Depreciation Register",
+            "target": "DepreciationRegister",
+            "url": "/master/depreciationregister",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Depreciation Register",
+            "items": []
+          },
+          {
+            "id": 50,
+            "label": "Project Description",
+            "target": "ProjectDescription",
+            "url": "/master/projectdescription",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Project Description",
+            "items": []
+          },
+          {
+            "id": 52,
+            "label": "Tax",
+            "target": "Tax",
+            "url": "/master/tax",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Tax",
+            "items": []
+          },
+          {
+            "id": 53,
+            "label": "QTemplates",
+            "target": "QTemplates",
+            "url": "/master/template",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "QTemplates",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 54,
+        "label": "Code",
+        "target": "Code",
+        "url": "",
+        "icon": "",
+        "title": "Code",
+        "items": [
+          {
+            "id": 55,
+            "label": "Brand",
+            "target": "Brand",
+            "url": "/master/code/brand",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Brand",
+            "items": []
+          },
+          {
+            "id": 56,
+            "label": "Model",
+            "target": "Model",
+            "url": "/master/code/model",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Model",
+            "items": []
+          },
+          {
+            "id": 57,
+            "label": "Type",
+            "target": "Type",
+            "url": "/master/code/type",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Type",
+            "items": []
+          },
+          {
+            "id": 58,
+            "label": "Unit",
+            "target": "Unit",
+            "url": "/master/code/unit",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Unit",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "label": "Assets",
+        "target": "Assets",
+        "url": "",
+        "icon": "fa fa-fw fa-gg",
+        "title": "Assets",
+        "items": [
+          {
+            "id": 33,
+            "label": "Asset Management",
+            "target": "AssetManagement",
+            "url": "master/asset-management",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Asset Management",
+            "items": []
+          },
+          {
+            "id": 34,
+            "label": "Asset Chart",
+            "target": "AssetChart",
+            "url": "/master/assetchart",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Asset Chart",
+            "items": []
+          },
+          {
+            "id": 35,
+            "label": "Asset Register",
+            "target": "AssetRegister",
+            "url": "/master/assetregister",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Asset Register",
+            "items": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "label": "Account",
+    "target": "Account Statement",
+    "url": "account/accountstatement",
+    "icon": "fa fa-fw fa-gg",
+    "title": "Account",
+    "items": [
+      {
+        "id": 59,
+        "label": "Vouchers",
+        "target": "Vouchers",
+        "url": "",
+        "icon": "fa fa-fw fa-gg",
+        "title": "Vouchers",
+        "items": [
+          {
+            "id": 60,
+            "label": "Payment Voucher",
+            "target": "PaymentVoucher",
+            "url": "/account/paymentvoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Payment Voucher",
+            "items": []
+          },
+          {
+            "id": 61,
+            "label": "Receipt Voucher",
+            "target": "ReceiptVoucher",
+            "url": "/account/receiptvoucher",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Receipt Voucher",
+            "items": []
+          },
+          {
+            "id": 62,
+            "label": "Journal Voucher",
+            "target": "JournalVoucher",
+            "url": "/account/journalvoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Journal Voucher",
+            "items": []
+          },
+          {
+            "id": 63,
+            "label": "Contra  Voucher",
+            "target": "ContraVoucher",
+            "url": "/account/contravoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Contra  Voucher",
+            "items": []
+          },
+          {
+            "id": 64,
+            "label": "Voucher Printing",
+            "target": "VoucherPrinting",
+            "url": "/account/VoucherPrinting",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Voucher Printing",
+            "items": []
+          },
+          {
+            "id": 65,
+            "label": "Voucher Allocation",
+            "target": "VoucherAllocation",
+            "url": "/account/voucher-allocation",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Voucher Allocation",
+            "items": []
+          },
+          {
+            "id": 66,
+            "label": "Opening Balance Voucher",
+            "target": "OpeningBalanceVoucher",
+            "url": "/account/openingbalancevoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Opening Balance Voucher",
+            "items": []
+          },
+          {
+            "id": 67,
+            "label": "Bank Receipt Voucher",
+            "target": "BankReceiptVoucher",
+            "url": "/account/bankreceiptvoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Bank Receipt Voucher",
+            "items": []
+          },
+          {
+            "id": 68,
+            "label": "Bank Payment Voucher",
+            "target": "BankPaymentVoucher",
+            "url": "/account/bankpaymentvoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Bank Payment Voucher",
+            "items": []
+          },
+          {
+            "id": 69,
+            "label": "Depreciation Journal Voucher",
+            "target": "DepreciationJournalVoucher",
+            "url": "/account/depreciation-journal-voucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Depreciation Journal Voucher",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 70,
+        "label": "Statements",
+        "target": "Statements",
+        "url": "",
+        "icon": "",
+        "title": "Statements",
+        "items": [
+          {
+            "id": 75,
+            "label": "Outstanding Statement",
+            "target": "OutstandingStatement",
+            "url": "/account/outstandingstatement",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Outstanding Statement",
+            "items": []
+          },
+          {
+            "id": 76,
+            "label": "Customer Statement",
+            "target": "CustomerStatement",
+            "url": "/account/customerStatement",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Statement",
+            "items": []
+          },
+          {
+            "id": 77,
+            "label": "Bank Statement",
+            "target": "BankStatement",
+            "url": "/account/bankstatement",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Bank Statement",
+            "items": []
+          },
+          {
+            "id": 78,
+            "label": "Bank Transfer Statement",
+            "target": "BankTransferStatement",
+            "url": "/account",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Bank Transfer Statement",
+            "items": []
+          },
+          {
+            "id": 79,
+            "label": "Multi Account Statement",
+            "target": "MultiAccountStatement",
+            "url": "/account/MultiAccount",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Multi Account Statement",
+            "items": []
+          },
+          {
+            "id": 80,
+            "label": "VAT Statementt",
+            "target": "VATStatement",
+            "url": "/account/vatstatement",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "VAT Statementt",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 81,
+        "label": "Customer",
+        "target": "Customer",
+        "url": "",
+        "icon": "",
+        "title": "Customer",
+        "items": [
+          {
+            "id": 82,
+            "label": "Sales Journal",
+            "target": "Sales Journal",
+            "url": "/account/salesjournal",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Sales Journal",
+            "items": []
+          },
+          {
+            "id": 83,
+            "label": "PDC Posting",
+            "target": "PDC Posting",
+            "url": "/account/PDCPosting",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "PDC Posting",
+            "items": []
+          },
+          {
+            "id": 84,
+            "label": "Previous Balance Sheet Entry",
+            "target": "Previous Balnace Sheet Entry",
+            "url": "/account/previous-balancesheet",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Previous Balance Sheet Entry",
+            "items": []
+          },
+          {
+            "id": 85,
+            "label": "Debit Note",
+            "target": "Debit Note",
+            "url": "/account/debitnote",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Debit Note",
+            "items": []
+          },
+          {
+            "id": 86,
+            "label": "Credit Note",
+            "target": "Credit Note",
+            "url": "/account/creditnote",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Credit Note",
+            "items": []
+          },
+          {
+            "id": 88,
+            "label": "Bank Reconcilation",
+            "target": "Bank Reconcilation",
+            "url": "/account/BankReconcilation",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Bank Reconcilation",
+            "items": []
+          },
+          {
+            "id": 91,
+            "label": "Purchase Journal",
+            "target": "Purchase Journal",
+            "url": "/account/purchasejournal",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Journal",
+            "items": []
+          },
+          {
+            "id": 92,
+            "label": "Bank Book",
+            "target": "Bank Book",
+            "url": "/account",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Bank Book",
+            "items": []
+          },
+          {
+            "id": 93,
+            "label": "Cash Book",
+            "target": "Cash Book",
+            "url": "/account",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Cash Book",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 96,
+        "label": "Invoice",
+        "target": "Invoice",
+        "url": "",
+        "icon": "",
+        "title": "Invoice",
+        "items": [
+          {
+            "id": 97,
+            "label": "Invoice",
+            "target": "Invoice",
+            "url": "/documentation",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Invoice",
+            "items": []
+          },
+          {
+            "id": 98,
+            "label": "Journal Invoice",
+            "target": "Journal Invoice",
+            "url": "/account/journalinvoice",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Journal Invoice",
+            "items": []
+          },
+          {
+            "id": 99,
+            "label": "Job Invoice",
+            "target": "Job Invoice",
+            "url": "/account/jobInvoice",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Job Invoice",
+            "items": []
+          },
+          {
+            "id": 234,
+            "label": "progressive Invoice",
+            "target": "progressive Invoice",
+            "url": "/account/progressiveInvoice",
+            "icon": "fa fa-fw fa-gg",
+            "title": "progressive Invoice",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 237,
+        "label": "Assets",
+        "target": "Assets",
+        "url": "",
+        "icon": "",
+        "title": "Assets",
+        "items": [
+          {
+            "id": 238,
+            "label": "Asset Sub List",
+            "target": "Asset Sub List",
+            "url": "/account/asset-sub-list",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Asset Sub List",
+            "items": []
+          },
+          {
+            "id": 239,
+            "label": "Asset consumption return",
+            "target": "Asset consumption return",
+            "url": "/account/asset-consumption-return",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Asset consumption return",
+            "items": []
+          },
+          {
+            "id": 240,
+            "label": "Asset consumption",
+            "target": "Asset consumption",
+            "url": "/account/asset-consumption",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Asset consumption",
+            "items": []
+          },
+          {
+            "id": 89,
+            "label": "Asset Purchase",
+            "target": "Asset Purchase",
+            "url": "/account/assetPurchase",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Asset Purchase",
+            "items": []
+          },
+          {
+            "id": 90,
+            "label": "Asset Opening",
+            "target": "Asset Opening",
+            "url": "/account/assetOpening",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Asset Opening",
+            "items": []
+          },
+          {
+            "id": 94,
+            "label": "Asset Purchase List",
+            "target": "Asset Purchase List",
+            "url": "/account",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Asset Purchase List",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 100,
+        "label": "Reports",
+        "target": "Reports",
+        "url": "",
+        "icon": "",
+        "title": "Reports",
+        "items": [
+          {
+            "id": 101,
+            "label": "Accounts Transactions Report",
+            "target": "Accounts Transactions Report",
+            "url": "/account/accountstransactionsreport",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Accounts Transactions Report",
+            "items": []
+          },
+          {
+            "id": 102,
+            "label": "Job Cost Report",
+            "target": "Job Cost Report",
+            "url": "/account/job-cost-report",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Job Cost Report",
+            "items": []
+          },
+          {
+            "id": 103,
+            "label": "Ageing Report",
+            "target": "Ageing Report",
+            "url": "/account/ageingreport",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Ageing Report",
+            "items": []
+          },
+          {
+            "id": 104,
+            "label": "PDC Alert",
+            "target": "PDC Alert",
+            "url": "/account/pdc-alert",
+            "icon": "fa fa-fw fa-gg",
+            "title": "PDC Alert",
+            "items": []
+          },
+          {
+            "id": 232,
+            "label": "FC Statement Of Accountt",
+            "target": "FC Statement Of Account",
+            "url": "/account/fc-statement-account",
+            "icon": "fa fa-fw fa-gg",
+            "title": "FC Statement Of Accountt",
+            "items": []
+          },
+          {
+            "id": 87,
+            "label": "Day Book",
+            "target": "Day Book",
+            "url": "/account/daybook",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Day Book",
+            "items": []
+          },
+          {
+            "id": 235,
+            "label": "JobInvoice Report",
+            "target": "JobInvoice Report",
+            "url": "/sale/job-invoice-report",
+            "icon": "fa fa-fw fa-gg",
+            "title": "JobInvoice Report",
+            "items": []
+          },
+          {
+            "id": 254,
+            "label": "Project Status Report",
+            "target": "",
+            "url": "/account/projectstatusreport",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Project Status Report",
+            "items": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "label": "Store And WareHouses",
+    "target": "StoreAndWareHouses",
+    "url": "storewarehouse/alternative-item",
+    "icon": "fa fa-fw fa-gg",
+    "title": "Store And WareHouses",
+    "items": [
+      {
+        "id": 105,
+        "label": "Master",
+        "target": "Master",
+        "url": "",
+        "icon": "",
+        "title": "Master",
+        "items": [
+          {
+            "id": 106,
+            "label": "Good Receipt Voucher (GRN)",
+            "target": "Good Receipt Voucher (GRN)",
+            "url": "storewarehouse/GRN",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Good Receipt Voucher (GRN)",
+            "items": []
+          },
+          {
+            "id": 107,
+            "label": "Alternative Item",
+            "target": "Alternative Item",
+            "url": "/storewarehouse/alternative-item",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Alternative Item",
+            "items": []
+          },
+          {
+            "id": 108,
+            "label": "Finish Product Entry",
+            "target": "Finish Product Entry",
+            "url": "/storewarehouse/finished-product-entry",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Finish Product Entry",
+            "items": []
+          },
+          {
+            "id": 109,
+            "label": "GRN Pending List",
+            "target": "GRN Pending List",
+            "url": "/storewarehouse/grnPendingList",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "GRN Pending List",
+            "items": []
+          },
+          {
+            "id": 110,
+            "label": "Issue To Production",
+            "target": "Issue To Production",
+            "url": "/storewarehouse/issuevoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Issue To Production",
+            "items": []
+          },
+          {
+            "id": 116,
+            "label": "Issue Return(Received Back from Production)",
+            "target": "IssueReturn",
+            "url": "storewarehouse/issuereturn",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Issue Return(Received Back from Production)",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 117,
+        "label": "Reports",
+        "target": "Reports",
+        "url": "",
+        "icon": "",
+        "title": "Reports",
+        "items": [
+          {
+            "id": 121,
+            "label": "Stock Ledger",
+            "target": "Stock Ledger",
+            "url": "storewarehouse/stockledger",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Ledger",
+            "items": []
+          },
+          {
+            "id": 122,
+            "label": "Stock Report",
+            "target": "Stock Report",
+            "url": "/storewarehouse/stockreport",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Report",
+            "items": []
+          },
+          {
+            "id": 123,
+            "label": "Stock Report(Base Unit)",
+            "target": "Stock Report(Base Unit)",
+            "url": "storewarehouse/stockreportbaseunit",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Report(Base Unit)",
+            "items": []
+          },
+          {
+            "id": 124,
+            "label": "Stock Movement",
+            "target": "Stock Movement",
+            "url": "storewarehouse/stockmovement",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Movement",
+            "items": []
+          },
+          {
+            "id": 125,
+            "label": "Stock Adjustment Report",
+            "target": "Stock Adjustment Report",
+            "url": "/storewarehouse/stockadjustmentreport",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Adjustment Report",
+            "items": []
+          },
+          {
+            "id": 127,
+            "label": "Reorder Level Report",
+            "target": "Reorder Level Report",
+            "url": "/storewarehouse/recorderlevelreport",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Reorder Level Report",
+            "items": []
+          },
+          {
+            "id": 128,
+            "label": "BOM Status",
+            "target": "BOM Status",
+            "url": "/storewarehouse/bomstatus",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "BOM Status",
+            "items": []
+          },
+          {
+            "id": 129,
+            "label": "Issue Report",
+            "target": "Issue Report",
+            "url": "storewarehouse/issuereport",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Issue Report",
+            "items": []
+          },
+          {
+            "id": 251,
+            "label": "Stock Transfer Report",
+            "target": "",
+            "url": "/storewarehouse/stockTransferReport",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Stock Transfer Report",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 130,
+        "label": "Assets",
+        "target": "Assets",
+        "url": "",
+        "icon": "",
+        "title": "Assets",
+        "items": [
+          {
+            "id": 132,
+            "label": "Stock Ageing Report",
+            "target": "Stock Ageing Report",
+            "url": "/storewarehouse/stockageingreport",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Stock Ageing Report",
+            "items": []
+          },
+          {
+            "id": 133,
+            "label": "Item Wise Profit Report",
+            "target": "Item Wise Profit Report",
+            "url": "/storewarehouse/itemwiseprofitreport",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Item Wise Profit Report",
+            "items": []
+          },
+          {
+            "id": 134,
+            "label": "Damage Entry",
+            "target": "Damage Entry",
+            "url": "storewarehouse/damageentry",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Damage Entry",
+            "items": []
+          },
+          {
+            "id": 135,
+            "label": "Stock Adjustment",
+            "target": "Stock Adjustment",
+            "url": "/storewarehouse/stockadjustment",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Adjustment",
+            "items": []
+          },
+          {
+            "id": 136,
+            "label": "Stock Transfer",
+            "target": "Stock Transfer",
+            "url": "/storewarehouse/stocktransfer",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Stock Transfer",
+            "items": []
+          },
+          {
+            "id": 137,
+            "label": "Opening Stock",
+            "target": "Opening Stock",
+            "url": "/storewarehouse/openingstock",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Opening Stock",
+            "items": []
+          },
+          {
+            "id": 138,
+            "label": "Stock Reservation",
+            "target": "Stock Reservation",
+            "url": "/storewarehouse/",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Reservation",
+            "items": []
+          },
+          {
+            "id": 139,
+            "label": "Stock Transfer Job Wise",
+            "target": "Stock Transfer Job Wise",
+            "url": "/storewarehouse/",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Stock Transfer Job Wise",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 140,
+        "label": "Manufacture Items",
+        "target": "Manufacture Items",
+        "url": "",
+        "icon": "",
+        "title": "Manufacture Items",
+        "items": [
+          {
+            "id": 141,
+            "label": "Menufacturing Entry",
+            "target": "Menufacturing Entry",
+            "url": "storewarehouse/menufacturingEntry",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Menufacturing Entry",
+            "items": []
+          },
+          {
+            "id": 142,
+            "label": "Manufacture (Component List)",
+            "target": "Manufacture (Component List)",
+            "url": "storewarehouse/manufacture-list",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Manufacture (Component List)",
+            "items": []
+          },
+          {
+            "id": 143,
+            "label": "Item Manufacturing Entry",
+            "target": "Item Manufacturing Entry",
+            "url": "/storewarehouse",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Item Manufacturing Entry",
+            "items": []
+          },
+          {
+            "id": 144,
+            "label": "Item List",
+            "target": "Item List",
+            "url": "storewarehouse/item-list",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Item List",
+            "items": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "label": "Sales",
+    "target": "Sales",
+    "url": "sale/salesvoucher",
+    "icon": "fa fa-fw fa-gg",
+    "title": "Sales",
+    "items": [
+      {
+        "id": 24,
+        "label": "Sales",
+        "target": "Sales",
+        "url": "",
+        "icon": "",
+        "title": "Sales",
+        "items": [
+          {
+            "id": 9,
+            "label": "Sales Voucher",
+            "target": "SalesVoucher",
+            "url": "sale/salesvoucher",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Sales Voucher",
+            "items": []
+          },
+          {
+            "id": 10,
+            "label": "Sales Return",
+            "target": "Sales Return",
+            "url": "/sale/salesreturn",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Sales Return",
+            "items": []
+          },
+          {
+            "id": 146,
+            "label": "Customer Sales Order",
+            "target": "Customer Sales Order",
+            "url": "/sale/customer-sales-order",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Sales Order",
+            "items": []
+          },
+          {
+            "id": 147,
+            "label": "Sales Summary by Date",
+            "target": "Manufacture (Component List)",
+            "url": "/sale",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Sales Summary by Date",
+            "items": []
+          },
+          {
+            "id": 148,
+            "label": "Customer Sales Detail",
+            "target": "Item Manufacturing Entry",
+            "url": "/sale/customer-sales-detail",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Sales Detail",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 149,
+        "label": "Customer",
+        "target": "Customer",
+        "url": "",
+        "icon": "",
+        "title": "Customer",
+        "items": [
+          {
+            "id": 150,
+            "label": "Customer Enquiry",
+            "target": "Customer Sales Order",
+            "url": "/sale/customerenquiry",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Enquiry",
+            "items": []
+          },
+          {
+            "id": 151,
+            "label": "Customer Enquiry Search",
+            "target": "Manufacture (Component List)",
+            "url": "/sale/customer-enquiry-search",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Enquiry Search",
+            "items": []
+          },
+          {
+            "id": 152,
+            "label": "Customer Order Tracking",
+            "target": "Customer Order Tracking",
+            "url": "/sale/customer-order-tracking",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Order Tracking",
+            "items": []
+          },
+          {
+            "id": 258,
+            "label": "Customer Quotation",
+            "target": "Customer Quotation",
+            "url": "/sale/customerquotation-ace",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Quotation",
+            "items": []
+          },
+          {
+            "id": 154,
+            "label": "Customer Quotation Detail",
+            "target": "Customer Quotation Detail",
+            "url": "/sale/customer-qutation-detail",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Quotation Detail",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 155,
+        "label": "Invoice",
+        "target": "Invoice",
+        "url": "",
+        "icon": "",
+        "title": "Invoice",
+        "items": [
+          {
+            "id": 163,
+            "label": "List Invoice Without Account Entry",
+            "target": "List Invoice ",
+            "url": "/sale",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "List Invoice Without Account Entry",
+            "items": []
+          },
+          {
+            "id": 159,
+            "label": "Proforma Invoice",
+            "target": "Proforma Invoice",
+            "url": "/sale/proformainvoice",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Proforma Invoice",
+            "items": []
+          },
+          {
+            "id": 160,
+            "label": "Delivery Note",
+            "target": "Delivery Note",
+            "url": "/sale/deliverynote",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Delivery Note",
+            "items": []
+          },
+          {
+            "id": 162,
+            "label": "invoice Profit Analysis",
+            "target": "invoice Profit Analysis",
+            "url": "/sale/invoice-profit-analysis",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "invoice Profit Analysis",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 164,
+        "label": "Reports",
+        "target": "Reports",
+        "url": "",
+        "icon": "",
+        "title": "Reports",
+        "items": [
+          {
+            "id": 165,
+            "label": "Customer Enquiry  report wise",
+            "target": "CustomerEnquiryreportwise",
+            "url": "/sale/customer-enquiry-search",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Enquiry  report wise",
+            "items": []
+          },
+          {
+            "id": 166,
+            "label": "Customer Wise Sales Report",
+            "target": "Customer Wise Sales Report",
+            "url": "/sale/customer-sales-report-wise",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Customer Wise Sales Report",
+            "items": []
+          },
+          {
+            "id": 173,
+            "label": "Salesman Wise Outstanding Report",
+            "target": "Salesman Wise ",
+            "url": "/sale/",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Salesman Wise Outstanding Report",
+            "items": []
+          },
+          {
+            "id": 168,
+            "label": "Sales Men Wise Sales Report",
+            "target": "Sales Men Wise Sales Report",
+            "url": "/sale/salesmanwise-sales-report",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Sales Men Wise Sales Report",
+            "items": []
+          },
+          {
+            "id": 170,
+            "label": "Sales Voucher Report",
+            "target": "Sales Voucher Report",
+            "url": "/sale/report-sales-voucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Sales Voucher Report",
+            "items": []
+          },
+          {
+            "id": 171,
+            "label": "Delivery Order Report",
+            "target": "Delivery Order Report",
+            "url": "/sale/delivery-order-report",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Delivery Order Report",
+            "items": []
+          },
+          {
+            "id": 172,
+            "label": "Graphical Reports",
+            "target": "Graphical Reports",
+            "url": "/sale/graphical-reports",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Graphical Reports",
+            "items": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "label": "Procurement",
+    "target": "Procurement",
+    "url": "",
+    "icon": "fa fa-fw fa-wrench",
+    "title": "Procurement",
+    "items": [
+      {
+        "id": 174,
+        "label": "Master",
+        "target": "Master",
+        "url": "",
+        "icon": "",
+        "title": "Master",
+        "items": [
+          {
+            "id": 175,
+            "label": "Purchase Voucher",
+            "target": "Purchase Voucher",
+            "url": "/procurement/purchasevoucher",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Purchase Voucher",
+            "items": []
+          },
+          {
+            "id": 157,
+            "label": "Bill of Quantity (BOQ)",
+            "target": "Bill of Quantity (BOQ)",
+            "url": "/sale/boquantity",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Bill of Quantity (BOQ)",
+            "items": []
+          },
+          {
+            "id": 176,
+            "label": "Purchase Return",
+            "target": "Purchase Return",
+            "url": "/procurement/purchasereturn",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Return",
+            "items": []
+          },
+          {
+            "id": 177,
+            "label": "Purchase Order",
+            "target": "Purchase Order",
+            "url": "/procurement/purchaseorder",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Order",
+            "items": []
+          },
+          {
+            "id": 178,
+            "label": "Supplier Quotation",
+            "target": "Purchase Quotation",
+            "url": "/procurement/purchasequotation",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Supplier Quotation",
+            "items": []
+          },
+          {
+            "id": 179,
+            "label": "Purchase Requisition",
+            "target": "Purchase Requisition",
+            "url": "/procurement/purchaserequisition",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Requisition",
+            "items": []
+          },
+          {
+            "id": 180,
+            "label": "General Purchase Order",
+            "target": "General Purchase Order",
+            "url": "/procurement/general-purchase-order",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "General Purchase Order",
+            "items": []
+          },
+          {
+            "id": 181,
+            "label": "RFQ",
+            "target": "RFQ",
+            "url": "/procurement/rfq",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "RFQ",
+            "items": []
+          },
+          {
+            "id": 182,
+            "label": "Store Requisition",
+            "target": "Store Requisition",
+            "url": "/procurement/storerequisition",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Store Requisition",
+            "items": []
+          },
+          {
+            "id": 184,
+            "label": "Approval",
+            "target": "P.O Approval",
+            "url": "/procurement/po-approval",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Approval",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 185,
+        "label": "Purchase A/C",
+        "target": "Purchase A/C",
+        "url": "",
+        "icon": "",
+        "title": "Purchase A/C",
+        "items": [
+          {
+            "id": 186,
+            "label": "Purchase Order Approval Status",
+            "target": "Purchase Order Approval Status",
+            "url": "/procurement/po-approval-status",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Order Approval Status",
+            "items": []
+          },
+          {
+            "id": 187,
+            "label": "Purchase Order List",
+            "target": "Purchase Order List",
+            "url": "/procurement/reportpurchaseorder",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Order List",
+            "items": []
+          },
+          {
+            "id": 188,
+            "label": "Purchase Order Tracking",
+            "target": "Purchase Order Tracking",
+            "url": "/procurement/potracking",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Order Tracking",
+            "items": []
+          },
+          {
+            "id": 189,
+            "label": "Purchase Order Report List",
+            "target": "Purchase Order Report List",
+            "url": "/procurement/Polist",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Order Report List",
+            "items": []
+          },
+          {
+            "id": 190,
+            "label": "Purchase Requisition Report",
+            "target": "Purchase Requisition Status",
+            "url": "/procurement/reportpurchaserequisition",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Requisition Report",
+            "items": []
+          },
+          {
+            "id": 191,
+            "label": "Price Comparison",
+            "target": "Price Comparison",
+            "url": "/procurement/",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Price Comparison",
+            "items": []
+          },
+          {
+            "id": 192,
+            "label": "Purchase Supplier Wise",
+            "target": "Purchase Supplier Wise",
+            "url": "/procurement/",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Supplier Wise",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 193,
+        "label": "Reports",
+        "target": "Reports",
+        "url": "",
+        "icon": "",
+        "title": "Reports",
+        "items": [
+          {
+            "id": 194,
+            "label": "Purchase Return Report",
+            "target": "Purchase Return Report",
+            "url": "/procurement/reportpurchasereturn",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Purchase Return Report",
+            "items": []
+          },
+          {
+            "id": 195,
+            "label": "Purchase Report Detailed",
+            "target": "Purchase Report Detailed",
+            "url": "/procurement/",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Report Detailed",
+            "items": []
+          },
+          {
+            "id": 196,
+            "label": "Purchase Report",
+            "target": "Purchase Report",
+            "url": "/procurement/reportpurchasevoucher",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Report",
+            "items": []
+          },
+          {
+            "id": 197,
+            "label": "Purchase Order Report",
+            "target": "Purchase Order Report",
+            "url": "/procurement/reportpurchaseorder",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Order Report",
+            "items": []
+          },
+          {
+            "id": 198,
+            "label": "Purchase Report Supplier Wise",
+            "target": "Purchase Report",
+            "url": "/procurement/Purchase-Report-Supplier-Wise",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Report Supplier Wise",
+            "items": []
+          },
+          {
+            "id": 200,
+            "label": "Purchase Requisition Status Report",
+            "target": "Purchase Requisition",
+            "url": "/procurement/prstatusreport",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Purchase Requisition Status Report",
+            "items": []
+          },
+          {
+            "id": 255,
+            "label": "BOQ Status Report",
+            "target": "",
+            "url": "/procurement/boq-status-report",
+            "icon": "fa fa-fw fa-gg",
+            "title": "BOQ Status Report",
+            "items": []
+          },
+          {
+            "id": 256,
+            "label": "Approval Status Report",
+            "target": "",
+            "url": "/procurement/approvalStatus",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Approval Status Report",
+            "items": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "label": "MIS Report",
+    "target": "MISReport",
+    "url": "",
+    "icon": "fa fa-fw fa-gear",
+    "title": "MIS Report",
+    "items": [
+      {
+        "id": 201,
+        "label": "Financial Worksheet",
+        "target": "Financial Worksheet",
+        "url": "",
+        "icon": "",
+        "title": "Financial Worksheet",
+        "items": [
+          {
+            "id": 202,
+            "label": "Trial Balance",
+            "target": "Trial Balance",
+            "url": "/misreport/trialbalance",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Trial Balance",
+            "items": []
+          },
+          {
+            "id": 203,
+            "label": "Profit and Loss",
+            "target": "Profit and Loss",
+            "url": "/misreport/profit-and-loss",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Profit and Loss",
+            "items": []
+          },
+          {
+            "id": 204,
+            "label": "Balance Sheet",
+            "target": "Balance Sheet",
+            "url": "/misreport/balance-sheet",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Balance Sheet",
+            "items": []
+          },
+          {
+            "id": 205,
+            "label": "User Activity",
+            "target": "User Activity",
+            "url": "/administration/user-activity",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "User Activity",
+            "items": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "label": "Administration",
+    "target": "Administration",
+    "url": "",
+    "icon": "fa fa-fw fa-book",
+    "title": "Administration",
+    "items": [
+      {
+        "id": 206,
+        "label": "Setting",
+        "target": "Setting",
+        "url": "",
+        "icon": "fa fa-fw fa-gg",
+        "title": "Setting",
+        "items": [
+          {
+            "id": 207,
+            "label": "General Settings",
+            "target": "General Settings",
+            "url": "/administration/generalsettings",
+            "icon": "fa fa-fw fa-gg",
+            "title": "General Settings",
+            "items": []
+          },
+          {
+            "id": 208,
+            "label": "Program Settings",
+            "target": "Setting",
+            "url": "/administration/programsettings",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Program Settings",
+            "items": []
+          },
+          {
+            "id": 209,
+            "label": "Permission Settings",
+            "target": "Permission Settings",
+            "url": "/administration/permissionsetting",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Permission Settings",
+            "items": []
+          },
+          {
+            "id": 210,
+            "label": "Barcode Settings",
+            "target": "Barcode Settings",
+            "url": "/administration",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Barcode Settings",
+            "items": []
+          },
+          {
+            "id": 211,
+            "label": "Account Settings",
+            "target": "Account Settings",
+            "url": "/administration/account-setting",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Account Settings",
+            "items": []
+          },
+          {
+            "id": 212,
+            "label": "Settings(Option)",
+            "target": "Settings(Option)",
+            "url": "/administration/optionsettings",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Settings(Option)",
+            "items": []
+          },
+          {
+            "id": 213,
+            "label": "Permission Approval",
+            "target": "Permission Approval",
+            "url": "/administration/permission-approval",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Permission Approval",
+            "items": []
+          },
+          {
+            "id": 229,
+            "label": "Menu",
+            "target": "Menu",
+            "url": "/administration/menu",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Menu",
+            "items": []
+          },
+          {
+            "id": 233,
+            "label": "User Creation",
+            "target": "User Creation",
+            "url": "/administration/user-creation",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "User Creation",
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": 214,
+        "label": "Details",
+        "target": "Details",
+        "url": "",
+        "icon": "fa fa-fw fa-gg",
+        "title": "Details",
+        "items": [
+          {
+            "id": 215,
+            "label": "Query Window",
+            "target": "Query Window",
+            "url": "/administration",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Query Window",
+            "items": []
+          },
+          {
+            "id": 216,
+            "label": "Company Master",
+            "target": "Company Master",
+            "url": "/administration/station-master",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Company Master",
+            "items": []
+          },
+          {
+            "id": 217,
+            "label": "User Profile",
+            "target": "User Profile",
+            "url": "/administration/usermaster",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "User Profile",
+            "items": []
+          },
+          {
+            "id": 218,
+            "label": "Work Group Master",
+            "target": "Work Group Master",
+            "url": "/master/workgroup",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Work Group Master",
+            "items": []
+          },
+          {
+            "id": 219,
+            "label": "Report Type Master",
+            "target": "Report Type Master",
+            "url": "/administration/report-type-master",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Report Type Master",
+            "items": []
+          },
+          {
+            "id": 220,
+            "label": "Financial Period Closing",
+            "target": "Financial Period",
+            "url": "/administration/financial-period-closing",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Financial Period Closing",
+            "items": []
+          },
+          {
+            "id": 221,
+            "label": "Link Accounts",
+            "target": "Link Accounts",
+            "url": "/administration",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Link Accounts",
+            "items": []
+          },
+          {
+            "id": 223,
+            "label": "Check List",
+            "target": "Check List",
+            "url": "/administration",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Check List",
+            "items": []
+          },
+          {
+            "id": 230,
+            "label": "Station Master",
+            "target": "Station Master",
+            "url": "/administration/station-master",
+            "icon": "fa fa-fw fa-gg",
+            "title": "Station Master",
+            "items": []
+          },
+          {
+            "id": 231,
+            "label": "User Track Report",
+            "target": "User Track Report",
+            "url": "/administration/user-activity",
+            "icon": "fa fa-fw fa-gg",
+            "title": "User Track Report",
+            "items": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 241,
+    "label": "Documents",
+    "target": "Documents",
+    "url": "",
+    "icon": "",
+    "title": "Documents",
+    "items": [
+      {
+        "id": 242,
+        "label": "Documents",
+        "target": "Documents",
+        "url": "",
+        "icon": "",
+        "title": "Documents",
+        "items": [
+          {
+            "id": 243,
+            "label": "Documents Entry",
+            "target": "Documents",
+            "url": "/document/documents",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Documents Entry",
+            "items": []
+          },
+          {
+            "id": 244,
+            "label": "Documents Report",
+            "target": "Documents",
+            "url": "/document/documentReport",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Documents Report",
+            "items": []
+          },
+          {
+            "id": 245,
+            "label": "Documents Type",
+            "target": "Documents",
+            "url": "/document/documentType",
+            "icon": "fa fa-fw fa-sign-in",
+            "title": "Documents Type",
+            "items": []
+          }
+        ]
+      }
+    ]
+  }
+]

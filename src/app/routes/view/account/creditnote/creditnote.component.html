@@ -1,0 +1,630 @@
+<!-- <p>creditnote works!</p> -->
+
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Credit Note' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      [disabled]="!btnFlag.new"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <!-- <button pButton type="button" [label]="btnFlag.save == true ? 'Save': 'Update'"  [disabled]='!btnFlag.update' (click)='saveCreditNote()'
+             icon="fa fa-floppy-o" class="ui-button-success"></button>   -->
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="saveCreditNote()"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button
+      pButton
+      type="button"
+      label="List"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <div class="ui-inputgroup">
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="search"
+          placeholder="Search"
+        />
+        <button
+          pButton
+          type="button"
+          (click)="GetSavedCreditNoteDetails(search)"
+          icon="pi pi-search"
+        ></button>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        label="Print"
+        [disabled]="!Permission?.Print"
+        (click)="getPOReport()"
+        icon="fa fa-print"
+        class="ui-button-success"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        label="Exit"
+        (click)="ExitNew()"
+        icon="fa fa-sign-out"
+      ></button>
+    </div>
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="creditNoteFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Credit Note' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-7">
+          <p-panel>
+            <p-header>
+              {{ "Credit Note Details" | translate }}
+            </p-header>
+
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Voucher No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-4 p-0">
+                  <input
+                    class="w-100"
+                    readonly
+                    formControlName="creditNoteVno"
+                    id="voucherno"
+                    pInputText
+                  />
+                  <div class="error" *ngIf="f.creditNoteDate.errors"></div>
+                </div>
+                <p-message
+                  severity="error"
+                  *ngIf="f.creditNoteVno?.errors?.Exist && !btnFlag.update"
+                  text="Voucher No is exist"
+                ></p-message>
+
+                <label class="p-col-12 p-md-2" for="voucherdate">{{
+                  "Voucher Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    [showIcon]="true"
+                    class="w-100"
+                    useUtc
+                    formControlName="creditNoteDate"
+                    id="voucherdate"
+                  >
+                  </p-calendar>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.creditNoteDate.errors &&
+                      (f.creditNoteDate.dirty || f.creditNoteDate.touched)
+                    "
+                  >
+                    <span *ngIf="f.creditNoteDate.errors.required">
+                      Voucher date is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="narration">{{
+                  "Narration" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10 p-0">
+                  <textarea
+                    class="w-100"
+                    formControlName="creditNoteNarration"
+                    id="narration"
+                    maxlength="500"
+                    pInputText
+                  ></textarea>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.creditNoteNarration.errors &&
+                      (f.creditNoteNarration.dirty ||
+                        f.creditNoteNarration.touched)
+                    "
+                  >
+                    <span *ngIf="f.creditNoteNarration.errors.required">
+                      Narration is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              {{ "Credit Account Details" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">{{
+                "Account" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="creditNoteAcNo"
+                  [options]="accountList"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.creditNoteAcNo.errors &&
+                    (f.creditNoteAcNo.dirty || f.creditNoteAcNo.touched)
+                  "
+                >
+                  <span *ngIf="f.creditNoteAcNo.errors.required">
+                    Account is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="currency">{{
+                "Currency" | translate
+              }}</label>
+              <!-- <input class="p-col-12 p-md-4" id="currency" pInputText> -->
+              <div class="p-col-12 p-md-10 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="creditNoteCurrencyId"
+                  [options]="currencyList"
+                >
+                </p-dropdown>
+
+                <!-- <div  class="p-inputgroup">
+                                        <input type="text" class="w-85"  #currCtrl
+                                         pInputText placeholder="Currency">   
+                                       
+                                    </div>
+                                    <div class="p-col-12 p-md-1">
+                                        <button type="button" pButton pRipple icon="pi pi-search" (click)='openCurrency()'
+                                        styleClass="p-button-warn"></button>      
+                                    </div> -->
+
+                <div
+                  class="error"
+                  *ngIf="
+                    f.creditNoteCurrencyId.errors &&
+                    (f.creditNoteCurrencyId.dirty ||
+                      f.creditNoteCurrencyId.touched)
+                  "
+                >
+                  <span *ngIf="f.creditNoteCurrencyId.errors.required">
+                    Currency is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="refno">{{
+                "Reference No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10 p-0">
+                <input
+                  class="w-100"
+                  formControlName="creditNoteRefNo"
+                  id="refno"
+                  maxlength="50"
+                  pInputText
+                />
+                <div
+                  class="error"
+                  *ngIf="
+                    f.creditNoteRefNo.errors &&
+                    (f.creditNoteRefNo.dirty || f.creditNoteRefNo.touched)
+                  "
+                >
+                  <span *ngIf="f.creditNoteRefNo.errors.required">
+                    Reference no is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <p-panel>
+        <p-header>
+          {{ "Debit Account Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="creditnote_entry"
+            [data]="creditnote_entryDataset"
+          ></hot-table>
+        </div>
+        <div class="p-grid p-ai-center">
+          <!-- <label class="p-col-12 p-md-1 " for="account">
+                        <b>{{'Total Credit'| translate}}</b>
+                    </label>
+                    <div class="p-col-12 p-md-2">
+                        <input id="totalCredit"  
+                        formControlName='creditNoteCrAmount' style="border-color: black; text-align: right;" pInputText>
+                    </div> -->
+
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total Debit" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input
+              id="totalDebit"
+              formControlName="creditNoteDrAmount"
+              readonly
+              style="border-color: black; text-align: right"
+              pInputText
+            />
+          </div>
+        </div>
+      </p-panel>
+      <app-lookup
+        [header]="'Look Up'"
+        [dataArry]="dataList"
+        [selectedItem]="selectItem"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectaccount($event)"
+        (exitEvent)="exit($event)"
+        [cell]="activeRow"
+        (clearEvent)="clear($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="showAccountLookUp"
+      ></app-lookup>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+              }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+            Content 3
+        </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Credit Note List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="creditNotearry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-creditnote_list>
+      <tr>
+        <td>{{ creditnote_list.creditNoteVno }}</td>
+        <td>{{ creditnote_list.creditNoteDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ creditnote_list.creditNoteAcNo }}</td>
+        <td *ngIf="creditnote_list.creditNoteCurrencyId != null">
+          {{ getCurrency(creditnote_list.creditNoteCurrencyId) }}
+        </td>
+        <td>{{ creditnote_list.creditNoteDrAmount }}</td>
+        <td>{{ creditnote_list.creditNoteCrAmount }}</td>
+        <td>{{ creditnote_list.creditNoteNarration }}</td>
+        <td>{{ creditnote_list.creditNoteDrAmount }}</td>
+        <td>{{ creditnote_list.creditNoteCrAmount }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedCreditNoteDetails(creditnote_list.creditNoteId);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div id="contentToConvert">
+    <div class="contain">
+      <div class="flexcol wp-50">
+        <div class="vouhead">
+          <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+        </div>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Tel </b>
+            <b>Fax </b>
+            <b>Email </b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>{{ stationmasterObj?.stationMasterTele1 }}</div>
+            <div>{{ stationmasterObj?.stationMasterFax }}</div>
+            <div>{{ stationmasterObj?.stationMasterEmail }}</div>
+          </div>
+        </div>
+        <br />
+      </div>
+    </div>
+    <h2>Credit Note</h2>
+    <div class="payment1">
+      <div class="header">
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Credit Note No</b>
+          </div>
+          <div class="space2">
+            <div>:</div>
+          </div>
+          <div class="flexcol">
+            <div>{{ savedCreditNote?.creditNoteId }}</div>
+          </div>
+        </div>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Date</b>
+          </div>
+          <div class="space1">
+            <div>:</div>
+          </div>
+          <div class="flexcol">
+            <div>
+              {{ savedCreditNote?.creditNoteDate | date : "dd/MM/yyyy" }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding-bottom: 30px"></div>
+
+      <div class="flexrow">
+        <div class="flexcol">
+          <b>Ref.No</b>
+          <b>Account.No</b>
+          <b>Narration </b>
+        </div>
+        <div class="space1">
+          <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+        </div>
+        <div class="flexcol">
+          <div>{{ savedCreditNote?.creditNoteRefNo }}</div>
+          <div>{{ savedCreditNote?.creditNoteAcNo }}</div>
+          <div>{{ savedCreditNote?.creditNoteNarration }}</div>
+        </div>
+        <br />
+      </div>
+    </div>
+    <div class="rounded-table">
+      <table id="Voucher">
+        <tr>
+          <th class="w60">Account No</th>
+          <th class="w80" style="text-align: left">Account Name</th>
+          <th class="w60">Amount</th>
+          <th class="w60">Narration</th>
+        </tr>
+        <tr *ngFor="let item of savedCreditNote?.creditNoteDetails">
+          <td>{{ item?.creditNoteDetailsAccNo }}</td>
+          <td>{{ getAccountName(item?.creditNoteDetailsAccNo) }}</td>
+          <td>{{ item?.creditNoteDetailsDrAmount | number : "0.2" }}</td>
+          <td>{{ item?.creditNoteDetailsNarration }}</td>
+        </tr>
+        <tr class="spacer">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <div class="container">
+      <div class="column1">Total:</div>
+      <div class="column2">
+        {{ savedCreditNote?.creditNoteDrAmount | number : "0.2" }}
+      </div>
+    </div>
+    <p class="rup">{{ wordamt | translate }}</p>
+    <div class="rounded-table">
+      <div class="page-footer">
+        <table id="payment">
+          <tr>
+            <th>Receiver's Signature:</th>
+            <th>Verified By & Signature:</th>
+            <th>Page Date:</th>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td class="page">Page No: 1</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</p-dialog>

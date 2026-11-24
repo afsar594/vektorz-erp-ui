@@ -1,0 +1,349 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Stock Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear&Enable"
+      (click)="new()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="List_REPORT()"
+      label="List"
+      icon="fa fa-list"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="Print_REPORT()"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="stockLedgerReportFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Stock Report' | translate">
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                "Item Group" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="rptItemGroup"
+                  id="rptItemGroup"
+                  [options]="ItemMasterGroupList"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                "Item Name" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="rptItem"
+                  id="rptItem"
+                  [options]="ItemMasterList"
+                >
+                </p-dropdown>
+
+                <!-- <div class="error" *ngIf="f.rptItem.errors 
+                                && (f.rptItem.dirty || f.rptItem.touched)">
+                                    <span *ngIf="f.rptItem.errors.required">
+                                        Item Name is Mandatory Field*</span>
+                                </div> -->
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="vatno">{{
+                "Part No." | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <input
+                  class="w-100"
+                  id="rptPartNo"
+                  formControlName="rptPartNo"
+                  maxlength="50"
+                  pInputText
+                />
+              </div>
+            </div>
+
+            <!-- <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-4"
+                                for="voucherdate"></label>
+                            <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                               
+                                <p-radioButton name="groupname1" formControlName='rptPrintWithRef' id="rptPrintWithRef" class="p-col-12 p-md-12 p-lg-12" label="{{'Print With Ref#'| translate}}"  [value]="true" (onClick)="makePrintWithRefTrue()"  ></p-radioButton>
+
+                                 
+                            </div>
+                        </div>
+                        <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-4" for="currency"></label>
+                            <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                               
+                                <p-radioButton name="groupname1"  formControlName='rptPrintWithRelatedAccTrans' id="rptPrintWithRelatedAccTrans" class="p-col-12 p-md-12 p-lg-12" label="{{'Print With Related Acc. Trans'| translate}}" (onClick)="makePrintWithRelatedAccTransTrue()"   ></p-radioButton>
+
+                            </div>
+
+                        </div> -->
+          </div>
+          <!-- </p-panel> -->
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <p-radioButton
+                name="groupname"
+                formControlName="rptDetails"
+                id="rptDetails"
+                class="p-col-12 p-md-12 p-lg-4"
+                label="{{ 'With Value' | translate }}"
+                [value]="true"
+                (onClick)="makeDetailsTrue()"
+              ></p-radioButton>
+              <p-radioButton
+                name="groupname"
+                formControlName="rptSummary"
+                id="rptSummary"
+                class="p-col-12 p-md-12 p-lg-4"
+                label="{{ 'With Out Value' | translate }}"
+                (onClick)="makeSummaryTrue()"
+              ></p-radioButton>
+              <p-checkbox
+                name="groupname"
+                formControlName="rptHideZero"
+                class="p-col-12 p-md-12 p-lg-4"
+                label="{{ 'Exclude Zero Balance' | translate }}"
+                (onChange)="ChangeHideOpeningBalance()"
+                inputId="rptHideZero"
+              >
+              </p-checkbox>
+            </div>
+            <!-- <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-3" for="job">{{'Job'| translate}}</label>
+
+                            <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                              
+                                <p-dropdown filter="true" class="w-100"  formControlName='rptJob'   id="rptJob"
+                                [options]="jobList" >
+                                </p-dropdown>
+                            </div>
+                        </div> -->
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="location">{{
+                "Location" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="rptLocation"
+                  id="rptLocation"
+                  [options]="locationList"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+
+            <!-- <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-3" ></label>
+                       
+                              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                                
+                                <p-checkbox    formControlName='rptPrintWithCheq' id="rptPrintWithCheq"  (onChange)="makePrintWithCheqTrue()" ></p-checkbox>  <label  for="rptPrintWithCheq">{{'Exclude Zero Opening Balance'| translate}}</label>
+
+                            </div>
+                        </div> -->
+          </div>
+          <!-- </p-panel> -->
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <div class="min-panel">
+            <!-- <div class="p-grid inputGroup">
+              
+                            <p-radioButton name="groupname2"  formControlName='rptDateRange' id="rptDateRange" class="p-col-12 p-md-12 p-lg-3" label="{{'From'| translate}}"  (onClick)="makeDateRangeTrue()"></p-radioButton>
+                         
+                         
+                            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                              
+                                <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc  id='rptDtpFrom' formControlName='rptDtpFrom'>
+                                </p-calendar>
+                            </div>
+
+                            <label class="p-col-12 p-md-12 p-lg-1"
+                                for="voucherdate">{{'To'| translate}}</label>
+
+                            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  
+                                <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc  id='rptDtpTo' formControlName='rptDtpTo'>
+                                </p-calendar>
+
+                            </div>
+                        </div> -->
+            <!-- <div class="p-grid inputGroup">
+                            <p-radioButton name="groupname2" formControlName='rptAsOnDate' id="rptAsOnDate" class="p-col-12 p-md-12 p-lg-3" label="{{'As On'| translate}}" [value]="true" (onClick)="makeAsOnDateTrue()"></p-radioButton>
+                         
+                            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                                <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc  id='rptDtpAson' formControlName='rptDtpAson' >
+                                </p-calendar>
+                                 
+                            </div>
+
+
+
+
+
+
+
+                            <label class="p-col-12 p-md-12 p-lg-3"
+                                for="voucherdate"></label>
+
+                            <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                    
+                               
+
+                            </div>
+
+
+
+                        </div> -->
+
+            <!-- <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-3"
+                                for="narration">{{'Narration'| translate}}</label>
+                            <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                                <textarea class="w-100" formControlName='rptNarration' id="rptNarration"
+                                    maxlength="500"  pInputText></textarea>
+
+                                
+                            </div>
+                        </div> -->
+
+            <!-- <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-4" for="refno"></label>
+                            <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                               
+                                <p-radioButton name="groupname1" formControlName='rptPrintWithAlloc' id="rptPrintWithAlloc" class="p-col-12 p-md-12 p-lg-12" label="{{'Print Order By Group.'| translate}}" (onClick)="makePrintWithAllocTrue()"  ></p-radioButton>
+                            </div>
+
+                        </div> -->
+            <!-- <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-4" for="currency"></label>
+                            <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                                
+                                <p-radioButton name="groupname1" formControlName='rptPrintWithAgainstAcc' id="rptPrintWithAgainstAcc" class="p-col-12 p-md-12 p-lg-12" label="{{'Print Recived Quntity Report.'| translate}}"  (onClick)="makePrintWithAgainstAccTrue()" ></p-radioButton>
+
+                            </div>
+
+                        </div> -->
+          </div>
+        </div>
+        <!-- <div class="p-sm-12 p-md-12 p-lg-2">
+              
+                    <div class="min-panel">
+                         <div class="p-grid inputGroup">
+                            
+                         
+                            <div class="p-col-12 p-md-12 p-lg-12 p-0">
+                              
+                                 
+                                 
+                                  <p-listbox formControlName='rptType' id="rptType" class="w-100" [options]="V_TYPEList"    [metaKeySelection]="false" [checkbox]="true" 
+                                [filter]="true" [multiple]="true" optionLabel="label"   
+                                [listStyle]="{'max-height':'250px'}" [style]="{'width':'13rem'}" >
+                                     
+                                </p-listbox>   
+                            </div>
+
+                     
+                        </div>  
+                   
+                  </div>
+                
+            </div> -->
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Stock Report" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="reportaccountstransactions_entry"
+            [data]="reportaccountstransactions_entryDataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+      <div class="p-grid">
+        <!-- <div class="p-sm-12 p-md-12 p-lg-8">
+                 <div class="min-panel">
+                       <div class="p-grid inputGroup">
+                            <label  formControlName='rptTotRunningBalanceCreditDebit' id='rptTotRunningBalanceCreditDebit'  class="p-col-12 p-md-12 p-lg-12" for="account"     style="color: red;text-align: right; font: bolder;">{{TotRunningBalanceCreditDebit| translate}}</label>
+                        </div>
+                   </div>
+            </div> -->
+        <!-- <div class="p-sm-12 p-md-12 p-lg-2">
+                <div class="min-panel">
+                        <div class="p-grid inputGroup">
+                            <label class="p-col-12 p-md-12 p-lg-3" for="account">{{'Debit'| translate}}</label>
+                            <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                              <input class="w-100"   formControlName='rptTotDebit' id='rptTotDebit' readonly
+                                style="border-color: black;text-align: right;" maxlength="50"
+                                   pInputText>
+                            </div>
+                        </div>
+                     </div>
+             </div> -->
+        <!-- <div class="p-sm-12 p-md-12 p-lg-2">
+                 <div class="min-panel">
+                    <div class="p-grid inputGroup">
+                        <label class="p-col-12 p-md-12 p-lg-3" for="rptTotCredit">{{'Credit'| translate}}</label>
+                        <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                           <input  class="w-100" formControlName='rptTotCredit' id='rptTotCredit'  readonly
+                            style="border-color: black; text-align: right;" maxlength="50"
+                               pInputText>
+  </div>
+</div>
+ </div>
+           </div> -->
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

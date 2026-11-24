@@ -1,0 +1,290 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+
+<div class="modern-container">
+  <div class="main-layout">
+    <!-- Left Sidebar - Tree Navigation -->
+    <div class="sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-header">
+          <i class="fa fa-folder"></i>
+          <h3>Item Categories</h3>
+        </div>
+        <div class="tree-container">
+          <p-tree
+            [value]="files"
+            (onNodeSelect)="getItemData($event)"
+            (onNodeUnselect)="getItemData($event)"
+            selectionMode="single"
+            [(selection)]="selectedFile"
+            [metaKeySelection]="true"
+            (onNodeContextMenuSelect)="contextMenuSelection($event.node, cm)"
+            [contextMenu]="cm"
+            (onNodeExpand)="loadNode($event)"
+            [filter]="true"
+            class="modern-tree"
+          >
+            <ng-template let-node pTemplate="default">
+              <div class="tree-node" (click)="node.expanded = !node.expanded">
+                <!-- <i
+                  [class]="node.children ? 'pi pi-folder' : 'pi pi-file'"
+                  class="node-icon"
+                ></i> -->
+                <span
+                  class="node-label"
+                  [ngClass]="{
+                    'folder-label': node.children,
+                    'file-label': !node.children
+                  }"
+                >
+                  {{ node.label }}
+                </span>
+              </div>
+            </ng-template>
+          </p-tree>
+          <p-contextMenu
+            #cm
+            [model]="items"
+            class="modern-context-menu"
+          ></p-contextMenu>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <!-- Search Panel -->
+      <div class="search-panel card-modern">
+        <div class="panel-header">
+          <i class="pi pi-search"></i>
+          <h3>Search Items</h3>
+        </div>
+        <div class="panel-body">
+          <div class="search-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="findItem">
+                  <i class="pi pi-tag"></i>
+                  {{ "Find Item" | translate }}
+                </label>
+                <div class="input-with-action">
+                  <input
+                    id="findItem"
+                    [(ngModel)]="search.itemName"
+                    (ngModelChange)="onModelChange($event)"
+                    pInputText
+                    placeholder="Enter item name..."
+                    class="modern-input"
+                  />
+                  <button
+                    pButton
+                    icon="pi pi-search"
+                    class="p-button-outlined search-action-btn"
+                  ></button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="findGroup">
+                  <i class="pi pi-folder"></i>
+                  {{ "Find Group" | translate }}
+                </label>
+                <div class="input-with-action">
+                  <input
+                    [(ngModel)]="search.itemGroup"
+                    id="findGroup"
+                    pInputText
+                    placeholder="Enter group name..."
+                    class="modern-input"
+                  />
+                  <button
+                    pButton
+                    icon="pi pi-search"
+                    class="p-button-outlined search-action-btn"
+                  ></button>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button
+                  pButton
+                  (click)="SearchFilter(search)"
+                  [label]="'Search' | translate"
+                  icon="pi pi-filter"
+                  class="p-button-primary search-btn"
+                ></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Panel -->
+      <div class="details-panel card-modern">
+        <div class="panel-header">
+          <i class="pi pi-info-circle"></i>
+          <h3>Item Details</h3>
+        </div>
+        <app-entry [listmode]="false" [ItemData]="itemData"></app-entry>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Item Group Dialog -->
+<p-dialog
+  header="Create Item Group"
+  [style]="{ width: '500px' }"
+  [modal]="true"
+  [(visible)]="displayBasic"
+  [formGroup]="itemMasterGrpFormGroup"
+  class="modern-dialog"
+>
+  <div class="dialog-content">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>
+          <i class="pi pi-sitemap"></i>
+          Parent Group
+        </label>
+        <div class="input-with-action">
+          <input
+            type="text"
+            #accountCtrl
+            pInputText
+            placeholder="Select parent group..."
+            class="modern-input"
+          />
+          <button
+            type="button"
+            pButton
+            icon="pi pi-search"
+            (click)="openAccount()"
+            class="p-button-help search-action-btn"
+          ></button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <i class="pi pi-tag"></i>
+          Group Name
+        </label>
+        <input
+          type="text"
+          formControlName="itemMasterItemName"
+          pInputText
+          placeholder="Enter group name..."
+          class="modern-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>
+          <i class="pi pi-arrow-up-right"></i>
+          Credit Account
+        </label>
+        <div class="input-with-action">
+          <input
+            type="text"
+            #creditCtrl
+            pInputText
+            placeholder="Select credit account..."
+            class="modern-input"
+          />
+          <button
+            type="button"
+            pButton
+            icon="pi pi-search"
+            (click)="openCreditAccount()"
+            class="p-button-help search-action-btn"
+          ></button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <i class="pi pi-arrow-down-left"></i>
+          Debit Account
+        </label>
+        <div class="input-with-action">
+          <input
+            type="text"
+            #debitCtrl
+            pInputText
+            placeholder="Select debit account..."
+            class="modern-input"
+          />
+          <button
+            type="button"
+            pButton
+            icon="pi pi-search"
+            (click)="openDebitAccount()"
+            class="p-button-help search-action-btn"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      (click)="new()"
+      label="Clear"
+      class="p-button-outlined"
+    ></button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      (click)="displayBasic = false; saveGroup()"
+      label="Save"
+      class="p-button-primary"
+    ></button>
+  </div>
+</p-dialog>
+
+<!-- Lookup Components -->
+<app-lookup
+  [header]="'Item Lookup'"
+  [selectedItem]="selectItem"
+  [eleReference]="elementReference"
+  [dataArry]="dataList"
+  [isServerSearch]="true"
+  [formControlName]="control"
+  (exitEvent)="exit($event)"
+  (clearEvent)="clear($event)"
+  [columns]="lookupColumns"
+  (selectItemEvent)="selectedtItem($event)"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Available Items'"
+  [(show)]="showControlLookUp"
+  (searchEvent)="onModelChange($event)"
+></app-lookup>
+
+<app-lookup
+  [header]="'Account Lookup'"
+  [selectedItem]="selectItem"
+  [eleReference]="elementReference"
+  [dataArry]="dataList"
+  [formControlName]="control"
+  (exitEvent)="exit($event)"
+  (clearEvent)="clear($event)"
+  [columns]="lookupColumns"
+  (selectItemEvent)="selectControl($event)"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Account List'"
+  [(show)]="showFormControlLookUp"
+></app-lookup>
+
+<p-toast position="top-right"></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

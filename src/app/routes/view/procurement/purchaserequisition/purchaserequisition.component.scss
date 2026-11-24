@@ -1,0 +1,96 @@
+
+
+
+
+
+
+h5 {
+  margin-top: 0%;
+}
+
+.w60 {
+  width: 60px;
+}
+
+.w80 {
+  width: 130px;
+  text-align: left;
+}
+
+
+.page-footer {
+  position: running(footer);
+  bottom: 0;
+  width: 100%;
+  visibility: visible;
+}
+
+
+#Voucher {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+
+
+}
+
+#Voucher td,
+#Voucher th {
+  border: 1px solid #ddd;
+  padding: 8px;
+
+}
+#Voucher th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #c6cccb;
+  color: rgb(0, 0, 0);
+  text-align: center;
+
+}
+
+
+#Voucher {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+
+}
+
+#Voucher td,
+#Voucher th {
+  border: 1px solid #ddd;
+  padding: 8px;
+
+}
+
+//   #Voucher tr:nth-child(even){background-color: #f2f2f2;}
+
+//   #Voucher tr:hover {background-color: #ddd;}
+
+#Voucher th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #c6cccb;
+  color: rgb(0, 0, 0);
+  text-align: center;
+}
+
+.page {
+  padding-left: 15px;
+  text-align: center;
+  height: 74px;
+}
+.btn-list{
+  float: right;
+}
+.row{
+  text-align: center;
+}
+.end{
+  text-align: end;
+}
+
+

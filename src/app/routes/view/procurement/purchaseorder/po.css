@@ -1,0 +1,258 @@
+.contain{
+    width: 85%;
+    margin-left: 8%;
+    margin-bottom:2% ;
+    border-radius: 10px;
+    margin-top: 1%;
+}
+h1{
+    padding-left: 7%;
+    padding-top: .5%;
+    font-family:"Sans-serif";
+    font-size: 4rem;
+    margin-bottom: 1%;
+    color: red;
+     
+}
+.head{
+    font-size: 18px;
+    color: black;
+     
+     
+}
+h2{
+    padding-top: 25px;
+    text-align: center;
+    margin-top: 1%;
+    font-family:"Sans-serif";
+    font-size: 1.5rem;
+    margin-bottom: 0%;
+ }
+ 
+h3{
+    text-align: center;
+   margin-top: 0%;
+    font-family:"Sans-serif";
+    font-size: 1rem;  
+}
+h4{
+  margin-top: 0%;
+  padding-left: 0%;
+  margin-bottom: 0%;
+  font-size: 15px;
+}
+h5{
+     padding-bottom:  12px;
+    padding-top: 0%;
+    margin-top: 0%;
+    margin-bottom: 0%;
+
+}
+.row{
+    display: flex;
+justify-content: space-between;
+ margin-left: 8%;
+ margin-bottom: 0%;
+ padding-bottom: 0%;
+}
+.col-md-7{
+    border: 2.5px solid rgb(163, 165, 165);
+    width:719px;
+    height: auto;
+    border-radius: 10px;
+    padding-left: 2%;
+    padding-top: 1%;
+    font-size: 18px;
+    margin-bottom: 0%;
+ padding-bottom: 0%;
+  }
+  .col-md-5{
+   border: 2.5px solid rgb(163, 165, 165);
+    width:405px;
+    height: auto;
+    border-radius: 10px;
+   padding-left: 2%;
+   padding-top: 1%;
+    font-size: 18px;
+    margin-bottom: 0%;
+ padding-bottom: 0%;
+  }
+  
+  .row2{
+    display: flex;
+justify-content: space-between;
+ margin-left: 8%;
+ margin-bottom: 0%;
+ padding-bottom: 0%;
+ margin-top: 0%;
+}
+.TMD{
+   border: 2.5px solid rgb(163, 165, 165);
+    width:719px;
+    height: auto;
+    border-radius: 10px;
+    padding-left: 2%;
+    padding-top: 1%;
+    font-size: 18px;
+    margin-bottom: 0%;
+ padding-bottom: 0%;
+ margin-top: 0%;
+  }
+  .GDS{
+   border: 2.5px solid rgb(163, 165, 165);
+    width:405px;
+    height: auto;
+    border-radius: 10px;
+    padding-left: 2%;
+    padding-top: 1%;
+    font-size: 18px;
+    margin-bottom: 0%;
+    padding-bottom: 0%;
+   margin-top: 0%;
+  }
+  .SvTotalC{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: start;
+    gap: 17px;
+}
+  .Notes{
+    border: 2.5px solid rgb(163, 165, 165);
+     width:1105px;
+     height: auto;
+     border-radius: 10px;
+     padding-left: 2%;
+     padding-top: 1%;
+     font-size: 18px;
+     margin-bottom: 0%;
+     padding-bottom: 0%;
+    margin-top: 2px;
+    text-decoration: underline;
+   }
+  .header {
+    display: flex;
+    justify-content: space-between;
+   margin-right: 35%;
+  }
+  
+  .left {
+    font-size: 16px;
+    text-align: left;
+  }
+  
+  .right {
+    font-size: 16px;
+    text-align: right;
+    
+  }
+  
+  #invoice {
+    font-family: Arial, Helvetica, sans-serif;
+ 
+    border-collapse:separate;
+    border:solid black 1px;
+    border-radius:6px;
+    width: 88%;
+    margin-left: 8%;
+margin-bottom: 0%;
+    margin-top: 2px;
+    border-radius: 10px;
+     border: 2.5px solid rgb(163, 165, 165);
+  }
+  
+  #invoice td, #invoice th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    
+  }
+  
+  #invoice tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #invoice tr:hover {background-color: #ddd;}
+  
+  #invoice th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dfe4e3;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    
+  }
+ 
+  
+  .total{
+    padding-left: 12%;
+    padding-top: 0%;
+    font-weight: bold;
+  }
+  #payment {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse:separate;
+    border-radius:10px;
+    width: 88%;
+    margin-left: 8%;
+    margin-top: 2px;
+margin-bottom: 0%;
+     border: 2.5px solid rgb(163, 165, 165);
+  }
+  
+  #payment td, #payment th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    
+  }
+  
+  #payment tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #payment tr:hover {background-color: #ddd;}
+  
+  #payment th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dfe4e3;
+    color: rgb(0, 0, 0);
+    text-align: center;
+  }
+ .page{
+    padding-left: 15px;
+    text-align: center;
+ }
+ .container {
+  display: flex; /* Use flexbox layout */
+   padding-top: 2px;
+}
+
+ .suplier{
+font-weight: bold;
+font-size: 14px;
+color: black;
+text-decoration: underline; 
+padding-bottom: 5px;
+}
+
+.seq{
+    display: inline-flex;
+     margin-left: 5%;
+}
+.header {
+    display: flex;
+    align-items: center;
+     
+  }
+  
+  .logo {
+    margin-right: 90px; /* Adjust margin as needed */
+    width: 20%;
+    height: 7%;
+    padding-top: 5%;
+  }
+  
+ 
+  .amt{
+    font-size: 16px;
+    padding-top:0%;
+    padding-bottom:0%;
+  }

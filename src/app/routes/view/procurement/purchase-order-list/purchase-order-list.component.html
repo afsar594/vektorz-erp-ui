@@ -1,0 +1,37 @@
+<app-page-header 
+    [title]='title| translate'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <!-- <button pButton type="button" label="New" icon="pi pi-plus"></button>
+        <button pButton type="button" class="ui-button-danger" label="Cancel" icon="fa fa-ban"></button>
+        <button pButton type="button" label="Save" icon="fa fa-floppy-o" class="ui-button-success"></button> -->
+        <button pButton type="button" label="List"  [disabled]='!Permission?.View' icon="fa fa-list" (click)="getAllPurchaseOrderList()"
+            class="ui-button-info"></button>
+        <!-- <button pButton type="button" class="ui-button-danger" label="Delete" icon="fa fa-trash"></button> -->
+    </div>
+    <div class="ui-toolbar-group-right">
+        <div class="flexSearch">
+            <div class="ui-inputgroup">
+                <input type="text" pInputText placeholder="Search">
+                <button pButton type="button" icon="pi pi-search"></button>
+            </div>
+            <button pButton type="button" label="Print" [disabled]='!Permission?.Print' icon="fa fa-print" class="ui-button-success"></button>
+            <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+        </div>
+    </div>
+</p-toolbar>
+<div class="card">
+    <div class="p-grid"></div>
+
+    <p-panel>
+        <p-header>
+            Purchase Order List ReportDDD
+        </p-header>
+        <div class="p-grid">
+            <div class="p-col-12">
+                <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="purchaseOrderList"
+                [data]="purchaseOrderListArray"></hot-table>
+            </div>
+        </div>
+    </p-panel>
+</div>

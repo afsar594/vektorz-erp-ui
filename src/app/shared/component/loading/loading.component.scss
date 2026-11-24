@@ -1,0 +1,85 @@
+
+// .spinner {
+//   width: 80px;
+//   height: 80px;
+//   border-radius: 50%;
+//   border: 13px dotted #284974;
+//   // border-top: 12px dotted transparent;
+//   animation: spin 1s linear infinite;
+//   margin: 15px 29px;
+//   text-align: center;
+// }
+
+// .card {
+//   height: 150px;
+//   width: 150px;
+//   border-radius: 30px;
+//   text-align: center;
+//   z-index:auto;
+//   position: relative; /* Ensure proper positioning of the image */
+// }
+
+// .img {
+//   height: 50px;
+//   top: 63px !important;
+//   /* margin: 8px 4px 1px; */
+//   position: absolute;
+//   top: 50%;
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+// }
+
+// @keyframes spin {
+//   0% {
+//     transform: rotate(0deg);
+//   }
+
+//   100% {
+//     transform: rotate(360deg);
+//   }
+// }
+
+
+// =======================
+
+
+
+.spinner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 13px dotted #284974;
+  animation: spin 1s linear infinite;
+  margin: 15px 29px;
+  text-align: center;
+  position: relative; /* Add this to create a new stacking context */
+  z-index: 1200 !important; /* Set a high z-index value to appear on top of Prime Dialog */
+}
+
+.card {
+  height: 150px;
+  width: 150px;
+  border-radius: 30px;
+  text-align: center;
+  position: relative; /* Ensure proper positioning of the image */
+}
+
+.img {
+  height: 50px;
+  top: 63px !important;
+  /* margin: 8px 4px 1px; */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,736 @@
+<!-- <p>journalvoucher works!</p> -->
+
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Journal Voucher' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      *ngIf="btnFlag.save"
+      pButton
+      type="button"
+      label="Save"
+      (click)="saveJournalVoucher()"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      *ngIf="btnFlag.update"
+      pButton
+      type="button"
+      label="Update"
+      (click)="saveJournalVoucher()"
+      [disabled]="!btnFlag.edit"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="jvTemplate()"
+      label="JV Template"
+      icon="fa fa-bars"
+    ></button>
+      <button
+        pButton
+        type="button"
+        label="Import From Excel"
+        icon="pi pi-upload"
+        class="ui-button-info"
+        (click)="triggerExcelImport()"
+        [disabled]="journalvoucher_entry?.readOnly"
+      ></button>
+
+
+      <input
+        #excelFileInput
+        type="file" style="display: none"
+        accept=".xlsx,.xls" (change)="onExcelImport($event)"
+      />
+  </div>
+  <div class="ui-toolbar-group-right p-d-flex p-flex-wrap responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!btnFlag.edit || !Permission?.Print"
+      (click)="displayPrint()"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      class="ui-button-danger"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="journalVoucherFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Journal Voucher' | translate">
+      <p-panel>
+        <p-header>
+          {{ "Journal Voucher" | translate }}
+        </p-header>
+        <div class="p-grid p-fluid">
+          <div class="col-12 p-md-8">
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-2">
+                <label for="voucherno">{{ "Voucher No" | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <input
+                  formControlName="journalVoucherVno"
+                  readonly
+                  id="voucherno"
+                  pInputText
+                />
+              </div>
+              <div class="p-col-12 p-md-2">
+                <label for="voucherdate">{{
+                  "Voucher Date" | translate
+                }}</label>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  class="w-100"
+                  [readonlyInput]="true"
+                  [showIcon]="true"
+                  useUtc
+                  formControlName="journalVoucherDate"
+                  id="voucherdate"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-2">
+                <label for="refno">{{ "Reference No" | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <input
+                  formControlName="journalVoucherRefNo"
+                  id="refno"
+                  class="w-100"
+                  pInputText
+                />
+              </div>
+              
+              <div class="p-col-12 p-md-2">
+                <label for="currency">{{ "Currency" | translate }}</label>
+              </div>
+
+              <div class="p-col-12 p-md-4">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="journalVoucherCurrencyId"
+                  [options]="currencyList"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12 p-md-4">
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label for="narration">{{ "Narration" | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <textarea
+                  formControlName="journalVoucherNarration"
+                  id="narration"
+                  [rows]="5"
+                  pInputText
+                ></textarea>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.journalVoucherNarration.errors &&
+                    (f.journalVoucherNarration.dirty ||
+                      f.journalVoucherNarration.touched)
+                  "
+                >
+                  <span *ngIf="f.journalVoucherNarration.errors.required">
+                    Narration is Mandatory Field*</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+      <p-panel>
+        <p-header>
+          {{ "Account Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="journalvoucher_entry"
+            [data]="journalvoucher_entryDataset"
+          ></hot-table>
+        </div>
+        <div class="p-grid p-ai-center" style="justify-content: end">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total Debit" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input
+              id="totalDebit"
+              formControlName="journalVoucherDrAmount"
+              readonly
+              style="border-color: black; text-align: right"
+              pInputText
+            />
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total Credit" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input
+              id="totalCredit"
+              formControlName="journalVoucherCrAmount"
+              readonly
+              style="border-color: black; text-align: right"
+              pInputText
+            />
+          </div>
+
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Difference" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input pInputText [value]="difference" readonly />
+          </div>
+        </div>
+      </p-panel>
+      <app-lookup
+        [header]="'Look Up'"
+        [dataArry]="dataList"
+        [selectedItem]="selectItem"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectaccount($event)"
+        (exitEvent)="exit($event)"
+        [cell]="activeRow"
+        (clearEvent)="clear($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="showAccountLookUp"
+      ></app-lookup>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+              }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+            Content 3
+        </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activities' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Journal Voucher List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button
+          type="submit"
+          pButton
+          label="Find"
+          (click)="filter()"
+          icon="pi pi-search"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Clear"
+          icon="fa fa-pencil"
+          (click)="ClearFilter()"
+          class="ui-button-success"
+        ></button>
+      </p-header>
+      <form [formGroup]="JournalVoucherFilterForm">
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                "Voucher No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10">
+                <input
+                  class="w-100"
+                  formControlName="journalVoucherNo"
+                  pInputText
+                />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">{{
+                "Narration" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10">
+                <input
+                  class="w-100"
+                  formControlName="journalVoucherNarration"
+                  pInputText
+                />
+              </div>
+              <!-- <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'Location/Mobile' | translate }}</label>
+                      <div class="p-col-12 p-md-12 p-lg-10">
+                        <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId" [options]="locationList"></p-dropdown>
+                        <div class="error" *ngIf="f.salesVoucherLocationId.errors && (f.salesVoucherLocationId.dirty || f.salesVoucherLocationId.touched)">
+                          <span *ngIf="f.salesVoucherLocationId.errors.required">Location is Mandatory Field*</span>
+                        </div>
+                      </div> -->
+            </div>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-ai-center"></div>
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="Date Range"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2">{{
+                  "From Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="fromDate"
+                    [showIcon]="true"
+                    [disabled]="!JournalVoucherFilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2">{{
+                  "To Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="toDate"
+                    [showIcon]="true"
+                    [disabled]="!JournalVoucherFilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+  <p-table
+    #dt
+    [value]="journalVoucherarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-journalvoucher_list>
+      <tr>
+        <td>{{ journalvoucher_list.journalVoucherVrefNo }}</td>
+        <td>
+          {{ journalvoucher_list.journalVoucherDate | date : "dd/MM/yyyy" }}
+        </td>
+        <!-- <td>{{journalvoucher_list.journalVoucherAcNo}}</td> -->
+        <td>{{ journalvoucher_list.journalVoucherCurrencyId }}</td>
+        <td>{{ journalvoucher_list.journalVoucherDrAmount }}</td>
+        <td>{{ journalvoucher_list.journalVoucherCrAmount }}</td>
+        <td>{{ journalvoucher_list.journalVoucherNarration }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedJournalVoucherDetails(
+                journalvoucher_list?.journalVoucherId,
+                journalvoucher_list
+              );
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+
+  <div id="contentToConvert">
+    <div class="print">
+      <h1 class="main1">
+        <strong>{{ companyDetails?.stationMasterStationName }} </strong>
+      </h1>
+      <div class="flex">
+        <div class="payment1">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>Address </b>
+              <b>Tel </b>
+              <b>Fax </b>
+              <b>Email </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>
+                {{ companyDetails?.stationMasterAddress | translate }}&nbsp;
+              </div>
+              <div>
+                {{ companyDetails?.stationMasterTele1 | translate }}&nbsp;
+              </div>
+              <div>
+                {{ companyDetails?.stationMasterFax | translate }}&nbsp;
+              </div>
+              <div>{{ companyDetails?.stationMasterEmail }}&nbsp;</div>
+            </div>
+          </div>
+        </div>
+        <div class="payment2">
+          <!-- <img src="../../../../../assets/Images/logo-2.png" /> -->
+          <img
+            *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+            class="squreImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+          <img
+            *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+            class="rectImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+        </div>
+      </div>
+      <div class="center">
+        <h2>{{ "Journal Voucher" | translate }}</h2>
+      </div>
+      <div class="flex1">
+        <div class="contain1">
+          <div class="inflex">
+            <div class="date">
+              <b>{{ "Voucher No" | translate }}</b>
+              <div class="space1">
+                <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              </div>
+              <div>{{ savedJournalVoucher?.journalVoucherVrefNo }}&nbsp;</div>
+            </div>
+
+            <div class="date">
+              <b>{{ "Voucher Date" | translate }}</b>
+              <div class="space1">
+                <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              </div>
+              <div>
+                {{
+                  savedJournalVoucher?.journalVoucherDate | date : "dd/MM/yyyy"
+                }}&nbsp;
+              </div>
+            </div>
+          </div>
+
+          <div class="flexrow">
+            <div class="flexcol">
+              <!-- <b>{{'Voucher No' | translate}}</b> -->
+
+              <b>{{ "Ref No" | translate }}</b>
+              <b>{{ "Narration" | translate }}</b>
+            </div>
+            <div class="flexcol space">
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ savedJournalVoucher?.journalVoucherVrefNo }}&nbsp;</div>
+              <!-- <div>{{savedReceiptVoucher?.receiptVoucherMasterCrAmount}}&nbsp;</div> -->
+              <div>
+                {{ savedJournalVoucher?.journalVoucherNarration }}&nbsp;
+              </div>
+              <!-- <div>{{savedPaymentVoucher?.paymentVoucherDate}}</div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table">
+        <table id="customers">
+          <thead>
+            <th>Acc No.</th>
+            <th>Acc Name</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Narration</th>
+          </thead>
+          <!-- <tr *ngFor="let accountTrans of savedPaymentVoucher?.accountsTransactions"></tr> -->
+          <tr
+            *ngFor="
+              let item of savedJournalVoucher?.journalVoucherDetails;
+              let i = index
+            "
+          >
+            <td>{{ item.journalVoucherDetailsAccNo }}</td>
+            <td>{{ getAccountName(item.journalVoucherDetailsAccNo) }}</td>
+            <td>{{ item.journalVoucherDetailsDrAmount | number }}</td>
+            <td>{{ item.journalVoucherDetailsCrAmount | number }}</td>
+            <td>{{ item.journalVoucherDetailsNarration }}</td>
+          </tr>
+          <tr
+            *ngFor="
+              let _ of [].constructor(
+                getEmptyRowCount(
+                  savedJournalVoucher?.journalVoucherDetails?.length
+                )
+              );
+              let i = index
+            "
+          >
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+        <table id="customers">
+          <thead>
+            <th>Total Debit</th>
+            <th>Total Credit</th>
+            <th>Total Difference</th>
+          </thead>
+          <tbody>
+            <td>{{ savedJournalVoucher?.journalVoucherCrAmount }}</td>
+            <td>{{ savedJournalVoucher?.journalVoucherDrAmount }}</td>
+            <td>
+              {{
+                savedJournalVoucher?.journalVoucherCrAmount -
+                  savedJournalVoucher?.journalVoucherDrAmount
+              }}
+            </td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="table">
+        <table id="customers">
+          <thead>
+            <th>Reciever's Signature</th>
+            <th>{{ "Verified by&Signature:" | translate }}</th>
+            <th>Date of Print</th>
+          </thead>
+          <tbody>
+            <td></td>
+            <td></td>
+            <td>{{ date() | date : "dd/MM/yyyy" }}</td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</p-dialog>

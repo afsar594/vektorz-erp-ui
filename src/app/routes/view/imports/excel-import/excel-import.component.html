@@ -1,0 +1,13 @@
+<!-- <app-page-header [nav]='[{label: "import"},{label: "timesheet"}]' title='timesheet'></app-page-header> -->
+<p-toast></p-toast>
+
+<div class="card">
+    <p-fileUpload name="files" url='{{fileurl}}'  (onUpload)="onUpload($event)" contentType='multipart/form-data' multiple="multiple" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+        maxFileSize="1000000">
+        <ng-template pTemplate="content">
+            <ul *ngIf="uploadedFiles.length">
+                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+            </ul>
+        </ng-template>
+    </p-fileUpload>
+</div>

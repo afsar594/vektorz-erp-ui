@@ -1,0 +1,99 @@
+<app-page-header
+  [nav]="breadcumbmodel"
+  [title]="title | translate"
+></app-page-header>
+
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      (click)="new()"
+      label="New"
+      icon="fa fa-floppy-o"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="vendorFormGroup">
+  <div class="p-grid">
+    <div class="p-col-12">
+      <hot-table
+        [hotId]="hotid"
+        [licenseKey]="licensekey"
+        [settings]="brand_entry"
+        [data]="brand_entryDataset"
+      ></hot-table>
+    </div>
+  </div>
+</div>
+<p-dialog
+  [header]="btnFlag.save ? 'Add New Brand' : 'Update Brand'"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '650px' }"
+>
+  <form [formGroup]="vendorFormGroup" class="p-fluid">
+    <div class="p-grid">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">{{ "Brand Name" | translate }}</div>
+      <div class="p-col-6">
+        <input
+          pInputText
+          placeholder="Brand Name"
+          formControlName="vendorMasterVendorName"
+        />
+
+        <div
+          class="error"
+          *ngIf="
+            f.vendorMasterVendorName.errors &&
+            (f.vendorMasterVendorName.dirty || f.vendorMasterVendorName.touched)
+          "
+        >
+          <span *ngIf="f.vendorMasterVendorName.errors.required">
+            Please Enter the Brand Name*</span
+          >
+        </div>
+      </div>
+      <div class="p-col-2"></div>
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">Inactive</div>
+      <div class="p-col-6">
+        <p-checkbox [binary]="true" formControlName="vendorMasterVendorStatus"
+          >Inactive</p-checkbox
+        >
+      </div>
+    </div>
+
+    <!-- Footer buttons (manually placed inside) -->
+    <div class="dialog-footer">
+      <p-button
+        (click)="saveVendor()"
+        [icon]="btnFlag.save ? 'pi pi-save' : 'pi pi-check'"
+        [label]="btnFlag.save ? 'Save' : 'Update'"
+        styleClass="p-button-raised p-button-rounded p-button-success"
+      ></p-button>
+    </div>
+  </form>
+</p-dialog>
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

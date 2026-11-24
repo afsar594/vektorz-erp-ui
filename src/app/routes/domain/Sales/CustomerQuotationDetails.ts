@@ -1,0 +1,25 @@
+export interface CustomerQuotationDetails {
+customerQuotationDetailsId?:number,
+customerQuotationDetailsQuotationId?:string,
+customerQuotationDetailsSlno?:number,
+customerQuotationDetailsItemId?:number,
+customerQuotationDetailsDescription?:string,
+customerQuotationDetailsUnitId?:number,
+customerQuotationDetailsQty?:number,
+customerQuotationDetailsUnitPrice?:number,
+customerQuotationDetailsGrossAmount?:number,
+customerQuotationDetailsDiscount?:number,
+customerQuotationDetailsVAT?:number,
+customerQuotationDetailsNetAmount ?:number,
+customerQuotationDetailsFsno ?:number,
+customerQuotationDetailsIsEdited?:Boolean
+customerQuotationDetailsPurchasePrice?:number,
+customerQuotationDetailsPriceType?:string,
+customerQuotationDetailsQuotationDetailsId?:number,
+customerQuotationDetailsVoucherType ?:string,
+CustomerQuotationDetailsBatchcode?:string,
+customerQuotationDetailsEnquiryDetailsId?:number,
+customerQuotationDetailsDelStatus?:Boolean
+customerQuotationDetailsCostPrice?:number,
+customerQuotationDetailsGrossProfit?:number,
+}

@@ -1,0 +1,457 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="GetGridListData()"
+      label="Show Statement"
+      [disabled]="!Permission?.View"
+      icon="pi pi-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="displayPrint()"
+      label="Print Statement"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Close"
+      icon="fa fa-trash"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Excel"
+      icon="fa fa-excel-file-o"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="' VAT Statement' | translate">
+      <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-10"></div>
+        <div class="p-col-12 p-md-2">
+          <p-checkbox
+            name="particularVoucher"
+            inputId="dateRange"
+            value="dateRange"
+            style="color: brown"
+            label="Hide Opening Balance"
+          >
+          </p-checkbox>
+        </div>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              <div class="p-grid p-ai-center">
+                <div class="p-col-12 p-md-4">
+                  <p-radioButton
+                    [(ngModel)]="asOnAndDateRange"
+                    inputId="asOndate"
+                    value="asOndate"
+                    style="color: rgb(40, 160, 66)"
+                    label="As On1"
+                  >
+                  </p-radioButton>
+                </div>
+                <div class="p-col-12 p-md-4">
+                  <p-radioButton
+                    [(ngModel)]="asOnAndDateRange"
+                    inputId="dateRange"
+                    value="dateRange"
+                    label="Date Range"
+                    style="color: blueviolet"
+                  >
+                  </p-radioButton>
+                </div>
+              </div>
+            </p-header>
+
+            <!-- Date Range -->
+            <div
+              *ngIf="asOnAndDateRange === 'dateRange'"
+              class="p-grid p-ai-center"
+            >
+              <div class="p-col-12 p-md-3">
+                <label for="account">
+                  <b>{{ "Date From:" | translate }}</b>
+                </label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [(ngModel)]="startDate"
+                  [maxDate]="endDate"
+                  [dateFormat]="dataFormat"
+                  [yearNavigator]="true"
+                  yearRange="2000:2050"
+                  [readonlyInput]="true"
+                ></p-calendar>
+              </div>
+              <div class="p-col-12 p-md-3">
+                <label for="account">
+                  <b>{{ "Date To:" | translate }}</b>
+                </label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [(ngModel)]="endDate"
+                  [minDate]="startDate"
+                  [dateFormat]="dataFormat"
+                  [yearNavigator]="true"
+                  yearRange="2000:2050"
+                  [readonlyInput]="true"
+                ></p-calendar>
+              </div>
+            </div>
+
+            <!-- As On Date -->
+            <div
+              *ngIf="asOnAndDateRange === 'asOndate'"
+              class="p-grid p-ai-center"
+            >
+              <div class="p-col-12 p-md-3">
+                <label for="account">
+                  <b>{{ "As On Date:" | translate }}</b>
+                </label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [(ngModel)]="selectedAsOnDate"
+                  [dateFormat]="dataFormat"
+                  [yearNavigator]="true"
+                  yearRange="2000:2050"
+                  [readonlyInput]="true"
+                ></p-calendar>
+              </div>
+            </div>
+
+            <!-- Date Picker Type -->
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-2"></div>
+              <div class="p-col-12 p-md-3">
+                <p-radioButton
+                  (onClick)="ResetFormat('mm/dd/yy', '')"
+                  style="color: rgb(27, 7, 204)"
+                  label="Date"
+                  name="particularVoucher"
+                  inputId="formatDate"
+                  value="date"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-3">
+                <p-radioButton
+                  (onClick)="ResetFormat('mm/yy', 'month')"
+                  name="particularVoucher"
+                  inputId="formatMonth"
+                  style="color: rgb(15, 173, 49)"
+                  label="Month"
+                  value="month"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-3">
+                <p-radioButton
+                  (onClick)="ResetFormat('yy', 'year')"
+                  name="particularVoucher"
+                  inputId="formatYear"
+                  style="color: rgb(216, 30, 30)"
+                  label="Year"
+                  value="year"
+                >
+                </p-radioButton>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header> Select </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-6">
+                <button
+                  pButton
+                  type="button"
+                  (click)="DetailedOrSummary('Detailed')"
+                  label="Detailed"
+                  class="ui-button-success"
+                  style="padding-left: 20px; padding-right: 20px"
+                ></button>
+              </div>
+
+              <div class="p-col-12 p-md-6">
+                <button
+                  pButton
+                  type="button"
+                  (click)="DetailedOrSummary('Summary')"
+                  label="Summary"
+                  class="ui-button-danger"
+                  style="padding-left: 20px; padding-right: 20px"
+                ></button>
+              </div>
+            </div>
+          </p-panel>
+          <p-panel>
+            <p-header>
+              <p-checkbox
+                label="VAT Accounts"
+                [(ngModel)]="isVatAccountsChecked"
+              ></p-checkbox>
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-6">
+                <p-checkbox
+                  name="particularVoucher"
+                  inputId="vatPayable"
+                  value="vatPayable"
+                  [disabled]="!isVatAccountsChecked"
+                  [(ngModel)]="isVatPayableChecked"
+                >
+                </p-checkbox>
+                <label
+                  for="vatPayable"
+                  style="color: rgb(61, 212, 205); padding-left: 8px"
+                  >VAT Payable</label
+                >
+              </div>
+
+              <div class="p-col-12 p-md-6">
+                <p-checkbox
+                  name="particularVoucher"
+                  inputId="vatReceivable"
+                  value="vatReceivable"
+                  [disabled]="!isVatAccountsChecked"
+                  [(ngModel)]="isVatReceivableChecked"
+                >
+                </p-checkbox>
+                <label
+                  for="vatReceivable"
+                  style="color: rgb(61, 212, 205); padding-left: 8px"
+                  >VAT Receivable</label
+                >
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-12 p-0">
+                <p-listbox
+                  id="rptType"
+                  class="w-100"
+                  [options]="voucherTypes"
+                  [metaKeySelection]="false"
+                  [checkbox]="true"
+                  [filter]="true"
+                  [multiple]="true"
+                  optionLabel="label"
+                  (onChange)="onVTypeChange($event?.value)"
+                  [listStyle]="{ 'max-height': '150px' }"
+                  [style]="{ width: '13rem' }"
+                >
+                </p-listbox>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-tabView
+      *ngIf="detailedOrSummary == 'Detailed'"
+      [activeIndex]="index"
+      (onChange)="handleChange($event)"
+    >
+      <p-tabPanel [header]="'VAT Statement Detailed' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset2"
+              [licenseKey]="licensekey"
+              [settings]="detailed"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+  <div class="card card-w-title">
+    <p-tabView
+      *ngIf="detailedOrSummary == 'Summary'"
+      [activeIndex]="index"
+      (onChange)="handleChange($event)"
+    >
+      <p-tabPanel [header]="'VAT Statement Summary' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid1"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="summary"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+
+<!-- Print -->
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div>
+    <button
+      pButton
+      type="button"
+      class="ui-button-primary"
+      (click)="printAsPDF()"
+      label="Print"
+      icon="fa fa-print"
+    ></button>
+  </div>
+  <div id="print" style="justify-content: center">
+    <div class="flex">
+      <div class="contain1">
+        <div class="center">
+          <img
+            *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+            class="squreImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+          <img
+            *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+            class="rectImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+        </div>
+      </div>
+      <div class="contain2">
+        <!-- <div class="vouhead">
+                <h2> {{'Accounts Statement' | translate}}</h2>
+            </div> -->
+        <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>{{ "Address" | translate }}</b>
+            <b>{{ "Tel" | translate }} </b>
+            <b>{{ "Fax" | translate }} </b>
+            <b>{{ "Email" | translate }} </b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>{{ stationmasterObj?.stationMasterAddress }}</div>
+            <div>{{ stationmasterObj?.stationMasterTele1 }}</div>
+            <div>{{ stationmasterObj?.stationMasterFax }}</div>
+            <div>{{ stationmasterObj?.stationMasterEmail }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2 class="ab">VAT STATEMENT</h2>
+    <!-- <div class="second">
+        <h4 class="ad">Acc. Name : {{GetAccountName(reportAccountsTransactionsFormGroup.get('rptAccount').value)}}
+        </h4>
+        <h4 class="ae">Acc. No. : {{ reportAccountsTransactionsFormGroup.get('rptAccount').value }}</h4>
+    </div> -->
+
+    <table class="customers">
+      <thead>
+        <tr>
+          <th>VNo.</th>
+          <th>VDate</th>
+          <th>Voucher type</th>
+          <th>PartyName</th>
+          <th>Description</th>
+          <th>Vatable Amount</th>
+          <th>Debit</th>
+          <th>Credit</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- <td>{{item?.accountsTransactionsVoucherNo}}</td>
+                <td>{{item?.accountsTransactionsTransDate}}</td>
+                <td>{{item?.accountsTransactionsVoucherType}}</td>
+                <td>{{item?.accountsTransactionsDescription}}</td>
+                <td class="end">{{item?.accountsTransactionsDebit}}</td>
+                <td class="end">{{item?.accountsTransactionsCredit}}</td>
+                <td class="end">{{item?.accountsTransactionsAllocBalance}}</td> -->
+        </tr>
+        <tr>
+          <!-- <td colspan="4" class="end"> Total:</td>
+                <td class="end">{{getTotalDedit()}}</td>
+                <td class="end">{{getTotalCredit()}}</td>
+                <td class="end">{{getTotal()}}</td> -->
+        </tr>
+      </tbody>
+    </table>
+    <!-- <h3 class="af">Credit Balance Of {{getTotal()}}</h3> -->
+    <!-- <div class="total">
+        <div>Total : </div>
+        <div>{{getTotalDedit()}}</div>
+        <div>{{getTotalCredit()}} </div>
+        <div>{{getTotal()}}</div>
+    </div> -->
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>

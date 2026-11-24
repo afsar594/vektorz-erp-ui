@@ -1,0 +1,73 @@
+<app-page-header [nav]='breadcumbmodel' [title]='title'></app-page-header>
+<div class="card card-w-title" [formGroup]='TermandConditionFormGroup'>
+    <div class="p-grid inputGroup">
+        <label class="p-col-6 p-md-6 p-lg-2"
+            for="narration">{{'Terms and Condition'| translate}}</label>
+        <div class="p-col-6 p-md-6 p-lg-4 p-0">
+            <textarea class="w-100" formControlName='termsAndConditionTermsConditions' id="narration"
+                pInputText></textarea>
+
+            <div class="error" *ngIf="f.termsAndConditionTermsConditions.errors 
+            && (f.termsAndConditionTermsConditions.dirty || f.termsAndConditionTermsConditions.touched)">
+                <span *ngIf="f.termsAndConditionTermsConditions.errors.required">
+                    Please Enter the Terms and Conditions*</span>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+    <!-- <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-2"> {{'Terms and Condition'| translate}} </div>
+        <div class="p-col-12 p-md-12 p-lg-2">
+           
+
+            <input pInputText placeholder="'Terms and Condition'| translate"  formControlName='TermandConditionFormGroup'>
+
+            <div class="error" *ngIf="f.termsAndConditionTermsConditions.errors 
+            && (f.termsAndConditionTermsConditions.dirty || f.termsAndConditionTermsConditions.touched)">
+                <span *ngIf="f.termsAndConditionTermsConditions.errors.required">
+                   Please Enter the Terms and Conditions*</span>
+            </div>
+        </div>
+    </div> -->
+
+
+        <div class="p-grid">
+            <div class="p-col-12 p-md-12 p-lg-offset-1 p-lg-8">
+                <button pButton class="ui-button-info" [label]='btnlabel' (click)='saveTerms()'></button>
+                <button pButton class="ui-button-warning" label='Clear' (click)='reset()'></button></div>
+        </div> 
+   
+    <div class="p-grid">
+        <div class="p-col-12">
+            <p-table [value]="TermsandConditionList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>{{'Code' | translate}}</th>
+                        <th>{{'Terms and Condition'| translate}}</th>
+                        <th>{{'Action'| translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-Terms>
+                    <tr>
+                        <td>{{Terms.termsAndConditionTermsId}}</td>
+                        <td>{{Terms.termsAndConditionTermsConditions}}</td>
+                    
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(Terms)'
+                                iconPos="left"></button>
+                            <button pButton type="button" icon="pi pi-trash" (click)='removeBudget(Terms)'
+                                iconPos="left"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+
+        </div>
+    </div>
+</div>

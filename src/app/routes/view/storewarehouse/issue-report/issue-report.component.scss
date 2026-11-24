@@ -1,0 +1,338 @@
+/* =======================================================
+   Issue Report Screen UI + Print Table Styles
+   ======================================================= */
+
+:host {
+  display: block;
+}
+
+:host ::ng-deep .issue-filter-panel {
+  border: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 18px 34px rgba(15, 34, 58, 0.08);
+}
+
+:host ::ng-deep .issue-filter-panel .ui-panel-titlebar,
+:host ::ng-deep .issue-filter-panel .p-panel-header {
+  background: linear-gradient(120deg, #113a53 0%, #1f6b7a 55%, #2f8f8c 100%);
+  color: #ffffff;
+  border: 0;
+  font-family: 'Trebuchet MS', 'Segoe UI', Tahoma, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.35px;
+  padding: 14px 20px;
+}
+
+:host ::ng-deep .issue-filter-panel .ui-panel-content,
+:host ::ng-deep .issue-filter-panel .p-panel-content {
+  border: 0;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 88% -18%, rgba(42, 141, 129, 0.2), transparent 44%),
+    radial-gradient(circle at 6% 14%, rgba(12, 70, 90, 0.08), transparent 36%),
+    #f5f8fb;
+}
+
+.issue-filter-shell {
+  width: 100%;
+}
+
+.issue-filter-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(320px, 2fr) minmax(260px, 1.1fr) minmax(230px, 0.9fr);
+  align-items: start;
+}
+
+.issue-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #d8e4ee;
+  border-radius: 12px;
+  box-shadow: 0 9px 18px rgba(20, 64, 100, 0.07);
+  padding: 14px;
+}
+
+.issue-card-title {
+  font-family: 'Trebuchet MS', 'Segoe UI', Tahoma, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #154663;
+  letter-spacing: 0.25px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e5eef5;
+  padding-bottom: 8px;
+}
+
+.issue-card-wide {
+  min-height: 100%;
+}
+
+.issue-card-compact {
+  display: flex;
+  flex-direction: column;
+}
+
+.issue-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.issue-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.issue-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #254357;
+  letter-spacing: 0.15px;
+}
+
+.issue-field-full {
+  grid-column: 1 / -1;
+}
+
+.issue-inline-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #335261;
+}
+
+.issue-radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.issue-radio-row label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #254357;
+}
+
+.issue-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+:host ::ng-deep .issue-field .ui-dropdown,
+:host ::ng-deep .issue-field .p-dropdown,
+:host ::ng-deep .issue-field .ui-calendar,
+:host ::ng-deep .issue-field .p-calendar {
+  width: 100%;
+}
+
+:host ::ng-deep .issue-field textarea,
+:host ::ng-deep .issue-field .ui-inputtext,
+:host ::ng-deep .issue-field .p-inputtext,
+:host ::ng-deep .issue-field .ui-dropdown-label,
+:host ::ng-deep .issue-field .p-dropdown-label {
+  font-size: 12px;
+}
+
+:host ::ng-deep .issue-action-grid .ui-button,
+:host ::ng-deep .issue-action-grid .p-button {
+  width: 100%;
+}
+
+:host ::ng-deep .issue-action-grid .ui-button .ui-button-text,
+:host ::ng-deep .issue-action-grid .p-button .p-button-label {
+  font-weight: 600;
+}
+
+:host ::ng-deep .p-tabview {
+  margin-top: 14px;
+}
+
+.cr-report-wrapper {
+  font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+  font-size: 12px;
+  color: #1a1a1a;
+  background: #fff;
+  padding: 16px 20px;
+}
+
+/* ---- Report Header ---- */
+.cr-report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-top: 4px solid #1e3a5f;
+  border-bottom: 3px double #1e3a5f;
+  padding: 12px 0;
+  margin-bottom: 14px;
+}
+
+.cr-header-left {
+  flex: 1;
+}
+
+.cr-header-right {
+  text-align: right;
+  padding-left: 24px;
+  white-space: nowrap;
+}
+
+.cr-report-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e3a5f;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+
+.cr-report-params {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.7;
+}
+
+.cr-print-date {
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+}
+
+.cr-record-count {
+  font-size: 11px;
+  color: #777;
+  margin-top: 4px;
+}
+
+/* ---- Data Table ---- */
+.cr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.cr-th {
+  background-color: #1e3a5f;
+  color: #ffffff;
+  padding: 9px 11px;
+  border: 1px solid #15304f;
+  font-weight: 600;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+.cr-th-left   { text-align: left; }
+.cr-th-right  { text-align: right; }
+.cr-th-center { text-align: center; }
+
+.cr-td {
+  padding: 6px 11px;
+  border: 1px solid #c5d4e8;
+  vertical-align: middle;
+  line-height: 1.4;
+}
+
+.cr-td-right  { text-align: right; }
+.cr-td-center { text-align: center; }
+
+/* Alternating row colour */
+.cr-row-even {
+  background-color: #edf3fb;
+}
+
+tbody tr:hover td {
+  background-color: #d0e6ff !important;
+  cursor: default;
+  transition: background-color 0.15s ease;
+}
+
+/* ---- Totals / Footer Row ---- */
+.cr-totals-row td {
+  background-color: #cfe0f5;
+  border-top: 2px solid #1e3a5f;
+  border-bottom: 2px solid #1e3a5f;
+  padding: 7px 11px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.cr-tf {
+  padding: 7px 11px;
+  border: 1px solid #c5d4e8;
+}
+
+.cr-tf-label {
+  color: #1e3a5f;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+}
+
+/* ---- Empty State ---- */
+.cr-no-data {
+  text-align: center;
+  padding: 36px;
+  color: #aaa;
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+
+/* ---- Report Footer ---- */
+.cr-report-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 8px;
+  border-top: 1px solid #c5d4e8;
+  font-size: 10.5px;
+  color: #999;
+  font-style: italic;
+}
+
+@media (max-width: 1240px) {
+  .issue-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .issue-card-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 860px) {
+  :host ::ng-deep .issue-filter-panel .ui-panel-content,
+  :host ::ng-deep .issue-filter-panel .p-panel-content {
+    padding: 12px;
+  }
+
+  .issue-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .issue-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .issue-action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-report-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cr-header-right {
+    text-align: left;
+    padding-left: 0;
+    white-space: normal;
+  }
+}

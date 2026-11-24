@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="SRsummary.css">
+    <title> Sales Reprt Summary </title>
+</head>
+
+<body>
+    <div class="contain">
+        <div class="header">
+            <h1>INSPIREA TRADING</h1>
+            <img src="C:\Users\LAPIFY\Downloads\logoo (1).jpg" alt="Logo" class="logo">
+        </div>
+    </div>
+    <div class="seq">
+        <h4>Address:</h4>
+        <h4>Tel:</h4>
+        <h4>Fax:</h4>
+        <h4>Email:</h4>
+    </div>
+    <h2>Sales Report Summary</h2>
+    <div class="rounded-table">
+        <table id="sales">
+            <tr>
+                <th>SI No</th>
+                <th>Voucher No.</th>
+                <th>Voucher Date</th>
+                <th>Customer </th>
+                <th>P.O No.</th>
+                <th>Job No.</th>
+                <th>Gross Amt.</th>
+                <th>Discount</th>
+                <th>Vat Amount</th>
+                <th>Round A</th>
+                <th>Net Amt.</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr *ngFor="let _ of [].constructor(getEmptyRowCount(savedSalesVoucher?.salesVoucherDetails?.length)); let i = index">
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+            <p class="total">Total</p>
+
+</body>
+
+</html>

@@ -1,0 +1,587 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      icon="fa fa-plus"
+      class="ui-button-info"
+      (click)="newEntry()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+      [disabled]="!btnFlag.edit"
+      (click)="edit()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Save"
+      icon="fa fa-floppy-o"
+      (click)="submitDamageEntry()"
+      class="ui-button-success"
+      [label]="btnFlag?.save == true ? 'Save' : 'Update'"
+    ></button>
+    <!-- <button pButton type="button" label="Update" icon="fa fa-floppy-o"
+            class="ui-button-warning" *ngIf="btnFlag.update" [disabled]='btnFlag.edit'></button> -->
+    <button
+      pButton
+      type="button"
+      label="List"
+      icon="fa fa-list"
+      class="ui-button-info"
+      (click)="displayDamageEntryListing()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="delete"
+      icon="fa fa-ban"
+      (click)="delete()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      icon="fa fa-ban"
+      (click)="cancelAll()"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right flexSearch">
+    <div class="ui-inputgroup flexSearch">
+      <input type="text" pInputText placeholder="Search" />
+      <button pButton type="button" icon="pi pi-search"></button>
+    </div>
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.edit"
+      label="Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="displayPrint()"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+    <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="damageEntryFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Damage Entry Details' | translate">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <p-panel [header]="'Damage Entry' | translate">
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-2" for="account">
+                <b>{{ "Voucher No." | translate }}</b>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <input
+                  [style]="{ width: '100%' }"
+                  id="openQty"
+                  formControlName="voucherNo"
+                  pInputText
+                  disabled
+                />
+                <div
+                  class="error"
+                  *ngIf="f.voucherNo.touched && f.voucherNo.invalid"
+                >
+                  <span>Voucher No is Mandatory Field*</span>
+                </div>
+              </div>
+              <div class="p-col-12 p-md-2" for="account">
+                <b>{{ "Voucher Date" | translate }}</b>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  class="w-100"
+                  useUtc
+                  formControlName="voucherDate"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-2" for="account">
+                <b>{{ "Location" | translate }}</b>
+              </div>
+              <div class="p-col-12 p-md-4" for="account">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="location"
+                  [options]="locationList"
+                >
+                </p-dropdown>
+              </div>
+              <div class="p-col-12 p-md-2" for="account">
+                <b>{{ "Narration" | translate }}</b>
+              </div>
+              <div class="p-col-12 p-md-4" for="account">
+                <textarea
+                  style="min-height: 80px; width: 100%; margin-top: 5px"
+                  formControlName="Narration"
+                  pInputTextarea
+                ></textarea>
+                <div
+                  class="error"
+                  *ngIf="f.Narration.touched && f.Narration.invalid"
+                >
+                  <span>Narration is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="grid">
+              <hot-table
+                [hotId]="hotid"
+                [licenseKey]="licensekey"
+                [settings]="damageEntry"
+              >
+              </hot-table>
+            </div>
+            <div class="p-grid p-ai-center" style="margin-top: 2vh">
+              <div class="p-col-12 p-md-9"></div>
+              <div class="p-col-12 p-md-1" for="account">
+                <b>{{ "Total" | translate }}</b>
+              </div>
+              <div class="p-col-2 p-md-2 p-lg-2">
+                <input
+                  [style]="{ width: '100%' }"
+                  id="total"
+                  formControlName="totalAmount"
+                  type="number"
+                  pInputText
+                />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <p-panel [header]="'Account Details' | translate">
+            <hot-table
+              [hotId]="hotidAccounts"
+              [licenseKey]="'non-commercial-and-evaluation'"
+              [settings]="accountDetails"
+            >
+            </hot-table>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<app-lookup
+  [header]="'Look Up item'"
+  [dataArry]="dataList"
+  [selectedItem]="selectItem"
+  [columns]="lookupGridColumns"
+  (selectItemEvent)="selectedItem($event)"
+  (exitEvent)="exit($event)"
+  [cell]="activeRow"
+  (clearEvent)="clear($event)"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'"
+  [(show)]="showSalesLookUp"
+></app-lookup>
+
+<p-dialog
+  header="Damage Entry List"
+  [(visible)]="displayListing"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="damageEntryResponse"
+    [columns]="listingCols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th
+          *ngFor="let col of listingCols"
+          [pSortableColumn]="col.field"
+          style="text-align: center"
+        >
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr *ngIf="item.damageMasterDelStatus != true">
+        <td style="text-align: center">
+          {{ item?.damageMasterVoucherNumber }}
+        </td>
+        <td style="text-align: center">
+          {{ item?.damageMasterVdate | date : "dd/MM/yyyy" }}
+        </td>
+        <td style="text-align: center">{{ item?.damageMasterNarration }}</td>
+        <td style="text-align: center">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSaveddamageMasterDetails(item?.damageMasterId);
+              displayListing = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<!-- <p-dialog header="Damage Entry Listing" [(visible)]="displayListing" [modal]="true" [style]="{width: '50%'}"
+    [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <p-table #deList [value]="damageEntryResponse" [columns]="listingCols" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+                <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Global Filter"
+                    (input)="deList.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let col of listingCols" [pSortableColumn]="col.field">{{col.header|translate}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item?.damageMasterVoucherNumber}}</td>
+                <td>{{item?.damageMasterVdate}}</td>
+                <td>{{item?.damageMasterNarration}}</td>
+                <td style="text-align: center;">
+                    <button pButton type="button" class="ui-button-info" icon="fa fa-pencil"
+                        (click)="toggleEditable(item)"></button>
+                    <button pButton type="button" class="ui-button-danger" icon="fa fa-trash"
+                        (click)="deleteDamageEntry(item)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog> -->
+
+<p-dialog
+  header="Unit List"
+  [(visible)]="unitListing"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #uList
+    [value]="unitList"
+    [columns]="unitCols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="uList.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of unitCols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{ item.unitMasterUnitShortName }}</td>
+        <td>
+          <a href="javascript:void(0)" (click)="selectUnit(item)">{{
+            item.unitMasterUnitFullName
+          }}</a>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-dialog
+  header="Price List"
+  [(visible)]="priceListing"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #prList
+    [value]="priceArrayList"
+    [columns]="priceCols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="prList.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of priceCols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>Unit Price :</td>
+        <td>
+          <a href="javascript:void(0)" (click)="selectPrice(item)">{{
+            item
+          }}</a>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="showPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+    class="ui-button-success"
+  ></button>
+  <div class="container w-100" style="justify-content: center" id="print">
+    <div class="card" style="border: 2px double #000; margin: auto; width: 85%">
+      <div class="p-grid">
+        <div
+          class="p-col-12"
+          style="justify-content: center; align-items: center; display: flex"
+        >
+          <!-- <img style="width: 400px;" src="../../../../../assets/Images/logo-2.png" /> -->
+          <img
+            style="width: 400px"
+            *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+            class="squreImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+          <img
+            style="width: 400px"
+            *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+            class="rectImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+        </div>
+      </div>
+      <h1
+        style="
+          text-align: center;
+          font-weight: 800;
+          font-size: 22pt;
+          margin-left: 0% !important;
+          margin-right: 0% !important;
+        "
+      >
+        {{ companyDetails?.stationMasterStationName }}
+      </h1>
+      <h2 style="text-align: center; font-weight: 700; font-size: 20pt">
+        Damage Entry
+      </h2>
+      <div class="p-grid" style="margin-right: 4vh; margin-left: 4vh">
+        <div class="p-col-12">
+          <p-panel style="font-size: 12pt">
+            <p-header>
+              <b style="font-size: 16pt; font-weight: 600pt">Company Details</b>
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-4">Telephone</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-7">
+                {{ companyDetails?.stationMasterTele1 }}
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-4">Fax</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-7">{{ companyDetails?.stationMasterFax }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-4">Email</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-7">
+                {{ companyDetails?.stationMasterEmail }}
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-4">Address</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-7">
+                {{ companyDetails?.stationMasterAddress }}
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-4">PO Box / City</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-7">{{ companyDetails?.stationMasterCity }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-4">Website</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-7">
+                {{ companyDetails?.stationMasterWebSite }}
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-4">Country</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-7">
+                {{ companyDetails?.stationMasterCountry }}
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid" style="margin-right: 4vh; margin-left: 4vh">
+        <div class="p-col-12">
+          <table class="printingTable">
+            <thead>
+              <tr>
+                <th>Sr.</th>
+                <th>Material Name</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let item of savedDamegeEnter?.damageDetails;
+                  let i = index
+                "
+              >
+                <td style="text-align: center">{{ i + 1 }}</td>
+                <td style="text-align: left">
+                  {{ getItemById(item?.damageDetailsMaterialId) }}
+                </td>
+                <td style="text-align: center">{{ item?.damageDetailsQty }}</td>
+                <td style="text-align: center">
+                  {{ getUnitsById(item?.damageDetailsUnitId) }}
+                </td>
+                <td style="text-align: center">
+                  {{ item?.damageDetailsAmount }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="p-grid" style="margin-right: 4vh; margin-left: 4vh">
+        <div class="p-col-12">
+          <div class="p-grid">
+            <div class="p-col-8"></div>
+            <div class="p-col-4">
+              <p-panel>
+                <p-header>
+                  <b>Summary</b>
+                </p-header>
+                <div class="p-grid">
+                  <div class="p-col-8">Total Amount :</div>
+                  <div class="p-col-4">{{ totalAmount }}</div>
+                </div>
+              </p-panel>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>
+
+<!-- <p-toast></p-toast> -->
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

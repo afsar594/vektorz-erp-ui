@@ -1,0 +1,41 @@
+h2{
+    padding-top: 25px;
+    text-align: center;
+    margin-top: 7%;
+    font-family:"Sans-serif";
+    font-size: 1.5rem;
+    margin-bottom: 3%;
+ }
+#pvreport {
+    font-family: Arial, Helvetica, sans-serif;
+ 
+    border-collapse:separate;
+    border:solid black 1px;
+    border-radius:6px;
+    width: 88%;
+    margin-left: 8%;
+margin-bottom: 0%;
+    margin-top: 2px;
+    border-radius: 10px;
+     border: 2.5px solid rgb(163, 165, 165);
+  }
+  
+  #pvreport td, #pvreport th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    
+  }
+  
+  #pvreport tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #pvreport tr:hover {background-color: #ddd;}
+  
+  #pvreport th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dfe4e3;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    
+  }

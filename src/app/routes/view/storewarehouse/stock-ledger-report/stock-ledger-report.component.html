@@ -1,0 +1,919 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      [disabled]="btnFlag.edit || !Permission?.Edit"
+      label="Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="btnFlag.cancel"
+      class="ui-button-danger"
+      label="Cancel"
+      (click)="onCancel()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="fa fa-floppy-o"
+      [disabled]="btnFlag.save || !Permission?.Add"
+      class="ui-button-success"
+      (click)="saveStockLedgerReport()"
+      label="Save"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="btnFlag.list || !Permission?.View"
+      label="List"
+      icon="fa fa-list"
+      class="ui-button-info"
+      (click)="getStockLedgerRpt()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="btnFlag.delete || !Permission?.Delete"
+      class="ui-button-danger"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right" style="display: flex">
+    <div class="ui-inputgroup">
+      <input type="text" pInputText placeholder="Search" />
+      <button
+        type="button"
+        pButton
+        icon="pi pi-search"
+        styleClass="p-button-warn"
+      ></button>
+    </div>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      (click)="displayPrint()"
+      class="ui-button-success"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+    <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+  </div>
+</p-toolbar>
+<p-tabView>
+  <p-tabPanel header="Report">
+    <div class="card card-w-title" [formGroup]="ItemFormGroup">
+      <div class="p-grid">
+        <div class="p-col-8 p-md-8 p-lg-8">
+          <div class="p-grid">
+            <div class="p-col-6 p-md-6 p-lg-6">
+              <div class="ui-inputgroup">
+                <label class="p-md-3 p-sm-3 p-lg-3" for="itemGroup">{{
+                  "Item Group" | translate
+                }}</label>
+                <div class="p-sm-9 p-md-9 p-lg-9">
+                  <div class="p-inputgroup w-100">
+                    <input
+                      pInputText
+                      formControlName="ItemGroup"
+                      #itemGroup
+                      id="itemGroup"
+                      [(ngModel)]="selectedItem.Item_Master_Item_ID"
+                    />
+                    <button
+                      pButton
+                      type="button"
+                      (click)="showItemGroups()"
+                      icon="pi pi-search"
+                    ></button>
+                  </div>
+                  <div
+                    class="error"
+                    *ngIf="f.ItemGroup.touched && f.ItemGroup.invalid"
+                  >
+                    <span>Item Group is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-col-6 p-md-6 p-lg-6">
+              <div class="ui-inputgroup">
+                <label class="p-sm-3 p-md-3 p-lg-3 dev" for="location">{{
+                  "Location" | translate
+                }}</label>
+                <div class="p-sm-9 p-md-9 p-lg-9">
+                  <div class="p-inputgroup w-100">
+                    <input
+                      pInputText
+                      [(ngModel)]="selectedLocation"
+                      formControlName="Location"
+                      id="location"
+                    />
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-search"
+                      (click)="getAllLocations()"
+                    ></button>
+                  </div>
+                  <div
+                    class="error"
+                    *ngIf="f.Location.touched && f.Location.invalid"
+                  >
+                    <span>Location is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-6 p-md-6 p-lg-6">
+              <div class="ui-inputgroup">
+                <label class="p-md-3 p-sm-3 p-lg-3" for="brand">{{
+                  "Brand" | translate
+                }}</label>
+                <div class="p-sm-9 p-md-9 p-lg-9">
+                  <div class="p-inputgroup w-100">
+                    <input pInputText formControlName="Brand" id="brand" />
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-search"
+                      (click)="getAllBrands()"
+                    ></button>
+                  </div>
+                  <div class="error" *ngIf="f.Brand.touched && f.Brand.invalid">
+                    <span>Brand is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-col-6 p-md-6 p-lg-6">
+              <div class="ui-inputgroup">
+                <label class="p-sm-3 p-md-3 p-lg-3 dev" for="itemName">{{
+                  "Item" | translate
+                }}</label>
+                <div class="p-sm-9 p-md-9 p-lg-9">
+                  <div class="p-inputgroup w-100">
+                    <input
+                      pInputText
+                      formControlName="ItemName"
+                      id="itemName"
+                      [(ngModel)]="selectedItem.Item_Master_Item_Name"
+                    />
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-search"
+                      (click)="showItems()"
+                    ></button>
+                  </div>
+                  <div
+                    class="error"
+                    *ngIf="f.ItemName.touched && f.ItemName.invalid"
+                  >
+                    <span>Item Name is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-6 p-md-6 p-lg-6">
+              <div class="ui-inputgroup">
+                <label class="p-sm-3 p-md-3 p-lg-3" for="job">{{
+                  "Job" | translate
+                }}</label>
+                <div class="p-sm-9 p-md-9 p-lg-9">
+                  <div class="p-inputgroup w-100">
+                    <input
+                      pInputText
+                      [(ngModel)]="selectedJob"
+                      formControlName="Job"
+                      id="job"
+                    />
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-search"
+                      (click)="getAllJobs()"
+                    ></button>
+                  </div>
+                  <div class="error" *ngIf="f.Job.touched && f.Job.invalid">
+                    <span>Job is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-col-2 p-md-2 p-lg-2"></div>
+            <div class="p-col-3 p-md-3 p-lg-3 p-2">
+              <p-radioButton
+                name="dateType"
+                inputId="monthly"
+                formControlName="DateType"
+                value="Monthly"
+                label="No Group"
+              >
+              </p-radioButton>
+            </div>
+            <div class="p-col-1 p-md-1 p-lg-1" for="dateType">
+              <p-radioButton
+                name="dateType"
+                inputId="yearly"
+                formControlName="DateType"
+                value="Yearly"
+                label="Job"
+              >
+              </p-radioButton>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-4 p-md-4 p-lg-4">
+          <div class="p-grid">
+            <div class="p-col-7 p-md-7 p-lg-7">
+              <p-radioButton
+                name="detailType"
+                label="Details"
+                inputId="details"
+                formControlName="DetailsType"
+                value="Details"
+              >
+              </p-radioButton>
+            </div>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <p-radioButton
+                name="detailType"
+                label="Summary"
+                inputId="summary"
+                formControlName="DetailsType"
+                value="Summary"
+              >
+              </p-radioButton>
+            </div>
+          </div>
+          <p-panel>
+            <p-header>
+              <p-checkbox label="By Date"></p-checkbox>
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-3 p-md-3 p-lg-3" for="dateTo">
+                {{ "Date To" | translate }}
+              </div>
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [showIcon]="true"
+                  [(ngModel)]="datedTo"
+                  formControlName="DateTo"
+                  id="dateTO"
+                >
+                </p-calendar>
+                <div class="error" *ngIf="f.DateTo.touched && f.DateTo.invalid">
+                  <span>Date To is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-3 p-md-3 p-lg-3" for="dateFrom">
+                {{ "Date From" | translate }}
+              </div>
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [showIcon]="true"
+                  [(ngModel)]="datedFrom"
+                  formControlName="DateFrom"
+                  id="dateFrom"
+                >
+                </p-calendar>
+                <div
+                  class="error"
+                  *ngIf="f.DateFrom.touched && f.DateFrom.invalid"
+                >
+                  <span>Date From is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid inputGroup">
+        <div class="p-col-2 p-md-12 p-lg-4"></div>
+        <div class="p-col-2 p-md-12 p-lg-2">
+          <button
+            pButton
+            class="ui-button-info"
+            (click)="getFilteredStockLedgerRpt()"
+            label="Submit"
+          ></button>
+          <button
+            pButton
+            class="ui-button-warning"
+            (click)="clearForm()"
+            label="Clear"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-w-title">
+      <p-panel>
+        <p-header>
+          {{ gridHeader | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [data]="dataset"
+            [licenseKey]="licensekey"
+            [settings]="stockLedgerReport"
+          ></hot-table>
+        </div>
+      </p-panel>
+      <div class="p-grid">
+        <div class="p-col-9"></div>
+        <div class="p-col-3">
+          <p-panel>
+            <p-header> Summary </p-header>
+            <div class="p-grid">
+              <div class="p-col-7">Total Opening Qty</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalOpenQty }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Opening Value</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalOpenValue }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Recvd Qty</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalRcvdQty }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Recvd Value</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalRcvdValue }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Issued Qty</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalIssuedQty }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Issued Value</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalIssuedValue }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Closed Qty</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalClosedQty }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Closed Value</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalClosedValue }}</div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-7">Total Balance</div>
+              <div class="p-col-1">:</div>
+              <div class="p-col-4">{{ totalBalance }}</div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </div>
+  </p-tabPanel>
+</p-tabView>
+<p-dialog
+  header="Item Groups"
+  [(visible)]="showItemGroupList"
+  [modal]="true"
+  [style]="{ width: '25%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-danger"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <div class="p-grid p-2">
+      <input
+        [style]="{ width: '100%', margin: '5px 2px 5px 2px' }"
+        pInputText
+        type="text"
+        placeholder="Type to Search"
+      />
+    </div>
+    <div class="card">
+      <span
+        *ngFor="let item of itemGroupList"
+        (click)="toggleActive(item.itemId)"
+      >
+        <div class="customListHover" id="{{ item.itemId }}">
+          <label>{{ item.itemName }}</label>
+          <i
+            class="fa fa-check-square"
+            *ngIf="item.checked"
+            style="float: right; color: dodgerblue"
+          ></i>
+          <i
+            class="fa fa-square-o"
+            *ngIf="!item.checked"
+            style="float: right; color: dodgerblue"
+          ></i>
+        </div>
+      </span>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Locations"
+  [(visible)]="showLocationList"
+  [modal]="true"
+  [style]="{ width: '25%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-danger"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <div class="p-grid p-2">
+      <input
+        [style]="{ width: '100%', margin: '5px 2px 5px 2px' }"
+        pInputText
+        type="text"
+        placeholder="Type to Search"
+      />
+    </div>
+    <div class="card">
+      <span
+        *ngFor="let item of locationList"
+        (click)="
+          toggleActiveLoc(
+            item.locationMasterLocationId,
+            item.locationMasterLocationName
+          )
+        "
+      >
+        <div class="customListHover" id="{{ item.locationMasterLocationId }}">
+          <label>{{ item.locationMasterLocationName }}</label>
+        </div>
+      </span>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Jobs"
+  [(visible)]="showJobList"
+  [modal]="true"
+  [style]="{ width: '40%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-danger"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <p-table
+      #dt1Jobs
+      [value]="jobList"
+      [columns]="jobCols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dt1Jobs.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of jobCols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td
+            [style]="{ cursor: 'pointer' }"
+            (click)="selectJob(item.jobMasterJobName)"
+          >
+            {{ item.jobMasterJobName }}
+          </td>
+          <td>{{ item.jobMasterJobNumber }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Brands"
+  [(visible)]="showBrandList"
+  [modal]="true"
+  [style]="{ width: '40%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-danger"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <p-table
+      #dt2Brands
+      [value]="brandList"
+      [columns]="brandCols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dt2Brands.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of brandCols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+        <tr (click)="selectBrand(item)">
+          <td>{{ item.vendorMasterVendorId }}</td>
+          <td>{{ item.vendorMasterVendorName }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Items"
+  [(visible)]="showItemList"
+  [modal]="true"
+  [style]="{ width: '80%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show"
+        icon="fa fa-search"
+        class="ui-button-danger"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Add"
+        icon="fa fa-plus"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Ok"
+        icon="fa fa-check"
+        class="ui-button-success"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card">
+    <p-table
+      #dt3Items
+      [value]="itemList"
+      [columns]="cols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dt3Items.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.itemMasterItemId }}</td>
+          <td [style]="{ cursor: 'pointer' }" (click)="selectItem(item)">
+            {{ item.itemMasterItemName }}
+          </td>
+          <td>{{ item.itemMasterBarcode }}</td>
+          <td>{{ item.itemMasterPartNo }}</td>
+          <td>{{ item.stock }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Print preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '80%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Print"
+        icon="fa fa-print"
+        class="ui-button-success"
+        (click)="printAsPDF()"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card" id="printPDF">
+    <h1 style="font-weight: 700; font-size: 2rem; text-align: center">
+      {{ companyDetails?.stationMasterStationName }}
+    </h1>
+    <h2 style="font-weight: 600; font-size: 1.75rem; text-align: center">
+      Stock Ledger Report List
+    </h2>
+    <p-panel>
+      <p-header>Comapny Details</p-header>
+      <div class="p-grid">
+        <div class="p-col-2">Comapny Address :</div>
+        <div class="p-col-10">{{ companyDetails?.stationMasterAddress }}</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-2">Company Telephone :</div>
+        <div class="p-col-10">{{ companyDetails?.stationMasterTele1 }}</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-2">Company Fax :</div>
+        <div class="p-col-10">{{ companyDetails?.stationMasterFax }}</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-2">Company Email Address :</div>
+        <div class="p-col-10">{{ companyDetails?.stationMasterEmail }}</div>
+      </div>
+    </p-panel>
+    <p-panel>
+      <p-header> Stock Ledger Report List </p-header>
+      <table class="printingTable">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Part No</th>
+            <th>Material</th>
+            <th>Open Qty</th>
+            <th>Open value</th>
+            <th>Recvd Qty</th>
+            <th>Recvd Value</th>
+            <th>Issued Qty</th>
+            <th>Issued Value</th>
+            <th>Closed Qty</th>
+            <th>Closed Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of dataset; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.item_Id }}</td>
+            <td>{{ item.item_Name }}</td>
+            <td>{{ item.openQty }}</td>
+            <td>{{ item.openQtyAmount }}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </p-panel>
+    <div class="p-grid">
+      <div class="p-col-9"></div>
+      <div class="p-col-3">
+        <p-panel>
+          <p-header> Summary </p-header>
+          <div class="p-grid">
+            <div class="p-col-7">Total Opening Qty</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalOpenQty }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Opening Value</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalOpenValue }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Recvd Qty</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalRcvdQty }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Recvd Value</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalRcvdValue }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Issued Qty</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalIssuedQty }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Issued Value</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalIssuedValue }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Closed Qty</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalClosedQty }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Closed Value</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalClosedValue }}</div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-7">Total Balance</div>
+            <div class="p-col-1">:</div>
+            <div class="p-col-4">{{ totalBalance }}</div>
+          </div>
+        </p-panel>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="displayMaximizable"
+>
+</p-confirmDialog>

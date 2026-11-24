@@ -1,0 +1,108 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" (click)="showDetail()" label="Search" icon="pi pi-search"
+      class="ui-button-info"></button>
+    <button pButton type="button" (click)="cancel()" label="Cancel" icon="pi pi-times"
+      class="ui-button-warning"></button>
+
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" label="Print" icon="fa fa-print" class="ui-button-success"></button>
+    <button pButton type="button" label="Excel" icon="fa fa-file-excel-o" class="ui-button-success"></button>
+    <button pButton type="button" class="ui-button-danger" (click)="ExitNew()" label="Exit"
+      icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="JCRform">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Job Cost Report ' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-5">
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-3" for="account">
+              <b>{{ "Job" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-9">
+              <!-- <input readonly pInputText class="w-100"> -->
+              <p-dropdown filter="true" [options]="jobList" [showClear]="true" [style]="{ width: '100%' }"
+                formControlName="jobNo">
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-3" for="account">
+              <b>{{ "Cost Center" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-9">
+              <p-dropdown filter="true" [options]="costcenterList" [showClear]="true" [style]="{ width: '100%' }"
+                formControlName="costCenterId">
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              <!-- <p-checkbox label="By Date"></p-checkbox> -->
+              <p-checkbox formControlName="isdateSelected" [binary]="true" label="ByDate"></p-checkbox>
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">
+                <b>{{ "Date From" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-9">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [yearNavigator]="true" yearRange="2000:2040" showIcon="true" useUtc formControlName="dateFrom"
+                  [disabled]="!JCRform.get('isdateSelected')?.value">
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">
+                <b>{{ "Date To" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-9">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [yearNavigator]="true" yearRange="2000:2040" showIcon="true" useUtc formControlName="dateTO"
+                  [disabled]="!JCRform.get('isdateSelected')?.value">
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-12">
+              <p-radioButton name="viewType" value="detail" label="Detail" formControlName="viewType">
+              </p-radioButton>
+            </div>
+            <div class="p-col-12 p-md-12">
+              <p-radioButton name="viewType" value="summary" label="Summary" formControlName="viewType">
+              </p-radioButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Job Cost Report Detail' | translate">
+        <div class="grid">
+          <div class="p-col-12"
+            *ngIf="JCRform.get('viewType')?.value == 'summary' ||JCRform.get('viewType')?.value == null">
+            <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey" [settings]="JCSummary">
+            </hot-table>
+          </div>
+
+          <div class="p-col-12" *ngIf="JCRform.get('viewType')?.value == 'detail'">
+            <hot-table [hotId]="hotid1" [data]="dataset1" [licenseKey]="licensekey" [settings]="JCDetail">
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>

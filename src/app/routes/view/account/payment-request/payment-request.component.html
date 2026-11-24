@@ -1,0 +1,248 @@
+<app-page-header [nav]="[
+    { label: 'account' | translate },
+    { label: 'payment Request' | translate }
+  ]" [title]="title | translate"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button pButton type="button" label="New" (click)="new()" [disabled]="!btnFlag?.new" icon="pi pi-plus"></button>
+    <button pButton type="button" label="Edit" (click)="edit()" [disabled]="!btnFlag?.edit || !Permission?.Edit"
+      icon="fa fa-pencil" class="ui-button-success"></button>
+    <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag?.cancel" label="Cancel"
+      (click)="cancel()" icon="fa fa-ban"></button>
+    <button pButton type="button" [label]="btnFlag?.save == true ? 'Save' : 'Update'" [disabled]="!Permission?.Add"
+      (click)="savePaymentRequest()" icon="fa fa-floppy-o" class="ui-button-success"></button>
+    <button pButton type="button" [label]="'List' | translate" icon="fa fa-list" [disabled]="!Permission?.View"
+      (click)="showMaximizableDialog()" class="ui-button-info"></button>
+    <button pButton type="button" class="ui-button-danger" (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete" [label]="'Delete' | translate" icon="fa fa-trash"></button>
+  </div>
+
+  <div class="ui-toolbar-group-right p-d-flex p-flex-wrap responsive-toolbar" style="display: flex">
+    <div class="ui-inputgroup">
+      <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
+      <button pButton type="button" (click)="GetSavedPaymentDetails(search)" icon="pi pi-search"></button>
+    </div>
+    <button pButton type="button" label="Print Preview" [disabled]="!btnFlag?.printPreview" icon="fa fa-print"
+      class="ui-button-success"></button>
+
+    <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"></button>
+
+    <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="paymentRequestFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Payment Request' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              {{ "Payment Voucher Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Voucher No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-9">
+                  <input class="w-100" readonly formControlName="paymentRequestVoucherNo" id="voucherno" pInputText />
+                  <div class="error" *ngIf="f.paymentRequestDate.errors"></div>
+                </div>
+                <p-message severity="error" *ngIf="
+                    f.paymentRequestVoucherNo?.errors?.Exist && !btnFlag.update
+                  " text="Voucher No is exist"></p-message>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherdate">{{
+                  "Voucher Date" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-9">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" class="w-100" [(ngModel)]="date1" [showIcon]="true"
+                    useUtc formControlName="paymentRequestDate" id="voucherdate">
+                  </p-calendar>
+
+                  <div class="error" *ngIf="
+                      f.paymentRequestDate.errors &&
+                      (f.paymentRequestDate.dirty ||
+                        f.paymentRequestDate.touched)
+                    ">
+                    <span *ngIf="f.paymentRequestDate.errors.required">
+                      Voucher date is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="narration">{{
+                  "Narration" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-9">
+                  <textarea class="w-100" rows="3" formControlName="paymentRequestNarration" id="narration"
+                    pInputText></textarea>
+
+                  <div class="error" *ngIf="
+                      f.paymentRequestNarration.errors &&
+                      (f.paymentRequestNarration.dirty ||
+                        f.paymentRequestNarration.touched)
+                    ">
+                    <span *ngIf="f.paymentRequestNarration.errors.required">
+                      Narration is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <div class="p-col-12 p-md-12">
+        <p-panel>
+          <p-header>
+            {{ "Debit Account Details" | translate }}
+          </p-header>
+          <div class="p-grid">
+            <div class="p-col-12 tbl-maxheight">
+              <div class="p-col-12 tbl-maxheight">
+                <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="paymentvoucherentry">
+                </hot-table>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-1" for="total">
+              <b>{{ "Total" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-4">
+              <input type="number" readonly pInputText id="total" formControlName="paymentRequestDbAmount" />
+            </div>
+          </div>
+        </p-panel>
+        <app-lookup [header]="'Look Up'" [dataArry]="dataList" [selectedItem]="selectItem" [columns]="lookupGridColumns"
+          (selectItemEvent)="selectaccount($event)" (exitEvent)="exit($event)" [cell]="activeRow"
+          (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" [tableheader]="'Account List'"
+          [(show)]="showAccountLookUp">
+        </app-lookup>
+
+        <app-lookup [header]="'Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference"
+          [dataArry]="dataList" (exitEvent)="exit($event)" (clearEvent)="clear($event)" [formControlName]="control"
+          [columns]="lookupGridColumns" (selectItemEvent)="selectControl($event)" (hideDialogEvent)="hide($event)"
+          [tableheader]="'Account List'" [(show)]="formControlLookUp">
+        </app-lookup>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog header="Payment Request List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button type="submit" pButton label="Find" (click)="getAllPaymentVouchrs()" icon="pi pi-search"></button>
+        <button pButton type="button" label="Clear" icon="fa fa-pencil" (click)="ClearFilter()"
+          class="ui-button-success"></button>
+      </p-header>
+      <form [formGroup]="PaymentRequestFilterForm">
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">{{
+                "Voucher No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-10">
+                <input class="w-100" formControlName="paymentRequestNo" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">{{
+                "Account No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-10">
+                <input class="w-100" formControlName="paymentRequestAcNo" pInputText />
+              </div>
+              <!-- <label class="p-col-12 p-md-2" for="account">{{ 'Location/Mobile' | translate }}</label>
+                      <div class="p-col-12 p-md-10">
+                        <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId" [options]="locationList"></p-dropdown>
+                        <div class="error" *ngIf="f.salesVoucherLocationId.errors && (f.salesVoucherLocationId.dirty || f.salesVoucherLocationId.touched)">
+                          <span *ngIf="f.salesVoucherLocationId.errors.required">Location is Mandatory Field*</span>
+                        </div>
+                      </div> -->
+            </div>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox formControlName="isDate" [binary]="true" label="Date Range"></p-checkbox>
+              </p-header>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2">{{
+                  "From Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-10">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="fromDate" [showIcon]="true"
+                    [disabled]="!PaymentRequestFilterForm.get('isDate').value" class="w-100" useUtc></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2">{{
+                  "To Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-10">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="toDate" [showIcon]="true"
+                    [disabled]="!PaymentRequestFilterForm.get('isDate').value" class="w-100" useUtc></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+  <p-table #dt [value]="paymentRequestarry" [columns]="cols" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-pymtVchr>
+      <tr>
+        <td>{{ pymtVchr?.paymentRequestVoucherNo }}</td>
+        <td>{{ pymtVchr?.paymentRequestDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ pymtVchr?.paymentRequestCrAcNo }}</td>
+        <td>{{ getCurrency(pymtVchr?.paymentRequestCurrencyId) }}</td>
+        <td>{{ pymtVchr?.paymentRequestDbAmount?.toFixed(3) }}</td>
+        <td>{{ pymtVchr?.paymentRequestCrAmount?.toFixed(3) }}</td>
+        <td>{{ pymtVchr?.paymentRequestNarration }}</td>
+        <td>{{ pymtVchr?.paymentRequestDbAmount?.toFixed(2) }}</td>
+        <td>{{ pymtVchr?.paymentRequestCrAmount?.toFixed(2) }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedPaymentDetails(pymtVchr.paymentRequestSno);
+              displayMaximizable = false
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>

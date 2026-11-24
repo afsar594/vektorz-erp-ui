@@ -1,0 +1,499 @@
+<div class="matero-page-header">
+  <div class="matero-page-header-inner">
+    <h2 class="matero-page-title">{{ title }}</h2>
+  </div>
+</div>
+<!-- <app-page-header [nav]='[{label: "account"| translate},{label: "Stock Report"| translate}]'
+    [title]='title| translate'></app-page-header> -->
+<p-toolbar>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="New"
+        (click)="New()"
+        class="ui-button-info"
+        icon="fa fa-plus"
+      ></button>
+      <button
+        pButton
+        type="button"
+        (click)="Edit()"
+        [disabled]="!btnFlag.edit"
+        label="Edit"
+        class="ui-button-primary"
+        icon="fa fa-pencil"
+      ></button>
+      <button
+        pButton
+        type="button"
+        (click)="onSave()"
+        [label]="btnFlag?.save == true ? 'Save' : 'Update'"
+        icon="fa fa-floppy-o"
+        class="ui-button-success"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        (click)="showList()"
+        label="List"
+        icon="fa fa-list"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        [disabled]="!btnFlag.delete"
+        label="Delete"
+        (click)="DeleteDocument()"
+        class="ui-button-danger"
+        icon="fa fa-close"
+      ></button>
+
+      <!-- <button pButton type="button" label="Cancel" class=" ui-button-warning" icon="fa fa-ban"
+            icon="fa fa-floppy-o"></button>
+        <button pButton type="button" label="Exit" icon="fa fa-sign-out" class="ui-button-warning"></button> -->
+    </div>
+    <div class="ui-toolbar-group-right">
+      <button
+        pButton
+        type="button"
+        label="Exit"
+        routerLink="/dashboard"
+        icon="fa fa-sign-out"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card card-w-title" [formGroup]="staffdocumentForm">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Documents Entry' | translate">
+        <div class="p-card">
+          <!-- <div class=" p-grid p-ai-center">
+                            <label for="code" class="p-col-12 p-md-2">Code:</label>
+                            <div class="p-col-12 p-md-4">
+                                <input id="code" type="text" pInputText />
+                            </div>
+                            <label for="docType" class="p-col-12 p-md-2">Doc Type:</label>
+                            <div class="p-col-12 p-md-4">
+                                <p-dropdown filter="true" id="docType" [style]="{width:'100%'}"></p-dropdown>
+                            </div>
+                        </div>
+
+                        <div class="  p-grid p-ai-center">
+                            <label for="documentNo" class="p-col-12 p-md-2">Document No:</label>
+                            <div class="p-col-12 p-md-4">
+                                <input id="documentNo" type="text" pInputText />
+                            </div>
+                            <label for="documentRef" class="p-col-12 p-md-2">Document Ref:</label>
+                            <div class="p-col-12 p-md-4">
+                                <input id="documentRef" type="text" pInputText />
+                            </div>
+                        </div>
+
+                        <div class="  p-grid p-ai-center">
+                            <label for="issueDate" class="p-col-12 p-md-2">Issue Date:</label>
+                            <div class="p-col-12 p-md-4">
+                                <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040"
+ useUtc id="issueDate" [showIcon]="true"></p-calendar>
+                            </div>
+                            <label for="expiryDate" class="p-col-12 p-md-2">Expiry Date:</label>
+                            <div class="p-col-12 p-md-4">
+                                <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040"
+ useUtc id="expiryDate" [showIcon]="true"></p-calendar>
+                            </div>
+                        </div> -->
+
+          <!-- <div class="  p-grid p-ai-center">
+                            <label for="status" class="p-col-12 p-md-2">Company:</label>
+                            <div class="p-col-12 p-md-4">
+                                <p-dropdown filter="true" id="company" [style]="{width:'100%'}"></p-dropdown>
+                            </div>
+                            <label for="status" class="p-col-12 p-md-2">Document Status:</label>
+                            <div class="p-col-12 p-md-4">
+                                <p-dropdown filter="true" id="status" [style]="{width:'100%'}"></p-dropdown>
+                            </div> 
+                        </div>
+
+                        <div class="  p-grid p-ai-center">
+                            <label for="remarks" class="p-col-12 p-md-2">Remarks:</label>
+                            <div class="p-col-12 p-md-8">
+                                <textarea id="remarks" pInputTextarea rows="3" cols="30"></textarea>
+                            </div>
+                            <div class="p-col-12 p-md-2">
+                                <p-checkbox label="Close" style="color: brown;"></p-checkbox>
+                            </div>
+                        </div> -->
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl"
+                >Company<span class="required">*</span></label
+              >
+              <!-- <p-dropdown filter="true" [filter]="true" filterValue="fullName" [showClear]="true"
+                                    dataKey="staffId" autoWidth="false" formControlName="companyId" [style]="{'width':'100%'}"
+                                    [options]="companiesList" optionLabel="label">
+                                </p-dropdown> -->
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="companyId"
+                [options]="companiesList"
+              >
+              </p-dropdown>
+              <div class="error" *ngIf="submitted && f.staffId.errors">
+                <span
+                  *ngIf="
+                    submitted && f.staffId.errors && f.staffId.errors.required
+                  "
+                  >Staff is Required</span
+                >
+              </div>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl"
+                >Document Type<span class="required">*</span></label
+              >
+              <!-- <p-dropdown filter="true" [filter]="true" placeholder="Select a Document Type" filterValue="documentType"
+                                    [showClear]="true" dataKey="documentTypeId" autoWidth="false" formControlName="documentTypeId"
+                                    [style]="{'width':'100%'}" [options]="doctypeList" dataKey="documentTypeId"
+                                    optionLabel="label">
+                                </p-dropdown>        -->
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="documentTypeId"
+                [options]="documentTypeList"
+              >
+              </p-dropdown>
+              <div class="error" *ngIf="submitted && f.documentTypeId.errors">
+                <span
+                  *ngIf="
+                    submitted &&
+                    f.documentTypeId.errors &&
+                    f.documentTypeId.errors.required
+                  "
+                  >Document Type is Required</span
+                >
+              </div>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl"
+                >Document Status<span class="required">*</span></label
+              >
+              <!-- <p-dropdown filter="true" [filter]="true" placeholder="Select a Document Status" filterValue="docStatus"
+                                    [showClear]="true" dataKey="docStatusId" autoWidth="false" formControlName="docStatusId"
+                                    [style]="{'width':'100%'}" [options]="docStatusList"
+                                    optionLabel="label">
+                                </p-dropdown> -->
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                formControlName="docStatusId"
+                [options]="documentStatusList"
+              >
+              </p-dropdown>
+              <div class="error" *ngIf="submitted && f.docStatusId.errors">
+                <span
+                  *ngIf="
+                    submitted &&
+                    f.docStatusId.errors &&
+                    f.docStatusId.errors.required
+                  "
+                  >Document Status is Required</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl"
+                >Document No<span class="required">*</span></label
+              >
+              <input
+                type="text"
+                readonly
+                pInputText
+                [style]="{ width: '100%' }"
+                formControlName="docNo"
+                placeholder="Enter Document No"
+              />
+              <div class="error" *ngIf="submitted && f.docNo.errors">
+                <span
+                  *ngIf="submitted && f.docNo.errors && f.docNo.errors.required"
+                >
+                  Document No is Required</span
+                >
+              </div>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl"
+                >Document Ref<span class="required">*</span></label
+              >
+              <input
+                type="text"
+                pInputText
+                [style]="{ width: '100%' }"
+                formControlName="docName"
+                placeholder="Enter Document Ref"
+              />
+              <div class="error" *ngIf="submitted && f.docName.errors">
+                <span
+                  *ngIf="
+                    submitted && f.docName.errors && f.docName.errors.required
+                  "
+                >
+                  Document Ref is Required</span
+                >
+              </div>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl">Issue Date</label>
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                [showIcon]="true"
+                formControlName="issueDate"
+              >
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl">Expiry Date</label>
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                [showIcon]="true"
+                formControlName="expDate"
+              ></p-calendar>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <!-- <div class="p-col-12 p-md-3 width">
+                                  
+                                        <img [src]="imageSrc" alt="Image Preview" class="image-preview" />
+                                    </div>
+                                    <p-fileUpload 
+                                        mode="basic" 
+                                        name="file" 
+                                        accept="image/*" 
+                                        customUpload="true"
+                                        chooseLabel="Browse Image..." 
+                                        class="ui-button-success browse-button"
+                                        [style]="{width:'61%', marginLeft: '18%'}"
+                                        (onSelect)="onImageSelect($event)">
+                                    </p-fileUpload>
+                                    
+                                </div> -->
+              <div class="sign">
+                <div class="p-col-12">
+                  <img
+                    [src]="staffdocumentForm.controls.docImage.value"
+                    alt="Selected Image"
+                    style="width: 150px; height: 100px"
+                  />
+                </div>
+              </div>
+              <span class="p-2">
+                <input type="file" (change)="onSelectFile($event)"
+              /></span>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="formlbl"
+                >Remarks<span class="required">*</span></label
+              >
+              <textarea
+                pInputText
+                [style]="{ width: '100%' }"
+                formControlName="remarks"
+                placeholder="Enter Remarks"
+              ></textarea>
+              <!-- <input type="" pInputText [style]="{width:'100%'}" formControlName="remarks"
+                                    placeholder="Enter Remarks" /> -->
+              <div class="error" *ngIf="submitted && f.remarks.errors">
+                <span
+                  *ngIf="
+                    submitted && f.remarks.errors && f.remarks.errors.required
+                  "
+                >
+                  Remarks is Required</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="container p-field p-grid p-ai-center">
+            <div class="p-col-12 p-md-1"></div>
+
+            <!-- <div class="p-col-12 p-md-3">
+                                <textarea pInputTextarea rows="8" class="id-input" placeholder="ID"></textarea>
+                                <button pButton type="button" label="Delete Image"
+                                    [style]="{width:'80%', marginLeft: '10%' }" class="ui-button-danger delete-button"
+                                    icon="fa fa-trash">
+                                </button>
+                            </div> -->
+            <!-- <div class="p-col-12 p-md-2">
+                                <button pButton type="button" label="Print Image" icon="pi pi-print"
+                                    class="ui-button-success" [style]="{width:'80%', marginLeft: '10%' }"></button>
+                            </div> -->
+            <!-- <div class="p-col-12 p-md-1">
+                                <button pButton type="button" label="Save" icon="pi pi-save" class="ui-button-success"
+                                    [style]="{width:'100%'}">
+
+                                </button>
+                            </div> -->
+            <!-- <div class="p-col-12 p-md-1">
+                                <button pButton type="button" label="Delete" icon="pi pi-trash" class="ui-button-danger"
+                                    [style]="{width:'100%'}"></button>
+                            </div> -->
+            <!-- <div class="p-col-12 p-md-1">
+                                <button pButton type="button" label="Close" icon="pi pi-ban" class="ui-button-warning"
+                                    [style]="{width:'100%'}"></button>
+                            </div> -->
+          </div>
+          <!-- <div class="container">
+                            <div class="image-upload-block">
+                              <div class="image-preview"></div>
+                              <p-fileUpload mode="basic" name="file" accept="image/*" customUpload="true"
+                                            chooseLabel="Browse Image..." class="browse-button"></p-fileUpload>
+                              <textarea pInputTextarea rows="5" class="id-input" placeholder="ID"></textarea>
+                              <button pButton type="button" label="Delete Image" class="delete-button"></button>
+                            </div>
+                          </div>
+                           -->
+          <!-- <div class="p-field p-grid p-ai-center">
+                            <div class="p-col-12 p-md-4">
+                                <button pButton type="button" label="Browse Image..." icon="pi pi-image"></button>
+                            </div>
+                            <div class="p-col-12 p-md-4">
+                                <button pButton type="button" label="Delete Image" icon="pi pi-trash"
+                                    class="p-button-danger"></button>
+                            </div>
+                            <div class="p-col-12 p-md-4">
+                                <button pButton type="button" label="Print Image" icon="pi pi-print"></button>
+                            </div>
+                        </div> -->
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+
+  <p-dialog
+    header="Documents Images"
+    [(visible)]="viewDocumentImageModal"
+    [style]="{ width: '80vw' }"
+    [baseZIndex]="10000"
+  >
+    <p-table
+      [styleClass]="'p-datatable-sm'"
+      [value]="DocImagesArray"
+      styleClass="p-datatable-striped"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Document Name</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>
+            <strong
+              style="cursor: pointer"
+              (click)="
+                openDocument(item.docImage, item.extension, item.docName)
+              "
+              >{{ item.docName }}
+            </strong>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+      <p-button
+        icon="pi pi-times"
+        (click)="viewDocumentImageModal = false"
+        class="p-button-text"
+        label="Close"
+      ></p-button>
+    </ng-template>
+  </p-dialog>
+  <p-toast [style]="{ marginTop: '80px' }"></p-toast>
+  <p-confirmDialog
+    key="confirm-key"
+    acceptLabel="Yes"
+    rejectLabel="No"
+    header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"
+  ></p-confirmDialog>
+
+  <p-dialog
+    header="Document List"
+    [(visible)]="displayMaximizable"
+    [modal]="true"
+    [style]="{ width: '90%' }"
+    [maximizable]="true"
+    [baseZIndex]="10000"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <p-table
+      #dt
+      [value]="DocumentSaved"
+      [columns]="cols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item?.documentvoucherNo }}</td>
+          <td>{{ getStatusName(item?.docStatusId) }}</td>
+          <td>{{ getTypeName(item?.documentTypeId) }}</td>
+          <td>{{ getCompanyName(item?.companyId) }}</td>
+          <td>{{ item?.remarks }}</td>
+          <td>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              (click)="
+                GetSavedDetails(item?.documentId); displayMaximizable = false
+              "
+              class="ui-button-info"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table> </p-dialog
+></p-toolbar>

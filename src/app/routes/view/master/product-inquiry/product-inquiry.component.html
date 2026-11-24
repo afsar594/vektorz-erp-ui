@@ -1,0 +1,809 @@
+<div class="product-inquiry-wrapper">
+  <!-- Top Executive Header Bar -->
+  <header class="inquiry-header">
+    <div class="header-left">
+      <div class="icon-badge">
+        <i class="fa fa-file-text-o"></i>
+      </div>
+      <div class="title-group">
+        <h1 class="header-title">Product Inquiry - Single Product View</h1>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="search-container">
+        <div class="search-input-box" [class.is-loading]="isLoadingItems">
+          <i class="fa fa-search search-lead-icon"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (input)="onSearchInput()"
+            (keyup.enter)="onSearchEnter()"
+            (focus)="showSearchResults = true"
+            placeholder="Search by Part No, Description, or Barcode..."
+            class="inquiry-search-input"
+          />
+          <button
+            *ngIf="searchQuery"
+            class="clear-search-btn"
+            (click)="clearSearch()"
+            title="Clear"
+          >
+            <i class="fa fa-times"></i>
+          </button>
+          <span *ngIf="isLoadingItems" class="search-loading">
+            <i class="fa fa-spinner fa-spin"></i>
+          </span>
+          <button class="search-icon-btn" (click)="onSearchEnter()" title="Search & Load Product">
+            <i class="fa fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- Autocomplete Suggestions Dropdown -->
+        <div class="search-dropdown" *ngIf="showSearchResults">
+          <div class="search-dropdown-header">
+            <span>Matching Products ({{ searchProducts().length }})</span>
+            <button class="close-dropdown-btn" (click)="showSearchResults = false">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="search-dropdown-list">
+            <div
+              *ngFor="let item of searchProducts()"
+              class="search-item-row"
+              [class.active-item]="item.partNumber === currentProduct.partNumber"
+              (click)="selectProduct(item)"
+            >
+              <div class="search-item-thumb">
+                <img [src]="item.imageUrl" [alt]="item.partNumber" />
+              </div>
+              <div class="search-item-info">
+                <div class="search-item-top">
+                  <span class="search-item-part">{{ item.partNumber }}</span>
+                  <span class="search-item-cat">{{ item.category }}</span>
+                </div>
+                <div class="search-item-desc">{{ item.description }}</div>
+              </div>
+              <div class="search-item-stock">
+                <span class="stock-label">Stock</span>
+                <span class="stock-val" [class.stock-zero]="item.onHandQty <= 0">
+                  {{ item.onHandQty }} {{ item.unit }}
+                </span>
+              </div>
+            </div>
+            <div *ngIf="searchProducts().length === 0" class="no-results">
+              No matching products found. If the item does not exist,
+              <a routerLink="/master/item/entry">create it in Item Master Entry</a>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="header-actions">
+        <button class="btn-action" (click)="refreshData()" title="Refresh Data">
+          <i class="fa fa-refresh" [class.fa-spin]="isLoadingItems"></i>
+        </button>
+        <button class="btn-action" (click)="printInquiry()" title="Print View">
+          <i class="fa fa-print"></i>
+        </button>
+        <button class="btn-action" (click)="exportExcel()" title="Export Details">
+          <i class="fa fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class="inquiry-body">
+    <div class="empty-catalog-banner" *ngIf="!isLoadingItems && sampleProducts.length === 0">
+      <i class="fa fa-database"></i>
+      <span>No items found in the database. Create the item in
+        <a routerLink="/master/item/entry">Item Master Entry</a>
+        — it will appear here automatically.</span>
+    </div>
+    <!-- Top Product Card: Image + Form Fields + Pricing + On Hand Badge -->
+    <section class="product-summary-card">
+      <!-- 1. Product Image Column -->
+      <div class="product-media-col">
+        <div class="image-frame">
+          <img [src]="currentProduct.imageUrl" [alt]="currentProduct.description" />
+        </div>
+        <span class="zoom-hint">
+          <i class="fa fa-industry"></i> {{ currentProduct.manufacturer }}
+        </span>
+      </div>
+
+      <!-- 2. Product Form Fields Column -->
+      <div class="product-details-col">
+        <div class="form-row">
+          <label class="field-label">Part Number</label>
+          <div class="field-input-group part-number-group">
+            <input type="text" [value]="currentProduct.partNumber" readonly class="form-control font-mono font-bold" />
+            <button
+              class="btn-copy-inline"
+              (click)="copyToClipboard(currentProduct.partNumber, 'part')"
+              [title]="copiedPartNumber ? 'Copied!' : 'Copy Part Number'"
+            >
+              <i class="fa" [ngClass]="copiedPartNumber ? 'fa-check text-success' : 'fa-clone'"></i>
+              <span class="copied-tooltip" *ngIf="copiedPartNumber">Copied</span>
+            </button>
+            <span class="verified-check" *ngIf="currentProduct.verified" title="Verified Master Catalog Item">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="field-label">Item Code</label>
+          <div class="field-input-group">
+            <input type="text" [value]="currentProduct.itemCode" readonly class="form-control font-mono" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="field-label">Description</label>
+          <div class="field-input-group">
+            <input type="text" [value]="currentProduct.description" readonly class="form-control" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="field-label">Manufacturer</label>
+          <div class="field-input-group">
+            <input type="text" [value]="currentProduct.manufacturer" readonly class="form-control" />
+          </div>
+        </div>
+
+        <div class="form-row multi-fields">
+          <div class="sub-col">
+            <label class="field-label">Category</label>
+            <div class="field-input-group">
+              <input type="text" [value]="currentProduct.category" readonly class="form-control" />
+            </div>
+          </div>
+          <div class="sub-col unit-col">
+            <label class="field-label">Unit</label>
+            <div class="field-input-group">
+              <input type="text" [value]="currentProduct.unit" readonly class="form-control unit-input font-bold text-primary" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Key Financial Rates Column -->
+      <div class="product-pricing-col">
+        <div class="metric-line">
+          <span class="metric-label">Cost Price</span>
+          <span class="metric-value font-mono">{{ formatCurrency(currentProduct.costPrice) }}</span>
+        </div>
+        <div class="metric-line">
+          <span class="metric-label">Selling Price</span>
+          <span class="metric-value font-mono text-primary">{{ formatCurrency(currentProduct.sellingPrice) }}</span>
+        </div>
+        <div class="metric-line margin-line">
+          <span class="metric-label">Margin</span>
+          <span class="metric-value highlight-margin font-mono">
+            ▲ {{ formatNumber(currentProduct.margin, 2) }}%
+          </span>
+        </div>
+      </div>
+
+      <!-- 4. On Hand Quantity Hero Card -->
+      <div class="product-stock-hero">
+        <div class="stock-hero-card">
+          <div class="stock-hero-header">
+            <div class="cube-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </div>
+            <span class="stock-hero-title">On Hand Quantity</span>
+          </div>
+
+          <div class="stock-hero-number font-mono">
+            {{ currentProduct.onHandQty }}
+          </div>
+
+          <div class="stock-hero-unit">
+            {{ currentProduct.unit }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs Bar -->
+    <nav class="inquiry-tabs-nav">
+      <button
+        *ngFor="let tab of tabs"
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab === tab.id"
+        (click)="selectTab(tab.id)"
+      >
+        <i [class]="tab.icon"></i>
+        <span>{{ tab.label }}</span>
+        <span class="active-dot" *ngIf="activeTab === tab.id"></span>
+      </button>
+    </nav>
+
+    <!-- Tab Content: PRIMARY DASHBOARD (Stock & Branches) -->
+    <div class="tab-content-area" *ngIf="activeTab === 'stock'">
+      <!-- Grid Row 1: Stock in All Branches & Recent History -->
+      <div class="dashboard-grid-row">
+        <!-- Stock in All Branches Card -->
+        <div class="card-panel grid-col-left">
+          <div class="card-panel-header">
+            <div class="card-title-group">
+              <i class="fa fa-cubes card-icon"></i>
+              <h2 class="card-title">Stock in All Branches</h2>
+            </div>
+            <div class="card-badge">
+              <span>{{ currentProduct.branchStock.length }} Branches</span>
+            </div>
+          </div>
+          <div class="card-panel-body p-0">
+            <div class="custom-table-container">
+              <table class="inquiry-table branch-table">
+                <thead>
+                  <tr>
+                    <th class="text-left">Branch</th>
+                    <th class="text-left">Location</th>
+                    <th class="text-right">Current Stock</th>
+                    <th class="text-right">Reserved</th>
+                    <th class="text-right">Available</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of currentProduct.branchStock">
+                    <td class="text-left branch-name">
+                      <i class="fa fa-building-o branch-icon"></i> {{ item.branch }}
+                    </td>
+                    <td class="text-left text-muted">
+                      <span class="loc-tag"><i class="fa fa-map-marker"></i> {{ item.location }}</span>
+                    </td>
+                    <td class="text-right font-mono font-medium">{{ item.currentStock }}</td>
+                    <td class="text-right font-mono text-muted">{{ item.reserved }}</td>
+                    <td class="text-right font-mono font-bold text-success">{{ item.available }}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="total-row">
+                    <td colspan="2" class="text-left total-label">
+                      <i class="fa fa-calculator"></i> Total Stock
+                    </td>
+                    <td class="text-right total-value font-mono">{{ totalBranchStock }}</td>
+                    <td class="text-right total-value text-muted font-mono">{{ totalReservedStock }}</td>
+                    <td class="text-right total-value text-success font-mono font-bold">{{ totalAvailableStock }}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent History (Last 5 Transactions) Card -->
+        <div class="card-panel grid-col-right">
+          <div class="card-panel-header">
+            <div class="card-title-group">
+              <i class="fa fa-clock-o card-icon"></i>
+              <h2 class="card-title">Recent History <span class="header-subtitle">(Last 5 Transactions)</span></h2>
+            </div>
+          </div>
+          <div class="card-panel-body p-0">
+            <div class="custom-table-container">
+              <table class="inquiry-table transactions-table">
+                <thead>
+                  <tr>
+                    <th class="text-left">Date</th>
+                    <th class="text-center">Type</th>
+                    <th class="text-left">Ref No</th>
+                    <th class="text-right">Qty</th>
+                    <th class="text-right">Rate</th>
+                    <th class="text-right">Amount</th>
+                    <th class="text-left">Branch</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let tx of currentProduct.recentHistory">
+                    <td class="text-left text-muted font-mono">{{ tx.date }}</td>
+                    <td class="text-center">
+                      <span
+                        class="type-pill"
+                        [ngClass]="{
+                          'pill-sale': tx.type === 'Sale',
+                          'pill-purchase': tx.type === 'Purchase',
+                          'pill-transfer': tx.type === 'Transfer',
+                          'pill-adjustment': tx.type === 'Adjustment'
+                        }"
+                      >
+                        {{ tx.type }}
+                      </span>
+                    </td>
+                    <td class="text-left font-mono font-bold">{{ tx.refNo }}</td>
+                    <td class="text-right font-mono font-medium" [class.negative-qty]="tx.qty < 0" [class.positive-qty]="tx.qty > 0">
+                      {{ tx.qty > 0 ? '+' + tx.qty : tx.qty }}
+                    </td>
+                    <td class="text-right font-mono">{{ formatRate(tx.rate) }}</td>
+                    <td class="text-right font-mono font-bold text-slate-900">{{ formatRate(tx.amount) }}</td>
+                    <td class="text-left text-muted">{{ tx.branch }}</td>
+                  </tr>
+                  <tr *ngIf="currentProduct.recentHistory.length === 0">
+                    <td colspan="7" class="text-center py-4 text-muted">No recent transactions recorded</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Row 2: Monthly Sales Bar Chart & Yearly Sales -->
+      <div class="dashboard-grid-row">
+        <!-- Monthly Sales Bar Chart -->
+        <div class="card-panel grid-col-left">
+          <div class="card-panel-header">
+            <div class="card-title-group">
+              <i class="fa fa-bar-chart card-icon"></i>
+              <h2 class="card-title">Monthly Sales <span class="header-subtitle">(Last 12 Months)</span></h2>
+            </div>
+            <div class="chart-kpi-badge" *ngIf="peakMonthlySale">
+              <i class="fa fa-star text-amber"></i> Peak: {{ peakMonthlySale.label }} ({{ peakMonthlySale.qty }} Units)
+            </div>
+          </div>
+          <div class="card-panel-body chart-panel-body">
+            <!-- Custom Styled Responsive SVG / HTML Bar Chart -->
+            <div class="bar-chart-container">
+              <!-- Y-Axis Scale -->
+              <div class="chart-y-axis font-mono">
+                <span>200</span>
+                <span>150</span>
+                <span>100</span>
+                <span>50</span>
+                <span>0</span>
+              </div>
+
+              <!-- Chart Plotting Area -->
+              <div class="chart-plot-area">
+                <!-- Horizontal Grid Lines -->
+                <div class="grid-line line-200"></div>
+                <div class="grid-line line-150"></div>
+                <div class="grid-line line-100"></div>
+                <div class="grid-line line-50"></div>
+                <div class="grid-line line-0"></div>
+
+                <!-- Bars Column Group -->
+                <div class="chart-bars-row">
+                  <div *ngFor="let item of currentProduct.monthlySales" class="bar-col">
+                    <div class="bar-track">
+                      <div
+                        class="bar-fill"
+                        [style.height.%]="item.heightPercent"
+                        [class.peak-bar]="peakMonthlySale && item.label === peakMonthlySale.label"
+                      >
+                        <div class="bar-tooltip">
+                          <span class="tooltip-qty">{{ item.qty }} Units</span>
+                          <span class="tooltip-date">{{ item.label }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bar-label">
+                      <span class="lbl-month">{{ item.month }}</span>
+                      <span class="lbl-year">{{ item.year }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yearly Sales Card -->
+        <div class="card-panel grid-col-right">
+          <div class="card-panel-header">
+            <div class="card-title-group">
+              <i class="fa fa-line-chart card-icon"></i>
+              <h2 class="card-title">Yearly Sales</h2>
+            </div>
+          </div>
+          <div class="card-panel-body p-0">
+            <div class="custom-table-container">
+              <table class="inquiry-table yearly-table">
+                <thead>
+                  <tr>
+                    <th class="text-left">Year</th>
+                    <th class="text-right">Qty Sold</th>
+                    <th class="text-right">Sales Amount</th>
+                    <th class="text-center">Trend</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let yr of currentProduct.yearlySales; let i = index">
+                    <td class="text-left font-bold text-slate-900">{{ yr.year }}</td>
+                    <td class="text-right font-mono">{{ formatNumber(yr.qtySold) }}</td>
+                    <td class="text-right font-mono font-bold text-primary">{{ formatRate(yr.salesAmount) }}</td>
+                    <td class="text-center">
+                      <span class="trend-badge" [ngClass]="i === 0 ? 'trend-up' : 'trend-steady'">
+                        {{ i === 0 ? '▲ +14.5%' : i === 1 ? '▲ +12.6%' : '▲ +8.2%' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Row 3: Financial & Operational Summary & Notes Card -->
+      <div class="dashboard-grid-row">
+        <!-- Financial & Stock Operational Metrics Card -->
+        <div class="card-panel grid-col-left">
+          <div class="card-panel-body summary-metrics-panel">
+            <div class="metrics-grid">
+              <!-- Left Metric Column -->
+              <div class="metrics-col">
+                <div class="summary-metric-item">
+                  <span class="metric-name">Average Cost</span>
+                  <span class="metric-num font-mono">{{ formatCurrency(currentProduct.averageCost) }}</span>
+                </div>
+                <div class="summary-metric-item">
+                  <span class="metric-name">Last Purchase Price</span>
+                  <span class="metric-num font-mono">{{ formatCurrency(currentProduct.lastPurchasePrice) }}</span>
+                </div>
+                <div class="summary-metric-item">
+                  <span class="metric-name">Last Selling Price</span>
+                  <span class="metric-num font-mono">{{ formatCurrency(currentProduct.lastSellingPrice) }}</span>
+                </div>
+              </div>
+
+              <!-- Right Metric Column -->
+              <div class="metrics-col">
+                <div class="summary-metric-item">
+                  <span class="metric-name">Total Purchased Qty (Life to Date)</span>
+                  <span class="metric-num font-mono">{{ formatNumber(currentProduct.totalPurchasedQty) }}</span>
+                </div>
+                <div class="summary-metric-item">
+                  <span class="metric-name">Total Sold Qty (Life to Date)</span>
+                  <span class="metric-num font-mono">{{ formatNumber(currentProduct.totalSoldQty) }}</span>
+                </div>
+                <div class="summary-metric-item highlight-stock-val">
+                  <span class="metric-name">Current Stock Value</span>
+                  <span class="metric-num font-mono font-bold text-success">
+                    {{ formatCurrency(currentProduct.currentStockValue) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Card -->
+        <div class="card-panel grid-col-right">
+          <div class="card-panel-header notes-header">
+            <div class="card-title-group">
+              <i class="fa fa-sticky-note-o card-icon"></i>
+              <h2 class="card-title">Notes</h2>
+            </div>
+            <button class="edit-note-btn" *ngIf="!isEditingNote" (click)="enableNoteEdit()">
+              <i class="fa fa-pencil"></i> Edit
+            </button>
+          </div>
+          <div class="card-panel-body notes-body">
+            <div *ngIf="!isEditingNote" class="notes-display">
+              <div class="note-quote-box">
+                <p class="notes-text">{{ currentProduct.notes || 'No notes added yet for this item.' }}</p>
+              </div>
+            </div>
+            <div *ngIf="isEditingNote" class="notes-edit-mode">
+              <textarea
+                [(ngModel)]="noteDraft"
+                rows="3"
+                class="form-control notes-textarea"
+                placeholder="Enter item operational notes or reorder instructions..."
+              ></textarea>
+              <div class="notes-actions">
+                <button class="btn-sm btn-secondary" (click)="cancelNoteEdit()">Cancel</button>
+                <button class="btn-sm btn-primary" (click)="saveNote()">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Detailed Purchase History -->
+    <div class="tab-content-area" *ngIf="activeTab === 'purchases'">
+      <div class="card-panel">
+        <div class="card-panel-header">
+          <div class="card-title-group">
+            <i class="fa fa-truck card-icon"></i>
+            <h2 class="card-title">Detailed Purchase Orders & Goods Received</h2>
+          </div>
+          <div class="card-badge">
+            <span>{{ currentProduct.purchaseHistoryDetailed.length }} Records</span>
+          </div>
+        </div>
+        <div class="card-panel-body p-0">
+          <div class="custom-table-container">
+            <table class="inquiry-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>PO Number</th>
+                  <th>Supplier</th>
+                  <th>Invoice No</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Unit Rate</th>
+                  <th class="text-right">Total Amount</th>
+                  <th>Receiving Branch</th>
+                  <th class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of currentProduct.purchaseHistoryDetailed">
+                  <td class="font-mono text-muted">{{ p.date }}</td>
+                  <td class="font-mono font-bold text-primary">{{ p.poNo }}</td>
+                  <td class="font-medium text-slate-800">{{ p.supplier }}</td>
+                  <td class="font-mono text-muted">{{ p.invoiceNo }}</td>
+                  <td class="text-right font-mono font-bold">{{ p.qty }}</td>
+                  <td class="text-right font-mono">{{ formatRate(p.rate) }}</td>
+                  <td class="text-right font-mono font-bold text-slate-900">{{ formatRate(p.amount) }}</td>
+                  <td>{{ p.branch }}</td>
+                  <td class="text-center">
+                    <span class="type-pill pill-purchase">{{ p.status }}</span>
+                  </td>
+                </tr>
+                <tr *ngIf="currentProduct.purchaseHistoryDetailed.length === 0">
+                  <td colspan="9" class="text-center py-6 text-muted">No detailed purchase orders on record</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Detailed Sales History -->
+    <div class="tab-content-area" *ngIf="activeTab === 'sales'">
+      <div class="card-panel">
+        <div class="card-panel-header">
+          <div class="card-title-group">
+            <i class="fa fa-shopping-cart card-icon"></i>
+            <h2 class="card-title">Detailed Sales Invoices & Customer Orders</h2>
+          </div>
+          <div class="card-badge">
+            <span>{{ currentProduct.salesHistoryDetailed.length }} Records</span>
+          </div>
+        </div>
+        <div class="card-panel-body p-0">
+          <div class="custom-table-container">
+            <table class="inquiry-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Invoice No</th>
+                  <th>Customer</th>
+                  <th>Salesperson</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Rate</th>
+                  <th class="text-right">Total Amount</th>
+                  <th>Dispatch Branch</th>
+                  <th class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of currentProduct.salesHistoryDetailed">
+                  <td class="font-mono text-muted">{{ s.date }}</td>
+                  <td class="font-mono font-bold text-primary">{{ s.invoiceNo }}</td>
+                  <td class="font-medium text-slate-800">{{ s.customer }}</td>
+                  <td class="text-muted">{{ s.salesperson }}</td>
+                  <td class="text-right font-mono font-bold">{{ s.qty }}</td>
+                  <td class="text-right font-mono">{{ formatRate(s.rate) }}</td>
+                  <td class="text-right font-mono font-bold text-slate-900">{{ formatRate(s.amount) }}</td>
+                  <td>{{ s.branch }}</td>
+                  <td class="text-center">
+                    <span class="type-pill pill-sale">{{ s.status }}</span>
+                  </td>
+                </tr>
+                <tr *ngIf="currentProduct.salesHistoryDetailed.length === 0">
+                  <td colspan="9" class="text-center py-6 text-muted">No detailed sales invoices on record</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Monthly Sales Deep Dive -->
+    <div class="tab-content-area" *ngIf="activeTab === 'monthly'">
+      <div class="card-panel">
+        <div class="card-panel-header">
+          <div class="card-title-group">
+            <i class="fa fa-calendar-check-o card-icon"></i>
+            <h2 class="card-title">Monthly Demand & Trend Analysis</h2>
+          </div>
+        </div>
+        <div class="card-panel-body p-0">
+          <div class="custom-table-container">
+            <table class="inquiry-table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th class="text-right">Units Sold</th>
+                  <th class="text-right">Estimated Revenue</th>
+                  <th class="text-right">Gross Profit</th>
+                  <th class="text-center">Performance Indicator</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let m of currentProduct.monthlySales">
+                  <td class="font-bold text-slate-800">{{ m.label }}</td>
+                  <td class="text-right font-mono font-bold">{{ m.qty }} {{ currentProduct.unit }}</td>
+                  <td class="text-right font-mono">{{ formatCurrency(m.qty * currentProduct.sellingPrice) }}</td>
+                  <td class="text-right font-mono text-success font-bold">
+                    {{ formatCurrency(m.qty * (currentProduct.sellingPrice - currentProduct.costPrice)) }}
+                  </td>
+                  <td class="text-center">
+                    <span class="type-pill" [class.pill-sale]="m.qty >= 100" [class.pill-purchase]="m.qty < 100">
+                      {{ m.qty >= 100 ? 'High Velocity' : 'Steady' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Yearly Sales -->
+    <div class="tab-content-area" *ngIf="activeTab === 'yearly'">
+      <div class="card-panel">
+        <div class="card-panel-header">
+          <div class="card-title-group">
+            <i class="fa fa-line-chart card-icon"></i>
+            <h2 class="card-title">Multi-Year Financial Trend</h2>
+          </div>
+        </div>
+        <div class="card-panel-body p-0">
+          <div class="custom-table-container">
+            <table class="inquiry-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th class="text-right">Quantity Sold</th>
+                  <th class="text-right">Sales Amount</th>
+                  <th class="text-right">Avg Selling Rate</th>
+                  <th class="text-right">Growth Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let y of currentProduct.yearlySales; let i = index">
+                  <td class="font-bold text-slate-900">{{ y.year }}</td>
+                  <td class="text-right font-mono font-bold">{{ formatNumber(y.qtySold) }}</td>
+                  <td class="text-right font-mono font-bold text-primary">{{ formatCurrency(y.salesAmount) }}</td>
+                  <td class="text-right font-mono">{{ formatCurrency(y.salesAmount / (y.qtySold || 1)) }}</td>
+                  <td class="text-right">
+                    <span class="trend-badge" [ngClass]="i === 0 ? 'trend-up' : 'trend-steady'">
+                      {{ i === 0 ? '+14.5% YoY' : i === 1 ? '+12.6% YoY' : '+8.2% YoY' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Pricing & Details -->
+    <div class="tab-content-area" *ngIf="activeTab === 'pricing'">
+      <div class="dashboard-grid-row">
+        <div class="card-panel grid-col-left">
+          <div class="card-panel-header">
+            <div class="card-title-group">
+              <i class="fa fa-tag card-icon"></i>
+              <h2 class="card-title">Price Levels Matrix</h2>
+            </div>
+          </div>
+          <div class="card-panel-body p-0">
+            <div class="custom-table-container">
+              <table class="inquiry-table">
+                <thead>
+                  <tr>
+                    <th>Price Level</th>
+                    <th class="text-right">Price</th>
+                    <th class="text-right">Min Qty</th>
+                    <th class="text-right">Discount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let tier of currentProduct.pricingTiers">
+                    <td class="font-bold text-slate-800">{{ tier.levelName }}</td>
+                    <td class="text-right font-mono font-bold text-primary">{{ formatCurrency(tier.price) }}</td>
+                    <td class="text-right font-mono">{{ tier.minQty }}</td>
+                    <td class="text-right text-muted font-mono">{{ tier.discountPct }}%</td>
+                  </tr>
+                  <tr *ngIf="currentProduct.pricingTiers.length === 0">
+                    <td colspan="4" class="text-center py-4 text-muted">Standard price tier applies</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-panel grid-col-right">
+          <div class="card-panel-header">
+            <div class="card-title-group">
+              <i class="fa fa-info-circle card-icon"></i>
+              <h2 class="card-title">Warehouse & Item Specifications</h2>
+            </div>
+          </div>
+          <div class="card-panel-body">
+            <div class="specs-grid">
+              <div class="spec-row">
+                <span class="spec-label">Default Bin Location</span>
+                <span class="spec-val font-mono font-bold text-primary">{{ currentProduct.binLocation || 'N/A' }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Unit Weight</span>
+                <span class="spec-val">{{ currentProduct.weight || 'N/A' }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Barcode / EAN</span>
+                <span class="spec-val font-mono">{{ currentProduct.barcode || 'N/A' }}</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">HS Code</span>
+                <span class="spec-val font-mono">8482.10.00</span>
+              </div>
+              <div class="spec-row">
+                <span class="spec-label">Country of Origin</span>
+                <span class="spec-val">Germany / EU</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Accounts / Financials -->
+    <div class="tab-content-area" *ngIf="activeTab === 'financials'">
+      <div class="card-panel">
+        <div class="card-panel-header">
+          <div class="card-title-group">
+            <i class="fa fa-book card-icon"></i>
+            <h2 class="card-title">General Ledger & Financial Linkages</h2>
+          </div>
+        </div>
+        <div class="card-panel-body">
+          <div class="accounts-grid">
+            <div class="account-card">
+              <span class="account-type">Inventory Asset Account</span>
+              <span class="account-code font-mono">{{ currentProduct.glAccountInventory || '1410 - Inventory Control' }}</span>
+            </div>
+            <div class="account-card">
+              <span class="account-type">Cost of Goods Sold (COGS)</span>
+              <span class="account-code font-mono">{{ currentProduct.glAccountCogs || '5010 - Cost of Goods Sold' }}</span>
+            </div>
+            <div class="account-card">
+              <span class="account-type">Sales Revenue Account</span>
+              <span class="account-code font-mono">{{ currentProduct.glAccountRevenue || '4010 - Merchandise Sales' }}</span>
+            </div>
+            <div class="account-card">
+              <span class="account-type">Inventory Valuation Method</span>
+              <span class="account-code">Weighted Average Periodic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

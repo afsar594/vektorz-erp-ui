@@ -1,0 +1,26 @@
+<div class="clock-container">
+  <div class="clock-face">
+
+    <!-- Clock Numbers -->
+    <ng-container *ngFor="let n of clockNumbers">
+      <div class="clock-number" [ngStyle]="{
+          left: n.left + '%',
+          top: n.top + '%',
+          transform: 'translate(-50%, -50%)'
+        }">
+        {{ n.label }}
+      </div>
+    </ng-container>
+
+    <!-- Hands -->
+    <div class="hand hour-hand" [ngStyle]="hourStyle"></div>
+    <div class="hand minute-hand" [ngStyle]="minuteStyle"></div>
+    <div class="hand second-hand" [ngStyle]="secondStyle"></div>
+
+    <!-- Date Info -->
+    <div class="date-info">
+      <span style="margin-right: 5px ;">{{ dayName }}</span>
+      <span>{{ monthName }} {{ date }}</span>
+    </div>
+  </div>
+</div>

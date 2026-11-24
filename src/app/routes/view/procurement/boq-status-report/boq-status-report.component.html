@@ -1,0 +1,172 @@
+<app-page-header
+  [nav]="[
+    { label: 'procurement' | translate },
+    { label: 'purchase Requisition S tatus Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="getreport()"
+      label="Show"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="clear()"
+      label="Clear"
+      icon="fa fa-close"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="crystalReport()"
+      label="Print"
+      icon="fa fa-search"
+      class="ui-button-print"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Close"
+      icon="fa fa-sign-out"
+      (click)="ExitNew()"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="BoqstatusForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'BOQ Status Report' | translate">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account" FormControl>
+              <b>{{ "Job:" | translate }}</b>
+            </label>
+            <div class="p-col-9 p-md-9 p-lg-9">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                formControlName="job"
+                [options]="jobList"
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-6">
+          <p-panel>
+            <p-header>
+              <input type="checkbox" formControlName="isdate" pInputCheck />
+              {{ "By Date" | translate }}
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-3">
+                <label>{{ "From Date:" | translate }}</label>
+              </div>
+              <div class="p-col-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [disabled]="!f.isdate.value"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  id="dateFrom"
+                  useUtc
+                  formControlName="FromDate"
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div
+                  class="error"
+                  *ngIf="f.FromDate.touched && f.FromDate.invalid"
+                >
+                  FromDate Invalid Entry
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-3">
+                <label>{{ "To Date:" | translate }}</label>
+              </div>
+              <div class="p-col-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [disabled]="!f.isdate.value"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  id="dateTo"
+                  useUtc
+                  formControlName="ToDate"
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div class="error" *ngIf="f.ToDate.touched && f.ToDate.invalid">
+                  ToDate Invalid Entry
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <div class="card card-w-title">
+        <div class="grid">
+          <div class="p-col-12">
+            <!-- <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey"
+                        [settings]="puchaserequsitionreport">
+
+                    </hot-table> -->
+            <p-table [value]="this.dataset">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>BOQ No</th>
+                  <th>Date</th>
+                  <th>Job Name</th>
+                  <th>Item Name</th>
+                  <th>Unit</th>
+                  <th>BOQ Qty</th>
+                  <th>PR Qty</th>
+                  <th>BAL PR Qty</th>
+                  <th>PO Qty</th>
+                  <th>BAL PO Qty</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>{{ item.billofqtyNo }}</td>
+                  <td>{{ item.boqDate | date : "dd/MM/yyyy" }}</td>
+                  <td>{{ item.jobMasterName }}</td>
+                  <td>{{ item.itemName }}</td>
+                  <td>{{ item.unitShortName }}</td>
+                  <td>{{ item.boqQty }}</td>
+                  <td>{{ item.prQty }}</td>
+                  <td>{{ item.balPrQty }}</td>
+                  <td>{{ item.poQty }}</td>
+                  <td>{{ item.balPOQty }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

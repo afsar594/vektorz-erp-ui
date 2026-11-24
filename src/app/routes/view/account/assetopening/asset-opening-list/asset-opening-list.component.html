@@ -1,0 +1,116 @@
+<div class="modal-body">
+  <div class="container">
+    <p-toolbar>
+      <div class="ui-toolbar-group-left">
+        <button
+          pButton
+          type="button"
+          label="Show"
+          (click)="ApplyAllFilter()"
+          icon="pi pi-search"
+          class="ui-button-info"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Exit"
+          icon="fa fa-sign-out"
+        ></button>
+      </div>
+    </p-toolbar>
+    <div class="card card-w-title">
+      <p-panel>
+        <p-header> Filter </p-header>
+        <div class="p-grid">
+          <div class="p-grid p-col-12 p-md-6 p-lg-6">
+            <label class="p-col-12 p-md-4 p-lg-4" for="account">
+              <b>{{ "Select Account:" }}</b>
+            </label>
+            <div class="p-col-12 p-md-8 p-lg-8">
+              <p-dropdown
+                filter="true"
+                [options]="suppliers"
+                [(ngModel)]="selectedSupplier"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="supplier"
+              ></p-dropdown>
+            </div>
+            <!-- <label class="p-col-12 p-md-4 p-lg-4 " for="account">
+                            <b>{{'LPO No:'}}</b>
+                        </label>
+                        <div class="p-col-12 p-md-8 p-lg-8">
+                            <input pInputText formControlName="Description">
+                        </div> -->
+          </div>
+          <div class="p-grid p-col-12 p-md-6 p-lg-6">
+            <div class="p-col-12 p-md-4 p-lg-3">
+              <p-radioButton
+                (onClick)="(showDatePicker == true)"
+                [(ngModel)]="selectedDatePicker"
+                [ngModelOptions]="{ standalone: true }"
+                name="particularVoucher"
+                inputId="dateRange"
+                value="dateRange"
+              >
+              </p-radioButton>
+              <label
+                class="p-m-2"
+                for="particularVoucher"
+                style="color: rgb(37, 201, 92)"
+                >By Date</label
+              >
+            </div>
+
+            <div class="p-grid p-col-12 p-md-8 p-lg-9">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                class="p-col-12"
+                [showIcon]="true"
+                [(ngModel)]="startDate"
+                [ngModelOptions]="{ standalone: true }"
+                [maxDate]="endDate"
+                [readonlyInput]="true"
+              ></p-calendar>
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                class="p-col-12"
+                [showIcon]="true"
+                [(ngModel)]="endDate"
+                [ngModelOptions]="{ standalone: true }"
+                [minDate]="startDate"
+                [readonlyInput]="true"
+              ></p-calendar>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+      <p-tabView>
+        <p-tabPanel [header]="'Asset Opening List' | translate">
+          <div class="grid">
+            <div class="p-col-12">
+              <hot-table
+                [hotId]="hotid"
+                [data]="dataset"
+                [licenseKey]="licensekey"
+                [settings]="CustomerSalesOrder"
+              >
+              </hot-table>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>

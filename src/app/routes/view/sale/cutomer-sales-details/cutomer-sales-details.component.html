@@ -1,0 +1,211 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<!-- <app-page-header [nav]='[{label: "account"| translate},{label: "Purchase Order"| translate}]'
+[title]='title| translate'></app-page-header> -->
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Show"
+      icon="fa fa-list"
+      class="ui-button-info"
+      (click)="getCustomerWiseSalesReport()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear All"
+      (click)="cancelAll()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="showPrint()"
+      label="Show Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+
+<div class="card">
+  <div class="p-grid">
+    <div class="p-sm-12 p-md-6 p-lg-5">
+      <p-panel>
+        <p-header>
+          {{ "Customer" | translate }}
+        </p-header>
+        <div class="min-panel">
+          <div class="p-grid inputGroup">
+            <label class="p-col-3">Customer</label>
+            <div class="p-col-9">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                [options]="customerList"
+                [(ngModel)]="customer"
+                name="customer"
+                [ngModelOptions]="{ standalone: true }"
+                optionLabel="customerMasterCustomerName"
+                id="customer"
+                [showClear]="true"
+                placeholder="---- Select Customer ----"
+                (onChange)="onCustomerChange($event)"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-4">
+              <p-radioButton
+                class="p-md-3"
+                name="groupname"
+                [(ngModel)]="type"
+                id="GetCustomerDetailWiseSalesReport"
+                label="All Sales"
+                value="All"
+              ></p-radioButton>
+            </div>
+            <div class="p-col-4">
+              <p-radioButton
+                class="p-md-3"
+                name="groupname"
+                [(ngModel)]="type"
+                id="GetCustomerDetailWiseSalesReport"
+                (click)="initializeControlsDetail()"
+                label="Details"
+                value="GetCustomerDetailWiseSalesReport"
+              ></p-radioButton>
+            </div>
+            <div class="p-col-4">
+              <p-radioButton
+                class="p-md-3"
+                name="groupname"
+                [(ngModel)]="type"
+                id="GetCustomerMaterialWiseSalesReport"
+                (click)="initailizeControlMaterial()"
+                label="Material wise"
+                value="GetCustomerMaterialWiseSalesReport"
+              ></p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-4">
+              <p-radioButton
+                class="p-md-3"
+                name="groupname"
+                id="GetCustomerSummaryWiseSalesReport"
+                [(ngModel)]="type"
+                (click)="initailizeControlSummary()"
+                label="Summary"
+                value="GetCustomerSummaryWiseSalesReport"
+              ></p-radioButton>
+            </div>
+            <div class="p-col-6">
+              <p-radioButton
+                class="p-md-3"
+                name="groupname"
+                id="GetmonthWiseSalesReport"
+                [(ngModel)]="type"
+                label="Monthly Comparison"
+                value="GetmonthWiseSalesReport"
+              ></p-radioButton>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+
+    <div class="p-col-4">
+      <app-datefilter
+        [enableDate]="enableDate"
+        (enableDateChange)="enableDate = $event"
+      ></app-datefilter>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="p-grid">
+    <div class="p-col-12">
+      <div
+        class="p-col-12 tbl-maxheight"
+        *ngIf="type == 'GetCustomerDetailWiseSalesReport'"
+      >
+        <hot-table
+          [hotId]="hotidD"
+          [licenseKey]="licensekey"
+          [settings]="customerReportDetail"
+        >
+        </hot-table>
+      </div>
+      <div
+        class="p-col-12 tbl-maxheight"
+        *ngIf="type == 'GetCustomerMaterialWiseSalesReport'"
+      >
+        <hot-table
+          [hotId]="hotidM"
+          [licenseKey]="licensekey"
+          [settings]="customerReportMaterial"
+        >
+        </hot-table>
+      </div>
+      <div
+        class="p-col-12 tbl-maxheight"
+        *ngIf="type == 'GetCustomerSummaryWiseSalesReport'"
+      >
+        <hot-table
+          [hotId]="hotidS"
+          [licenseKey]="licensekey"
+          [settings]="customerReportSummary"
+        >
+        </hot-table>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="type != 'GetmonthWiseSalesReport'" class="p-grid">
+    <div class="p-sm-12 p-md-12 p-lg-6">
+      <div class="min-panel">
+        <div class="p-grid inputGroup"></div>
+      </div>
+    </div>
+    <div class="p-sm-12 p-md-12 p-lg-3">
+      <div class="min-panel">
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-4" for="account">{{
+            "Total Amount " | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-8 p-0">
+            <input
+              class="w-100"
+              id="rptTotDebit"
+              [value]="totalamount | number : '1.2-2'"
+              readonly
+              style="border-color: black; text-align: right"
+              pInputText
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-sm-12 p-md-12 p-lg-3">
+      <div class="min-panel">
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-4" for="rptNetAmt">{{
+            "Net.Amount. " | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-8 p-0">
+            <input
+              class="w-100"
+              [value]="nettotal | number : '1.2-2'"
+              readonly
+              style="border-color: black; text-align: right"
+              pInputText
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

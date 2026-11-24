@@ -1,0 +1,88 @@
+<app-page-header [nav]='breadcumbmodel' [title]='title'></app-page-header>
+<div class="toolbar">
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" [label]="'New' | translate" (click)='new()' icon="pi pi-plus"></button>
+        <button pButton type="button" [label]="'Edit' | translate" (click)='edit()'
+            [disabled]='!btnFlag?.edit || !Permission?.Edit' icon="fa fa-pencil" class="ui-button-success"></button>
+
+        <button pButton type="button" class="ui-button-danger" [disabled]='!btnFlag?.cancel'
+            [label]="'Cancel' | translate" icon="fa fa-ban"></button>
+
+        <button pButton type="button" class="ui-button-success" (click)='saveWorkGroup()'
+            [disabled]='!btnFlag.save || !Permission?.Add' label="Save" icon="fa fa-floppy-o"></button>
+
+        <button pButton type="button" class="ui-button-success" (click)='saveWorkGroup()'
+            [disabled]='!btnFlag.update || !Permission.Edit' label="Update" icon="fa fa-floppy-o"></button>
+
+        <button pButton type="button" class="ui-button-danger" (click)='delete()'
+            [disabled]='!btnFlag.delete || !Permission.Delete' label="Delete" icon="fa fa-trash"></button>
+
+    </div>
+    <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Exit" (click)='ExitNew()' icon="fa fa-sign-out"></button>
+
+    </div>
+</div>
+
+<div class="card card-w-title" [formGroup]='workGroupFormGroup'>
+    <div class="p-grid">
+        <!-- WorkGroup Name -->
+        <div class="p-col-12 p-md-12 p-lg-2"><b>WorkGroup Name</b></div>
+        <div class="p-col-12 p-md-12 p-lg-7">
+            <input pInputText placeholder="WorkGroup Name" formControlName="workGroupMasterWorkGroupName">
+
+            <div class="error" *ngIf="f.workGroupMasterWorkGroupName.errors 
+            && (f.workGroupMasterWorkGroupName.dirty || f.workGroupMasterWorkGroupName.touched)">
+                <span *ngIf="f.workGroupMasterWorkGroupName.errors.required">
+                    WorkGroup Name is Mandatory Field*
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Dropdown -->
+    <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-2"><b>Dashboard</b></div>
+        <div class="p-col-12 p-md-12 p-lg-7">
+            <p-dropdown [options]="v_dashboardList" formControlName="workGroupMasterWorkGroupdashboardType" placeholder="Select Dashboard">
+            </p-dropdown>
+
+            
+        </div>
+    </div>
+
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <p-table [value]="workGroupList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-workGroup>
+                    <tr>
+                        <td>{{workGroup.workGroupMasterWorkGroupId}}</td>
+                        <td>{{workGroup.workGroupMasterWorkGroupName}}</td>
+
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(workGroup)'
+                                iconPos="left"></button>
+                            <!-- <button pButton type="button" icon="pi pi-trash" (click)='removeWorkGroup(workGroup)'
+                                iconPos="left"></button> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>

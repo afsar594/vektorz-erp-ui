@@ -1,0 +1,35 @@
+export class StockRegister {
+    StockRegisterStoreId?: number;
+    StockRegisterPurchaseId?: String;
+    StockRegisterRefVoucherNo?: String;
+    StockRegisterSno?: number;
+    StockRegisterBatchCode?: String;
+    DaStockRegisterExpDate?: Date;
+    StockRegisterMaterialId?: number;
+    StockRegisterQuantity?: number;
+    StockRegisterSin?: number;
+    StockRegisterSout?: number;
+    StockRegisterRate?: number;
+    StockRegisterAmount?: number;
+    StockRegisterFcAmount?: number;
+    StockRegisterAssignedDate?: Date;
+    StockRegisterDepCode?: String;
+    StockRegisterStatus?: String;
+    StockRegisterTransType?: String;
+    StockRegisterRemarks?: String;
+    StockRegisterUnit?: number;
+    StockRegisterLocationId?: number;
+    StockRegisterJobId?: number;
+    StockRegisterFsno?: number;
+    StockRegisterNetStkBal?: number;
+    StockRegisterFoc?: String;
+    StockRegisterUsedQty?: number;
+    StockRegisterQueryRun?: boolean;
+    StockRegisterCalcDone?: boolean;
+    StockRegisterRateTmp?: number;
+    StockRegisterAmountTmp?: number;
+    tockRegisterDepID?: number;
+    StockRegisterLandingCost?: number;
+    StockRegisterFcRate?: number;
+    StockRegisterDelStatus?: boolean;
+}

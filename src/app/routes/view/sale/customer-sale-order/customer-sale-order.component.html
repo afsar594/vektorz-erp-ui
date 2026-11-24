@@ -1,0 +1,423 @@
+<app-page-header
+  [nav]="[{ label: 'account' | translate }, { label: title | translate }]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      icon="fa fa-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Save"
+      (click)="SalesOrderFormSubmit()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="LoadCustomerSalesOrderList()"
+      label="List"
+      icon="fa fa-list"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      class="ui-button-danger"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Job"
+      icon="fa fa-file"
+      class="ui-button-warning"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Delete"
+      icon="fa fa-close"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Performance"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="SaleTamplate"
+      icon="fa fa-print"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="CSOForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="' Customer Sales Order' | translate">
+      <div class="p-grid">
+        <div class="p-col-8">
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Location:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="--- Location ---"
+                [options]="locationDropdown"
+                formControlName="CustomerOrderLocationId"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.CustomerOrderLocationId.touched &&
+                  f.CustomerOrderLocationId.invalid
+                "
+              >
+                Location is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "S.O No.:" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3">
+              <input
+                pInputText
+                style="width: 100%"
+                formControlName="CustomerOrderNo"
+              />
+              <div
+                class="error"
+                *ngIf="f.CustomerOrderNo.touched && f.CustomerOrderNo.invalid"
+              >
+                S.O is Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Customer:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="--- Customer ---"
+                formControlName="CustomerOrderCustomerId"
+                [options]="customerDropdown"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.CustomerOrderCustomerId.touched &&
+                  f.CustomerOrderCustomerId.invalid
+                "
+              >
+                Customer is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "S.O Date:" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                formControlName="CustomerOrderDate"
+                class="w-100"
+                [showIcon]="true"
+              >
+              </p-calendar>
+              <div
+                class="error"
+                *ngIf="
+                  f.CustomerOrderDate.touched && f.CustomerOrderDate.invalid
+                "
+              >
+                S.O Date Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Department:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="--- Department ---"
+                formControlName="Department"
+                [options]="departmentDropdown"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.Department.touched && f.Department.invalid"
+              >
+                Department Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "L.P.O No:" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3">
+              <input
+                pInputText
+                style="width: 100%"
+                formControlName="CustomerOrderLpoNo"
+              />
+              <div
+                class="error"
+                *ngIf="
+                  f.CustomerOrderLpoNo.touched && f.CustomerOrderLpoNo.invalid
+                "
+              >
+                L.P.O. No is Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Sales Man:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="--- Sales Man ---"
+                formControlName="Salesman"
+                [options]="salesManDropdown"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.Salesman.touched && f.Salesman.invalid"
+              >
+                Sales Man Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "L.P.O Date:" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                formControlName="CustomerOrderLpoDate"
+                class="w-100"
+                [showIcon]="true"
+              >
+              </p-calendar>
+              <div
+                class="error"
+                *ngIf="
+                  f.CustomerOrderLpoDate.touched &&
+                  f.CustomerOrderLpoDate.invalid
+                "
+              >
+                Date Invalid Entry
+              </div>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Select a Job:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="--- Select Job ---"
+                formControlName="Selectjob"
+                [options]="jobDropdown"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.Selectjob.touched && f.Selectjob.invalid"
+              >
+                Select a job Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Currency:" | translate }}</b>
+            </label>
+            <div class="p-col-3 p-md-3 p-lg-3">
+              <p-dropdown
+                filter="true"
+                [style]="{ width: '100%' }"
+                placeholder="--- Currency ---"
+                formControlName="CustomerOrderCurrencyId"
+                [options]="currencyDropdown"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.CustomerOrderCurrencyId.touched &&
+                  f.CustomerOrderCurrencyId.invalid
+                "
+              >
+                Currency is Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Remarks:" | translate }}</b>
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <textarea
+                style="min-height: 80px; width: 100%; margin-top: 5px"
+                formControlName="CustomerOrderDescription"
+                pInputTextarea
+              ></textarea>
+              <div
+                class="error"
+                *ngIf="
+                  f.CustomerOrderDescription.touched &&
+                  f.CustomerOrderDescription.invalid
+                "
+              >
+                Remarks Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Delivery Schedule:" | translate }}</b>
+            </label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <textarea
+                style="min-height: 80px; width: 100%; margin-top: 5px"
+                formControlName="Delivery"
+                pInputTextarea
+              ></textarea>
+              <div
+                class="error"
+                *ngIf="f.Delivery.touched && f.Delivery.invalid"
+              >
+                Delivery Schedule Invalid Entry
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-4">
+          <div class="p-grid">
+            <label
+              class="p-col-2 p-md-2 p-lg-2"
+              for="account"
+              style="padding-left: 10%"
+            >
+              <b>{{ "ID:" | translate }}</b>
+            </label>
+            <div class="p-col-8 p-md-8 p-lg-8">
+              <!-- <textarea   autoResize="autoResize" style="min-height:80px;width:100%;margin-top:5px;" formControlName="ID"
+                                pInputTextarea></textarea>
+                            <div class="error" *ngIf="f.ID.touched && f.ID.invalid"> ID is  Invalid
+                                Entry
+                            </div> -->
+            </div>
+            <div class="p-col-8 p-md-8 p-lg-8" style="padding-left: 20%">
+              <h5
+                style="
+                  cursor: pointer;
+                  background: rgb(211, 19, 19);
+                  padding: 1vh;
+                  color: #f8f8fc;
+                  border-radius: 5px;
+                  padding-left: 20%;
+                "
+              >
+                <label class="p-lg-4 p-md-4 p-sm-4" style="cursor: pointer"
+                  >Browse For Quotation</label
+                >
+              </h5>
+            </div>
+
+            <div class="p-col-8 p-md-8 p-lg-8" style="padding-left: 20%">
+              <h5
+                style="
+                  cursor: pointer;
+                  background: rgb(147, 147, 150);
+                  padding: 1vh;
+                  color: #080808;
+                  border-radius: 5px;
+                  padding-left: 20%;
+                "
+              >
+                <label class="p-lg-4 p-md-4 p-sm-4" style="cursor: pointer"
+                  >Browse Image....</label
+                >
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Customer Sales Order' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="CustomerSalesOrder"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

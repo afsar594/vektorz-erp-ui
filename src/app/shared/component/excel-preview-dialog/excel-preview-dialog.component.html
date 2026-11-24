@@ -1,0 +1,8 @@
+<div class="toolbar">
+    <h2>{{ receivedData.filename }}</h2>
+    <button class="download-btn" (click)="downloadExcel()">⬇ Download Excel</button>
+</div>
+
+
+
+<div class="table-wrapper" [innerHTML]="receivedData.htmlContent"></div>

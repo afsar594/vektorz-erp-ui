@@ -1,0 +1,131 @@
+<div class="matero-page-header">
+  <app-page-header [title]="title | translate"></app-page-header>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        (click)="Show()"
+        label="Show"
+        icon="pi pi-plus"
+        class="ui-button-primary"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Clear"
+        (click)="clear()"
+        icon="fa fa-pencil"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card card-w-title">
+    <p-tabView>
+      <p-tabPanel [header]="'Report' | translate">
+        <br />
+
+        <div class="p-grid" [formGroup]="frmSalesReport">
+          <div class="p-col-4 p-grid">
+            <label class="p-col-2" for="account">
+              {{ "Job" | translate }}<span class="required">*</span>
+            </label>
+            <div class="p-col-10">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                (ngModelChange)="changess($event)"
+                formControlName="job"
+                [options]="jobList"
+              >
+              </p-dropdown>
+            </div>
+            <label class="p-col-2" for="account">
+              {{ "Report" | translate }}
+            </label>
+            <div class="p-col-8">
+              <p-radioButton
+                (onClick)="change('PO')"
+                class="ml-2"
+                name="report"
+                value="report"
+                style="margin-right: 10px"
+              >
+              </p-radioButton>
+              <label for="date" class="ml-2">Purchase Order</label>
+
+              <p-radioButton
+                class="ml-2"
+                (onClick)="change('PR')"
+                name="report"
+                value="report"
+                style="margin-right: 10px; margin-left: 10px"
+              >
+              </p-radioButton>
+              <label for="month" class="ml-2">Purchase Requisation</label>
+            </div>
+          </div>
+          <div class="p-col-4">
+            <p-panel>
+              <p-header>
+                <input (click)="toggleDate()" type="checkbox" pInputCheck />
+                By Date
+              </p-header>
+              <div class="p-grid">
+                <div class="p-col-2">
+                  <label for="fromDate">From</label>
+                </div>
+                <div class="p-col-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    [disabled]="!enableDate"
+                    [showIcon]="true"
+                    formControlName="dateFrom"
+                  >
+                  </p-calendar>
+                </div>
+                <div class="p-col-2">
+                  <label style="padding-left: 20px" for="fromDate">To</label>
+                </div>
+                <div class="p-col-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    id="dateTo"
+                    [disabled]="!enableDate"
+                    [showIcon]="true"
+                    formControlName="dateTo"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+            </p-panel>
+            <!-- </div> -->
+          </div>
+          <div class="p-col-4">
+            <p-splitButton
+              icon="fa fa-print"
+              [model]="printbtn"
+              label="Print Report"
+              styleClass="p-button-outlined mr-2 mb-2"
+            >
+            </p-splitButton>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+    <br />
+  </div>
+</div>
+
+<p-toast></p-toast>

@@ -1,0 +1,27 @@
+.table-container {
+    max-height: 300px; /* Adjust the max-height value according to your needs */
+    overflow-y: auto;
+}
+.table-container th {
+    position: sticky;
+    top: 0;
+  }
+
+/* Adjustments for smaller screen sizes */
+@media only screen and (max-width: 768px) {
+    .table-container {
+        max-height: 200px;
+    }
+}
+
+
+
+.iconbton{
+    cursor: pointer;
+}
+.right {
+    // font-size: 16px;
+    text-align: right;
+    margin-bottom: 0%;
+    margin-top: 0px;
+  }

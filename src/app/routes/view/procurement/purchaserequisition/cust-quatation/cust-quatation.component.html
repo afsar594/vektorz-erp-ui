@@ -1,0 +1,164 @@
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      (click)="getData()"
+      label="Show"
+      icon="pi pi-search"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      class="ui-button-warning"
+      label="Export"
+      icon="fa fa-refresh"
+      (click)="export()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear"
+      icon="fa fa-ban"
+      (click)="clearfilter()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="ref.close()"
+      label="Close"
+      icon="pi pi-close"
+    ></button>
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title">
+  <div class="p-grid">
+    <div class="p-col-6">
+      <div class="p-grid">
+        <label for="">Enquiry no</label>
+        <div class="p-col-12 p-md-12 p-lg-12">
+          <input
+            type="text"
+            pInputText
+            class="w-100"
+            [(ngModel)]="quotaionNo"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="p-col-6">
+      <p-panel>
+        <p-header>
+          <p-checkbox
+            [(ngModel)]="isDate"
+            [binary]="true"
+            label="ByDate"
+          ></p-checkbox>
+        </p-header>
+        <div class="p-grid">
+          <label class="p-col-12 p-md-12 p-lg-1">{{
+            "From" | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-11">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              showIcon="true"
+              [(ngModel)]="fromDate"
+              class="w-200"
+              [disabled]="!isDate"
+            >
+            </p-calendar>
+          </div>
+        </div>
+        <div class="p-grid">
+          <label class="p-col-12 p-md-12 p-lg-1">{{ "To" | translate }}</label>
+          <div class="p-col-12 p-md-12 p-lg-11">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              showIcon="true"
+              [(ngModel)]="toDate"
+              class="w-200"
+              [disabled]="!isDate"
+            >
+            </p-calendar>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+  <div class="p-sm-12 p-md-12 p-lg-12">
+    <p-table
+      #dte
+      [value]="Data"
+      [(selection)]="selectedqotation"
+      dataKey="id"
+      styleClass="ui-table-customers"
+      [rowHover]="true"
+      [rows]="5"
+      [paginator]="true"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flexSearch">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dte.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-list>
+        <tr
+          (click)="toggleSelection(list)"
+          [ngClass]="{ 'selected-row': isSelected(list) }"
+        >
+          <td class="text-center">
+            <input
+              [(ngModel)]="list.isSelect"
+              type="checkbox"
+              class="check"
+              [checked]="isSelected(list)"
+            />
+          </td>
+          <td>{{ list?.quotationNo }}</td>
+          <td>{{ list?.itemName }}</td>
+          <td>{{ list?.unitName }}</td>
+          <td>{{ list?.itemQty }}</td>
+          <td>{{ list?.rate }}</td>
+          <td>{{ list?.itemQty * list?.rate }}</td>
+          <td>{{ list?.grossAmount }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

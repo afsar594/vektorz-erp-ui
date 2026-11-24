@@ -1,0 +1,88 @@
+.inputGroup {
+    margin: 4px 0;
+}
+  
+.p-0{
+    padding: 0;
+}
+.grid {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.f-r {
+    float: right;
+}
+ 
+.min-panel {
+    min-height: 106px !important;
+}
+
+:host ::ng-deep .ui-table .ui-table-thead > tr > th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: -8px;
+    box-shadow: 1px 3px 6px 0 rgba(32,33,36,0.10);
+}
+
+@media screen and (max-width: 64em) {
+    :host ::ng-deep .ui-table .ui-table-thead > tr > th {
+        top: -8px;
+    }
+}
+.ui-dropdown {
+   min-width:  50% !important;
+    }
+
+    
+table.border-table {
+
+    th,
+    td {
+        border: 1px solid black;
+        padding: 8px;
+    }
+
+}
+
+#customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    // min-height: 300px;
+}
+
+#customers td {
+    // border-left: 1px solid ;
+    // border-right: ipx solid;
+    border-bottom:1px solid #ddd ;
+    padding: 8px;
+
+}
+
+#customers th {
+    border: 1px solid #dddd ;
+    padding: 8px;
+    text-align: start;
+}
+
+.SvTotal{
+    border: 1px solid black;
+    border-radius: 12px;
+    justify-content: flex-end;
+    margin: 5px;
+    padding: 5px;
+    display: flex;
+    gap: 30px;
+    width: 84%;
+}
+.SvTotalC{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: start;
+    gap: 17px;
+}
+.mrg{
+    margin: 10px 0;
+}

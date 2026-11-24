@@ -1,0 +1,102 @@
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" (click)="ApplyAllFilter()" label="Show Statement" [disabled]="!Permission?.View"
+      icon="fa fa-search" class="ui-button-info"></button>
+    <p-splitButton icon="fa fa-print" [model]="printbtn" label="Print Report" styleClass="p-button-outlined mr-2 mb-2">
+    </p-splitButton>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out" class="ui-button-danger"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Day Book' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-8">
+          <p-panel>
+            <p-header>
+              <p-checkbox [binary]="true" [(ngModel)]="isByDate" label="By Date"></p-checkbox>
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">
+                <b>{{ "Date From:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-4">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [disabled]="!isByDate" [yearNavigator]="true" yearRange="2000:2040" [dateFormat]="dateFormat"
+                  [showIcon]="true" useUtc [(ngModel)]="startDate" class="w-200">
+                </p-calendar>
+              </div>
+              <label class="p-col-12 p-md-2" style="padding-left: 10px" for="account">
+                <b>{{ "Date To:" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-4">
+                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                  [yearNavigator]="true" [disabled]="!isByDate" yearRange="2000:2040" [dateFormat]="dateFormat"
+                  [showIcon]="true" useUtc [(ngModel)]="endDate" class="w-100">
+                </p-calendar>
+              </div>
+              <div class="p-col-12 p-md-4" style="margin-top: 8px">
+                <p-radioButton (click)="changeDateFormat('dd/mm/yy')" [(ngModel)]="typeDate" name="typeDate"
+                  value="Date">
+                </p-radioButton>
+                <label for="particularVoucher" style="padding-left: 10px">Date</label>
+              </div>
+              <div class="p-col-12 p-md-4" style="margin-top: 8px">
+                <p-radioButton (click)="changeDateFormat('mm/yy')" [(ngModel)]="typeDate" name="typeDate" value="Month">
+                </p-radioButton>
+                <label for="particularVoucher" style="padding-left: 10px; margin-top: 2px">Month</label>
+              </div>
+              <div class="p-col-12 p-md-4" style="margin-top: 8px">
+                <p-radioButton (click)="changeDateFormat('yy')" [(ngModel)]="typeDate" name="typeDate" value="Year">
+                </p-radioButton>
+                <label for="particularVoucher" style="padding-left: 10px; margin-top: 2px">Year</label>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <br />
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Day Book Details' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <p-table [scrollable]="true" scrollHeight="45vh" [columns]="cols" [lazy]="true"
+              (onLazyLoad)="GetGridListData($event)" [showCurrentPageReport]="true"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+              [rowsPerPageOptions]="[10, 25, 50, 100]" [value]="dataset" [paginator]="true" [rows]="10"
+              [totalRecords]="totalRecords">
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="
+                      col.header == 'Id' || col.header == 'Action'
+                        ? true
+                        : false
+                    " *ngFor="let col of columns">
+                    <span> {{ col.header }} </span>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                  <td *ngFor="let col of columns; index as index">
+                    <span> {{ rowData[col.field] }} </span>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer" let-columns>
+                <tr class="font-bold">
+                  <td colspan="5">Total</td>
+                  <td>{{ totaldebit }}</td>
+                  <td>{{ totalcredit }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

@@ -1,0 +1,120 @@
+<app-page-header [nav]='[{label: "account"| translate},{label: "Manufacturing List"| translate}]'
+    [title]='title| translate'></app-page-header>
+
+<div class="toolbar">
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" (click)="new()" label="New" icon="pi pi-plus" class="ui-button-info"></button>
+        <button pButton type="button" label="Edit" (click)="edit()" [disabled]="!Permission?.Edit" icon="fa fa-pencil"
+            class="ui-button-success"></button>
+        <button pButton type="button" class="ui-button-warning" label="Cancel" icon="fa fa-ban"></button>
+        <button pButton type="button" icon="fa fa-floppy-o" (click)="savemanufacture()"
+            [label]="btnFlag?.save == true ? 'Save': 'Update'" [disabled]="!Permission?. Add"
+            class="ui-button-success"></button>
+        <button pButton type="button" label="List" (click)="showMaximizableDialog()" [disabled]="!Permission?.View"
+            icon="fa fa-list" class="ui-button-info"></button>
+        <button pButton type="button" class="ui-button-danger" (click)="delete()" label="Delete"
+            [disabled]="!Permission?. Delete" icon="fa fa-trash"></button>
+
+
+    </div>
+    <div class="ui-toolbar-group-right">
+
+        <button pButton type="button" class="ui-button-primary" label="Template" icon="fa fa-bars"></button>
+        <button pButton type="button" label="Print" [disabled]="!Permission?.Print" icon="fa fa-print"
+            class="ui-button-info"></button>
+        <button pButton type="button" label="Exit" icon="fa fa-sign-out" class="ui-button-danger"></button>
+
+    </div>
+</div>
+
+<div class="card card-w-title" [formGroup]='menufacturlistGroup'>
+
+    <p-panel>
+        <p-header>
+            {{'Manufacturing Entry'| translate}}
+        </p-header>
+
+        <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1"><b>{{'ML.No.'| translate}}</b></label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+                <input class="w-100" pInputText formControlName="menufacturlistNo" readonly>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1"><b>{{'Item'| translate}}</b></label>
+            <div class="p-col-4 p-md-4 p-lg-4">
+                <p-dropdown filter="true" class="w-100" placeholder="---Item---" formControlName="item" [filter]="true"
+                    [options]="ItemMasterList">
+                </p-dropdown>
+                <div class="error" *ngIf="f?.item?.touched && f?.item?.invalid">
+                    <span>Item is Mandatory Field*</span>
+                </div>
+            </div>
+        </div>
+        <div class="p-grid">
+
+            <label class="p-col-1 p-md-1 p-lg-1"><b>{{'Remarks'| translate}}</b></label>
+            <div class="p-col-4 p-md-4  p-lg-4">
+                <textarea class="w-100" [rows]="5" formControlName="remarks" pInputTextarea></textarea>
+                <div class="error" *ngIf="f?.remarks?.touched && f?.remarks?.invalid">
+                    <span>Remarks is Mandatory Field*</span>
+                </div>
+            </div>
+
+        </div>
+
+    </p-panel>
+
+    <div class="card card-w-title">
+        <p-panel>
+            <p-header>
+                {{'Item Details'| translate}}
+            </p-header>
+            <div class="grid">
+                <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey" [settings]="menufactur_entry">
+                </hot-table>
+            </div>
+        </p-panel>
+    </div>
+</div>
+<app-lookup [header]='"Look Up item"' [dataArry]="dataList" [selectedItem]='selectItem' [columns]='lookupGridColumns'
+    (selectItemEvent)='selectedItem($event)' (exitEvent)='exit($event)' [cell]='activeRow' (clearEvent)='clear($event)'
+    (hideDialogEvent)='hide($event)' [tableheader]="'Sales List'" [(show)]='showSalesLookUp'></app-lookup>
+
+
+<p-dialog header="Manufacture (Component List) Search" [(visible)]="displayMaximizable" [modal]="true"
+    [style]="{width: '90%'}" [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <p-table #dt [value]="menufactureArray" [columns]="cols" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+                <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Global Filter"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let col of cols" [pSortableColumn]="col.field">{{col.header|translate}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-menufacture>
+            <tr *ngIf='menufacture.customerDeliveryNoteDelStatus!=true'>
+
+                <td> {{menufacture.mI_Id_N}}</td>
+                <td>{{menufacture.mI_RF_V}} </td>
+                <td>{{menufacture.mI_Item_ID}}</td>
+                <td>{{getItemName(menufacture.mI_Item_ID)}}</td>
+                <td>{{menufacture.mI_Remarks_V}}</td>
+                <td>
+                    <button pButton type="button" icon="pi pi-pencil"
+                        (click)='GetSavedmenufactureDetails(menufacture.mI_Id_N);displayMaximizable=false;'
+                        class="ui-button-info"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+</p-dialog>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>

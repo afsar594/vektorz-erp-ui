@@ -1,0 +1,241 @@
+// ::ng-deep{
+//     .ui-calendar {
+//         width: 100% !important;
+//       }
+//     }
+.contain{
+    width: 85%;
+    margin-left: 8%;
+    margin-bottom:2% ;
+    border-radius: 10px;
+    margin-top: 1%;
+  }
+  h1{
+    padding-left: 4%;
+    padding-top: .5%;
+    font-family:"Sans-serif";
+    font-size: 1.5rem; 
+    margin-bottom: 2%;
+    color: black;
+  }
+  h2{
+    padding-top: 25px;
+    text-align: center;
+    margin-top: 1%;
+    font-family:"Sans-serif";
+    font-size: 1.5rem;
+    margin-bottom: 0%;
+  }
+  h3{
+    text-align: center;
+   margin-top: 0%;
+    font-family:"Sans-serif";
+    font-size: 1rem;  
+  }
+  h4{
+  margin-top: 5px;
+  padding-left: 0%;
+  margin-bottom: 0%; 
+  font-size: 18px;
+  }
+  h5{
+    margin-top: 0%;
+  }
+  .w60{
+  width: 60px;
+  }
+  .w80{
+  width: 130px;
+  text-align: left;
+  }
+  .spacer{
+  height: 200px;
+  }
+  .page-footer {
+  position: running(footer);
+  bottom: 0;
+  width: 100%;
+  visibility: visible;
+ /* margin-top: 100%; */
+  /* clear: both;
+  position: relative;
+  height: 200px;
+  margin-top: -200px; */
+  }
+  .payment1{
+    border: 2.5px solid rgb(86, 87, 87);
+    width: 88.2%;
+    margin-left: 8%;
+    margin-bottom:2% ;
+    border-radius: 10px;
+    margin-top: 2%;
+    padding-left:3%;
+    font-size: 18px;
+     margin-bottom: 0%;
+     padding-top: 10px;
+     padding-bottom: 10px;
+      }
+ 
+  .btag{
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+   margin-right: 35%;
+   margin-top: 0px;
+  }
+  
+  .left {
+    font-size: 16px;
+    text-align: left;
+  }
+  
+  .right {
+    font-size: 16px;
+    text-align: right;
+    
+  }
+  #Voucher {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    
+  
+  }
+  
+  #Voucher td, #Voucher th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    
+  }
+  
+  #Voucher tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #Voucher tr:hover {background-color: #ddd;}
+  
+  #Voucher th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dfe4e3;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    
+  }
+  
+ 
+  #payment {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+   
+  }
+  
+  #payment td, #payment th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    
+  }
+  
+  #payment tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #payment tr:hover {background-color: #ddd;}
+  
+  #payment th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dfe4e3;
+    color: rgb(0, 0, 0);
+    text-align: center;
+  }
+  .page{
+    padding-left: 15px;
+    text-align: center;
+  }
+  .container {
+  display: flex; /* Use flexbox layout */
+   padding-top: 1%;
+   padding-left: 68%;
+   flex-direction: row;
+   justify-content: start;
+   align-items: start;
+ 
+  }
+  
+  .column1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+  }
+  .column2{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+margin-left: 100px;
+  }
+  
+  .rup{
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 11%;
+  }
+  h4{
+    padding-left: 8%;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    margin-top: -20px;
+    margin-bottom: -20px;
+  }
+  
+  .logo {
+    margin-right: 90px; /* Adjust margin as needed */
+    width: 20%;
+    height: 7%;
+    padding-top: 5%;
+  }
+  .adj{
+    display: flex;
+   padding-left: 13%;
+   padding-top: 3%;
+  }
+   
+  .pre{
+  padding-left: 45%;
+  }
+  .flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Adjust this according to your layout needs */
+    /* Add any other necessary styling */
+}
+.flexcol {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .flexrow {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    margin-right: 258px;
+  }
+  .rounded-table{
+     border: 2.5px solid rgb(86, 87, 87);
+  border-collapse:separate;
+   border-radius:6px;
+  width: 88%;
+  margin-left: 8%;
+  margin-top: 5px;
+  border-radius: 10px;
+  }

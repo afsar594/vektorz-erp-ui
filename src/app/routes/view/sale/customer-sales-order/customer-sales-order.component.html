@@ -1,0 +1,815 @@
+<app-page-header
+  [nav]="[{ label: 'account' | translate }, { label: title | translate }]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="saveCustomerSellOrder()"
+      [disabled]="!Permission.Add || btnFlag.new"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission.Delete"
+      [label]="'Delete' | translate"
+      icon="fa fa-trash"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="!Permission?.View"
+      [label]="'List' | translate"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      [label]="'Cancel' | translate"
+      (click)="cancel()"
+      icon="fa fa-ban"
+      class="ui-button-warning"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="callDropdowns(true)"
+      icon="fa fa-refresh"
+      class="ui-button-success"
+    ></button>
+    <div class="p-inputgroup">
+      <input type="text" pInputText placeholder="Search" />
+      <button pButton type="button" icon="pi pi-search"></button>
+    </div>
+    <p-splitButton
+      icon="fa fa-print"
+      [model]="printbtn"
+      label="Print Report"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      styleClass="p-button-outlined mr-2 mb-2"
+    >
+    </p-splitButton>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+    <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+  </div>
+</p-toolbar>
+<div
+  class="card card-w-title text-center"
+  [formGroup]="customerSellOrderFormGroup"
+>
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Customer Sales Order' | translate">
+      <div class="p-grid">
+        <div class="p-col-4">
+          <div class="p-grid">
+            <label class="p-col-3">Location</label>
+            <div class="p-col-9">
+              <p-dropdown
+                filter="true"
+                [options]="locationList"
+                formControlName="customerPurchaseOrderLocationId"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.customerPurchaseOrderLocationId.touched &&
+                  f.customerPurchaseOrderLocationId.invalid
+                "
+              >
+                <span>Location is Mandatory Field*</span>
+              </div>
+            </div>
+            <label class="p-col-3">Customer</label>
+            <div class="p-col-9">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                [options]="customerList"
+                formControlName="customerPurchaseOrderCustomerId"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.customerPurchaseOrderCustomerId.touched &&
+                  f.customerPurchaseOrderCustomerId.invalid
+                "
+              >
+                <span>Customer is Mandatory Field*</span>
+              </div>
+              <!-- <input pInputText value="" placeholder="---- Customer Name ----" /> -->
+            </div>
+            <label class="p-col-3">Department</label>
+            <div class="p-col-9">
+              <p-dropdown
+                filter="true"
+                [options]="departmentList"
+                formControlName="customerPurchaseOrderDepartmentId"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.customerPurchaseOrderDepartmentId.touched &&
+                  f.customerPurchaseOrderDepartmentId.invalid
+                "
+              >
+                <span>Department is Mandatory Field*</span>
+              </div>
+            </div>
+            <label class="p-col-3">Salesman</label>
+            <div class="p-col-9">
+              <p-dropdown
+                filter="true"
+                [options]="SalesManMasterList"
+                formControlName="customerPurchaseOrderSalesManId"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.customerPurchaseOrderSalesManId.touched &&
+                  f.customerPurchaseOrderSalesManId.invalid
+                "
+              >
+                <span>Salesman is Mandatory Field*</span>
+              </div>
+            </div>
+            <!-- <span class="p-col-12" *ngIf="!JOBCOST"> -->
+            <label *ngIf="!JOBCOST" class="p-col-3">Job List</label>
+            <div *ngIf="!JOBCOST" class="p-col-9">
+              <p-dropdown
+                filter="true"
+                [options]="jobList"
+                formControlName="customerPurchaseOrderJobId"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="
+                  f.customerPurchaseOrderJobId.touched &&
+                  f.customerPurchaseOrderJobId.invalid
+                "
+              >
+                <span>Job List is Mandatory Field*</span>
+              </div>
+            </div>
+            <!-- </span> -->
+            <label class="p-col-3">Narration</label>
+            <div class="p-col-9">
+              <textarea
+                class="w-100"
+                formControlName="customerPurchaseOrderRemarks"
+                pInputText
+              ></textarea>
+              <div
+                class="error"
+                *ngIf="
+                  f.customerPurchaseOrderRemarks.touched &&
+                  f.customerPurchaseOrderRemarks.invalid
+                "
+              >
+                <span>Narration is Mandatory Field*</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-8">
+          <p-panel>
+            <p-header>
+              <input type="checkbox" pInputCheck />
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-1">
+                <label for="fromDate">S.O No</label>
+              </div>
+              <div class="p-col-5 m-lg-5">
+                <input
+                  type="text"
+                  formControlName="customerPurchaseOrderSONo"
+                  class="w-100"
+                  pInputText
+                  readonly
+                />
+
+                <div
+                  class="error"
+                  *ngIf="
+                    f.customerPurchaseOrderSONo.touched &&
+                    f.customerPurchaseOrderSONo.invalid
+                  "
+                >
+                  <span>SNo. is Mandatory Field*</span>
+                </div>
+              </div>
+              <div class="p-col-1">
+                <label for="fromDate">S.O Date</label>
+              </div>
+              <div class="p-col-5">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  id="voucherDate"
+                  formControlName="customerPurchaseOrderDate"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.customerPurchaseOrderDate.touched &&
+                    f.customerPurchaseOrderDate.invalid
+                  "
+                >
+                  <span>S.O Date is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-1">
+                <label for="fromDate">Lpo No.</label>
+              </div>
+              <div class="p-col-5 m-lg-5">
+                <input
+                  type="text"
+                  formControlName="customerPurchaseOrderLPONo"
+                  class="w-100"
+                  pInputText
+                />
+                <div
+                  class="error"
+                  *ngIf="
+                    f.customerPurchaseOrderLPONo.touched &&
+                    f.customerPurchaseOrderLPONo.invalid
+                  "
+                >
+                  <span>Lpo No. is Mandatory Field*</span>
+                </div>
+              </div>
+              <div class="p-col-1">
+                <label for="fromDate">LPO Date</label>
+              </div>
+              <div class="p-col-5">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  formControlName="customerPurchaseOrderLPODate"
+                  useUtc
+                  id="customerPurchaseOrderLPODate"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.customerPurchaseOrderLPODate.touched &&
+                    f.customerPurchaseOrderLPODate.invalid
+                  "
+                >
+                  <span>Lpo Date is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-1">
+                <label for="fromDate">Currency</label>
+              </div>
+              <div class="p-col-5 m-lg-5">
+                <p-dropdown
+                  filter="true"
+                  [options]="currencyList"
+                  formControlName="customerPurchaseOrderCurrencyId"
+                  optionLabel=""
+                  [showClear]="true"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.customerPurchaseOrderCurrencyId.touched &&
+                    f.customerPurchaseOrderCurrencyId.invalid
+                  "
+                >
+                  <span>Currency is Mandatory Field*</span>
+                </div>
+              </div>
+              <div class="p-col-1">
+                <label for="fromDate">Delivery schedule</label>
+              </div>
+              <div class="p-col-5">
+                <textarea
+                  class="w-100"
+                  formControlName="customerPurchaseOrderDelSch"
+                  pInputText
+                ></textarea>
+                <div
+                  class="error"
+                  *ngIf="
+                    f.customerPurchaseOrderDelSch.touched &&
+                    f.customerPurchaseOrderDelSch.invalid
+                  "
+                >
+                  <span>Del Sch is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-1"></div>
+              <div class="p-col-3">
+                <button
+                  pButton
+                  type="button"
+                  (click)="QutationList()"
+                  label="Browse For Quotation"
+                  icon="fa fa-plus"
+                  class="ui-button-info"
+                  [disabled]="btnFlag.new"
+                ></button>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <p-panel>
+        <p-header> Details </p-header>
+        <div class="card">
+          <div class="p-grid">
+            <div class="p-col-12">
+              <hot-table
+                [hotId]="hotid"
+                [licenseKey]="licensekey"
+                [settings]="customerPurchaseDetails"
+              >
+              </hot-table>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+
+      <ng-container *ngIf="showSalesLookUp">
+        <app-lookup
+          [header]="'Look Up'"
+          [dataArry]="dataList"
+          [isServerSearch]="isServerSearch"
+          [selectedItem]="selectItem"
+          [columns]="lookupGridColumns"
+          (selectItemEvent)="selectsales($event)"
+          (exitEvent)="exit($event)"
+          [cell]="activeRow"
+          [width]="width"
+          (clearEvent)="clear($event)"
+          (searchEvent)="onSearch($event)"
+          (hideDialogEvent)="hide($event)"
+          [tableheader]="'Sales List'"
+          [(show)]="showSalesLookUp"
+        ></app-lookup>
+      </ng-container>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Sales List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+
+      <div class="p-co1-4 p-offset-8">
+        <div class="p-grid inputGroup">
+          <label class="p-col-3 p-md-3 p-lg-3" for="account">
+            <b>{{ "Grand Total" | translate }}</b>
+          </label>
+          <div class="p-col-9 p-md-9 p-lg-9">
+            <input
+              id="total"
+              formControlName="customerPurchaseOrderAmount"
+              pInputText
+            />
+          </div>
+        </div>
+        <div class="p-grid inputGroup">
+          <label class="p-col-3 p-md-3 p-lg-3" for="account">
+            <b>{{ "Discount" | translate }}</b>
+          </label>
+          <div class="p-col-9 p-md-9 p-lg-9">
+            <input
+              id="total"
+              formControlName="customerPurchaseOrderDiscAmount"
+              pInputText
+              (input)="onDiscountChange($event.target.value)"
+            />
+          </div>
+        </div>
+
+        <div class="p-grid inputGroup">
+          <label class="p-col-3 p-md-3 p-lg-3" for="account">
+            <b>{{ "VAT" | translate }}</b>
+          </label>
+          <div class="p-col-4 p-md-4 p-lg-4">
+            <input
+              id="total"
+              formControlName="customerPurchaseOrderVatPercentage"
+              pInputText
+            />
+          </div>
+          <div class="p-col-1 p-md-1 p-lg-1">
+            <span>%</span>
+          </div>
+          <div class="p-col-4 p-md-4 p-lg-4">
+            <input
+              id="total"
+              formControlName="customerPurchaseOrderVatAmount"
+              pInputText
+            />
+          </div>
+        </div>
+
+        <div class="p-grid inputGroup">
+          <label class="p-col-3 p-md-3 p-lg-3" for="account">
+            <b>{{ "Net Total" | translate }}</b>
+          </label>
+          <div class="p-col-9 p-md-9 p-lg-9">
+            <input
+              id="total"
+              formControlName="customerPurchaseOrderNetAmount"
+              pInputText
+            />
+          </div>
+        </div>
+        <!-- <div class="p-grid inputGroup">
+                        <label class="p-col-3 p-md-3 p-lg-3 " for="account">
+                            <b>{{'Gross Profit'| translate}}</b>
+                        </label>
+                        <div class="p-col-4 p-md-4 p-lg-4">
+                            <input id="total" formControlName='customerQuotationGrossProfitTotal' pInputText>
+                        </div>
+                        <div class="p-col-1 p-md-1 p-lg-1">
+                            <span>%</span>
+                        </div>
+                        <div class="p-col-4 p-md-4 p-lg-4">
+                            <input id="total" formControlName='customerQuotationGrossProfitTotal' pInputText>
+                        </div>
+                    </div> -->
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Customer SalesOrder List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="customerPurchase"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-custpur>
+      <tr>
+        <td>{{ custpur.customerPurchaseOrderVoucherNo }}</td>
+        <td>{{ custpur.customerPurchaseOrderDate | date : "dd/MM/yyyy" }}</td>
+
+        <td>
+          <span *ngIf="custpur?.customerPurchaseOrderCustomerId != null">
+            {{ getCustomer(custpur.customerPurchaseOrderCustomerId) }}
+          </span>
+        </td>
+        <td>
+          <span *ngIf="custpur?.customerPurchaseOrderLocationId != null">
+            {{ getLocation(custpur.customerPurchaseOrderLocationId) }}</span
+          >
+        </td>
+        <td>
+          <span *ngIf="custpur?.customerPurchaseOrderSalesManId != null">
+            {{ getSalesMan(custpur.customerPurchaseOrderSalesManId) }}</span
+          >
+        </td>
+        <td>
+          <span *ngIf="custpur?.customerPurchaseOrderCurrencyId != null">
+            {{ getCurrency(custpur.customerPurchaseOrderCurrencyId) }}</span
+          >
+        </td>
+        <td>
+          {{ custpur.customerPurchaseOrderRemarks }}
+        </td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedCustomerPurchaseDetails(custpur.customerPurchaseOrderId);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+<!-- ================================ -->
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="getPIReport()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div id="print">
+    <div class="contain">
+      <div class="flexcol wp-50">
+        <div class="vouhead">
+          <h1>Circle Elevators & Escalators LLC</h1>
+        </div>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Address </b>
+            <b>Tel </b>
+            <b>Fax </b>
+            <b>Email </b>
+            <b>Vat No </b>
+          </div>
+          <div class="flexcol">
+            <div class="btag">&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div class="btag">&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div class="btag">&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div class="btag">&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div class="btag">&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div class="btag">{{ stationmasterObj?.stationMasterAddress }}</div>
+            <div class="btag">{{ stationmasterObj?.stationMasterTele1 }}</div>
+            <div class="btag">{{ stationmasterObj?.stationMasterFax }}</div>
+            <div class="btag">{{ stationmasterObj?.stationMasterEmail }}</div>
+            <div class="btag">{{ stationmasterObj?.stationMasterVatNo }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2>Customer Sales Order</h2>
+    <div class="payment1">
+      <div class="flex-container">
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Customer </b>
+            <b>Vat No </b>
+            <b>Cont. Person </b>
+            <b>Tel </b>
+            <b>Mob No</b>
+            <b>Email</b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>
+              {{
+                GetCustomer(
+                  savedCustomerPurchase?.customerPurchaseOrderCustomerId
+                )
+              }}
+            </div>
+            <div>{{ savedCustomerPurchase?.customerMasterCustomerVatNo }}</div>
+            <div>
+              {{ savedCustomerPurchase?.customerMasterCustomerContactPerson }}
+            </div>
+            <div>{{ "Tell" }}</div>
+            <div>{{ "Mobile No" }}</div>
+            <div>{{ "Email" }}</div>
+          </div>
+        </div>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Voucher No </b>
+            <b>Voucher Date </b>
+            <b> P O No.</b>
+            <b>Sales Person </b>
+            <b>Remarks</b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>
+              {{ savedCustomerPurchase?.customerPurchaseOrderVoucherNo }}
+            </div>
+            <div>
+              {{
+                savedCustomerPurchase?.customerPurchaseOrderDate
+                  | date : "dd/MM/yyyy"
+              }}
+            </div>
+            <div>{{ savedCustomerPurchase?.customerPurchaseOrderLpoNo }}</div>
+            <div>
+              {{
+                getSalesMan(
+                  savedCustomerPurchase?.customerPurchaseOrderSalesManId
+                )
+              }}
+            </div>
+            <div>{{ savedCustomerPurchase?.customerPurchaseOrderRemarks }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-table">
+      <table id="Voucher">
+        <tr>
+          <th class="w60">SNo</th>
+          <th class="w80" style="text-align: left">Item Name</th>
+          <th class="w60">Unit</th>
+          <th class="w60">Qty Packing</th>
+          <th class="w60">U. Price</th>
+          <th class="w60">Amount</th>
+        </tr>
+        <tr
+          *ngFor="
+            let item of savedCustomerPurchase?.customerPurchaseOrderDetails;
+            let i = index
+          "
+        >
+          <td style="text-align: center">{{ i + 1 }}</td>
+          <td style="text-align: left">
+            {{ item?.customerPurchaseOrderDetailsDescription }}
+          </td>
+          <td style="text-align: center">
+            {{ getUnitName(item?.customerPurchaseOrderDetailsUnitId) }}
+          </td>
+          <td style="text-align: center">
+            {{ item?.proformaInvoiceDetailsItemId }}
+          </td>
+          <td style="text-align: right">
+            {{ item?.customerPurchaseOrderDetailsUnitPrice }}
+          </td>
+          <td style="text-align: right">
+            {{ item?.customerPurchaseOrderDetailsAmount }}
+          </td>
+        </tr>
+        <tr class="spacer">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <div class="container">
+      <div class="column1">
+        <b>Total Amount</b>
+        <!-- <b>Discount</b>
+            <b>Sub Total</b>
+            <b>Vat Amount</b>
+            <b>Net Amount[AED]</b> -->
+      </div>
+      <div class="column2">
+        <b>{{ GetTotal() }} </b>
+        <!-- <b>3676746 </b>
+            <b>3676746 </b>
+            <b>3676746 </b>
+            <b>3676746 </b> -->
+      </div>
+    </div>
+    <p class="rup">{{ convertNumberToWordsWithDecimal(GetTotal()) }}</p>
+    <div class="page-footer">
+      <div class="rounded-table">
+        <table id="payment">
+          <tr>
+            <th>Receiver's Signature:</th>
+            <th>Verified By & Signature:</th>
+            <th>Date Of Print:</th>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td class="page">Page No: 1</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</p-dialog>

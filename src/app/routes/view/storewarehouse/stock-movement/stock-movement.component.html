@@ -1,0 +1,599 @@
+<app-page-header
+  [nav]="[{ label: 'account' | translate }, { label: title | translate }]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      label="Find"
+      [disabled]="!Permission?.View"
+      icon="fa fa-search"
+      (click)="getStockMovement()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-success"
+      label="Print"
+      [disabled]="!Permission?.View"
+      icon="fa fa-print"
+      (click)="getPOReport()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      icon="fa fa-times"
+      (click)="Cancel()"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="navigateBack()"
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="stockMovementFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Stock Movement Report' | translate">
+      <div class="p-col-12 p-md-12 p-lg-12">
+        <div class="p-grid">
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid">
+              <div class="p-col-12 p-md-12 p-lg-2" for="account">
+                <b>{{ "Item Group" | translate }}</b>
+              </div>
+
+              <div class="p-col-12 p-md-12 p-lg-10">
+                <!-- <input id="tree" class="w-100" formControlName='itemGroupB' pInputText> -->
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  [options]="itemGroup"
+                  [filter]="true"
+                  formControlName="itemCodeB"
+                  [showClear]="true"
+                  (onChange)="onItemGroupChange($event)"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="f.itemCodeB.touched && f.itemCodeB.invalid"
+                >
+                  <span>Item Group is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 p-md-12 p-lg-2" for="account">
+                <b>{{ "Item" | translate }}</b>
+              </div>
+              <div class="p-col-12 p-md-12 p-lg-10">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  [options]="ItemMasterList"
+                  [filter]="true"
+                  formControlName="itemName"
+                  [showClear]="true"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="f.itemName.touched && f.itemName.invalid"
+                >
+                  <span>Item Name is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 p-md-12 p-lg-2" for="account">
+                <b>{{ "Location" | translate }}</b>
+              </div>
+              <div class="p-col-12 p-md-12 p-lg-10">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  [options]="locationList"
+                  [filter]="true"
+                  formControlName="location"
+                >
+                </p-dropdown>
+                <div
+                  class="error"
+                  *ngIf="f.location.touched && f.location.invalid"
+                >
+                  <span> Location is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+            <div class="p-col-12 p-md-12 p-lg-2" for="narration">
+              <b>{{ "Narration" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-12 p-lg-10">
+              <input
+                type="text"
+                pInputText
+                class="w-100"
+                formControlName="narration"
+                placeholder="{{ 'Enter Narration' | translate }}"
+              />
+            </div>
+          </div>
+
+            <!-- <div class="p-grid">
+
+                            <div class="p-col-12 p-md-12 p-lg-1 " for="account">
+                                <b>{{'Job'| translate}}</b>
+                            </div>
+                            <div class="p-col-12 p-md-12 p-lg-5">
+
+                                <div class="ui-inputgroup w-100">
+                                    <input class="w-100" placeholder="Job" pInputText formControlName="Job">
+                                    <button pButton type="button" icon="pi pi-search"></button>
+                                </div>
+                                <p-dropdown filter="true" class="w-100" [options]="jobList" [filter]="true" formControlName='location'
+                                > </p-dropdown>
+                                <div class="error" *ngIf="f.Job.touched && f.Job.invalid">
+                                    <span> Job is Mandatory Field*</span>
+                                </div>
+                            </div>
+                        </div> -->
+          </div>
+          <!-- <div class="p-col-2 p-md-2 p-lg-2">
+                        <p-panel>
+                            <div class="p-grid">
+                                <div class="p-col-12 p-md-12 p-sm-12 ">
+                                    <p-radioButton value="Summary"></p-radioButton>
+                                    <label class="p-lg-5 p-md-4 p-sm-4">Summary</label>
+                                </div>
+                                <div class="p-col-12 p-md-12 p-sm-12">
+                                    <p-radioButton value="Detailed"></p-radioButton>
+                                    <label class="p-lg-5 p-md-4 p-sm-4">Detailed</label>
+                                </div>
+
+                            </div>
+
+                        </p-panel>
+                    </div>
+                    <div class="p-col-2 p-md-2 p-lg-2">
+                        <p-panel>
+                            <div class="p-grid">
+                                <div class="p-col-12 p-md-12 p-sm-12">
+                                    <p-radioButton value="Summary"></p-radioButton>
+                                    <label class="p-lg-5 p-md-4 p-sm-4">No Group</label>
+                                </div>
+                                <div class="p-col-12 p-md-12 p-sm-12">
+                                    <p-radioButton value="Detailed"></p-radioButton>
+                                    <label class="p-lg-4 p-md-4 p-sm-4" for="dateRangeDetailed">Job</label>
+                                </div>
+                                <div class="p-col-12 p-md-12 p-sm-12">
+                                    <p-radioButton value="Group"></p-radioButton>
+                                    <label class="p-lg-4 p-md-4 p-sm-4" for="dateRangeGroup">Item Group</label>
+                                </div>
+                                <div class="p-col-12 p-md-12 p-sm-12">
+                                    <p-radioButton value="Group"></p-radioButton>
+                                    <label class="p-lg-4 p-md-4 p-sm-4" for="dateRangeGroup">Location</label>
+                                </div>
+                            </div>
+
+                        </p-panel>
+                    </div> -->
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <p-panel>
+              <p-header> By Date </p-header>
+              <div class="p-grid">
+                <div class="p-col-12 p-md-12 p-lg-2" for="account">
+                  <b>{{ "Date From" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    id="dateFrom"
+                    useUtc
+                    dateFormat="dd-mm-yy"
+                    [showIcon]="true"
+                    formControlName="dateFrom"
+                  ></p-calendar>
+                  <div
+                    class="error"
+                    *ngIf="f.dateFrom.touched && f.dateFrom.invalid"
+                  >
+                    <span>Date Range From is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-12 p-md-12 p-lg-2" for="account">
+                  <b>{{ "Date To" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    id="dateTo"
+                    useUtc
+                    dateFormat="dd-mm-yy"
+                    [showIcon]="true"
+                    formControlName="dateTo"
+                  ></p-calendar>
+                  <div
+                    class="error"
+                    *ngIf="f.dateTo.touched && f.dateTo.invalid"
+                  >
+                    <span>Date Range To is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </div>
+      <p-panel header="Details">
+        <div class="p-grid top">
+          <p-table
+            [tableStyle]="{ 'min-width': '30rem' }"
+            [value]="subjectDatSet"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th rowspan="3" class="col-sr text-left">Sr.</th>
+                <th rowspan="3" class="col-item-id text-left">Item Id</th>
+                <th rowspan="3" class="col-item-name text-left">Item Name</th>
+                <th rowspan="3" class="col-unit text-right">Unit</th>
+                <th colspan="2">Open</th>
+                <th colspan="2">Received</th>
+                <th colspan="2">Issue</th>
+                <th colspan="2">Balance</th>
+                <!-- <th rowspan="3" class="text-left">Narration</th>  -->
+              </tr>
+              <tr>
+                <th colspan="2"></th>
+                <th colspan="2">In</th>
+                <th colspan="2">Out</th>
+                <th colspan="2"></th>
+              </tr>
+              <tr>
+                <th class="col-qty text-right">Qty</th>
+                <th class="col-amt text-right">Amt</th>
+                <th class="col-qty text-right">Qty</th>
+                <th class="col-amt text-right">Amt</th>
+                <th class="col-qty text-right">Qty</th>
+                <th class="col-amt text-right">Amt</th>
+                <th class="col-qty text-right">Qty</th>
+                <th class="col-amt text-right">Amt</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+              <tr>
+                <td class="col-sr text-center">{{ rowIndex + 1 }}</td>
+                <td class="col-item-id text-left">{{ item.item_Id }}</td>
+                <td class="col-item-name text-left colname">
+                  {{ item.item_Name }}
+                </td>
+                <td class="col-unit text-right">
+                  {{ item.stock_Register_Unit }}
+                </td>
+                <td class="col-qty text-right">{{ item.openQty | number }}</td>
+                <td class="col-amt text-right">
+                  {{ item.openQtyAmount | number : "1.2-2" }}
+                </td>
+                <td class="col-qty text-right">{{ item.stockIn | number }}</td>
+                <td class="col-amt text-right">
+                  {{ item.stockInAmount | number : "1.2-2" }}
+                </td>
+                <td class="col-qty text-right">{{ item.stockOut | number }}</td>
+                <td class="col-amt text-right">
+                  {{ item.stockOutAmount | number : "1.2-2" }}
+                </td>
+                <td class="col-qty text-right">{{ item.totalBal | number }}</td>
+                <td class="col-amt text-right">
+                  {{ item.totalBalAmount | number : "1.2-2" }}
+                </td>
+                <!-- <td class="text-left">{{ item.narration }}</td> -->
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <div class="p-sm-12 p-md-12" [formGroup]="stockMovementDetailFormGroup">
+          <p-panel>
+            <p-header>
+              {{ "Stock Movement Summary" | translate }}
+            </p-header>
+            <div class="p-grid top">
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                  <b>{{ "Open Qty" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="openQty"
+                    type="number"
+                    pInputText
+                    formControlName="openQty"
+                  />
+                </div>
+              </div>
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                  <b>{{ "Open Amount" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="openAmount"
+                    type="number"
+                    pInputText
+                    formControlName="openAmount"
+                  />
+                </div>
+              </div>
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                  <b>{{ "Received Qty" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="receivedQty"
+                    type="number"
+                    pInputText
+                    formControlName="receivedQty"
+                  />
+                </div>
+              </div>
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                  <b>{{ "Received Amount" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="receivedAmount"
+                    type="number"
+                    pInputText
+                    formControlName="receivedAmount"
+                  />
+                </div>
+              </div>
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                  <b>{{ "Issue Qty" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="issueQty"
+                    type="number"
+                    pInputText
+                    formControlName="issueQty"
+                  />
+                </div>
+              </div>
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                  <b>{{ "Issue Amount" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="issueAmount"
+                    type="number"
+                    pInputText
+                    formControlName="issueAmount"
+                  />
+                </div>
+              </div>
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4">
+                  <b>{{ "Close Qty" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="closeQty"
+                    type="number"
+                    pInputText
+                    formControlName="closeQty"
+                  />
+                </div>
+              </div>
+              <div class="p-col-4 p-grid">
+                <div class="p-col-12 p-md-12 p-lg-4">
+                  <b>{{ "Close Amount" | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                  <input
+                    id="closeAmount"
+                    type="number"
+                    pInputText
+                    formControlName="closeAmount"
+                  />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </p-panel>
+      <!-- <div class="grid">
+        <hot-table [hotId]="hotid2" [licenseKey]="licensekey" [settings]="stockMovement"></hot-table>
+    </div> -->
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<div class="card card-w-title" [formGroup]="stockMovementDetailFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Format 1' | translate">
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <p-panel>
+            <p-header>
+              {{ "STOCK IN" | translate }}
+            </p-header>
+            <div class="grid">
+              <hot-table
+                [hotId]="hotid1"
+                [licenseKey]="licensekey"
+                [settings]="stockin"
+                [data]="stockin.data"
+              ></hot-table>
+            </div>
+          </p-panel>
+          <div class="p-grid top">
+            <div class="p-col-12 p-md-12 p-lg-4"></div>
+            <div class="p-col-12 p-md-12 p-lg-1" for="account">
+              <b>{{ " Qty" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-12 p-lg-3">
+              <input
+                id="InQty"
+                type="number"
+                pInputText
+                formControlName="InQty"
+              />
+            </div>
+            <div class="p-col-12 p-md-12 p-lg-1" for="account">
+              <b>{{ " Amt" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-12 p-lg-3">
+              <input
+                id="InAmount"
+                type="number"
+                pInputText
+                formControlName="InAmount"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <p-panel>
+            <p-header>
+              {{ "STOCK OUT" | translate }}
+            </p-header>
+            <div class="grid">
+              <hot-table
+                [hotId]="hotid2"
+                [licenseKey]="licensekey"
+                [settings]="stockout"
+                [data]="stockout.data"
+              ></hot-table>
+            </div>
+          </p-panel>
+
+          <div class="p-grid top">
+            <div class="p-col-12 p-md-12 p-lg-4"></div>
+
+            <div class="p-col-12 p-md-12 p-lg-1">
+              <b>{{ " Qty" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-12 p-lg-3">
+              <input
+                id="OutQty"
+                type="number"
+                pInputText
+                formControlName="OutQty"
+              />
+            </div>
+
+            <div class="p-col-12 p-md-12 p-lg-1">
+              <b>{{ " Amt" | translate }}</b>
+            </div>
+            <div class="p-col-12 p-md-12 p-lg-3">
+              <input
+                id="OutAmount"
+                type="number"
+                pInputText
+                formControlName="OutAmount"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Format 2' | translate">
+      <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1 mt-1" for="account">
+          <b>{{ "Open Qty" | translate }}</b>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-4 mt-1">
+          <input
+            id="openQty"
+            type="number"
+            pInputText
+            formControlName="openQty"
+          />
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-4 mt-1">
+          <b>STOCK MOVEMENT</b>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-1 mt-1">
+          <b>{{ "Close Qty" | translate }}</b>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-2 mt-1">
+          <input
+            id="closeQty"
+            type="number"
+            pInputText
+            formControlName="closeQty"
+          />
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1 mt-1" for="account">
+          <b>{{ "Open Amount" | translate }}</b>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-2 mt-1">
+          <input
+            id="openAmount"
+            type="number"
+            pInputText
+            formControlName="openAmount"
+          />
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-3 mt-1" for="account"></div>
+        <div class="p-col-12 p-md-12 p-lg-3 mt-1"></div>
+        <div class="p-col-12 p-md-12 p-lg-1 mt-1">
+          <b>{{ "Close Amount" | translate }}</b>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-2 mt-1">
+          <input
+            id="closeAmount"
+            type="number"
+            pInputText
+            formControlName="closeAmount"
+          />
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Receipt Voucher List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+</p-dialog>
+<p-toast></p-toast>
+<!-- p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog> -->

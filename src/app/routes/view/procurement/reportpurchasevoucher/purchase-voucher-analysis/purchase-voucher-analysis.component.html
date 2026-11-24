@@ -1,0 +1,108 @@
+<div class="card card-w-title" [formGroup]="analysisForm">
+  <div class="p-grid">
+    <div class="p-col-6">
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Supplier</label>
+        <div class="p-col-9"><p-dropdown [options]="supplierList" formControlName="rptSupplier" filter="true" styleClass="w-100"></p-dropdown></div>
+      </div>
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Location</label>
+        <div class="p-col-9"><p-dropdown [options]="locationList" formControlName="rptLocation" filter="true" styleClass="w-100"></p-dropdown></div>
+      </div>
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Job</label>
+        <div class="p-col-9"><p-dropdown [options]="jobList" formControlName="rptJob" filter="true" styleClass="w-100"></p-dropdown></div>
+      </div>
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Item</label>
+        <div class="p-col-9"><p-dropdown [options]="itemList" formControlName="rptItem" filter="true" styleClass="w-100"></p-dropdown></div>
+      </div>
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Item Group</label>
+        <div class="p-col-9"><p-dropdown [options]="itemGroupList" formControlName="rptItemGroup" filter="true" styleClass="w-100"></p-dropdown></div>
+      </div>
+    </div>
+    <div class="p-col-6">
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Currency</label>
+        <div class="p-col-9"><p-dropdown [options]="currencyList" formControlName="rptCurrency" filter="true" styleClass="w-100"></p-dropdown></div>
+      </div>
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Voucher Type</label>
+        <div class="p-col-9"><p-dropdown [options]="vTypeList" formControlName="rptInvoiceType" styleClass="w-100"></p-dropdown></div>
+      </div>
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Supplier Inv No</label>
+        <div class="p-col-9"><input pInputText formControlName="rptSuppInvNo" class="w-100" /></div>
+      </div>
+      <div class="p-grid inputGroup">
+        <label class="p-col-3">Measure</label>
+        <div class="p-col-9"><p-dropdown [options]="measureOptions" [ngModelOptions]="{standalone:true}" [ngModel]="selectedMeasure" (onChange)="onMeasureChange($event)" styleClass="w-100"></p-dropdown></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-grid" style="margin-top: 0.5rem;">
+    <div class="p-col-6">
+      <p-checkbox binary="true" label="Date Range" [ngModelOptions]="{standalone:true}" [ngModel]="enableDate" (onChange)="makeDateRangeTrue()"></p-checkbox>
+      <app-datefilter *ngIf="enableDate" [enableDate]="enableDate" (enableDateChange)="enableDate = $event"></app-datefilter>
+    </div>
+    <div class="p-col-6" style="text-align:right;">
+      <span style="margin-right:0.5rem; font-size:0.85rem; color:#666;">Amounts shown in {{baseCurrencyName}}</span>
+      <button pButton [label]="isLoading ? 'Loading...' : 'Show'" icon="pi pi-search" class="ui-button-info" (click)="listAnalysis()" [disabled]="isLoading"></button>
+      <button pButton label="Clear" icon="pi pi-times" class="ui-button-secondary" (click)="clear()" [disabled]="isLoading" style="margin-left:0.4rem;"></button>
+      <button pButton label="Print" icon="pi pi-print" class="ui-button-success" (click)="showPrint()" [disabled]="true" pTooltip="Crystal RPT to be deployed later - web matrix is live" style="margin-left:0.4rem;"></button>
+    </div>
+  </div>
+  <p-message *ngIf="lastError" severity="error" [text]="lastError" styleClass="w-100"></p-message>
+
+  <div class="p-grid" *ngIf="!isLoading">
+    <div class="p-col-12 p-md-7">
+      <p-panel header="Monthly Trend">
+        <p-chart *ngIf="trendData" type="bar" [data]="trendData" [options]="trendOptions" height="270px"></p-chart>
+        <p-message *ngIf="!trendData" severity="info" text="No trend data for the selected filters"></p-message>
+      </p-panel>
+    </div>
+    <div class="p-col-12 p-md-5">
+      <p-panel [header]="supplierChartTitle">
+        <p-chart *ngIf="supplierShareData" type="doughnut" [data]="supplierShareData" [options]="supplierShareOptions" height="220px"></p-chart>
+        <p-message *ngIf="!supplierShareData" severity="info" text="No supplier data for the selected filters"></p-message>
+        <div *ngIf="supplierShareLegend.length" style="margin-top:0.5rem;">
+          <div *ngFor="let item of supplierShareLegend" style="display:flex; align-items:center; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0f0f0;">
+            <span style="display:flex; align-items:center; min-width:0;">
+              <span [style.background-color]="item.color" style="width:11px; height:11px; border-radius:2px; display:inline-block; margin-right:7px;"></span>
+              <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:190px;">{{item.label}}</span>
+            </span>
+            <span style="white-space:nowrap; margin-left:8px;"><b>{{formatCompact(item.value)}}</b> <span style="color:#777;">({{item.percent | number:'1.2-2'}}%)</span></span>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+
+  <p-panel header="Monthly Comparison - Supplier × Month (Base Currency)">
+    <div style="overflow-x:auto;">
+      <p-table [value]="dataset" [scrollable]="true" scrollHeight="420px" styleClass="p-datatable-sm" [tableStyle]="{'min-width': (monthColumns.length * 120 + 320) + 'px'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width:240px;">Supplier</th>
+            <th *ngFor="let month of monthColumns" style="min-width:120px; text-align:right;">{{month.label}}</th>
+            <th style="min-width:150px; text-align:right;">Total ({{measureLabelText}})</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr [style.font-weight]="row.supplierName === 'Grand Total' ? 'bold' : 'normal'">
+            <td>{{row.supplierName}}</td>
+            <td *ngFor="let month of monthColumns" style="text-align:right;">{{row[month.key] | number:'1.2-2'}}</td>
+            <td style="text-align:right;">{{row.total | number:'1.2-2'}}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td [attr.colspan]="monthColumns.length + 2">No data for the selected filters</td></tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <small style="color:#888;">Tip: Change Measure to switch between Voucher Count, Gross, VAT, Net (base), and Quantity. Quantity sums detail lines (unit-mixed). Use Item filter for meaningful quantity. Base = transaction amount × COALESCE(FcRate, Currency Rate).</small>
+  </p-panel>
+</div>
+<p-toast></p-toast>

@@ -1,0 +1,84 @@
+<app-page-header 
+    [title]='title| translate'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" label="New" icon="pi pi-plus" class="ui-button-info"></button>
+        <button pButton type="button" label="Edit" icon="fa fa-pencil" class="ui-button-success"></button>
+        <button pButton type="button" class="ui-button-danger" label="Cancel" icon="fa fa-ban"></button>
+        <button pButton type="button" (click)="ReportTypeFormSubmit()" icon="fa fa-floppy-o" class="ui-button-success" label="Save"></button>
+         <button pButton type="button" label="Find" icon="fa fa-search" class="ui-button-info"></button>
+        <button pButton type="button" (click)="DeleteReportType(0)" class="ui-button-danger" label="Delete" icon="fa fa-trash"></button>
+         <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+    </div>
+</p-toolbar>
+<div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Report Type Master' | translate" [formGroup]="RTForm">    
+            <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2 " for="account">
+                    <b>{{'Report Type Id:' | translate}}</b>
+                </label>
+                <div class="p-col-4 p-md-4 p-lg-4">
+                    <input pInputText  [style]="{width: '100%'}" placeholder="--Report Type Id--" formControlName='ReportTypeId'/> 
+                    <div class="error" *ngIf="f.ReportTypeId.touched && f.ReportTypeId.invalid">
+                        Report Type Id is Invalid Entry
+                    </div>
+                </div>
+            </div>
+            <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2 " for="account">
+                    <b>{{'Report Description:' | translate}}</b>
+                </label>
+                <div class="p-col-8 p-md-8 p-lg-8">
+                    <input pInputText  [style]="{width: '100%'}" placeholder="--Report Description--" formControlName='ReportTypeDescription'/> 
+                    <div class="error" *ngIf="f.ReportTypeDescription.touched && f.ReportTypeDescription.invalid">
+                        Report Description is Invalid Entry
+                    </div>
+                </div>
+            </div>
+            <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2 ">
+                    <b>{{'Report File Name:' | translate}}</b>
+                </label>
+                <div class="p-col-8 p-md-8 p-lg-8">
+                    <input pInputText  [style]="{width: '100%'}" placeholder="--ReportFileName--" formControlName='ReportTypeFileName'/> 
+                    <div class="error" *ngIf="f.ReportTypeFileName.touched && f.ReportTypeFileName.invalid">
+                        Report File Name is Invalid Entry
+                    </div>
+                </div>
+            </div>
+            <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2 ">
+                    <b>{{'Voucher Name:' | translate}}</b>
+                </label>
+                <div class="p-col-4 p-md-4 p-lg-4">
+                    <input pInputText  [style]="{width: '100%'}" placeholder="--VoucherName--" formControlName='ReportTypeVoucherName'/> 
+                    <div class="error" *ngIf="f.ReportTypeVoucherName.touched && f.ReportTypeVoucherName.invalid">
+                        Voucher Name is Invalid Entry
+                    </div>
+                </div>
+                <div class="p-col-2 p-md-2 p-lg-2">
+                    <input type="checkbox"  formControlName='ReportTypeIsDefault' label="Is Default" style="color:red;" />
+                    <label for="ReportTypeIsDefault">Is Default</label>
+                </div>
+                <div class="p-col-2 p-md-2 p-lg-2">
+                    <input type="checkbox"  formControlName='ReportTypeIsVisible' label="Is Visible" style="color:rgb(18, 99, 18) ;" />
+                    <label for="ReportTypeIsVisible">Is Visible</label>
+                </div>
+            </div>  
+        </p-tabPanel>
+    </p-tabView>
+    <div class="card card-w-title">
+        <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+            <p-tabPanel [header]="'Report Type Master' | translate">
+                <div class="grid">
+                    <div class="p-col-12">
+                        <hot-table [hotId]="hotid" [data]=" dataset" [licenseKey]="licensekey"
+                            [settings]="reporttype">
+                        </hot-table>
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div>

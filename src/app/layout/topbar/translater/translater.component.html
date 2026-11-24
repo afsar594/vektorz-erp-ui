@@ -1,0 +1,23 @@
+<div class="translator">
+    <a class="lang-toggle-btn" (click)="app.onTopbarLangButtonClick($event)" [title]="'Select Language' | translate">
+        <i class="pi pi-globe" style="margin-right: 4px;"></i> 
+        <span class="lang-flag">{{ getCurrentLang().flag }}</span>
+        <span class="lang-current-label">{{ getCurrentLang().nativeLabel }}</span>
+        <i class="pi pi-angle-down" style="margin-left: 4px;"></i> 
+    </a>
+    <ul id="topbar-menu" class="lang-dropdown-menu fadeInDown animated" [ngClass]="{'topbar-menu-visible': app.topbarlangActive}">
+        <li *ngFor="let lang of languages" 
+            class="lang-item menuItem" 
+            [ngClass]="{'active-lang': getCurrentLang().code === lang.code}"
+            (click)="useLanguage(lang)">
+            <a href="javascript:void(0)">
+                <span class="dropdown-flag">{{ lang.flag }}</span>
+                <span class="dropdown-lang-name">{{ lang.nativeLabel }}</span>
+                <span class="dropdown-lang-code">({{ lang.label }})</span>
+                <i *ngIf="getCurrentLang().code === lang.code" class="fa fa-check active-check"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+

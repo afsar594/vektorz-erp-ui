@@ -1,0 +1,244 @@
+<!-- <app-page-header [title]='title| translate'></app-page-header> -->
+<p-toolbar>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      (click)="show()"
+      label="Show"
+      icon="pi pi-search"
+    ></button>
+    <!-- <button pButton type="button" class="ui-button-primary" label="Print" icon="fa fa-print"></button> -->
+    <button
+      pButton
+      type="button"
+      class="ui-button-primary"
+      (click)="export()"
+      [disabled]="!(selectedCustomers.length > 0)"
+      label="Export"
+      icon="fa fa-download"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="close()"
+      label="Close"
+      icon="pi pi-close"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="SalesOrderStatus">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Customer Quotation Details' | translate">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Customer Name" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                [options]="customerList"
+                formControlName="Customer"
+                optionLabel=""
+                [showClear]="true"
+              ></p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Select Item" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <!-- <p-dropdown filter="true" formControlName="Name" optionLabel="" [showClear]="true" filter="true">
+                            </p-dropdown> -->
+              <p-dropdown
+                filter="true"
+                [options]="ItemMasterList"
+                formControlName="item"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Location" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <!-- <p-dropdown filter="true" formControlName="location" optionLabel="" [showClear]="true"
+                                filter="true">
+                            </p-dropdown> -->
+              <p-dropdown
+                filter="true"
+                [options]="locationList"
+                formControlName="location"
+                optionLabel=""
+                [showClear]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-6">
+          <p-panel>
+            <p-header>
+              <!-- <p-checkbox label="By Date"></p-checkbox> -->
+              <p-checkbox
+                formControlName="isDate"
+                [binary]="true"
+                label="By Date"
+              ></p-checkbox>
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "From" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc [showIcon]="true"></p-calendar> -->
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  formControlName="DateFrom"
+                  class="w-200"
+                  [disabled]="!SalesOrderStatus.get('isDate').value"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "To" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc [showIcon]="true"></p-calendar> -->
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  formControlName="DateTO"
+                  class="w-200"
+                  [disabled]="!SalesOrderStatus.get('isDate').value"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <!-- <div class="p-sm-12 p-md-12 p-lg-12">
+                <p-checkbox style="color: brown;" label="Check All" (onChange)="selectAllCustomers($event)"></p-checkbox>
+            </div> -->
+      <div class="p-sm-12 p-md-12 p-lg-12">
+        <div class="p-col-12">
+          <p-panel>
+            <p-header> Details </p-header>
+            <p-table
+              #dt
+              [value]="customers"
+              [(selection)]="selectedCustomers"
+              dataKey="id"
+              styleClass="ui-table-customers"
+              [rowHover]="true"
+              [rows]="10"
+              [showCurrentPageReport]="true"
+              [rowsPerPageOptions]="[10, 25, 50]"
+              [loading]="loading"
+              (selectionChange)="onSelectionChange()"
+            >
+              <!-- Header Template -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>
+                    <!-- <p-tableCheckbox [value]="selectedCustomers" (onChange)="selectAllCustomers($event)"></p-tableCheckbox> -->
+                  </th>
+                  <th>Code</th>
+                  <!-- <th>Quotation No</th> -->
+                  <th>Part NO</th>
+                  <th>Material Name</th>
+                  <th>Date</th>
+                  <th>Unit</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Amount</th>
+                  <th>Remarks</th>
+                </tr>
+              </ng-template>
+              <!-- Body Template -->
+              <ng-template pTemplate="body" let-customer>
+                <tr
+                  class="ui-selectable-row"
+                  (click)="toggleSelection(customer)"
+                >
+                  <td>
+                    <input
+                      type="checkbox"
+                      class="check"
+                      [checked]="isSelected(customer)"
+                    />
+                  </td>
+                  <td>
+                    {{
+                      customer.customerQuotationDetailsItemId
+                        ? customer.customerQuotationDetailsItemId
+                        : 0
+                    }}
+                  </td>
+                  <td>{{ customer?.partNo }}</td>
+                  <td>{{ customer.customerQuotationDetailsDesription }}</td>
+
+                  <td>{{ customer.customerQuotationQuotationdate | date }}</td>
+
+                  <td>
+                    {{ getUnitName(customer?.customerQuotationDetailsUnits) }}
+                  </td>
+                  <td>{{ customer.customerQuotationDetailsQty }}</td>
+                  <td>{{ customer.customerQuotationDetailsUnitPrice }}</td>
+                  <td>{{ customer.customerQuotationDetailsAmount }}</td>
+                  <td>{{ customer.customerQuotationDetailsRemarks }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-12">
+          <div class="p-grid">
+            <div class="p-col-8 p-md-8 p-lg-8"></div>
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <div class="p-col-12 p-grid">
+                <label class="p-col-2" for="account">
+                  <b style="color: brown">{{ "Total" | translate }}</b>
+                </label>
+                <div class="p-col-10">
+                  <input
+                    type="text"
+                    class="w-100"
+                    pInputText
+                    formControlName="total"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

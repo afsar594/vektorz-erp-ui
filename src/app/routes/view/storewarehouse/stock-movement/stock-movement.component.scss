@@ -1,0 +1,66 @@
+// ::ng-deep{
+//     .ui-calendar {
+//         width: 96.5% !important;
+//     }
+// }
+table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+.iconbton {
+  cursor: pointer;
+}
+.table-container {
+  max-height: 300px; /* Adjust the max-height value according to your needs */
+  overflow-y: auto;
+}
+.table-container th {
+  position: sticky;
+  top: 0;
+}
+
+/* Adjustments for smaller screen sizes */
+@media only screen and (max-width: 768px) {
+  .table-container {
+    max-height: 200px;
+  }
+}
+.iconbton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+/* Column Widths */
+.col-sr {
+  width: 50px;
+}
+.col-item-id {
+  width: 80px;
+}
+.col-item-name {
+  width: 200px;
+}
+.col-unit {
+  width: 70px;
+}
+.col-qty {
+  width: 80px;
+}
+.col-amt {
+  width: 100px;
+}
+
+/* Text Alignment */
+.text-left {
+  text-align: left !important;
+}
+.text-right {
+  text-align: right !important;
+}
+.text-center {
+  text-align: center !important;
+}

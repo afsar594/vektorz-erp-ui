@@ -1,0 +1,67 @@
+input {
+    width: 100%;
+}
+
+// ::ng-deep {
+
+//     .ui-calendar .ui-inputtext {
+//         width: 96% !important;
+//     }
+// }
+h1 {
+    color: rgb(126, 12, 12);
+    text-align: center;
+    text-decoration: underline rgb(126, 12, 12);
+  }
+  
+  h2 {
+    text-align: center;
+    color: rgb(101, 33, 165);
+  }
+  
+  h3 {
+    color: rgb(12, 150, 150);
+    margin-left: 5%;
+  }
+   
+  .Acc {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 90.5%;
+    font-size: 12px;
+    margin-left: 5%;
+  }
+  
+  .Acc td,
+  .Acc th {
+    border: 1px solid #aca8a8;
+    padding: 8px;
+  }
+  
+  .Acc tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .Acc tr:hover {
+    background-color: #ddd;
+  }
+  
+  .Acc th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(247, 240, 240);
+    color: black;
+  
+  }
+  .table{
+    width: 70%;
+    margin-left: 30%;
+    margin-top: 17px;
+    margin-bottom: 10px;
+  
+    td {
+      width: 35px;
+    }
+  }
+  

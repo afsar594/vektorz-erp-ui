@@ -1,0 +1,139 @@
+
+
+
+.vouhead{
+padding-left: 10px;
+}
+.flex{
+  display: flex;
+}
+.Asset {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 3%;
+  }
+
+  .Asset td, .Asset th {
+    border: .5px solid #c8cec9;
+    padding: 4px;
+  }
+
+  .Asset tr:nth-child(even){background-color: #f2f2f2;}
+
+  .Asset tr:hover {background-color: #ddd;}
+
+  .Asset th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 6%;
+    text-align: left;
+    background-color: #127e18;
+    color: white;
+    font-size: 20px;
+    border-radius: 4%;
+  }
+  p{
+    font-size:16px;
+  }
+  .gross{
+font-weight: bold;
+padding-left: 4%;
+  }
+  .opera{
+text-align: center;
+  }
+  .net{
+font-weight: bold;
+
+  }
+  .ae{
+text-align:right ;
+  }
+ .Main{
+    color: rgb(13, 13, 123);
+    font-weight: bold;
+    padding-left: 1%;
+
+ }
+ .abd{
+padding-left: 2%;
+color: #808682;
+ }
+ .abe{
+padding-left: 6%;
+ }
+ .total{
+text-align: center;
+font-weight: bold;
+text-decoration: underline;
+ }
+ .step{
+text-decoration: underline;
+text-align: right;
+ }
+ .stepi{
+    text-decoration: double underline;
+    text-align: right;
+     }
+  .deignsize1{
+  width: 70%;  
+  background-color: green;
+  color: #fff;
+   font-size: 14pt;
+   padding:  10px 10px;
+  }
+ .designsize2{
+  width: 30%;
+   background-color: green; color: #fff; 
+    font-size: 14pt;
+    padding:  10px 10px;
+ }
+//  table {
+//   font-family: arial, sans-serif;
+//   border-collapse: collapse;
+//   width: 100%;
+
+// }
+
+// th{
+//   background-color: green; color: #fff; 
+//   margin:  20px 20px;
+// }
+// td, th {
+//   border: 1px solid #dddddd;
+//   text-align: left;
+//   padding: 8px;
+// }
+
+// tr:nth-child(even) {
+//   background-color: #dddddd;
+// }
+ 
+// #Balance {
+//   font-family: Arial, Helvetica, sans-serif;
+//   border-collapse: collapse;
+//   width: 100%;
+//  }
+
+// #Balance td, #Balance th {
+//   border: 1px solid #ddd;
+//   padding: 8px;
+  
+// }
+
+// #Balance tr:nth-child(even){background-color: #f2f2f2;}
+
+// #Balance tr:hover {background-color: #ddd;}
+
+// #Balance th {
+//   padding-top: 12px;
+//   padding-bottom: 12px;
+//   text-align: left;
+//   background-color: #bcc0bf;
+//   color: rgb(0, 0, 0);
+//  }
+// .set{
+//   padding-left: 20px;
+// }

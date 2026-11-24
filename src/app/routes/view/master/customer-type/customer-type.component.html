@@ -1,0 +1,85 @@
+<app-page-header [nav]='[{label: "account"| translate},{label: "Cuatomer Type"| translate}]'
+    [title]='title| translate'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+
+        <button pButton type="button" label="New"(click)="New()" class=" ui-button-info" icon="fa fa-plus"></button>
+        <button pButton type="button" (click)="Edit()" [disabled]='!btnFlag.edit' label="Edit" class=" ui-button-primary" icon="fa fa-pencil"></button>
+        <button pButton [disabled]='btnFlag.new' type="button"  (click)="onSave()" [label]="btnFlag?.save == true ? 'Save': 'Update'" icon="fa fa-floppy-o"
+            class="ui-button-success"></button>
+        <button pButton type="button"  [disabled]='!btnFlag.delete' label="Delete" (click)="DeleteDocument()" class=" ui-button-danger" icon="fa fa-close"></button>
+           
+
+    </div>
+</p-toolbar>
+<p-panel>
+    <p-header>
+        Customer Type
+    </p-header>
+    <div class="card card-w-title">
+        <div class="p-grid p-ai-center" [formGroup]="Customer_TypeFormGroup">
+            <div class="p-col-12 p-md-1"></div>
+            <div class="p-col-12 p-md-1">
+                {{'Customer ID' | translate }}</div>
+            <div class="p-col-12 p-md-4">
+                <!-- <input pInputText placeholder="ID"> -->
+                <input type="text" formControlName="customerTypeId" readonly pInputText style="width: 100%; "
+                />
+                
+            </div>
+            <div class="p-col-2">
+                {{'Customer Name' | translate }}
+            </div>
+            <div class="p-col-12 p-md-4">
+                <!-- <input pInputText placeholder="type"> -->
+                <input type="text" formControlName="customerTypeName" pInputText style="width: 100%;"
+                />
+                <div class="error" *ngIf="f.customerTypeName.errors 
+                && (f.customerTypeName.dirty || f.customerTypeName.touched)">
+                    <span *ngIf="f.customerTypeName.errors.required">
+                        {{'Customer Name is Mandatory Field*' | translate}}</span>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 70px;"></div>
+        <p-panel>
+            <p-header>
+                Customer Details
+            </p-header>
+            <div class="p-grid">
+                <div class="p-col-12 p-md-12 p-sm-12">
+                    <p-table [value]="customerList" style="text-align: center;">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width: 180px;">{{'Customer ID' | translate }}</th>
+                                <th>{{'CustomerName' | translate}}</th>
+                                <th style="width: 180px;">{{'View' | translate}}</th>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-data>
+                            <tr>
+    
+                                <td style="width: 180px;"  > {{data.customerTypeId}}</td>
+                                <td  > {{data.customerTypeName}}</td>
+
+         
+
+                                 <td  >
+                                    <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(data)'
+                                        iconPos="left"></button>
+                                 
+                                </td>
+                            </tr>
+
+                        </ng-template>
+                    </p-table>
+
+                </div>
+            </div>
+        </p-panel>
+    </div>
+</p-panel>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>

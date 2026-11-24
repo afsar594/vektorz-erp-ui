@@ -1,0 +1,151 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" class="ui-button-info" label="Find" [disabled]="!Permission?.View" icon="fa fa-search"
+      (click)="getStockReportBaseUnit()"></button>
+    <button pButton type="button" class="ui-button-danger" label="Clear" icon="fa fa-times" (click)="Cancel()"></button>
+  </div>
+  <div class="ui-toolbar-group-right flexSearch">
+
+    <button pButton type="button" label="Print" [disabled]="!Permission?.Print" icon="fa fa-print"
+      class="ui-button-success"></button>
+
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out" (click)="ExitNew()"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="currencyFormGroup">
+  <div class="p-grid">
+    <label class="p-col-12 p-md-12 p-lg-1" for="VoucherNo">{{
+      "Group" | translate
+      }}</label>
+    <div class="p-col-12 p-md-12 p-lg-2">
+      <p-dropdown filter="true" class="w-100" [options]="itemGroup" [filter]="true" formControlName="stockRepostGroupId"
+        [showClear]="true" (onChange)="onItemGroupChange($event)">
+      </p-dropdown>
+    </div>
+
+    <label class="p-col-12 p-md-12 p-lg-1" for="Date">{{
+      "Material Name" | translate
+      }}</label>
+    <div class="p-col-12 p-md-12 p-lg-2 ui-inputgroup">
+      <input class="w-100" formControlName="stockRepostmatrialId" pInputText />
+      <button pButton type="button" pRipple icon="pi pi-search" (click)="displayItemList()"></button>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <label class="p-col-12 p-md-12 p-lg-1" for="Location">{{
+      "Location" | translate
+      }}</label>
+    <div class="p-col-12 p-md-12 p-lg-2">
+      <p-dropdown filter="true" class="w-100" formControlName='stockRepostLocationId' [options]="locationList"
+        value="Local"> </p-dropdown>
+
+    </div>
+    <div class="p-col-12 p-md-12 p-lg-1"></div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-12 p-md-12 p-lg-1">{{ "Group Type" | translate }}</div>
+    <div class="p-col-2 p-md-12 p-lg-1">
+      <!-- <p-radioButton name="valueType" value="val1"></p-radioButton> -->
+      <p-radioButton name="valueType" value="WithValue" formControlName="stockRepostvalueType"></p-radioButton>
+      <label class="p-col-1 p-md-12 p-lg-1 p-1" for="groupname">With Value</label>
+    </div>
+    <div class="p-col-2 p-md-12 p-lg-2">
+      <!-- <p-radioButton name="valueType" value="val1"></p-radioButton> -->
+      <p-radioButton name="valueType" value="WithoutValue" formControlName="stockRepostvalueType"></p-radioButton>
+      <label class="p-col-1 p-md-12 p-lg-1 p-1">Without Value</label>
+    </div>
+    <div class="p-col-12 p-md-12 p-lg-1">
+      <input pInputCheck type="checkbox" formControlName="HideZero" />
+      {{ "Hide Zero" | translate }}
+    </div>
+  </div>
+</div>
+<div class="card card-w-title">
+  <div class="p-grid">
+    <div class="p-col-12">
+      <p-table [value]="subjectDatSet">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Item ID" | translate }}</th>
+            <th>{{ "PartNo" | translate }}</th>
+            <th>{{ "Item Name" | translate }}</th>
+            <th>{{ "Unit" | translate }}</th>
+            <th>{{ "Stock" | translate }}</th>
+            <th *ngIf="
+                currencyFormGroup.controls.stockRepostvalueType.value ===
+                'WithValue'
+              ">
+              {{ "AvgRate" | translate }}
+            </th>
+            <th *ngIf="
+                currencyFormGroup.controls.stockRepostvalueType.value ===
+                'WithValue'
+              ">
+              {{ "Amount" | translate }}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>{{ item.itemId }}</td>
+            <td>{{ item.itemNo }}</td>
+            <td>{{ item.itemName }}</td>
+            <td>{{ item.unitShortName }}</td>
+            <td>{{ item.stock }}</td>
+            <td *ngIf="
+                currencyFormGroup.controls.stockRepostvalueType.value ===
+                'WithValue'
+              ">
+              {{ item.avgrate }}
+            </td>
+            <td *ngIf="
+                currencyFormGroup.controls.stockRepostvalueType.value ===
+                'WithValue'
+              ">
+              {{ item.amount }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="p-grid p-sm-12">
+
+      <div class="p-sm-12 p-md-12 p-lg-8">
+      </div>
+      <div class="p-sm-12 p-md-12 p-lg-4">
+
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-4" for="account">{{'Total Stock'| translate}}</label>
+          <div class="p-col-12 p-md-12 p-lg-8 ">
+            <input class="w-100" [value]="stock  | number:'1.2-2'" readonly style="border-color: black;text-align: right;"
+              maxlength="50" pInputText>
+          </div>
+          <label class="p-col-12 p-md-12 p-lg-4"
+            *ngIf="currencyFormGroup.controls.stockRepostvalueType.value ==='WithValue'" for="rptNetAmt">
+            {{'Total Avgrate'| translate}}
+          </label>
+          <div class="p-col-12 p-md-12 p-lg-8 "
+            *ngIf="currencyFormGroup.controls.stockRepostvalueType.value === 'WithValue'">
+            <input class="w-100" [value]="avgrate  | number:'1.2-2'" readonly style="border-color: black; text-align: right;"
+              maxlength="50" pInputText>
+          </div>
+          <label class="p-col-12 p-md-12 p-lg-4"
+            *ngIf=" currencyFormGroup.controls.stockRepostvalueType.value ===  'WithValue' " for="rptNetAmt">{{'Total Amount'| translate}}</label>
+          <div class="p-col-12 p-md-12 p-lg-8 "
+            *ngIf="currencyFormGroup.controls.stockRepostvalueType.value ===  'WithValue'">
+            <input class="w-100" [value]="totalAMT  | number:'1.2-2'" readonly style="border-color: black; text-align: right;"
+              maxlength="50" pInputText>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-lookup [header]="'Look Up'" [dataArry]="ItemMasterList" [selectedItem]="selectItem" [columns]="lookupGridColumns"
+  (selectItemEvent)="selectItems($event)" (exitEvent)="exit($event)" [cell]="activeRow" [width]="'60vw'"
+  (hideDialogEvent)="hide($event)" [tableheader]="'Items Look Up'" [(show)]="displayMaximizableItems"></app-lookup>

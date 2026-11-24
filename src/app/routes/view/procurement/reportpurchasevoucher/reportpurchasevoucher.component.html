@@ -1,0 +1,377 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Purchase Voucher Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear&Enable"
+      (click)="new()"
+      icon="fa fa-ban"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      [disabled]="!reportActionsEnabled || !Permission?.View"
+      (click)="List_REPORT()"
+      label="Show"
+      icon="fa fa-list"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      icon="fa fa-print"
+      [disabled]="!reportActionsEnabled || !Permission?.Print"
+      class="ui-button-success"
+      (click)="Print_REPORT()"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="reportPurchaseVoucherFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Purchase Voucher Report' | translate">
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Account Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptDetails"
+                  id="rptDetails"
+                  class="p-col-12 p-md-12 p-lg-6"
+                  label="{{ 'Details' | translate }}"
+                  [value]="true"
+                  (onClick)="makeDetailsTrue()"
+                ></p-radioButton>
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptSummary"
+                  id="rptSummary"
+                  class="p-col-12 p-md-12 p-lg-6"
+                  label="{{ 'Summary' | translate }}"
+                  (onClick)="makeSummaryTrue()"
+                ></p-radioButton>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptInvoiceType">{{
+                  "Inv.Type" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptInvoiceType"
+                    id="rptInvoiceType"
+                    [options]="v_typeList"
+                    filter="true"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptSupplier">{{
+                  "Supplier" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptSupplier"
+                    id="rptSupplier"
+                    [options]="SupplierMasterList"
+                    filter="true"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptSuppInvNo">{{
+                  "Supp.Inv.#"
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="rptSuppInvNo"
+                    id="rptSuppInvNo"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              <p-checkbox
+                [binary]="true"
+                formControlName="rptDateRange"
+                id="rptDateRange"
+                (onChange)="makeDateRangeTrue()"
+              ></p-checkbox>
+              {{ "Date Filter" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    class="w-100"
+                    useUtc
+                    showIcon="true"
+                    formControlName="rptDtpFrom"
+                    [disabled]="
+                      !reportPurchaseVoucherFormGroup.get('rptDateRange').value
+                    "
+                  >
+                  </p-calendar>
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    formControlName="rptDtpTo"
+                    [disabled]="
+                      !reportPurchaseVoucherFormGroup.get('rptDateRange').value
+                    "
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptCurrency">{{
+                  "Currency" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptCurrency"
+                    id="rptCurrency"
+                    [options]="currencyList"
+                    filter="true"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptItemGroup">{{
+                  "Item Group" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptItemGroup"
+                    id="rptItemGroup"
+                    [options]="ItemMasterGroupList"
+                    (onChange)="onItemGroupChange($event)"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptItem">{{
+                  "Item" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptItem"
+                    id="rptItem"
+                    [options]="ItemMasterList"
+                    filter="true"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptLocation">{{
+                  "Location" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptLocation"
+                    id="rptLocation"
+                    [options]="locationList"
+                    [disabled]="locationLocked"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="job">{{
+                  "Job" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptJob"
+                    id="rptJob"
+                    [options]="jobList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-3"
+                  for="rptPrintGroupByItem"
+                ></label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-checkbox
+                    formControlName="rptPrintGroupByItem"
+                    id="rptPrintGroupByItem"
+                    class="p-col-12 p-md-12 p-lg-1"
+                    (onChange)="makePrintGroupByItemTrue()"
+                  ></p-checkbox>
+                  <label
+                    for="rptPrintGroupByItem"
+                    class="p-col-12 p-md-12 p-lg-2"
+                  >
+                    {{ "Print Group ByItem" | translate }}</label
+                  >
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Purchase Voucher Report" | translate }}
+        </p-header>
+        <div class="grid" *ngIf="Summary">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="reportpurchasevoucher_entry"
+            [data]="reportpurchasevoucher_entryDataset"
+          ></hot-table>
+        </div>
+        <div class="grid" *ngIf="Details">
+          <hot-table
+            [hotId]="hotidDetail"
+            [licenseKey]="licensekey"
+            [settings]="reportpurchasevoucher_entryDetail"
+            [data]="reportpurchasevoucher_entryDatasetDetail"
+          ></hot-table>
+        </div>
+      </p-panel>
+
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-8"></div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+              "Disc.Amt." | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input
+                class="w-100"
+                formControlName="rptDiscAmt"
+                id="rptTotDebit"
+                readonly
+                style="border-color: black; text-align: right"
+                maxlength="50"
+                pInputText
+              />
+            </div>
+            <label class="p-col-12 p-md-12 p-lg-2" for="rptNetAmt">{{
+              "Net.Amt." | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input
+                class="w-100"
+                formControlName="rptNetAmt"
+                id="rptNetAmt"
+                readonly
+                style="border-color: black; text-align: right"
+                maxlength="50"
+                pInputText
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Analysis' | translate">
+      <app-purchase-voucher-analysis></app-purchase-voucher-analysis>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

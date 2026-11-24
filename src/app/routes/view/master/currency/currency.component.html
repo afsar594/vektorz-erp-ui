@@ -1,0 +1,344 @@
+<app-page-header
+  [nav]="[{ label: 'master' | translate }, { label: 'currency' | translate }]"
+  [title]="title | translate"
+>
+</app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="currencyFormGroup">
+  <hot-table
+    [hotId]="hotid"
+    [licenseKey]="licensekey"
+    [settings]="currency_entry"
+    [data]="currency_entryDataset"
+  ></hot-table>
+</div>
+<p-dialog
+  [header]="btnFlag?.save ? 'Add Currency' : 'Update Currency'"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '650px' }"
+>
+  <form [formGroup]="currencyFormGroup" class="p-fluid">
+    <div class="p-grid p-ai-center">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "Currency Name" | translate }}<span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          class="currency"
+          pInputText
+          [placeholder]="'Currency Name' | translate"
+          formControlName="currencyMasterCurrencyName"
+        />
+
+        <div
+          class="error"
+          *ngIf="
+            f.currencyMasterCurrencyName.errors &&
+            (f.currencyMasterCurrencyName.dirty ||
+              f.currencyMasterCurrencyName.touched)
+          "
+        >
+          <span *ngIf="f.currencyMasterCurrencyName.errors.required">
+            {{ "Currency Name is Mandatory Field *" | translate }}</span
+          >
+        </div>
+      </div>
+
+      <div class="p-col-2"></div>
+
+      <div class="p-col-1"></div>
+
+      <div class="p-col-3 p-text-right">
+        {{ "Rate" | translate }}<span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          class="currency"
+          pInputText
+          type="number"
+          [placeholder]="'Rate' | translate"
+          formControlName="currencyMasterCurrencyRate"
+        />
+        <div
+          class="error"
+          *ngIf="
+            f.currencyMasterCurrencyRate.errors &&
+            (f.currencyMasterCurrencyRate.dirty ||
+              f.currencyMasterCurrencyRate.touched)
+          "
+        >
+          <span *ngIf="f.currencyMasterCurrencyRate.errors.required">{{
+            "Rate is Mandatory Field*" | translate
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-grid p-ai-center">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "Denomination" | translate }}<span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          class="currency"
+          pInputText
+          [placeholder]="'Denomination' | translate"
+          formControlName="currencyMasterCurrencyDenomination"
+        />
+
+        <div
+          class="error"
+          *ngIf="
+            f.currencyMasterCurrencyDenomination.errors &&
+            (f.currencyMasterCurrencyDenomination.dirty ||
+              f.currencyMasterCurrencyDenomination.touched)
+          "
+        >
+          <span *ngIf="f.currencyMasterCurrencyDenomination.errors.required">
+            {{ "Denomination is Mandatory Field*" | translate }}</span
+          >
+        </div>
+      </div>
+
+      <div class="p-col-2"></div>
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "Short Name" | translate }}<span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          class="currency"
+          pInputText
+          [placeholder]="'Short Name' | translate"
+          formControlName="currencyMasterCurrencyShortName"
+        />
+
+        <div
+          class="error"
+          *ngIf="
+            f.currencyMasterCurrencyShortName.errors &&
+            (f.currencyMasterCurrencyShortName.dirty ||
+              f.currencyMasterCurrencyShortName.touched)
+          "
+        >
+          <span *ngIf="f.currencyMasterCurrencyShortName.errors.required">
+            {{ "Short Name is Mandatory Field*" | translate }}</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="p-grid p-ai-center">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">{{ "Symbol" | translate }}</div>
+      <div class="p-col-6">
+        <input
+          class="currency"
+          pInputText
+          [placeholder]="'Symbol' | translate"
+          formControlName="currencyMasterCurrencySymbol"
+        />
+        <div
+          class="error"
+          *ngIf="
+            f.currencyMasterCurrencySymbol.errors &&
+            (f.currencyMasterCurrencySymbol.dirty ||
+              f.currencyMasterCurrencySymbol.touched)
+          "
+        >
+          <span *ngIf="f.currencyMasterCurrencySymbol.errors.required">
+            {{ "Symbol is Mandatory Field*" | translate }}</span
+          >
+        </div>
+      </div>
+    </div>
+    <!-- Footer buttons -->
+    <div class="dialog-footer">
+      <button
+        type="button"
+        pButton
+        [icon]="
+          f.currencyMasterCurrencyShortName.value <= 0
+            ? 'pi pi-save'
+            : 'pi pi-check'
+        "
+        [label]="
+          f.currencyMasterCurrencyShortName.value <= 0 ? 'Save' : 'Update'
+        "
+        (click)="saveCurrency()"
+        class="p-button-primary"
+      ></button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-------Printer here-->
+<button printSectionId="invoice-POS" ngxPrint>print</button>
+
+<div class="invoice-POS" id="invoice-POS">
+  <div class="logo"></div>
+  <div class="info">
+    <h2
+      style="
+        text-align: center;
+        border-bottom: 1px solid black;
+        max-width: 44mm;
+      "
+    >
+      SBISTechs Inc
+    </h2>
+  </div>
+  <!--End Info-->
+
+  <div id="mid">
+    <div class="info">
+      <h2 style="text-align: center; max-width: 44mm">Contact Info</h2>
+      <p>
+        Address : street city, state 000 <br />
+        Email : {{ "JohnDoe@gmail.com" }} <br />
+        Phone : 555-555-5555 <br />
+      </p>
+    </div>
+  </div>
+  <!--End Invoice Mid-->
+
+  <div id="bot">
+    <div id="table">
+      <table>
+        <tr class="table-title">
+          <td>
+            <h2>Items</h2>
+          </td>
+          <td class="Hours">
+            <h2>Qty</h2>
+          </td>
+          <td class="Rate">
+            <h2>Sub Total</h2>
+          </td>
+        </tr>
+
+        <tr class="service">
+          <td class="table-item">
+            <p class="item-text">Digital Phone</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">5</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">$375.00</p>
+          </td>
+        </tr>
+
+        <tr class="service">
+          <td class="table-item">
+            <p class="item-text">Notebook</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">3</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">$225.00</p>
+          </td>
+        </tr>
+
+        <tr class="service">
+          <td class="table-item">
+            <p class="item-text">Book</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">5</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">$375.00</p>
+          </td>
+        </tr>
+        <tr class="service">
+          <td class="table-item">
+            <p class="item-text">Powerbank</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">20</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">$1500.00</p>
+          </td>
+        </tr>
+        <tr class="service">
+          <td class="table-item">
+            <p class="item-text">Glasses</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">10</p>
+          </td>
+          <td class="table-item">
+            <p class="item-text">$750.00</p>
+          </td>
+        </tr>
+
+        <tr class="table-title">
+          <td></td>
+          <td class="Rate">
+            <h2>TAX</h2>
+          </td>
+          <td class="payment">
+            <h2>$419.25</h2>
+          </td>
+        </tr>
+
+        <tr class="table-title">
+          <td></td>
+          <td class="Rate">
+            <h2>Total</h2>
+          </td>
+          <td class="payment">
+            <h2>$3,644.25</h2>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <!--End Table-->
+
+    <div id="legal-copy">
+      <p class="legal" style="text-align: center; max-width: 44mm">
+        <strong>Thank you for your business!</strong>
+        Payment is expected within 31 days; please process this invoice within
+        that time. There will be a 5% interest charge per month on late
+        invoices.
+      </p>
+    </div>
+  </div>
+  <!--End InvoiceBot-->
+</div>
+<!--End Invoice-->
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>
+<p-toast></p-toast>

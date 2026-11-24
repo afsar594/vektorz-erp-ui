@@ -1,0 +1,102 @@
+ 
+
+export interface ReportSalesReturn {
+
+
+
+
+  salesReturnId?:number;
+  salesReturnNo?:string;
+ salesReturnDate?:Date;
+  salesReturnType?:string;
+ salesReturnPartyId?:number;
+  salesReturnPartyName?:string;
+  salesReturnPartyAddress?:string;
+  salesReturnPartyVatNo?:string;
+  salesReturnRefNo?:string;
+  salesReturnSupInvNo?:string;
+  salesReturnGrno?:string;
+ salesReturnGrdate?:Date;
+  salesReturnLpono?:string;
+ salesReturnLpodate?:Date;
+  salesReturnQtnNo?:string;
+ salesReturnQtnDate?:Date;
+  salesReturnDescription?:string;
+ salesReturnExcludeVat?:boolean;
+  salesReturnPono?:string;
+  salesReturnBatchCode?:string;
+  salesReturnDayBookNo?:string;
+ salesReturnLocationId?:number;
+ salesReturnUserId?:number;
+ salesReturnCurrencyId?:number;
+ salesReturnCompanyId?:number;
+ salesReturnJobId?:number;
+ salesReturnFsno?:number;
+ salesReturnFcRate?:number;
+  salesReturnStatus?:string;
+ salesReturnTotalGrossAmount?:number;
+ salesReturnTotalItemDisAmount?:number;
+ salesReturnTotalActualAmount?:number;
+ salesReturnTotalDisPer?:number;
+ salesReturnTotalDisAmount?:number;
+ salesReturnVatAmt?:number;
+ salesReturnVatPer?:number;
+  salesReturnVatRoundSign?:string;
+ salesReturnVatRountAmt?:number;
+ salesReturnNetDisAmount?:number;
+ salesReturnNetAmount?:number;
+ salesReturnTransportCost?:number;
+ salesReturnHandlingcharges?:number;
+  salesReturnIssueId?:number;
+ salesReturnJobDirectPur?:boolean;
+salesReturnDelStatus?:boolean;
+  suppliersMasterSupplierName?:string;
+  suppliersMasterSupplierContactPerson?:string;
+ suppliersMasterSupplierCountryId?:number;
+ suppliersMasterSupplierCityId?:number;
+  suppliersMasterSupplierMobile?:string;
+  suppliersMasterSupplierRemarks?:string;
+  suppliersMasterSupplierVatNo?:string;
+  countryMasterCountryName?:string;
+ cityMasterCityId?:number;
+  unitMasterUnitShortName?:string;
+  itemMasterPartNo?:string;
+  itemMasterItemName?:string;
+ expr1?:string;
+  salesReturnDetailsNo?:string;
+ salesReturnDetailsSno?:number;
+ salesReturnDetailsMatId?:number;
+  salesReturnDetailsItemName?:string;
+ salesReturnDetailsUnitId?:number;
+  salesReturnDetailsUnitName?:string;
+  salesReturnDetailsBatchCode?:string;
+ salesReturnDetailsDelStatus?:string;
+ salesReturnDetailsSalesPrice?:number;
+ salesReturnDetailsQtndId?:number;
+ salesReturnDetailsQtnId?:number;
+ salesReturnDetailsPodId?:number;
+ salesReturnDetailsPoId?:number;
+ salesReturnDetailsPrdId?:number;
+ salesReturnDetailsPrId?:number;
+ salesReturnDetailsRfqdId?:number;
+ salesReturnDetailsRfqId?:number;
+ salesReturnDetailsIsEdit?:boolean;
+  salesReturnDetailsRemarks?:string;
+ salesReturnDetailsNetAmt?:number;
+ salesReturnDetailsVatAmt?:number;
+ salesReturnDetailsVatPer?:number;
+ salesReturnDetailsActualAmount?:number;
+ salesReturnDetailsDiscAmount?:number;
+ salesReturnDetailsGrossAmount?:number;
+ salesReturnDetailsRate?:number;
+ salesReturnDetailsQuantity?:number;
+ salesReturnDetailsExpDate?:Date;
+ salesReturnDetailsManfDate?:Date;
+  suppliersMasterSupplierTel1?:string;
+  suppliersMasterSupplierFax?:string;
+
+  jobMasterJobName?:string;
+  locationMasterLocationName?:string;
+  currencyMasterCurrencyName?:string;
+  salesReturnDetailsId?:number;
+}

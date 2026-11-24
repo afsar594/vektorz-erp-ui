@@ -1,0 +1,241 @@
+<div class="p-grid inputGroup" *ngIf="currentVoucherNo">
+  <div class="p-col-12" style="text-align: right; padding-top: 0; padding-bottom: 4px;">
+    <label [style.fontWeight]="'600'">
+      Voucher #:
+    </label>
+    <span>{{ currentVoucherNo }}</span>
+  </div>
+</div>
+
+<div class="p-grid inputGroup">
+  <label class="p-col-12 p-md-12 p-lg-1">{{
+    "Account Name" | translate
+  }}</label>
+  <div class="p-col-12 p-md-12 p-lg-3">
+    <input
+      formControlName="SelectCustomerAC"
+      [value]="this.VAForm.controls['SelectCustomerAC'].value"
+      readonly
+      class="w-100"
+      pInputText
+    />
+  </div>
+  <div class="p-col-2 p-md-2 p-lg-8">
+    <button
+      pButton
+      type="button"
+      (click)="getAllocationDetails()"
+      label="Show_Allocation"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="VoucherAllocationFormSubmit()"
+      label="Save"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="AutoAllocateVouchers()"
+      label="Auto_Allocation"
+      class="ui-button-warning"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      style="padding-left: 25px; padding-right: 25px"
+      (click)="ReleaseVoucherAllocation()"
+      class="ui-button-info"
+      [disabled]="!canReleaseAllocation || isReleasing"
+      label="Release_Allocation"
+      [icon]="isReleasing ? 'pi pi-spinner pi-spin' : null"
+      iconPos="left"
+    ></button>
+
+    <label [style.backgroundColor]="'#9ad99f'"> Allocated Voucher </label>
+  </div>
+</div>
+<p-table
+  [columns]="cols"
+  [value]="displayedDataset"
+  class="p-datatable-sm"
+  responsiveLayout="scroll"
+  editable="true"
+>
+  <!-- ===== TABLE HEADER ===== -->
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th
+        *ngFor="let col of columns"
+        [pSortableColumn]="col.field"
+        [hidden]="col.header == 'ID'"
+        [pSortableColumnDisabled]="col.header == 'Select'"
+      >
+        <ng-container *ngIf="col.header != 'ID'">
+          <span *ngIf="col.header == 'Select'">
+            {{ col.header }}
+          </span>
+          <span *ngIf="col.header != 'Select'">
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+            {{ col.header }}
+          </span>
+        </ng-container>
+      </th>
+    </tr>
+  </ng-template>
+
+  <!-- ===== TABLE BODY ===== -->
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <!-- [ngClass]="{ 'disabled-row': rowData.isDisabled }" -->
+    <tr [style.backgroundColor]="shouldHighlightRow(rowData) ? '#9ad99f' : ''">
+      <td
+        *ngFor="let col of columns; index as index"
+        [hidden]="col.field == 'transNo'"
+      >
+        <ng-container [ngSwitch]="col.field">
+          <span *ngSwitchCase="'isSelected'">
+            <p-checkbox
+              *ngIf="!rowData.isDisabled"
+              [(ngModel)]="rowData.isSelected"
+              [binary]="true"
+              (onChange)="onVoucherSelectionChange(rowData)"
+            ></p-checkbox>
+            <p-checkbox
+              *ngIf="rowData.isDisabled"
+              [(ngModel)]="rowData.isSelected"
+              [binary]="true"
+              [disabled]="true"
+            ></p-checkbox>
+          </span>
+
+          <span *ngSwitchCase="'transDate'">
+            {{ rowData[col.field] | date : "dd/MM/yyyy" }}
+          </span>
+
+          <span *ngSwitchCase="'voucherNo'">
+            {{ rowData[col.field] }}
+          </span>
+
+          <span *ngSwitchCase="'type'">
+            {{ rowData[col.field] }}
+          </span>
+
+          <span *ngSwitchCase="'debit'">
+            {{
+              (rowData.originalDebit != null
+                ? rowData.originalDebit
+                : rowData[col.field]
+              ) | number : "1.0-2"
+            }}
+          </span>
+
+          <span *ngSwitchCase="'credit'">
+            {{
+              (rowData.originalCredit != null
+                ? rowData.originalCredit
+                : rowData[col.field]
+              ) | number : "1.0-2"
+            }}
+          </span>
+
+          <span *ngSwitchCase="'allocAmount'">
+            {{ rowData[col.field] | number : "1.0-2" }}
+          </span>
+
+          <span *ngSwitchCase="'balance'">
+            {{ rowData[col.field] | number : "1.0-2" }}
+          </span>
+
+          <span *ngSwitchCase="'netAllocation'" pEditableColumn>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  type="number"
+                  [(ngModel)]="rowData.netAllocation"
+                  [disabled]="rowData.isDisabled"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="
+                    onNetAllocationChange(
+                      $event,
+                      rowData.isSelected,
+                      rowData.netAllocation,
+                      rowData.transNo
+                    )
+                  "
+                  #netAllocationAmount
+                />
+              </ng-template>
+
+              <ng-template pTemplate="output">
+                <div class="editable-cell">
+                  {{ rowData[col.field] || "" }}
+                </div>
+              </ng-template>
+            </p-cellEditor>
+          </span>
+
+          <span *ngSwitchCase="'remainingBalance'">
+            {{ rowData[col.field] }}
+          </span>
+          <span *ngSwitchCase="'allocationStatus'">
+            {{ rowData[col.field] }}
+          </span>
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+
+  <!-- ===== TABLE FOOTER ===== -->
+  <ng-template pTemplate="footer">
+    <tr>
+      <td colspan="4" class="text-right"><b>Totals:</b></td>
+      <td class="text-right">
+        <b>{{ tableDebitTotal | number : "1.0-2" }}</b>
+      </td>
+      <td class="text-right">
+        <b>{{ tableCreditTotal | number : "1.0-2" }}</b>
+      </td>
+      <td colspan="2"></td>
+      <td class="text-right">
+        <b>{{ totalAllocated | number : "1.0-2" }}</b>
+      </td>
+      <td class="text-right">
+        <b>{{ remainingBalance | number : "1.0-2" }}</b>
+      </td>
+      <td></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<div class="p-grid inputGroup">
+  <label class="p-col-12 p-md-12 p-lg-1" for="allocationVoucherDescription">{{
+    "Remarks" | translate
+  }}</label>
+  <div class="p-col-12 p-md-12 p-lg-4">
+    <textarea
+      formControlName="allocationVoucherDescription"
+      class="w-100"
+      pInputText
+    ></textarea>
+  </div>
+  <div class="p-col-1 p-md-1 p-lg-3"></div>
+  <label class="p-col-12 p-md-12 p-lg-1" style="color: brown">{{
+    "Debit" | translate
+  }}</label>
+  <div class="p-col-12 p-md-12 p-lg-1">
+    <input [ngModel]="displayDebitTotal" class="w-100" pInputText />
+  </div>
+  <label class="p-col-12 p-md-12 p-lg-1" style="color: brown">{{
+    "Credit" | translate
+  }}</label>
+  <div class="p-col-12 p-md-12 p-lg-1">
+    <input [ngModel]="displayCreditTotal" class="w-100" pInputText />
+  </div>
+</div>

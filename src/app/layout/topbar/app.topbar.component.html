@@ -1,0 +1,151 @@
+<div class="topbar">
+  <div class="topbar-main">
+    <div style="display: flex; align-items: center">
+      <a href="#" id="menu-button" (click)="toggleMenu()">
+        <span class="fa fa-bars"></span>
+      </a>
+
+      <a href="/">
+        <img alt="main logo" src="assets/Images/logo.png" class="logo" />
+      </a>
+
+      <div class="app-name">
+        <a href="/">{{
+          companyDetails?.stationMasterStationName | translate
+          }}</a>
+      </div>
+    </div>
+
+    <!-- Menu Search -->
+    <div class="menu-search-wrapper" #searchContainer>
+      <div class="menu-search-input-wrapper">
+        <i class="fa fa-search menu-search-icon"></i>
+        <input
+          type="text"
+          class="menu-search-input"
+          [placeholder]="'Search pages...' | translate"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput()"
+          (focus)="onSearchFocus()"
+          autocomplete="off"
+        />
+        <button *ngIf="searchTerm" class="menu-search-clear" (click)="clearSearch()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="menu-search-results" *ngIf="showSearchResults">
+        <div *ngIf="filteredMenuItems.length > 0" class="menu-search-list">
+          <div
+            class="menu-search-item"
+            *ngFor="let item of filteredMenuItems"
+            (click)="selectSearchResult(item)"
+          >
+            <div class="menu-search-item-icon">
+              <i [class]="item.icon"></i>
+            </div>
+            <div class="menu-search-item-content">
+              <span class="menu-search-item-label">{{ item.translatedLabel || item.label }}</span>
+              <span class="menu-search-item-breadcrumb">{{ item.translatedBreadcrumb || item.breadcrumb }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="filteredMenuItems.length === 0" class="menu-search-empty">
+          <i class="fa fa-search"></i>
+          <p>{{ 'No pages found for' | translate }} "<strong>{{ searchTerm }}</strong>"</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="user-panel" style="display: flex; align-content: flex-end; position: relative">
+      <app-translater style="display: flex; align-items: center"></app-translater>
+
+      <!-- Notification Bell -->
+      <div id="notification-bell" class="notification-wrapper"
+        (click)="notificationService.toggleNotifications($event)">
+        <button type="button" class="notification-btn">
+          <i class="fa fa-bell"></i>
+
+          <span *ngIf="notificationService.unreadCount > 0" class="notification-badge">
+            {{ notificationService.unreadCount }}
+          </span>
+        </button>
+
+        <!-- Notification Dropdown -->
+        <div *ngIf="notificationService.notificationsVisible" class="notification-dropdown"
+          (click)="$event.stopPropagation()">
+          <div class="notification-header">
+            <div>
+              <h4>{{ 'Notifications' | translate }}</h4>
+              <small *ngIf="notificationService.unreadCount > 0">
+                {{ notificationService.unreadCount }} {{ 'unread' | translate }}
+              </small>
+            </div>
+
+            <button type="button" class="clear-btn" *ngIf="notificationService.notifications.length > 0"
+              (click)="notificationService.clearNotifications()">
+              {{ 'Clear All' | translate }}
+            </button>
+          </div>
+
+          <div *ngIf="notificationService.notifications.length > 0" class="notification-list">
+            <div class="notification-item" *ngFor="let item of notificationService.notifications"
+              (click)="notificationService.onNotificationSelected({ value: item })">
+              <div class="notification-icon">
+                <i class="fa fa-info"></i>
+              </div>
+
+              <div class="notification-content">
+                <p>{{ item.message }}</p>
+
+                <small *ngIf="item.createdDate">
+                  {{ item.createdDate | date: 'short' }}
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="notificationService.notifications.length === 0" class="empty-notification">
+            <i class="fa fa-bell-slash"></i>
+            <p>{{ 'No new notifications' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Menu -->
+      <div id="user-display" (click)="app.onTopbarMenuButtonClick($event)">
+        <div style="margin: 0 4px">
+          <div class="username">{{ userData.userName | translate }}</div>
+        </div>
+        <img alt="main logo" [src]="'data:image/png;base64,' + userData.userImage" />
+      </div>
+
+      <ul id="topbar-menu" class="fadeInDown animated" [ngClass]="{ 'topbar-menu-visible': app.topbarMenuActive }">
+        <li #profile [ngClass]="{ 'menuitem-active': app.activeTopbarItem === profile }">
+          <a href="#" (click)="app.onTopbarItemClick($event, profile)">
+            <i class="topbar-icon fa fa-fw fa-user"></i>
+            <span class="topbar-item-name">{{ 'Profile' | translate }}</span>
+          </a>
+          <ul>
+            <li>
+              <a href="#"><i class="fa fa-fw fa-user"></i>{{ 'Profile' | translate }}</a>
+            </li>
+            <li>
+              <a href="#"><i class="fa fa-fw fa-cog"></i>{{ 'General Settings' | translate }}</a>
+            </li>
+            <li>
+              <a href="#" (click)="app.logout($event)"><i class="fa fa-fw fa-sign-out"></i>{{ 'Logout' | translate }}</a>
+            </li>
+          </ul>
+        </li>
+        <li #logout [ngClass]="{ 'menuitem-active': app.activeTopbarItem === logout }">
+          <a href="#" (click)="app.logout($event)">
+            <i class="fa fa-fw fa-sign-out"></i>{{ 'Logout' | translate }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <app-menu [itemMenu]="items"></app-menu>
+</div>

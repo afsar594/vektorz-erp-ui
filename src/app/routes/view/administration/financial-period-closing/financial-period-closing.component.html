@@ -1,0 +1,300 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Run Process"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Close"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Financial Closing Period' | translate">
+      <div class="p-grid">
+        <div class="p-sm-6 p-md-6 p-lg-6">
+          <p-panel>
+            <div class="p-grid">
+              <div class="p-col-4 p-md-4 p-lg-4">
+                <label>{{ "Financial Period Start Date" | translate }}</label>
+              </div>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  [(ngModel)]="startDate"
+                  class="w-100"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-4 p-md-4 p-lg-4">
+                <label>{{ "Financial Period End Date" | translate }}</label>
+              </div>
+              <div class="p-col-8 p-md-8 p-lg-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  [(ngModel)]="endDate"
+                  class="w-100"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label
+                class="p-col-12 p-md-12 p-lg-4"
+                for="refno"
+                style="padding: 10px"
+                >{{
+                  "Total
+                                Asset" | translate
+                }}</label
+              >
+              <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                <input class="w-100" [(ngModel)]="totalAsset" pInputText />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-6 p-md-6 p-lg-6">
+          <p-panel>
+            <div class="min-panel">
+              <div class="p-grid">
+                <label
+                  class="p-col-12 p-md-12 p-lg-4"
+                  for="refno"
+                  style="padding: 10px"
+                  >{{
+                    "Closing
+                                    Period Capital" | translate
+                  }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input
+                    class="w-100"
+                    [(ngModel)]="closingPeriodCapital"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "Retained Earnings" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input
+                    class="w-100"
+                    [(ngModel)]="retainedEarnings"
+                    pInputText
+                  />
+                </div>
+              </div>
+
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "Period Profit" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input class="w-100" [(ngModel)]="periodProfit" pInputText />
+                </div>
+              </div>
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">
+                  {{
+                    "Owners Current
+                                    Account" | translate
+                  }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input
+                    class="w-100"
+                    [(ngModel)]="currentAccount"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <div class="min-panel">
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "Equity" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input class="w-100" [(ngModel)]="equity" pInputText />
+                </div>
+              </div>
+
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "Liabilities" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input class="w-100" [(ngModel)]="liabilities" pInputText />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <div class="min-panel">
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "Total Liabilities &
+                                    Equity" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input
+                    class="w-100"
+                    [(ngModel)]="liabilitiesEquity"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "Net Liabilities" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input
+                    class="w-100"
+                    [(ngModel)]="netLiabilities"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "User Authentication" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "User Name" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input class="w-100" [(ngModel)]="UserName" pInputText />
+                </div>
+              </div>
+              <div class="p-grid">
+                <label class="p-col-12 p-md-12 p-lg-4" style="padding: 10px">{{
+                  "Password" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0" style="padding: 10px">
+                  <input class="w-100" [(ngModel)]="password" pInputText />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Assets' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [licenseKey]="licensekey"
+              [settings]="FinancialPeriodClosing"
+            >
+            </hot-table>
+          </div>
+        </div>
+        <div class="p-grid" style="margin-top: 2vh">
+          <div class="p-col-6 p-md-6 p-lg-6"></div>
+          <div class="p-col-1 p-md-1 p-lg-1" for="account">
+            <b>{{ "Total Debit" | translate }}</b>
+          </div>
+          <div class="p-col-2 p-md-2 p-lg-2">
+            <input
+              [style]="{ width: '100%' }"
+              id="total"
+              type="number"
+              pInputText
+            />
+          </div>
+          <div class="p-col-1 p-md-1 p-lg-1" for="account">
+            <b>{{ "Total Credit" | translate }}</b>
+          </div>
+          <div class="p-col-2 p-md-2 p-lg-2">
+            <input
+              [style]="{ width: '100%' }"
+              id="total"
+              type="number"
+              pInputText
+            />
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel [header]="'Liabilities' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid2"
+              [licenseKey]="licensekey"
+              [settings]="LiabilitiesData"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel [header]="'Equity' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid3"
+              [licenseKey]="licensekey"
+              [settings]="EquityData"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+  <!-- <div class="p-grid  ">
+                    <label class="p-col-12 p-md-12 p-lg-1 " for="account">
+                        <b>{{'Total'| translate}}</b>
+                    </label>
+                    <div class="p-col-12 p-md-12 p-lg-2">
+                        <input id="total"   pInputText>
+                    </div>
+                </div>-->
+</div>

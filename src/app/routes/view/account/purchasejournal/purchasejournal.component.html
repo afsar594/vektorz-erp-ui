@@ -1,0 +1,410 @@
+<!-- <p>purchasejournal works!</p> -->
+
+<app-page-header [nav]="[
+    { label: 'account' | translate },
+    { label: 'Purchase Journal' | translate }
+  ]" [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="New" (click)="new()" icon="pi pi-plus"></button>
+    <button pButton type="button" label="Edit" (click)="edit()" [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil" class="ui-button-success"></button>
+
+    <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag.cancel" label="Cancel"
+      (click)="cancel()" icon="fa fa-ban"></button>
+    <button pButton type="button" [label]="btnFlag.save == true ? 'Save' : 'Update'" (click)="savePurchaseJournal()"
+      [disabled]="!Permission?.Add" icon="fa fa-floppy-o" class="ui-button-success"></button>
+    <button pButton type="button" label="List" [disabled]="!Permission?.View" icon="fa fa-list"
+      (click)="showMaximizableDialog()" class="ui-button-info"></button>
+
+    <button pButton type="button" class="ui-button-danger" (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete" label="Delete" icon="fa fa-trash"></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+
+      <button pButton type="button" label="Print" icon="fa fa-print" [disabled]="!Permission?.Print"
+        (click)="showPrint()" class="ui-button-success"></button>
+
+      <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"></button>
+    </div>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="purchaseJournalFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Purchase Journal' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-7">
+          <p-panel>
+            <p-header>
+              {{ "Purchase Journal Details" | translate }}
+            </p-header>
+
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="voucherno">{{
+                  "Voucher No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4 p-0">
+                  <input class="w-100" formControlName="purchaseJournalVno" readonly id="voucherno" pInputText />
+                  <div class="error" *ngIf="f.purchaseJournalDate.errors"></div>
+                </div>
+                <p-message severity="error" *ngIf="f.purchaseJournalVno?.errors?.Exist && !btnFlag.update"
+                  text="Voucher No is exist"></p-message>
+
+                <label class="p-col-12 p-md-2" for="voucherdate">{{
+                  "Voucher Date" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-4 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc
+                    formControlName="purchaseJournalDate" id="voucherdate">
+                  </p-calendar>
+
+                  <div class="error" *ngIf="
+                      f.purchaseJournalDate.errors &&
+                      (f.purchaseJournalDate.dirty ||
+                        f.purchaseJournalDate.touched)
+                    ">
+                    <span *ngIf="f.purchaseJournalDate.errors.required">
+                      Voucher date is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="narration">{{
+                  "Narration" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-10 p-0">
+                  <textarea class="w-100" formControlName="purchaseJournalNarration" id="narration" maxlength="500"
+                    pInputText></textarea>
+
+                  <div class="error" *ngIf="
+                      f.purchaseJournalNarration.errors &&
+                      (f.purchaseJournalNarration.dirty ||
+                        f.purchaseJournalNarration.touched)
+                    ">
+                    <span *ngIf="f.purchaseJournalNarration.errors.required">
+                      Narration is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              {{ "Credit Account Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="currency">{{
+                  "Currency" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-10 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="purchaseJournalCurrencyId"
+                    [options]="currencyList">
+                  </p-dropdown>
+
+                  <div class="error" *ngIf="
+                      f.purchaseJournalCurrencyId.errors &&
+                      (f.purchaseJournalCurrencyId.dirty ||
+                        f.purchaseJournalCurrencyId.touched)
+                    ">
+                    <span *ngIf="f.purchaseJournalCurrencyId.errors.required">
+                      Currency is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="refno">{{
+                  "Reference No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-10 p-0">
+                  <input class="w-100" formControlName="purchaseJournalRefNo" id="refno" maxlength="50" pInputText />
+                  <div class="error" *ngIf="
+                      f.purchaseJournalRefNo.errors &&
+                      (f.purchaseJournalRefNo.dirty ||
+                        f.purchaseJournalRefNo.touched)
+                    ">
+                    <span *ngIf="f.purchaseJournalRefNo.errors.required">
+                      Reference no is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <p-panel>
+        <p-header>
+          {{ "Debit Account Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="purchasejournal_entry"
+            [data]="purchasejournal_entryDataset"></hot-table>
+        </div>
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total Credit" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input id="totalCredit" formControlName="purchaseJournalCrAmount"
+              style="border-color: black; text-align: right" pInputText />
+          </div>
+
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total Debit" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input id="totalDebit" formControlName="purchaseJournalDrAmount"
+              style="border-color: black; text-align: right" pInputText />
+          </div>
+        </div>
+      </p-panel>
+      <app-lookup [header]="'Look Up'" [dataArry]="dataList" [selectedItem]="selectItem" [columns]="lookupGridColumns"
+        (selectItemEvent)="selectaccount($event)" (exitEvent)="exit($event)" [cell]="activeRow"
+        (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" [tableheader]="'Account List'"
+        [(show)]="showAccountLookUp"></app-lookup>
+
+      <app-lookup [header]="'Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference"
+        [dataArry]="dataList" (exitEvent)="exit($event)" (clearEvent)="clear($event)" [formControlName]="control"
+        [columns]="lookupGridColumns" (selectItemEvent)="selectControl($event)" (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'" [(show)]="formControlLookUp"></app-lookup>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+                }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+            Content 3
+        </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog header="Purchase Journal List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-table #dt [value]="purchaseJournalarry" [columns]="cols" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-purchasejournal_list>
+      <tr>
+        <td>{{ purchasejournal_list.purchaseJournalVno }}</td>
+        <td>
+          {{ purchasejournal_list.purchaseJournalDate | date : "dd/MM/yyyy" }}
+        </td>
+        <!-- <td>{{purchasejournal_list.purchaseJournalAcNo}}</td> -->
+        <td>{{ purchasejournal_list.purchaseJournalCurrencyId }}</td>
+        <td>{{ purchasejournal_list.purchaseJournalDrAmount }}</td>
+        <td>{{ purchasejournal_list.purchaseJournalCrAmount }}</td>
+        <td>{{ purchasejournal_list.purchaseJournalNarration }}</td>
+        <td>{{ purchasejournal_list.purchaseJournalDrAmount }}</td>
+        <td>{{ purchasejournal_list.purchaseJournalCrAmount }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedPurchaseJournalDetails(
+                purchasejournal_list.purchaseJournalId
+              );
+              displayMaximizable = false
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+<p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button (click)="printAsPDF()" pButton class="ui-button-info" label="Print" icon="pi pi-print"></button>
+  <div id="print" style="justify-content: center">
+    <div class="print page divHeader">
+      <h1 class="main1">{{ stationmasterObj?.stationMasterStationName }}</h1>
+      <div class="flex">
+        <div class="payment1">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>Address </b>
+              <b>Tel </b>
+              <b>Fax </b>
+              <b>Email </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ stationmasterObj?.stationMasterAddress }}</div>
+              <div>{{ stationmasterObj?.stationMasterTele1 }}</div>
+              <div>{{ stationmasterObj?.stationMasterFax }}</div>
+              <div>{{ stationmasterObj?.stationMasterEmail }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="payment2">
+          <!-- <img src="../../../../../assets/Images/logo-2.png" /> -->
+          <img *ngIf="stationmasterObj?.logotype != 'Rectangular'" class="squreImg" [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            " />
+          <img *ngIf="stationmasterObj?.logotype == 'Rectangular'" class="rectImg" [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            " />
+        </div>
+      </div>
+      <div class="center">
+        <h2>{{ "Purchase Journal Voucher" | translate }}</h2>
+      </div>
+      <div class="flex1">
+        <div class="contain1">
+          <div class="inflex">
+            <div class="voucher">
+              <b>{{ "Voucher No" | translate }}</b>
+              <div class="space1">
+                <div>:&nbsp;&nbsp;&nbsp;</div>
+              </div>
+              <div>{{ savedPurchaseJournal?.purchaseJournalVno }}</div>
+            </div>
+
+            <div class="date">
+              <b>{{ "Date of Voucher" | translate }}</b>
+              <div class="space1">
+                <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              </div>
+              <div>{{ savedPurchaseJournal?.purchaseJournalDate }}</div>
+            </div>
+          </div>
+
+          <div class="flexrow">
+            <div class="flexcol">
+              <!-- <b>{{'Voucher No' | translate}}</b> -->
+
+              <b>{{ "Ref No" | translate }}</b>
+              <b>{{ "Narration " | translate }}</b>
+            </div>
+            <div class="flexcol space">
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ savedPurchaseJournal?.purchaseJournalRefNo }}</div>
+              <div>{{ savedPurchaseJournal?.purchaseJournalNarration }}</div>
+              <!-- <div>{{savedPaymentVoucher?.paymentVoucherDate}}</div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table">
+        <table id="customers">
+          <thead>
+            <th>{{ "Acc No" | translate }}</th>
+            <th>{{ "Acc Name" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit " | translate }}</th>
+            <th>{{ "Narration " | translate }}</th>
+          </thead>
+          <!-- <tr *ngFor="let accountTrans of savedPaymentVoucher?.accountsTransactions"></tr> -->
+          <tr *ngFor="
+              let item of savedPurchaseJournal?.purchaseJournalDetails;
+              let i = index
+            ">
+            <td>{{ item?.purchaseJournalDetailsAccNo }}</td>
+            <td>{{ getAccountName(item?.purchaseJournalDetailsAccNo) }}</td>
+            <td>{{ item?.purchaseJournalDetailsDrAmount }}</td>
+            <td>{{ item?.purchaseJournalDetailsCrAmount | number : "0.2" }}</td>
+            <td>{{ item?.purchaseJournalDetailsNarration }}</td>
+          </tr>
+        </table>
+        <div class="row">
+          <strong>{{ "Total" | translate }}</strong>
+          <div>{{ savedPurchaseJournal?.purchaseJournalDrAmount }}</div>
+          <div>{{ savedPurchaseJournal?.purchaseJournalCrAmount }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div class="table">
+        <table id="customers">
+          <thead>
+            <th>Reciever's Signature</th>
+            <th>{{ "Verified by&Signature:" | translate }}</th>
+            <th>Date of Print: 25/08/2020</th>
+          </thead>
+          <tbody>
+            <td></td>
+            <td></td>
+            <td>Page No: 1</td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</p-dialog>

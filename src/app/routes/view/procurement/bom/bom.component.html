@@ -1,0 +1,169 @@
+<div class="matero-page-header">
+  <app-page-header [title]="title | translate"></app-page-header>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="New"
+        icon="pi pi-plus"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Edit"
+        icon="fa fa-pencil"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        class="ui-button-danger"
+        label="Cancel"
+        icon="fa fa-ban"
+      ></button>
+      <button
+        pButton
+        type="button"
+        icon="fa fa-floppy-o"
+        class="ui-button-success"
+        label="Save"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="List"
+        icon="fa fa-list"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        class="ui-button-danger"
+        label="Delete"
+        icon="fa fa-trash"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Print"
+        icon="fa fa-print"
+        class="ui-button-success"
+      ></button>
+      <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+    </div>
+  </p-toolbar>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'BOM' | translate" [formGroup]="BOMform">
+        <br />
+        <div class="p-grid">
+          <label class="p-col-1 p-md-1 p-lg-1" for="account">
+            <b>{{ "Requisition No:" | translate }}</b>
+          </label>
+          <div class="p-col-3 p-md-3 p-lg-3">
+            <input
+              pInputText
+              style="width: 100%"
+              formControlName="RequisitionNo"
+            />
+            <div
+              class="error"
+              *ngIf="f.RequisitionNo.touched && f.RequisitionNo.invalid"
+            >
+              RequisitionNo Invalid Entry
+            </div>
+          </div>
+          <label class="p-col-1 p-md-1 p-lg-1" for="account">
+            <b>{{ "Date:" | translate }}</b>
+          </label>
+          <div class="p-col-3 p-md-3 p-lg-3">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              formControlName="Date"
+              class="w-100"
+            >
+            </p-calendar>
+            <div class="error" *ngIf="f.Date.touched && f.Date.invalid">
+              Date Invalid Entry
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="p-grid">
+          <label class="p-col-1 p-md-1 p-lg-1" for="account">
+            <b>{{ "Select a Job:" | translate }}</b>
+          </label>
+          <div class="p-col-3 p-md-3 p-lg-3">
+            <input
+              id="supplier"
+              pInputText
+              style="width: 80%"
+              formControlName="SelectaJob"
+            />
+            <button pButton type="button" icon="pi pi-search"></button>
+            <div
+              class="error"
+              *ngIf="f.SelectaJob.touched && f.SelectaJob.invalid"
+            >
+              Select a Job Invalid Entry
+            </div>
+          </div>
+          <label class="p-col-1 p-md-1 p-lg-1" for="account">
+            <b>{{ "Location:" | translate }}</b>
+          </label>
+          <div class="p-col-3 p-md-3 p-lg-3">
+            <p-dropdown
+              filter="true"
+              placeholder="--- select location ---"
+              formControlName="location"
+            >
+            </p-dropdown>
+          </div>
+          <label class="p-col-1 p-md-1 p-lg-1" for="account">
+            <b>{{ "Narration:" | translate }}</b>
+          </label>
+          <div class="p-col-3 p-md-3 p-lg-3">
+            <textarea
+              style="min-height: 80px; width: 100%; margin-top: 5px"
+              formControlName="Narration"
+              pInputTextarea
+            ></textarea>
+            <div
+              class="error"
+              *ngIf="f.Narration.touched && f.Narration.invalid"
+            >
+              Narration Invalid Entry
+            </div>
+          </div>
+        </div>
+        <br />
+      </p-tabPanel>
+    </p-tabView>
+    <br />
+  </div>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'BOM Details' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="BOM"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

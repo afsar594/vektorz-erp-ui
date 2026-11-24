@@ -1,0 +1,175 @@
+<p-panel header="Supplier Wise Purchase Report">
+  <div class="p-grid">
+    <div class="p-col-3"></div>
+    <div
+      class="p-col-6"
+      style="padding: 5px; border: 1px solid #464444; border-radius: 10px"
+    >
+      <div class="flexSearch">
+        <button
+          pButton
+          type="button"
+          (click)="showPrint()"
+          label="Print"
+          icon="fa fa-print"
+          class="ui-button-success"
+        ></button>
+
+        <button
+          pButton
+          type="button"
+          label="Exit"
+          routerlink=""
+          icon="fa fa-sign-out"
+          class="ui-button-danger"
+        ></button>
+      </div>
+
+      <div style="padding: 5px">
+        <p-panel>
+          <p-header>
+            <input
+              (click)="toggleDate()"
+              [(ngModel)]="enableDate"
+              type="checkbox"
+              pInputCheck
+            />
+            By Date
+          </p-header>
+          <div class="p-grid">
+            <div class="p-col-2">
+              <label for="fromDate">From </label>
+            </div>
+            <div class="p-col-10 p-lg-10">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                id="dateFrom"
+                showButtonBar="true"
+                [showIcon]="true"
+                [(ngModel)]="dateFrom"
+                name="dateFrom"
+                [disabled]="!enableDate"
+                [ngModelOptions]="{ standalone: true }"
+              >
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2">
+              <label for="fromDate">To </label>
+            </div>
+            <div class="p-col-10 p-lg-10">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                id="dateTo"
+                showButtonBar="true"
+                [showIcon]="true"
+                [(ngModel)]="dateTo"
+                name="dateTo"
+                [disabled]="!enableDate"
+                [ngModelOptions]="{ standalone: true }"
+              >
+              </p-calendar>
+            </div>
+          </div>
+        </p-panel>
+
+        <div class="p-grid">
+          <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+            "Supplier" | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-10">
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              name="supplier"
+              [(ngModel)]="supplier"
+              [ngModelOptions]="{ standalone: true }"
+              [options]="SupplierMasterList"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <label class="p-col-12 p-md-12 p-lg-2" for="location">{{
+            "Location" | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-10">
+            <p-dropdown
+              filter="true"
+              class="w-100"
+              name="location"
+              [(ngModel)]="location"
+              [ngModelOptions]="{ standalone: true }"
+              [options]="locationList"
+              [showClear]="true"
+              placeholder="---- Select Location ----"
+              [disabled]="locationLocked"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="p-grid" style="padding-top: 15px">
+          <!-- <div class="p-col-4">
+            <p-radioButton
+              name="type"
+              value="All"
+              label="ALL Purchases"
+              [(ngModel)]="type"
+              [ngModelOptions]="{ standalone: true }"
+            ></p-radioButton>
+          </div> -->
+          <div class="p-col-4">
+            <p-radioButton
+              name="type"
+              value="Details"
+              label="Details"
+              [(ngModel)]="type"
+              [ngModelOptions]="{ standalone: true }"
+            ></p-radioButton>
+          </div>
+          <div class="p-col-4">
+            <p-radioButton
+              name="type"
+              value="Itemwise"
+              label="Item wise"
+              [(ngModel)]="type"
+              [ngModelOptions]="{ standalone: true }"
+            ></p-radioButton>
+          </div>
+          <div class="p-col-4">
+            <p-radioButton
+              name="type"
+              value="Summary"
+              label="Summary"
+              [(ngModel)]="type"
+              [ngModelOptions]="{ standalone: true }"
+            ></p-radioButton>
+          </div>
+          <div class="p-col-4">
+            <p-radioButton
+              name="type"
+              value="Monthly"
+              [(ngModel)]="type"
+              [ngModelOptions]="{ standalone: true }"
+              label="Monthly Comparison"
+            ></p-radioButton>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-3"></div>
+  </div>
+</p-panel>

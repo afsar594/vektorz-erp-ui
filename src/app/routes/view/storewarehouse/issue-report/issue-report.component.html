@@ -1,0 +1,414 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-panel [header]="'Filter' | translate" styleClass="issue-filter-panel">
+  <div [formGroup]="ItemFormGroup" class="issue-filter-shell">
+    <div class="issue-filter-grid">
+      <section class="issue-card issue-card-wide">
+        <div class="issue-card-title">Filter Criteria</div>
+        <div class="issue-form-grid">
+          <div class="issue-field">
+            <label>Item</label>
+            <p-dropdown
+              [filter]="true"
+              (onChange)="ChangeItem()"
+              formControlName="ItemName"
+              [filter]="true"
+              placeholder="ALL"
+              filterValue="itemMasterItemName"
+              [showClear]="true"
+              dataKey="itemMasterItemId"
+              autoWidth="false"
+              [options]="ItemMasterArray"
+              optionLabel="itemMasterItemName"
+            ></p-dropdown>
+          </div>
+
+          <div class="issue-field">
+            <label>Department</label>
+            <p-dropdown
+              [filter]="true"
+              formControlName="DepId"
+              [filter]="true"
+              placeholder="ALL"
+              filterValue="departmentMasterDepartmentName"
+              [showClear]="true"
+              dataKey="departmentMasterDepartmentId"
+              autoWidth="false"
+              [options]="DepartmentMasterArray"
+              optionLabel="departmentMasterDepartmentName"
+            ></p-dropdown>
+          </div>
+
+          <div class="issue-field">
+            <label>Job</label>
+            <p-dropdown
+              [filter]="true"
+              formControlName="Job"
+              [filter]="true"
+              placeholder="ALL"
+              filterValue="jobMasterJobName"
+              [showClear]="true"
+              autoWidth="false"
+              [options]="jobList"
+            ></p-dropdown>
+          </div>
+
+          <div class="issue-field issue-field-full">
+            <label>Remarks</label>
+            <textarea
+              rows="3"
+              pInputTextarea
+              formControlName="Description"
+              placeholder="Enter remarks here..."
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="issue-card">
+        <div class="issue-card-title">Date Range</div>
+        <div class="issue-inline-check">
+          <p-checkbox formControlName="isDate" [binary]="true"></p-checkbox>
+          <span>Filter By Date</span>
+        </div>
+
+        <div class="issue-field">
+          <label>From</label>
+          <p-calendar
+            appendTo="body"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2000:2040"
+            [showIcon]="true"
+            useUtc
+            formControlName="DateFrom"
+            [disabled]="!ItemFormGroup.get('isDate')?.value"
+          ></p-calendar>
+        </div>
+
+        <div class="issue-field">
+          <label>To</label>
+          <p-calendar
+            appendTo="body"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2000:2040"
+            [showIcon]="true"
+            useUtc
+            formControlName="DateTo"
+            [disabled]="!ItemFormGroup.get('isDate')?.value"
+          ></p-calendar>
+        </div>
+      </section>
+
+      <section class="issue-card issue-card-compact">
+        <div class="issue-card-title">View Options</div>
+
+        <div class="issue-radio-row">
+          <p-radioButton
+            value="details"
+            formControlName="Type"
+            name="reportType"
+            inputId="report-details"
+          ></p-radioButton>
+          <label for="report-details">Details</label>
+        </div>
+
+        <div class="issue-radio-row">
+          <p-radioButton
+            value="jobwise"
+            formControlName="Type"
+            name="reportType"
+            inputId="report-jobwise"
+          ></p-radioButton>
+          <label for="report-jobwise">Job Wise</label>
+        </div>
+
+        <div class="issue-radio-row">
+          <p-radioButton
+            value="summary"
+            formControlName="Type"
+            name="reportType"
+            inputId="report-summary"
+          ></p-radioButton>
+          <label for="report-summary">Summary</label>
+        </div>
+
+        <div class="issue-action-grid">
+          <button
+            pButton
+            type="button"
+            label="Find"
+            (click)="GenerateReport()"
+            icon="fa fa-search"
+            class="ui-button-info"
+          ></button>
+          <button
+            pButton
+            type="button"
+            label="Print"
+            (click)="onPrint()"
+            icon="fa fa-print"
+            class="p-button-secondary"
+          ></button>
+          <button
+            pButton
+            type="button"
+            class="ui-button-warning"
+            (click)="onClear()"
+            label="Clear"
+          ></button>
+          <button
+            pButton
+            type="button"
+            class="ui-button-danger"
+            (click)="ExitNew()"
+            label="Exit"
+            icon="fa fa-close"
+          ></button>
+        </div>
+      </section>
+    </div>
+  </div>
+</p-panel>
+
+<p-tabView>
+  <p-tabPanel
+    [header]="
+      this.ItemFormGroup.controls.Type.value == 'details'
+        ? 'Detail Wise Report'
+        : this.ItemFormGroup.controls.Type.value == 'jobwise'
+        ? 'Job Wise Report'
+        : 'Summary Wise Report'
+    "
+  >
+
+    <!-- ==================== DETAIL WISE ==================== -->
+    <div
+      *ngIf="this.ItemFormGroup.controls.Type.value == 'details'"
+      id="detailPrint"
+      class="cr-report-wrapper"
+    >
+      <div class="cr-report-header">
+        <div class="cr-header-left">
+          <div class="cr-report-title">Issue Voucher &#8212; Detail Wise Report</div>
+          <div class="cr-report-params">
+            <span *ngIf="ItemFormGroup.get('isDate')?.value">
+              Period:&nbsp;<strong>{{ ItemFormGroup.get('DateFrom')?.value | date:'dd/MM/yyyy' }}</strong>&nbsp;&#8211;&nbsp;<strong>{{ ItemFormGroup.get('DateTo')?.value | date:'dd/MM/yyyy' }}</strong>
+            </span>
+            <span *ngIf="!ItemFormGroup.get('isDate')?.value">Period: <strong>All</strong></span>
+            &nbsp;|&nbsp; Item: <strong>{{ ItemFormGroup.get('ItemName')?.value?.itemMasterItemName || 'All' }}</strong>
+            &nbsp;|&nbsp; Department: <strong>{{ ItemFormGroup.get('DepId')?.value?.departmentMasterDepartmentName || 'All' }}</strong>
+          </div>
+        </div>
+        <div class="cr-header-right">
+          <div class="cr-print-date">Generated: {{ currentDate | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="cr-record-count">Records: {{ (DetailWiseIssueReport || []).length }}</div>
+        </div>
+      </div>
+
+      <table class="cr-table">
+        <thead>
+          <tr>
+            <th class="cr-th cr-th-center">#</th>
+            <th class="cr-th cr-th-left">Issue No</th>
+            <th class="cr-th cr-th-left">Issue Date</th>
+            <th class="cr-th cr-th-left">Part No</th>
+            <th class="cr-th cr-th-left">Item</th>
+            <th class="cr-th cr-th-right">Quantity</th>
+            <th class="cr-th cr-th-right">Rate</th>
+            <th class="cr-th cr-th-right">Amount</th>
+            <th class="cr-th cr-th-left">Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="(DetailWiseIssueReport || []).length > 0; else noDetailData">
+            <tr *ngFor="let item of DetailWiseIssueReport; let i = index"
+                [class.cr-row-even]="i % 2 !== 0">
+              <td class="cr-td cr-td-center">{{ i + 1 }}</td>
+              <td class="cr-td">{{ item.issueNo }}</td>
+              <td class="cr-td">{{ item.issueDate | date:'dd/MM/yyyy' }}</td>
+              <td class="cr-td">{{ item.partNo }}</td>
+              <td class="cr-td">{{ item.itemName }}</td>
+              <td class="cr-td cr-td-right">{{ item.quantity | number:'1.3-3' }}</td>
+              <td class="cr-td cr-td-right">{{ item.rate | number:'1.2-2' }}</td>
+              <td class="cr-td cr-td-right">{{ item.amount | number:'1.2-2' }}</td>
+              <td class="cr-td">{{ item.description }}</td>
+            </tr>
+          </ng-container>
+          <ng-template #noDetailData>
+            <tr><td colspan="9" class="cr-no-data">No records found. Please adjust filters and click Find.</td></tr>
+          </ng-template>
+        </tbody>
+        <tfoot *ngIf="(DetailWiseIssueReport || []).length > 0">
+          <tr class="cr-totals-row">
+            <td class="cr-tf cr-tf-label" colspan="5">Grand Total</td>
+            <td class="cr-tf cr-td-right">{{ detailTotalQty | number:'1.3-3' }}</td>
+            <td class="cr-tf cr-td-right"></td>
+            <td class="cr-tf cr-td-right">{{ detailTotalAmount | number:'1.2-2' }}</td>
+            <td class="cr-tf"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="cr-report-footer">
+        <span>*** End of Report ***</span>
+        <span>ERP System &#8212; Issue Voucher Report</span>
+      </div>
+    </div>
+
+    <!-- ==================== JOB WISE ==================== -->
+    <div
+      *ngIf="this.ItemFormGroup.controls.Type.value == 'jobwise'"
+      id="jobwisePrint"
+      class="cr-report-wrapper"
+    >
+      <div class="cr-report-header">
+        <div class="cr-header-left">
+          <div class="cr-report-title">Issue Voucher &#8212; Job Wise Report</div>
+          <div class="cr-report-params">
+            <span *ngIf="ItemFormGroup.get('isDate')?.value">
+              Period:&nbsp;<strong>{{ ItemFormGroup.get('DateFrom')?.value | date:'dd/MM/yyyy' }}</strong>&nbsp;&#8211;&nbsp;<strong>{{ ItemFormGroup.get('DateTo')?.value | date:'dd/MM/yyyy' }}</strong>
+            </span>
+            <span *ngIf="!ItemFormGroup.get('isDate')?.value">Period: <strong>All</strong></span>
+            &nbsp;|&nbsp; Item: <strong>{{ ItemFormGroup.get('ItemName')?.value?.itemMasterItemName || 'All' }}</strong>
+            &nbsp;|&nbsp; Department: <strong>{{ ItemFormGroup.get('DepId')?.value?.departmentMasterDepartmentName || 'All' }}</strong>
+          </div>
+        </div>
+        <div class="cr-header-right">
+          <div class="cr-print-date">Generated: {{ currentDate | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="cr-record-count">Records: {{ (JobWiseIssueReport || []).length }}</div>
+        </div>
+      </div>
+
+      <table class="cr-table">
+        <thead>
+          <tr>
+            <th class="cr-th cr-th-center">#</th>
+            <th class="cr-th cr-th-left">Job No</th>
+            <th class="cr-th cr-th-left">Job Name</th>
+            <th class="cr-th cr-th-left">Issue No</th>
+            <th class="cr-th cr-th-left">Issue Date</th>
+            <th class="cr-th cr-th-left">Part No</th>
+            <th class="cr-th cr-th-left">Item</th>
+            <th class="cr-th cr-th-right">Quantity</th>
+            <th class="cr-th cr-th-right">Rate</th>
+            <th class="cr-th cr-th-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="(JobWiseIssueReport || []).length > 0; else noJobData">
+            <tr *ngFor="let item of JobWiseIssueReport; let i = index"
+                [class.cr-row-even]="i % 2 !== 0">
+              <td class="cr-td cr-td-center">{{ i + 1 }}</td>
+              <td class="cr-td">{{ HIDEJOBCOST ? item.detailjobId : item.jobNumber }}</td>
+              <td class="cr-td">{{ item.jobName }}</td>
+              <td class="cr-td">{{ item.issueNo }}</td>
+              <td class="cr-td">{{ item.issueDate | date:'dd/MM/yyyy' }}</td>
+              <td class="cr-td">{{ item.partNo }}</td>
+              <td class="cr-td">{{ item.itemName }}</td>
+              <td class="cr-td cr-td-right">{{ item.quantity | number:'1.3-3' }}</td>
+              <td class="cr-td cr-td-right">{{ item.rate | number:'1.2-2' }}</td>
+              <td class="cr-td cr-td-right">{{ item.amount | number:'1.2-2' }}</td>
+            </tr>
+          </ng-container>
+          <ng-template #noJobData>
+            <tr><td colspan="10" class="cr-no-data">No records found. Please adjust filters and click Find.</td></tr>
+          </ng-template>
+        </tbody>
+        <tfoot *ngIf="(JobWiseIssueReport || []).length > 0">
+          <tr class="cr-totals-row">
+            <td class="cr-tf cr-tf-label" colspan="7">Grand Total</td>
+            <td class="cr-tf cr-td-right">{{ jobwiseTotalQty | number:'1.3-3' }}</td>
+            <td class="cr-tf cr-td-right"></td>
+            <td class="cr-tf cr-td-right">{{ jobwiseTotalAmount | number:'1.2-2' }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="cr-report-footer">
+        <span>*** End of Report ***</span>
+        <span>ERP System &#8212; Issue Voucher Report</span>
+      </div>
+    </div>
+
+    <!-- ==================== SUMMARY WISE ==================== -->
+    <div
+      *ngIf="this.ItemFormGroup.controls.Type.value == 'summary'"
+      id="summaryPrint"
+      class="cr-report-wrapper"
+    >
+      <div class="cr-report-header">
+        <div class="cr-header-left">
+          <div class="cr-report-title">Issue Voucher &#8212; Summary Wise Report</div>
+          <div class="cr-report-params">
+            <span *ngIf="ItemFormGroup.get('isDate')?.value">
+              Period:&nbsp;<strong>{{ ItemFormGroup.get('DateFrom')?.value | date:'dd/MM/yyyy' }}</strong>&nbsp;&#8211;&nbsp;<strong>{{ ItemFormGroup.get('DateTo')?.value | date:'dd/MM/yyyy' }}</strong>
+            </span>
+            <span *ngIf="!ItemFormGroup.get('isDate')?.value">Period: <strong>All</strong></span>
+            &nbsp;|&nbsp; Item: <strong>{{ ItemFormGroup.get('ItemName')?.value?.itemMasterItemName || 'All' }}</strong>
+            &nbsp;|&nbsp; Department: <strong>{{ ItemFormGroup.get('DepId')?.value?.departmentMasterDepartmentName || 'All' }}</strong>
+          </div>
+        </div>
+        <div class="cr-header-right">
+          <div class="cr-print-date">Generated: {{ currentDate | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="cr-record-count">Records: {{ (_ReportService.SummaryWiseIssueReport || []).length }}</div>
+        </div>
+      </div>
+
+      <table class="cr-table">
+        <thead>
+          <tr>
+            <th class="cr-th cr-th-center">#</th>
+            <th class="cr-th cr-th-left">Job No</th>
+            <th class="cr-th cr-th-left">Job Name</th>
+            <th class="cr-th cr-th-left">Issue No</th>
+            <th class="cr-th cr-th-left">Issue Date</th>
+            <th class="cr-th cr-th-left">Part No</th>
+            <th class="cr-th cr-th-left">Item</th>
+            <th class="cr-th cr-th-right">Quantity</th>
+            <th class="cr-th cr-th-right">Rate</th>
+            <th class="cr-th cr-th-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="(_ReportService.SummaryWiseIssueReport || []).length > 0; else noSummaryData">
+            <tr *ngFor="let item of _ReportService.SummaryWiseIssueReport; let i = index"
+                [class.cr-row-even]="i % 2 !== 0">
+              <td class="cr-td cr-td-center">{{ i + 1 }}</td>
+              <td class="cr-td">{{ !HIDEJOBCOST ? item.detailjobId : item.jobNumber }}</td>
+              <td class="cr-td">{{ item.jobName }}</td>
+              <td class="cr-td">{{ item.issueNo }}</td>
+              <td class="cr-td">{{ item.issueDate | date:'dd/MM/yyyy' }}</td>
+              <td class="cr-td">{{ item.partNo }}</td>
+              <td class="cr-td">{{ item.itemName }}</td>
+              <td class="cr-td cr-td-right">{{ item.quantity | number:'1.3-3' }}</td>
+              <td class="cr-td cr-td-right">{{ item.rate | number:'1.2-2' }}</td>
+              <td class="cr-td cr-td-right">{{ item.amount | number:'1.2-2' }}</td>
+            </tr>
+          </ng-container>
+          <ng-template #noSummaryData>
+            <tr><td colspan="10" class="cr-no-data">No records found. Please adjust filters and click Find.</td></tr>
+          </ng-template>
+        </tbody>
+        <tfoot *ngIf="(_ReportService.SummaryWiseIssueReport || []).length > 0">
+          <tr class="cr-totals-row">
+            <td class="cr-tf cr-tf-label" colspan="7">Grand Total</td>
+            <td class="cr-tf cr-td-right">{{ summaryTotalQty | number:'1.3-3' }}</td>
+            <td class="cr-tf cr-td-right"></td>
+            <td class="cr-tf cr-td-right">{{ summaryTotalAmount | number:'1.2-2' }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="cr-report-footer">
+        <span>*** End of Report ***</span>
+        <span>ERP System &#8212; Issue Voucher Report</span>
+      </div>
+    </div>
+
+  </p-tabPanel>
+</p-tabView>

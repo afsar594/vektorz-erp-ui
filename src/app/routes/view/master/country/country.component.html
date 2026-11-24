@@ -1,0 +1,90 @@
+<!-- <app-page-header [nav]='breadcumbmodel' [title]='title'></app-page-header> -->
+<app-page-header
+  [nav]="[{ label: 'master' | translate }, { label: 'country' | translate }]"
+  [title]="title | translate"
+>
+</app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+<div class="p-grid">
+  <div class="p-col-12">
+    <hot-table
+      [hotId]="hotid"
+      [licenseKey]="licensekey"
+      [settings]="country_entry"
+      [data]="country_entryDataset"
+    ></hot-table>
+  </div>
+</div>
+<p-dialog
+  [header]="btnFlag.save ? 'Add New City' : 'Update City'"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '650px' }"
+>
+  <form [formGroup]="countryFormGroup" class="p-fluid">
+    <div class="p-grid p-ai-center">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "Country Name" | translate }}<span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          pInputText
+          placeholder="Country Name"
+          formControlName="countryMasterCountryName"
+        />
+        <div
+          class="error"
+          *ngIf="
+            f.countryMasterCountryName.errors &&
+            (f.countryMasterCountryName.dirty ||
+              f.countryMasterCountryName.touched)
+          "
+        >
+          <span *ngIf="f.cityMasterCityName.errors.required"
+            >Country name is Mandatory Field*</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer buttons (manually placed inside) -->
+    <div class="dialog-footer">
+      <p-button
+        (click)="saveCountry()"
+        [icon]="btnFlag.save ? 'pi pi-save' : 'pi pi-check'"
+        [label]="btnFlag.save ? 'Save' : 'Update'"
+        styleClass="p-button-raised p-button-rounded p-button-success"
+      ></p-button>
+    </div>
+  </form>
+</p-dialog>
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

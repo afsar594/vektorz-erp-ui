@@ -1,0 +1,41 @@
+.mainhead{
+    color: rgb(0, 0, 0);
+    text-align: center;
+     margin-bottom: -5px;
+     margin-top: 15px;
+ }
+.subhead{
+text-align: center;
+color: rgb(0, 0, 0);
+ margin-bottom: -5px;
+}
+.head{
+    color: rgb(0, 0, 0);
+     text-align: center;
+     margin-bottom: 5px;     
+}
+.Account {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 90.5%;
+    margin-left: 5%;
+  }
+  
+  .Account td, .Account th {
+    border: 1px solid #aca8a8;
+    padding: 8px;
+  }
+  
+  .Account tr:nth-child(even){background-color: #f2f2f2;}
+  
+  .Account tr:hover {background-color: #ddd;}
+  
+  .Account th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(81, 173, 209);
+    color: black;
+  font-weight: lighter;
+  }
+ 

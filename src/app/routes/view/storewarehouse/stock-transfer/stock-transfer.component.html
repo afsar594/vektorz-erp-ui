@@ -1,0 +1,900 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Stock Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      icon="pi pi-plus"
+      (click)="createNew()"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.edit || !Permission.Edit"
+      label="Edit"
+      icon="fa fa-pencil"
+      (click)="edit()"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="btnFlag.cancel"
+      (click)="cancelAll()"
+      class="ui-button-danger"
+      label="Cancel"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="fa fa-floppy-o"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission.Add || btnFlag?.new"
+      (click)="savestockTransfer()"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="!Permission?.View"
+      label="List"
+      icon="fa fa-list"
+      (click)="getshowStockTransferList()"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Delete"
+      icon="fa fa-trash"
+      [disabled]="!Permission?.Delete"
+      (click)="displayEditListing()"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <div class="ui-inputgroup">
+        <input type="text" pInputText placeholder="Search" />
+        <button pButton type="button" icon="pi pi-search"></button>
+      </div>
+      <!-- [disabled]="btnFlag.save" -->
+      <button
+        pButton
+        type="button"
+        [disabled]="!Permission?.Print"
+        (click)="displayPrint()"
+        label="Print"
+        icon="fa fa-print"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        (click)="ExitNew()"
+        label="Exit"
+        icon="fa fa-sign-out"
+      ></button>
+      <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+    </div>
+  </div>
+</div>
+
+<div class="" [formGroup]="StockTransferGroup">
+  <div class="p-grid p-5">
+    <div class="p-col-8">
+      <p-panel>
+        <p-header>
+          {{ "Stock Transfer Details" | translate }}
+        </p-header>
+        <div class="p-grid inputGroup">
+          <label class="p-col-2">{{ "Voucher No." | translate }}</label>
+          <div class="p-col-4 p-md-4">
+            <div class="ui-inputgroup">
+              <input
+                class="ng-valid"
+                pInputText
+                formControlName="stockTransferVoucherNo"
+                #stockTransferVoucherNo
+                id="stockTransferVoucherNo"
+              />
+            </div>
+          </div>
+          <label class="p-col-2">{{ "Date" | translate }}</label>
+          <div class="p-col-4 p-md-4">
+            <div class="ui-inputgroup p-0">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                [showIcon]="true"
+                class="w-100"
+                useUtc
+                formControlName="stockTransferStDate"
+                id="stockTransferDate"
+              >
+              </p-calendar>
+            </div>
+            <div
+              class="error"
+              *ngIf="
+                f.stockTransferStDate.touched && f.stockTransferStDate.invalid
+              "
+            >
+              <span>stockTransfer Date is Mandatory Field*</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-grid inputGroup">
+          <label class="p-col-2">{{ "Location From" | translate }}</label>
+          <div class="p-col-4 p-md-4">
+            <div class="ui-inputgroup">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                placeholder="Location from"
+                formControlName="stockTransferLocationIdFrom"
+                [options]="locationList"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div
+              class="error"
+              *ngIf="
+                f.stockTransferLocationIdFrom.touched &&
+                f.stockTransferLocationIdFrom.invalid
+              "
+            >
+              <span>Location From is Mandatory Field*</span>
+            </div>
+          </div>
+          <label class="p-col-2">{{ "Location To" | translate }}</label>
+          <div class="p-col-4 p-md-4">
+            <div class="ui-inputgroup">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                placeholder="Location To"
+                formControlName="stockTransferLocationIdTo"
+                [options]="locationList"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div
+              class="error"
+              *ngIf="
+                f.stockTransferLocationIdTo.touched &&
+                f.stockTransferLocationIdTo.invalid
+              "
+            >
+              <span>Location To is Mandatory Field*</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-grid inputGroup">
+          <label *ngIf="!JOBCOST" class="p-col-2">{{
+            "Job" | translate
+          }}</label>
+          <div class="p-col-4 p-md-4" *ngIf="!JOBCOST">
+            <div class="ui-inputgroup">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                placeholder="Job"
+                formControlName="stockTransferJobId"
+                [options]="jobList"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+          <label class="p-col-2">{{ "Narrration" | translate }}</label>
+          <div class="p-col-4 p-md-4">
+            <div class="ui-grid-col-12">
+              <textarea
+                class="p-col-2"
+                formControlName="stockTransferNarration"
+                pInputTextarea
+              ></textarea>
+              <!-- <div class="error" *ngIf="f.stockTransferNarration.touched && f.stockTransferNarration.invalid">
+            <span>Narration is Mandatory Field*</span>
+          </div> -->
+            </div>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+
+    <div class="p-col-4">
+      <p-panel>
+        <p-header>
+          {{ "Outlet Transfer Details" | translate }}
+        </p-header>
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-4">{{
+            "Customer " | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-8">
+            <div class="ui-inputgroup">
+              <input
+                formControlName="stockTransferCustomer"
+                placeholder="---Select customer----"
+                pInputText
+              />
+              <button
+                pButton
+                type="button"
+                (click)="showCustomerListt()"
+                icon="pi pi-search"
+              ></button>
+            </div>
+            <!-- <div class="error" *ngIf="f.stockTransferCustomer.touched && f.stockTransferCustomer.invalid">
+              <span>Customer Name is Mandatory Field*</span>
+            </div> -->
+          </div>
+        </div>
+        <div class="p-grid inputGroup">
+          <label class="p-col-12 p-md-12 p-lg-4">{{
+            "Department" | translate
+          }}</label>
+          <div class="p-col-12 p-md-12 p-lg-8">
+            <div class="ui-inputgroup">
+              <p-dropdown
+                filter="true"
+                class="w-100"
+                placeholder="---Select Department----"
+                formControlName="stockTransferDepId"
+                [options]="departmentLists"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+</div>
+<div class="card card-w-title">
+  <p-panel>
+    <p-header>
+      <div class="flexrow w-100">
+        <span class="w-100" style="margin-top: 6px">
+          {{ "Item Details" | translate }}
+        </span>
+        <span class="w-100 end">
+          <button
+            pButton
+            type="button"
+            label="Browse From Purchase Requisition Status"
+            (click)="PurchaseRequisitionStatus()"
+            [disabled]="!Permission?.View || btnFlag?.new"
+            icon="fa fa-pencil"
+            class="ui-button-success"
+          ></button>
+        </span>
+      </div>
+    </p-header>
+    <div class="grid">
+      <hot-table
+        [hotId]="hotid"
+        [data]="dataset"
+        [licenseKey]="licensekey"
+        [settings]="stockTransfer_Entry"
+      >
+      </hot-table>
+      <!-- <div class="p-sm-12 p-md-12 p-lg-4 p-offset-8">
+        <div class="ui-inputgroup">
+          <input readonly formControlName="total" placeholder="Total" pInputText />
+        </div>
+      </div> -->
+    </div>
+  </p-panel>
+</div>
+<p-dialog
+  header="Customers"
+  [(visible)]="showCustomerList"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card">
+    <p-table
+      #dt
+      [value]="customerList"
+      [columns]="cols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr [style]="{ cursor: 'pointer' }" (click)="selectCustomer(item)">
+          <td>{{ item.customerMasterCustomerNo }}</td>
+          <td>{{ item.customerMasterCustomerName }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Item List"
+  [(visible)]="showItemList"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <!-- -->
+  <div class="card">
+    <p-table
+      #itmList
+      [value]="itemList"
+      [columns]="itemListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of itemListcols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <!-- <td style="cursor: pointer;" (click)="selectItem(item)">{{item.item_Master_Batch_Code}}</td>
+          <td style="cursor: pointer;" (click)="selectItem(item)">{{item.itemMasterPartNo}}</td> -->
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.itemMasterItemId }}
+          </td>
+          <td style="cursor: pointer" (click)="selectItem(item)">
+            {{ item.itemMasterItemName }}
+          </td>
+          <!-- <td style="cursor: pointer;" (click)="selectItem(item)">{{item.stock}}</td> -->
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Job List"
+  [(visible)]="showJobList"
+  [modal]="true"
+  [style]="{ width: '30%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <!-- -->
+  <div class="card">
+    <p-table
+      #itmList
+      [value]="jobs"
+      [columns]="jobListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of jobListcols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-job>
+        <tr>
+          <td style="cursor: pointer" (click)="selectJOb(job)">
+            {{ job.jobMasterJobId }}
+          </td>
+          <td style="cursor: pointer" (click)="selectJOb(job)">
+            {{ job.jobMasterJobName }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Unit List"
+  [(visible)]="showUnitList"
+  [modal]="true"
+  [style]="{ width: '25%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card">
+    <p-table
+      #itmList
+      [value]="units"
+      [columns]="unitListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="itmList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of unitListcols" [pSortableColumn]="col.field">
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitMasterUnitId }}
+          </td>
+          <td style="cursor: pointer" (click)="selectUnit(item)">
+            {{ item.unitMasterUnitFullName }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Stock Transfer List"
+  [(visible)]="showStockTransferList"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card">
+    <p-table
+      #stList
+      [value]="stockTransferList"
+      [columns]="stockTransferListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="stList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th
+            *ngFor="let col of stockTransferListcols"
+            [pSortableColumn]="col.field"
+          >
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.stockTransferId }}</td>
+          <td>{{ item.stockTransferVoucherNo }}</td>
+          <td>{{ item.stockTransferStDate | date : "dd/MM/yyyy" }}</td>
+          <td>{{ getLocName(item.stockTransferLocationIdFrom) }}</td>
+          <td>{{ getLocName(item.stockTransferLocationIdTo) }}</td>
+          <td>{{ item.stockTransferUserId }}</td>
+          <td>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              (click)="GetSavedStockTransferDetails(item?.stockTransferId)"
+              class="ui-button-info"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Edit Stock Transfer"
+  [(visible)]="showEditListing"
+  [modal]="true"
+  [style]="{ width: '70%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="card">
+    <p-table
+      #stEList
+      [value]="stockTransferList"
+      [columns]="stockEditListcols"
+      [paginator]="true"
+      [rows]="10"
+    >
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+          <input
+            type="text"
+            pInputText
+            size="50"
+            placeholder="Global Filter"
+            (input)="stEList.filterGlobal($event.target.value, 'contains')"
+            style="width: auto"
+          />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th
+            *ngFor="let col of stockEditListcols"
+            [pSortableColumn]="col.field"
+          >
+            {{ col.header | translate }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="cursor: pointer">{{ item.stockTransferId }}</td>
+          <td style="cursor: pointer">{{ item.stockTransferVoucherNo }}</td>
+          <td style="cursor: pointer">{{ item.stockTransferStDate }}</td>
+          <td style="cursor: pointer">
+            {{ item.stockTransferLocationIdFrom }}
+          </td>
+          <td style="cursor: pointer">{{ item.stockTransferLocationIdTo }}</td>
+          <td style="cursor: pointer">{{ item.stockTransferUserId }}</td>
+          <td style="cursor: pointer">
+            <!-- <button pButton icon="pi pi-pencil" style="float: left;" (click)="selectEditItem(item)"></button> -->
+            <button
+              pButton
+              class="ui-button-danger"
+              (click)="deleteStockTransferEntry(item)"
+              icon="pi pi-trash"
+              style="float: right"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '75%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div id="printPDF" class="print">
+    <div style="justify-content: center">
+      <div class="flex">
+        <div class="contain2">
+          <div class="vouhead">
+            <h2>{{ stationmasterObj?.stationMasterStationName }}</h2>
+          </div>
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Address" | translate }}</b>
+              <b>{{ "Tel" | translate }} </b>
+              <b>{{ "Fax" | translate }} </b>
+              <b>{{ "TRN" | translate }} </b>
+              <b>{{ "Email" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ stationmasterObj?.stationMasterAddress }}&nbsp;</div>
+              <div>{{ stationmasterObj?.stationMasterTele1 }}&nbsp;</div>
+              <div>{{ stationmasterObj?.stationMasterFax }}&nbsp;</div>
+              <div>
+                {{
+                  stationmasterObj?.stationMasterVatNo
+                    ? stationmasterObj?.stationMasterVatNo
+                    : 104093336600003
+                }}&nbsp;
+              </div>
+              <div>{{ stationmasterObj?.stationMasterEmail }}&nbsp;</div>
+            </div>
+          </div>
+        </div>
+        <div class="contain1">
+          <div class>
+            <img
+              *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+              class="squreImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+            <img
+              *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+              class="rectImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+          </div>
+        </div>
+      </div>
+      <div class="center">
+        <h3>{{ "Stock Transfer " | translate }}</h3>
+      </div>
+      <div class="flex">
+        <div class="bank1">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Voucher No" | translate }}</b>
+              <b>{{ "Location From" | translate }} </b>
+              <b>{{ "Location To" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ savedstockTransfer?.stockTransferVoucherNo }} &nbsp;</div>
+              <div>
+                {{
+                  getILocationNameById(
+                    savedstockTransfer?.stockTransferLocationIdFrom
+                  )
+                }}
+                &nbsp;
+              </div>
+              <div>
+                {{
+                  getILocationNameById(
+                    savedstockTransfer?.stockTransferLocationIdTo
+                  )
+                }}
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin: 3px"></div>
+        <div class="bank2">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Date of Voucher" | translate }}</b>
+              <b>{{ "Job" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>
+                {{
+                  savedstockTransfer?.stockTransferStDate | date : "dd/MM/yyyy"
+                }}&nbsp;
+              </div>
+              <div>{{ savedstockTransfer?.stockTransferJobId }} &nbsp;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table id="customers">
+        <thead>
+          <th>Sr.</th>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Unit</th>
+          <th>Rate</th>
+          <th>Amount</th>
+        </thead>
+        <tr
+          *ngFor="
+            let item of savedstockTransfer?.stockTransferDetails;
+            let i = index
+          "
+        >
+          <td style="text-align: center">{{ i + 1 }}</td>
+          <td style="text-align: center">
+            {{ getItemNameById(item?.stockTransferDetailsMaterialId) }}
+          </td>
+          <td style="text-align: center">
+            {{ item?.stockTransferDetailsQty }}
+          </td>
+          <td style="text-align: center">
+            {{ getIUnitNameById(item?.stockTransferDetailsUnitId) }}
+          </td>
+          <td style="text-align: center">
+            {{ item?.stockTransferDetailsRate }}
+          </td>
+          <td style="text-align: center">
+            {{
+              (item?.stockTransferDetailsRate || 0) *
+                (item?.stockTransferDetailsQty || 0)
+            }}
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="
+            let _ of [].constructor(
+              getEmptyRowCount(savedstockTransfer?.stockTransferDetails?.length)
+            );
+            let i = index
+          "
+        >
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="border-top: 1px solid #b1aeae" colspan="4"></td>
+          <td style="border-top: 1px solid #b1aeae" colspan="1">
+            <div class="SvTotalC">
+              <strong>{{ "Total Amt" | translate }}</strong>
+            </div>
+          </td>
+          <td style="border-top: 1px solid #b1aeae">
+            <div class="SvTotalC">
+              <div class="end">{{ getTotalAmount() }}</div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="11"></td>
+        </tr>
+        <tr>
+          <td colspan="11">
+            <div id="page-container">
+              <div id="content-wrap">
+                <div class="border">
+                  <div class="flexrow w-100">
+                    <div
+                      class="flexrow wp-50"
+                      style="justify-content: space-between"
+                    >
+                      <div class="flexcol"></div>
+                      <div class="flexcol"></div>
+                    </div>
+                  </div>
+
+                  <div class="signature-container">
+                    <div class="customer-signature">
+                      <b>Issued By</b>
+                    </div>
+                    <div class="authorized-signature">
+                      <b>Received By</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <footer id="footer"></footer>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <br />
+    </div>
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

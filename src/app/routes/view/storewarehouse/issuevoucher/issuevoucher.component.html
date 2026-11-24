@@ -1,0 +1,1327 @@
+<!-- <p>issuevoucher works!</p> -->
+
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Issue Voucher' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <!-- <button pButton type="button" *ngIf="btnFlag.save == true" label="Save" (click)="saveIssueVoucher()"
+      icon="fa fa-floppy-o" [disabled]="!btnFlag.new || !Permission?.Add" class="ui-button-success"></button>
+    <button pButton *ngIf="btnFlag.save != true" type="button" label="Update" (click)="saveIssueVoucher()"
+      icon="fa fa-floppy-o" class="ui-button-success" [disabled]="!btnFlag.update"></button> -->
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add || btnFlag.new"
+      (click)="saveIssueVoucher()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <div class="ui-inputgroup">
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="search"
+          placeholder="Search"
+        />
+        <button
+          pButton
+          type="button"
+          (click)="GetSavedIssueVoucherDetails(search)"
+          icon="pi pi-search"
+        ></button>
+      </div>
+
+      <!-- <button pButton type="button" label="Print" [disabled]="!Permission?.Print" (click)="displayPrint()"
+        icon="fa fa-print" class="ui-button-success"></button> -->
+      <button
+        pButton
+        type="button"
+        label="Print"
+        icon="fa fa-print"
+        class="ui-button-success"
+        [disabled]="!btnFlag.edit || !Permission.Print"
+        (click)="showPrint()"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        label="Exit"
+        (click)="ExitNew()"
+        icon="fa fa-sign-out"
+      ></button>
+    </div>
+
+    <!-- <p-checkbox label="Suppess Allocation in Print" ></p-checkbox> -->
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="issueVoucherFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Issue Voucher' | translate">
+      <div class="p-grid p-sm-12 p-md-12 p-lg-12">
+        <div class="p-sm-12 p-md-12 p-lg-3">
+          <p-panel>
+            <p-header>
+              {{ "Issue Voucher Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="voucherno">{{
+                  "V.No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="issueVoucherNo"
+                    id="voucherno"
+                    readonly
+                    pInputText
+                  />
+                  <div class="error" *ngIf="f.issueVoucherDate.errors"></div>
+                </div>
+                <p-message
+                  severity="error"
+                  *ngIf="f.issueVoucherNo?.errors?.Exist && !btnFlag.update"
+                  text="Voucher No is exist"
+                ></p-message>
+              </div>
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-4"
+                  for="voucherdate"
+                  style="color: darkred"
+                  >{{ "V.Date" | translate }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    formControlName="issueVoucherDate"
+                    id="voucherdate"
+                  >
+                  </p-calendar>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherDate.errors &&
+                      (f.issueVoucherDate.dirty || f.issueVoucherDate.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherDate.errors.required">
+                      Voucher date is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-4"
+                  for="refno"
+                  style="color: darkred"
+                  >{{
+                    "Reference
+                  No" | translate
+                  }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="issueVoucherRefNo"
+                    id="refno"
+                    style="border-color: black"
+                    maxlength="50"
+                    pInputText
+                  />
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherRefNo.errors &&
+                      (f.issueVoucherRefNo.dirty || f.issueVoucherRefNo.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherRefNo.errors.required">
+                      Reference no is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-4"
+                  for="currency"
+                  style="color: darkred"
+                  >{{ "Currency" | translate }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueVoucherCurrencyId"
+                    [options]="currencyList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherCurrencyId.errors &&
+                      (f.issueVoucherCurrencyId.dirty ||
+                        f.issueVoucherCurrencyId.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherCurrencyId.errors.required">
+                      Currency is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Account Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <!-- *ngIf="!JOBCOST" -->
+                <label
+                  class="p-col-12 p-md-12 p-lg-3"
+                  for="job"
+                  style="color: darkred"
+                  >{{ "Job" | translate }}</label
+                >
+
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueVoucherJobId"
+                    [options]="jobList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherJobId.errors &&
+                      (f.issueVoucherJobId.dirty || f.issueVoucherJobId.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherJobId.errors.required">
+                      Job is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                  "Department" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueVoucherDepartmentId"
+                    [options]="departmentList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherDepartmentId.errors &&
+                      (f.issueVoucherDepartmentId.dirty ||
+                        f.issueVoucherDepartmentId.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherDepartmentId.errors.required">
+                      Department is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="address">{{
+                  "CostCenter" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueVoucherCostCenterId"
+                    [options]="costcenterList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherCostCenterId.errors &&
+                      (f.issueVoucherCostCenterId.dirty ||
+                        f.issueVoucherCostCenterId.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherCostCenterId.errors.required">
+                      CostCenter is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-3"
+                  for="location"
+                  style="color: darkred"
+                  >{{ "Location" | translate }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueVoucherLocationId"
+                    [options]="locationList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherLocationId.errors &&
+                      (f.issueVoucherLocationId.dirty ||
+                        f.issueVoucherLocationId.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherLocationId.errors.required">
+                      Location is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" style="color: darkred">{{
+                  "Account" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueVoucherCreditAccNo"
+                    id="rptAccount"
+                    [options]="accountList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-5">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "GRN No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="issueVoucherGrno"
+                    formControlName="issueVoucherGrno"
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "GRN Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    useUtc
+                    id="issueVoucherGrdate"
+                    formControlName="issueVoucherGrdate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "LPO No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="issueVoucherLpono"
+                    formControlName="issueVoucherLpono"
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "LPO Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="issueVoucherLpodate"
+                    formControlName="issueVoucherLpodate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "REQ No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="issueVoucherReqNo"
+                    formControlName="issueVoucherReqNo"
+                    pInputText
+                  />
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "REQ Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    useUtc
+                    id="issueVoucherReqDate"
+                    formControlName="issueVoucherReqDate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label
+                  class="p-col-12 p-md-12 p-lg-2"
+                  for="narration"
+                  style="color: darkred"
+                  >{{ "Narration" | translate }}</label
+                >
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <textarea
+                    class="w-100"
+                    rows="3"
+                    formControlName="issueVoucherDescription"
+                    id="narration"
+                    maxlength="500"
+                    pInputText
+                  ></textarea>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueVoucherDescription.errors &&
+                      (f.issueVoucherDescription.dirty ||
+                        f.issueVoucherDescription.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueVoucherDescription.errors.required">
+                      Narration is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <!-- <div class="p-grid" style="margin-bottom: 25px;">
+
+        </div> -->
+      </div>
+
+      <p-panel>
+        <p-header>
+          <div class="flexrow w-100">
+            <span class="w-100" style="margin-top: 6px">
+              {{ "Item Details" | translate }}
+            </span>
+            <span class="w-100 end">
+              <button
+                pButton
+                type="button"
+                label="Browse From Purchase Requisition Status"
+                (click)="PurchaseRequisitionStatus()"
+                [disabled]="browsebutton"
+                icon="fa fa-pencil"
+                class="ui-button-success"
+              ></button>
+            </span>
+          </div>
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="issuevoucher_entry"
+            [data]="issuevoucher_entryDataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+
+      <ng-container *ngIf="showSalesLookUp">
+        <app-lookup
+          [header]="'Look Up'"
+          [dataArry]="dataList"
+          [isServerSearch]="isServerSearch"
+          [selectedItem]="selectItem"
+          [columns]="lookupGridColumns"
+          (selectItemEvent)="selectsales($event)"
+          (exitEvent)="exit($event)"
+          [cell]="activeRow"
+          [width]="width"
+          (clearEvent)="clear($event)"
+          (hideDialogEvent)="hide($event)"
+          [tableheader]="'Sales List'"
+          (searchEvent)="onSearch($event)"
+          [(show)]="showSalesLookUp"
+        ></app-lookup>
+      </ng-container>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Sales List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+
+      <div class="p-grid">
+        <div class="p-col-4 p-offset-8">
+          <div class="p-col-12 p-grid">
+            <label class="p-col-4 p-col-align-end" for="account">
+              <b>{{ "Total Gross Amt" | translate }}</b>
+            </label>
+            <div class="p-col-6 p-col-align-end p-0">
+              <input
+                class="w-100"
+                id="issueVoucherTotalGrossAmount"
+                formControlName="issueVoucherTotalGrossAmount"
+                readonly
+                style="border-color: black; text-align: right"
+                pInputText
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+              }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+        Content 3
+    </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog
+  header="Issue Voucher List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button
+          type="submit"
+          pButton
+          label="Find"
+          icon="pi pi-search"
+          (click)="filter()"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Clear"
+          (click)="ClearFilter()"
+          icon="fa fa-pencil"
+          class="ui-button-success"
+        ></button>
+      </p-header>
+      <form [formGroup]="issueVoucherFilterForm">
+        <div class="p-grid">
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                "voucherNo" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <input
+                  type="text"
+                  pInputText
+                  size="50"
+                  formControlName="filterissueVoucherNo"
+                  style="width: auto"
+                />
+                <!-- <p-dropdown filter="true" class="w-100" formControlName="purchaseVoucherPartyID"
+                                [options]="SupplierMasterList" ></p-dropdown> -->
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <!-- <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'Currency' | translate
+                }}</label> -->
+              <label
+                class="p-col-12 p-md-12 p-lg-2"
+                for="job"
+                style="color: darkred"
+                >{{ "Job" | translate }}</label
+              >
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="filterissueVoucherjob"
+                  [options]="jobList"
+                >
+                </p-dropdown>
+                <!-- <p-dropdown filter="true" class="w-100" formControlName="filterissueVoucherCurrency" [options]="currencyList"
+                  >
+                </p-dropdown> -->
+              </div>
+              <!-- <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'Location/Mobile' | translate }}</label>
+                  <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                    <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId" [options]="locationList" ></p-dropdown>
+                    <div class="error" *ngIf="f.salesVoucherLocationId.errors && (f.salesVoucherLocationId.dirty || f.salesVoucherLocationId.touched)">
+                      <span *ngIf="f.salesVoucherLocationId.errors.required">Location is Mandatory Field*</span>
+                    </div>
+                  </div> -->
+            </div>
+            <div class="p-grid inputGroup">
+              <!-- <label class="p-col-12 p-md-12 p-lg-2" for="vatno">{{ 'LPO No' | translate }}</label>
+                  <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                    <input class="w-100" formControlName="lpoNo" placeholder="LPO No" maxlength="50" pInputText>
+                  </div> -->
+            </div>
+            <div class="p-grid inputGroup">
+              <!-- <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'Voucher No' | translate }}</label>
+                  <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                    <input class="w-100" formControlName="voucherNo" placeholder="Voucher No" pInputText>
+                  </div> -->
+            </div>
+          </div>
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid inputGroup"></div>
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="Date Range"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="fromDate"
+                    [showIcon]="true"
+                    [disabled]="!issueVoucherFilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="toDate"
+                    [showIcon]="true"
+                    [disabled]="!issueVoucherFilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+  <p-table
+    #dt
+    [value]="issueVoucherarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-issuevoucher_list>
+      <tr>
+        <td>{{ issuevoucher_list.issueVoucherNo }}</td>
+        <td>{{ issuevoucher_list.issueVoucherDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ getJobNamebyid(issuevoucher_list?.issueVoucherJobId) }}</td>
+        <td>{{ GetCurrency(issuevoucher_list.issueVoucherCurrencyId) }}</td>
+        <td>{{ issuevoucher_list.issueVoucherDescription }}</td>
+        <td>{{ issuevoucher_list.issueVoucherTotalGrossAmount }}</td>
+        <!-- <td>{{ issuevoucher_list.issueVoucherTotalDisAmount }}</td>
+        <td>{{ issuevoucher_list.issueVoucherVatAmt }}</td>
+        <td>{{ issuevoucher_list.issueVoucherVatRoundSign }}</td>
+        <td>{{ issuevoucher_list.issueVoucherVatRountAmt }}</td> -->
+        <td>{{ issuevoucher_list.issueVoucherNetAmount }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedIssueVoucherDetails(issuevoucher_list.issueVoucherNo);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '75%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div id="printPDF" class="print">
+    <div style="justify-content: center">
+      <div class="flex">
+        <div class="contain2">
+          <div class="vouhead">
+            <h2>{{ stationmasterObj?.stationMasterStationName }}</h2>
+          </div>
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Address" | translate }}</b>
+              <b>{{ "Tel" | translate }} </b>
+              <b>{{ "Fax" | translate }} </b>
+              <b>{{ "TRN" | translate }} </b>
+              <b>{{ "Email" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ stationmasterObj?.stationMasterAddress }}&nbsp;</div>
+              <div>{{ stationmasterObj?.stationMasterTele1 }}&nbsp;</div>
+              <div>{{ stationmasterObj?.stationMasterFax }}&nbsp;</div>
+              <div>
+                {{
+                  stationmasterObj?.stationMasterVatNo
+                    ? stationmasterObj?.stationMasterVatNo
+                    : 104093336600003
+                }}&nbsp;
+              </div>
+              <div>{{ stationmasterObj?.stationMasterEmail }}&nbsp;</div>
+            </div>
+          </div>
+        </div>
+        <div class="contain1">
+          <div class>
+            <img
+              *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+              class="squreImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+            <img
+              *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+              class="rectImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+          </div>
+        </div>
+      </div>
+      <div class="center">
+        <h3>{{ "Issue Voucher " | translate }}</h3>
+      </div>
+      <div class="flex">
+        <div class="bank1">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Location" | translate }} </b>
+              <b>{{ "Department" | translate }} </b>
+              <b>{{ "Ref. No" | translate }} </b>
+              <b>{{ "Job" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>
+                {{
+                  getLocationName(savedIssueVoucher?.issueVoucherLocationId)
+                }}
+                &nbsp;
+              </div>
+              <div>
+                {{
+                  getDepartmentName(savedIssueVoucher?.issueVoucherDepartmentId)
+                }}
+                &nbsp;
+              </div>
+              <div>
+                {{
+                  savedIssueVoucher?.issueVoucherRefNo
+                    ? savedIssueVoucher?.issueVoucherRefNo
+                    : ""
+                }}
+                &nbsp;
+              </div>
+              <div>
+                {{ getJobName(savedIssueVoucher?.issueVoucherJobId) }} &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin: 3px"></div>
+        <div class="bank2">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Voucher No" | translate }}</b>
+              <b>{{ "Date of Voucher" | translate }}</b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ savedIssueVoucher?.issueVoucherNo }}&nbsp;</div>
+              <div>
+                {{
+                  savedIssueVoucher?.issueVoucherDate | date : "dd/MM/yyyy"
+                }}&nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
+
+      <table id="customers">
+        <thead>
+          <th>Sr.</th>
+          <th>Material Name</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Amount</th>
+          <th>Job Name</th>
+        </thead>
+        <tr
+          *ngFor="
+            let item of savedIssueVoucher?.issueVoucherDetails;
+            let i = index
+          "
+        >
+          <td style="text-align: center">{{ i + 1 }}</td>
+          <td style="text-align: center">
+            {{ getItemMasterName(item?.issueVoucherDetailsMatId) }}
+          </td>
+          <td style="text-align: center">
+            {{ item.issueVoucherDetailsQuantity }}
+          </td>
+          <td style="text-align: center">
+            {{ getUnitName(item?.issueVoucherDetailsUnitId) }}
+          </td>
+          <td style="text-align: center">
+            {{ item.issueVoucherDetailsNetAmt }}
+          </td>
+          <td style="text-align: center">
+            {{ getJobName(item.issueVoucherDetailsJobID) }}
+          </td>
+        </tr>
+        <tr
+          *ngFor="
+            let _ of [].constructor(
+              getEmptyRowCount(savedIssueVoucher?.issueVoucherDetails?.length)
+            );
+            let i = index
+          "
+        >
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <!-- <td>&nbsp;</td>
+                  <td>&nbsp;</td> -->
+          <!-- <td>&nbsp;</td> -->
+        </tr>
+        <tr>
+          <td style="border-top: 1px solid #b1aeae" colspan="4">
+            <!-- <div class=" flexrow">
+                          <b>Total Amount is
+                              {{getCurrencyName(savedPurchaseVoucher?.purchaseVoucherCurrencyID)}}
+                              :</b>
+
+                          <span> {{wordamt}}</span>
+                      </div> -->
+            <!-- <div class=" p-grid">
+                      <div class="p-col-3"><b>Total Amount is :</b>
+                          {{getCurrencyName(savedPurchaseVoucher?.purchaseVoucherCurrencyID)}}</div>
+                      <span class="p-col-7"> {{wordamt}}</span> </div> -->
+          </td>
+          <td style="border-top: 1px solid #b1aeae" colspan="1">
+            <div class="SvTotalC">
+              <strong>{{ "Total Amt" | translate }}</strong>
+              <!-- <strong>{{'Discount ' | translate}}</strong>
+                          <strong>{{'Total VAT' | translate}}</strong>
+                          <strong>{{'Net Amount' | translate}}</strong> -->
+            </div>
+          </td>
+          <td style="border-top: 1px solid #b1aeae">
+            <div class="SvTotalC">
+              <div class="end">
+                {{ savedIssueVoucher?.issueVoucherNetAmount | number : "0.2" }}
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="11"></td>
+        </tr>
+        <tr>
+          <td colspan="11">
+            <div id="page-container">
+              <div id="content-wrap">
+                <div class="border">
+                  <div class="flexrow w-100">
+                    <div
+                      class="flexrow wp-50"
+                      style="justify-content: space-between"
+                    >
+                      <div class="flexcol"></div>
+                      <div class="flexcol"></div>
+                    </div>
+                  </div>
+
+                  <div class="signature-container">
+                    <div class="customer-signature">
+                      <b>Receiver Signature</b>
+                    </div>
+                    <div class="authorized-signature">
+                      <b>Authorized Signature</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <footer id="footer"></footer>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <br />
+    </div>
+  </div>
+</p-dialog>
+
+<!-- <p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button pButton type="button" class="ui-button-primary" (click)="printAsPDF()" label="Print"
+    icon="fa fa-print"></button>
+  <div id="print" style="font-family: italic !important; justify-content: center">
+    <div class="flex ">
+      <div class="payment3">
+        <h1> <strong>{{stationmasterObj?.stationMasterStationName}}</strong></h1>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Address </b>
+            <b>Tel </b>
+            <b>Fax </b>
+            <b>Email </b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;&nbsp; </div>
+            <div>&nbsp;&nbsp;&nbsp; </div>
+            <div>&nbsp;&nbsp;&nbsp; </div>
+            <div>&nbsp;&nbsp;&nbsp; </div>
+          </div>
+          <div class="flexcol">
+            <div>{{stationmasterObj?.stationMasterAddress}}</div>
+            <div>{{stationmasterObj?.stationMasterTele1}}</div>
+            <div>{{stationmasterObj?.stationMasterFax}}</div>
+            <div>{{stationmasterObj?.stationMasterEmail}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="payment2">
+        <img *ngIf="stationmasterObj?.logotype != 'Rectangular'" class="squreImg"
+        [src]="'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg" />
+      <img *ngIf="stationmasterObj?.logotype == 'Rectangular'" class="rectImg"
+        [src]="'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg" />
+      </div>
+    </div>
+    <h2 style="text-align: center">Issue Voucher</h2>
+    <div class="payment1">
+      <div class="header" >
+        <table>
+          <tr>
+            <td>  <b> {{ "Voucher No " | translate }} </b></td>
+            <td>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</td>
+            <td>{{ savedIssueVoucher?.issueVoucherNo }}</td>
+
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td ><b  style="font-style: italic;">{{'Date of Voucher' | translate}}</b></td>
+            <td>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</td>
+            <td>{{savedIssueVoucher?.issueVoucherDate | date:'dd/MM/yyyy'}}</td>
+       
+          </tr>
+          <tr>
+            <td><b> {{ "Ref. No " | translate }} </b></td>
+            <td>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</td>
+            <td>{{ savedIssueVoucher?.issueVoucherRefNo?savedIssueVoucher?.issueVoucherRefNo:'' }}</td>
+          </tr>
+          <tr>
+            <td> <b> {{ "Location " | translate }} </b></td>
+            <td>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</td>
+            <td> {{ getLocationName(savedIssueVoucher?.issueVoucherLocationId) }}</td>
+          </tr>
+          <tr>
+            <td><b> {{ "Department" | translate }}</b></td>
+            <td>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</td>
+            <td>{{getDepartmentName(savedIssueVoucher?.issueVoucherDepartmentId) }}</td>
+          </tr>
+          <tr>
+            <td><b> {{ "Job " | translate }}</b></td>
+            <td>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</td>
+            <td>{{ getJobName(savedIssueVoucher?.issueVoucherJobId) }}</td>
+          </tr>
+          <tr>
+            <td><b> {{ "Being " | translate }} </b></td>
+            <td>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</td>
+            <td>{{ savedIssueVoucher?.issueVoucherDescription }}</td>
+          </tr>
+        </table>
+       
+      </div>
+      <div style="padding-bottom: 8px"></div>
+
+      <div class="flexrow">
+        <br />
+      </div>
+    </div>
+
+    <table id="Voucher">
+      <tr>
+        <th>Material Name</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Amount</th>
+        <th>Job Name</th>
+
+      </tr>
+      <tr *ngFor="let item of savedIssueVoucher?.issueVoucherDetails">
+        <td style="text-align: center;">{{ getItemMasterName(item?.issueVoucherDetailsMatId) }}</td>
+        <td style="text-align: center;">{{ item.issueVoucherDetailsQuantity }}</td>
+        <td style="text-align: center;"> {{ getUnitName(item?.issueVoucherDetailsUnitId)}}</td>
+        <td style="text-align: center;">{{ item.issueVoucherDetailsNetAmt }}</td>
+        <td style="text-align: center;">{{ getJobName(item.issueVoucherDetailsJobID) }}</td>
+
+      </tr>
+    </table>
+    <div class="container">
+      <div class="column">Total Amount :</div>
+      <div class="column">{{ savedIssueVoucher?.issueVoucherNetAmount }}</div>
+    </div>
+  </div>
+</p-dialog> -->
+<p-dialog
+  header="Issue Voucher List"
+  [(visible)]="displayVoucherlist"
+  [style]="{ width: '80%' }"
+>
+  <p-table
+    #dt
+    [value]="purchasevoucherarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flexSearch">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of colsPV" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-purchasevoucher_list>
+      <tr>
+        <td>{{ purchasevoucher_list.purchaseVoucherVoucherNo }}</td>
+        <td>
+          {{
+            purchasevoucher_list.purchaseVoucherPurchaseDate
+              | date : "dd/MM/yyyy"
+          }}
+        </td>
+        <td>{{ purchasevoucher_list.purchaseVoucherPartyName }}</td>
+        <td>
+          {{ GetCurrency(purchasevoucher_list.purchaseVoucherCurrencyId) }}
+        </td>
+        <!-- <td>{{purchasevoucher_list.purchaseVoucherDescription}}</td> -->
+        <td>{{ purchasevoucher_list.purchaseVoucherTotalGrossAmt }}</td>
+        <td>{{ purchasevoucher_list.purchaseVoucherTotalDiscountAmt }}</td>
+        <td>{{ purchasevoucher_list.purchaseVoucherVatAmount }}</td>
+        <td>{{ purchasevoucher_list.purchaseVoucherVatRoundSign }}</td>
+        <td>{{ purchasevoucher_list.purchaseVoucherVatRoundAmount }}</td>
+        <td>{{ purchasevoucher_list.purchaseVoucherNetAmount }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedPurchaseVoucherDetails(
+                purchasevoucher_list.purchaseVoucherVoucherNo
+              );
+              displayVoucherlist = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <!-- </div> -->
+</p-dialog>

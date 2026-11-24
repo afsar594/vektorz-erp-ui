@@ -1,0 +1,523 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'bank Payment voucher' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <!-- <p-toolbar> -->
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'Edit' | translate"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      [label]="'Cancel' | translate"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add"
+      (click)="saveBankReceiptVoucher()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      [label]="'List' | translate"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      [label]="'Delete' | translate"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <button
+        pButton
+        type="button"
+        (click)="callDropdowns(true)"
+        icon="fa fa-refresh"
+        class="ui-button-success"
+      ></button>
+      <div class="ui-inputgroup">
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="search"
+          [placeholder]="'Search'"
+        />
+        <button
+          pButton
+          type="button"
+          (click)="GetSavedBankReceiptDetails(search)"
+          icon="pi pi-search"
+        ></button>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        [label]="'Print Template' | translate"
+        (click)="getReport()"
+        icon="fa fa-print"
+        [disabled]="!Permission!.Print"
+        class="ui-button-success"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        label="Exit"
+        (click)="ExitNew()"
+        icon="fa fa-sign-out"
+      ></button>
+         <p-checkbox
+  [label]="'Print with Allocation' | translate"
+  [(ngModel)]="printWithAllocation"
+  [binary]="true"
+  style="margin-top: 6px;">
+</p-checkbox>
+    </div>
+  </div>
+  <!-- </p-toolbar> -->
+</div>
+<div class="card card-w-title" [formGroup]="bankReceiptVoucherFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Bank Receipt Voucher' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-7">
+          <p-panel>
+            <p-header>
+              {{ "Bank Receipt Voucher Details" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="voucherno">{{
+                "Voucher No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-4">
+                <input
+                  formControlName="bankReceiptVoucherVoucherNo"
+                  id="voucherno"
+                  pInputText
+                />
+              </div>
+
+              <label class="p-col-12 p-md-2" for="voucherdate">{{
+                "Voucher Date" | translate
+              }}</label>
+              <div class="p-col-12 p-md-4">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  class="w-100"
+                  useUtc
+                  formControlName="bankReceiptVoucherVDate"
+                  id="voucherdate"
+                >
+                </p-calendar>
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="narration">{{
+                "Narration" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10">
+                <textarea
+                  formControlName="bankReceiptVoucherNarration"
+                  id="narration"
+                  pInputText
+                ></textarea>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              {{ "Debit Account Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="account">{{
+                  "Account" | translate
+                }}</label>
+                <!-- <input class="p-col-12 p-md-4" id="account" pInputText> -->
+                <div class="p-col-12 p-md-10">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="bankReceiptVoucherDrAcNo"
+                    [options]="accountListdropdown"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.bankReceiptVoucherDrAcNo.errors &&
+                      (f.bankReceiptVoucherDrAcNo.dirty ||
+                        f.bankReceiptVoucherDrAcNo.touched)
+                    "
+                  >
+                    <span *ngIf="f.bankReceiptVoucherDrAcNo.errors.required">
+                      Account is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="refno">{{
+                  "Reference No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-10">
+                  <input
+                    type="text"
+                    formControlName="bankReceiptVoucherRefNo"
+                    id="refno"
+                    pInputText
+                  />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <p-panel>
+        <p-header>
+          {{ "Credit Account Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="bankReceiptvoucherentry"
+          ></hot-table>
+        </div>
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input
+              id="total"
+              readonly
+              formControlName="bankReceiptVoucherCrAmount"
+              pInputText
+            />
+          </div>
+        </div>
+      </p-panel>
+      <app-lookup
+        [header]="'Look Up'"
+        [dataArry]="dataList"
+        [selectedItem]="selectItem"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectaccount($event)"
+        (exitEvent)="exit($event)"
+        [cell]="activeRow"
+        (clearEvent)="clear($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="showAccountLookUp"
+      ></app-lookup>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+              }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Allocation Details' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'Allocation Details' | translate">
+          <app-allocations
+            *ngIf="CurrentselectedAccount"
+            (dataEvent)="receiveData($event)"
+            (allocationChanged)="refreshCurrentVoucherFromAllocation($event)"
+            [data]="CurrentselectedAccount"
+          ></app-allocations>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Receipt Voucher List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button
+          type="submit"
+          pButton
+          label="Find"
+          (click)="filter()"
+          icon="pi pi-search"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Clear"
+          icon="fa fa-pencil"
+          (click)="ClearFilter()"
+          class="ui-button-success"
+        ></button>
+      </p-header>
+      <form [formGroup]="BankReceiptVoucherFilterForm">
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">{{
+                "Voucher No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10">
+                <input
+                  class="w-100"
+                  formControlName="BankReceiptVoucherNo"
+                  pInputText
+                />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="account">{{
+                "Account No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10">
+                <input
+                  class="w-100"
+                  formControlName="BankReceiptVoucherAcNo"
+                  pInputText
+                />
+              </div>
+              <!-- <label class="p-col-12 p-md-2" for="account">{{ 'Location/Mobile' | translate }}</label>
+                      <div class="p-col-12 p-md-10 ">
+                        <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId" [options]="locationList" filter="true"></p-dropdown>
+                        <div class="error" *ngIf="f.salesVoucherLocationId.errors && (f.salesVoucherLocationId.dirty || f.salesVoucherLocationId.touched)">
+                          <span *ngIf="f.salesVoucherLocationId.errors.required">Location is Mandatory Field*</span>
+                        </div>
+                      </div> -->
+            </div>
+            <div class="p-grid p-ai-center">
+              <!-- <label class="p-col-12 p-md-2" for="vatno">{{ 'LPO No' | translate }}</label>
+                      <div class="p-col-12 p-md-10 ">
+                        <input class="w-100" formControlName="lpoNo" placeholder="LPO No" maxlength="50" pInputText>
+                      </div> -->
+            </div>
+            <div class="p-grid p-ai-center">
+              <!-- <label class="p-col-12 p-md-2" for="account">{{ 'Voucher No' | translate }}</label>
+                      <div class="p-col-12 p-md-10 ">
+                        <input class="w-100" formControlName="voucherNo" placeholder="Voucher No" pInputText>
+                      </div> -->
+            </div>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-ai-center"></div>
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="Date Range"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="fromDate"
+                    [showIcon]="true"
+                    [disabled]="
+                      !BankReceiptVoucherFilterForm.get('isDate').value
+                    "
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    formControlName="toDate"
+                    [showIcon]="true"
+                    [disabled]="
+                      !BankReceiptVoucherFilterForm.get('isDate').value
+                    "
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+  <p-table [value]="bankReceiptVoucherarry" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rcptVchr>
+      <tr>
+        <td>{{ rcptVchr.bankReceiptVoucherVoucherNo }}</td>
+        <td>{{ rcptVchr.bankReceiptVoucherVDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ rcptVchr.bankReceiptVoucherDrAcNo }}</td>
+        <td>{{ rcptVchr.bankReceiptVoucherDrAmount }}</td>
+        <td>{{ rcptVchr.bankReceiptVoucherCrAmount }}</td>
+        <td>{{ rcptVchr.bankReceiptVoucherNarration }}</td>
+        <td>{{ rcptVchr.bankReceiptVoucherDrAmount }}</td>
+        <td>{{ rcptVchr.bankReceiptVoucherCrAmount }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedBankReceiptDetails(rcptVchr.bankReceiptVoucherSno);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

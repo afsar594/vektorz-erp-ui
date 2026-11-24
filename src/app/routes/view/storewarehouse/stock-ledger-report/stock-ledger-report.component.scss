@@ -1,0 +1,43 @@
+.customListHover{
+    width:'100%';
+    cursor:pointer;
+    padding: 5px 3px 5px 3px;
+    font-size: 11pt;
+    transition: 0.25s;
+  }
+  .customListHover:hover{
+    background-color: rgba(121, 217, 241, 0.3);
+    color: #000;
+  }
+  .selected{
+    background-color: rgba(121, 217, 241, 0.637);
+    color: #fff;
+  }
+
+  .printingTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.printingTable th {
+    background: #5e86b3;
+    color: #fff;
+    font-size: 14pt;
+}
+
+.printingTable th,
+.printingTable td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.printingTable tr:nth-child(even) {
+    background: #efefef;
+}
+
+.printingTable td{
+    font-size: 12pt;
+}
+.printingTable tr:hover {
+    background: #dcedf1;
+}

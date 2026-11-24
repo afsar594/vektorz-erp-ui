@@ -1,0 +1,114 @@
+<div class="card card-w-title">
+    <p-tabView>
+        <p-tabPanel [header]="'Profit & Loss' | translate">
+            <!-- Main container with flex layout -->
+            <div class="p-grid">
+                <!-- LEFT SIDE - FILTER OPTIONS (40% width) -->
+                <div class="p-col-12 p-md-5">
+                    <!-- Date Filters Panel -->
+                    <p-panel header="Date Range" [toggleable]="true" [collapsed]="false" class="filter-panel">
+                        <div class="p-fluid">
+                            <!-- By Date Checkbox -->
+                            <div class="p-field-checkbox p-mb-3">
+                                <p-checkbox name="byDate" [(ngModel)]="byDate" binary="true"
+                                    inputId="byDate"></p-checkbox>
+                                <label for="byDate" class="p-ml-2"><b>Filter by Date</b></label>
+                            </div>
+
+                            <!-- From Date -->
+                            <div class="p-field p-grid p-ai-center p-mb-2">
+                                <label class="p-col-12 p-md-4"><b>From Date:</b></label>
+                                <div class="p-col-12 p-md-8">
+                                    <p-calendar appendTo="body" [(ngModel)]="fromDate" dateFormat="dd/mm/yy"
+                                        [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true"
+                                        yearRange="2000:2040" useUtc showIcon="true" [style]="{'width':'100%'}"
+                                        placeholder="Select from date" [disabled]="!byDate">
+                                    </p-calendar>
+                                </div>
+                            </div>
+
+                            <!-- To Date -->
+                            <div class="p-field p-grid p-ai-center p-mb-2">
+                                <label class="p-col-12 p-md-4"><b>To Date:</b></label>
+                                <div class="p-col-12 p-md-8">
+                                    <p-calendar appendTo="body" [(ngModel)]="toDate" dateFormat="dd/mm/yy"
+                                        [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true"
+                                        yearRange="2000:2040" useUtc showIcon="true" [style]="{'width':'100%'}"
+                                        placeholder="Select to date" [disabled]="!byDate">
+                                    </p-calendar>
+                                </div>
+                            </div>
+                        </div>
+                    </p-panel>
+
+                    <!-- View Options Panel -->
+                    <p-panel header="View Options" [toggleable]="true" [collapsed]="false" class="filter-panel p-mt-3">
+                        <div class="p-fluid">
+                            <!-- Location Dropdown -->
+                            <div class="p-field p-grid p-ai-center p-mb-3">
+                                <label class="p-col-12 p-md-4"><b>Location:</b></label>
+                                <div class="p-col-12 p-md-8">
+                                    <p-dropdown [options]="locations" [(ngModel)]="selectedLocation" filter="true"
+                                        [showClear]="true" placeholder="Select Location"
+                                        optionLabel="locationMasterLocationName" optionValue="locationMasterLocationId"
+                                        [style]="{'width':'100%'}">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+
+                            <!-- Cost Center Dropdown -->
+                            <div class="p-field p-grid p-ai-center p-mb-3">
+                                <label class="p-col-12 p-md-4"><b>Cost Center:</b></label>
+                                <div class="p-col-12 p-md-8">
+                                    <p-dropdown [options]="costCenters" [(ngModel)]="selectedCostCenter"
+                                        placeholder="Select Cost Center" optionLabel="costCenterMasterCostCenterName"
+                                        optionValue="costCenterMasterCostCenterId" filter="true" [showClear]="true"
+                                        [style]="{'width':'100%'}">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                    </p-panel>
+
+                    <!-- Action Buttons -->
+                    <div class="p-d-flex p-jc-end p-mt-3">
+
+                        <p-splitButton icon="pi pi-print" [model]="printbtn" label="Generate Report"
+                            styleClass="p-button-outlined" ></p-splitButton>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE - PDF VIEWER (60% width) -->
+                <div class="p-col-12 p-md-7">
+                    <p-panel [header]="'Report Preview'" class="pdf-panel">
+                        <!-- Toolbar -->
+                        <div class="p-d-flex p-ai-center p-jc-between p-mb-2" *ngIf="pdfUrl">
+                            <div>
+                                <button pButton icon="pi pi-refresh"
+                                    class="p-button-text p-button-rounded p-button-outlined" label="Reload"
+                                    (click)="exportPdf()"></button>
+                            </div>
+                        </div>
+
+                        <!-- PDF Viewer Container -->
+                        <div class="pdf-container">
+                            <div *ngIf="pdfUrl" class="pdf-wrapper">
+                                <iframe #pdfFrame [src]="pdfUrl" width="100%" height="100%" style="border:none;"
+                                    class="pdf-iframe"></iframe>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div *ngIf="!pdfUrl" class="empty-state">
+                                <i class="pi pi-file-pdf" style="font-size: 5rem; opacity: 0.3"></i>
+                                <h3>No Report Generated</h3>
+                                <p>Select filters and click "Generate Report" to preview the Profit & Loss statement.
+                               
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+<p-toast></p-toast>

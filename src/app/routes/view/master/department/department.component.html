@@ -1,0 +1,140 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="departmentFormGroup">
+  <div class="card card-w-title">
+    <div class="grid">
+      <div class="col-12">
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="department_entry"
+            [data]="department_entryDataset"
+          ></hot-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog
+  [header]="operation.insert ? 'Add Department' : 'Update Department'"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '650px' }"
+>
+  <form [formGroup]="departmentFormGroup" class="p-fluid">
+    <div class="p-grid p-ai-center">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "Department Code" | translate }} <span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          pInputText
+          placeholder="Department code"
+          formControlName="departmentMasterDepartmentCode"
+          class="name"
+        />
+
+        <div
+          class="error"
+          *ngIf="
+            f.departmentMasterDepartmentCode.errors &&
+            (f.departmentMasterDepartmentCode.dirty ||
+              f.departmentMasterDepartmentCode.touched)
+          "
+        >
+          <span *ngIf="f.departmentMasterDepartmentCode.errors.required">
+            Please Enter the Depatment Code*</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="p-grid p-ai-center">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "Department Name" | translate }} <span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          pInputText
+          placeholder="Department Name"
+          formControlName="departmentMasterDepartmentName"
+          class="name"
+        />
+
+        <div
+          class="error"
+          *ngIf="
+            f.departmentMasterDepartmentName.errors &&
+            (f.departmentMasterDepartmentName.dirty ||
+              f.departmentMasterDepartmentName.touched)
+          "
+        >
+          <span *ngIf="f.departmentMasterDepartmentName.errors.required">
+            Please Enter the Department Name*</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="p-grid p-ai-center">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">{{ "Status" | translate }}</div>
+      <div class="p-col-6">
+        <p-checkbox
+          [binary]="true"
+          placeholder="Status"
+          formControlName="departmentMasterDepartmentStatus"
+          >Status</p-checkbox
+        >
+      </div>
+    </div>
+    <!-- Footer buttons -->
+    <div class="dialog-footer">
+      <p-button
+        (click)="saveDepartment()"
+        [icon]="
+          f.departmentMasterDepartmentId.value <= 0
+            ? 'pi pi-save'
+            : 'pi pi-check'
+        "
+        [label]="f.departmentMasterDepartmentId.value <= 0 ? 'Save' : 'Update'"
+        styleClass="p-button-raised p-button-rounded p-button-success"
+      ></p-button>
+    </div>
+  </form>
+</p-dialog>
+<p-toast></p-toast>
+<!-- <p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog> -->
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

@@ -1,0 +1,24 @@
+.inline-icon {
+  color: rgb(22, 113, 155);
+}
+.country {
+  width: 100%;
+}
+.p-grid {
+  padding: 7px;
+}
+.responsive-toolbar > button {
+  margin: 0; /* Remove margins from buttons */
+}
+
+.responsive-toolbar {
+  gap: 0.5rem; /* Use gap to control spacing instead */
+}
+.dialog-footer {
+  margin-top: 20px;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}

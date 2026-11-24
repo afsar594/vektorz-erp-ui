@@ -1,0 +1,42 @@
+// .circular-progress {
+//     width: 100px;
+//     height: 100px;
+// }
+
+// .progress-background {
+//     fill: none;
+//     stroke: #ddd;
+//     /* background color */
+//     stroke-width: 5;
+// }
+
+// .progress-bar {
+//     fill: none;
+//     stroke: #4caf50;
+//     /* progress color */
+//     stroke-width: 5;
+//     stroke-linecap: round;
+//     transform: rotate(-90deg);
+//     transform-origin: 50% 50%;
+//     transition: stroke-dashoffset 0.5s ease;
+// }
+.circular-progress {
+    width: 80px; /* decreased width */
+    height: 80px; /* decreased height */
+  }
+
+  .progress-background {
+    fill: none;
+    stroke: #ddd; /* background color */
+    stroke-width: 10; /* border width */
+  }
+
+  .progress-bar {
+    fill: none;
+    // stroke: #4caf50; /* progress color */
+    stroke-width: 10; /* border width */
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.5s ease;
+  }

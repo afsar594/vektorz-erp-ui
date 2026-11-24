@@ -1,0 +1,18 @@
+export interface PDCPostedListNew {
+    pdc?: string,
+    vno?: string,
+    partyName?: string,
+    vType?: string,
+    tDate?: Date,
+    stringtDate?: string,
+    pDate?: Date,
+    stringpDate?: string,
+    cno?: string,
+    cAmount?: string,
+    cbName?: string,
+    bAccNo?: string,
+    pdcvnO?: string,
+    postDt?: Date,
+    stringpostDt?: string,
+    pid?: number,
+}

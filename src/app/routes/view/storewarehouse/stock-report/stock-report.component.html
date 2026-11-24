@@ -1,0 +1,305 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Stock Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear&Enable"
+      (click)="new()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="List_REPORT()"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="displayPrint()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Excel"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="exportToExcel()"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="stockLedgerReportFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Stock Report' | translate">
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                "Group" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="rptItemGroup"
+                  id="rptItem"
+                  [options]="ItemMasterGroupList"
+                  filter="true"
+                  (onChange)="onItemGroupChange($event)"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                "Name" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="rptItem"
+                  id="rptItemGroup"
+                  [options]="ItemMasterList"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="vatno">{{
+                "Part No." | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <input
+                  class="w-100"
+                  id="rptPartNo"
+                  formControlName="rptPartNo"
+                  maxlength="50"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-6">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <p-radioButton
+                name="groupname"
+                formControlName="rptDetails"
+                id="rptDetails"
+                class="p-col-12 p-md-12 p-lg-4"
+                label="{{ 'With Value' | translate }}"
+                [value]="true"
+                (onClick)="makeDetailsTrue()"
+              ></p-radioButton>
+              <p-radioButton
+                name="groupname"
+                formControlName="rptSummary"
+                id="rptSummary"
+                class="p-col-12 p-md-12 p-lg-4"
+                label="{{ 'With Out Value' | translate }}"
+                (onClick)="makeSummaryTrue()"
+              ></p-radioButton>
+
+              <p-checkbox
+                formControlName="rptWithOutZero"
+                [binary]="true"
+                label="Exclude Zero Balance"
+                (onChange)="makeExcludeZeroBalanceTrue($event)"
+              ></p-checkbox>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="location">{{
+                "Location" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="rptLocation"
+                  id="rptLocation"
+                  [options]="locationList"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Stock Report" | translate }}
+        </p-header>
+        <div class="p-grid inputGroup" style="margin-bottom: 10px">
+          <div class="p-col-12 p-md-6 p-lg-4 p-0">
+            <input
+              class="w-100"
+              id="itemSearch"
+              type="text"
+              pInputText
+              placeholder="Search by item name..."
+              [value]="itemSearchText"
+              (input)="onItemSearch($any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="reportaccountstransactions_entry"
+            [data]="reportaccountstransactions_entryDataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="p-sm-12 p-md-12 p-lg-4">
+    <p-panel>
+      <p-header>
+        {{ "Stock Summary" | translate }}
+      </p-header>
+
+      <div class="p-grid">
+        <!-- Total Stock -->
+        <div class="p-col-12 p-grid">
+          <label class="p-col-12 p-md-4 p-lg-4" for="totalStock">
+            <b>{{ "Total Stock" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8 p-0">
+            <input
+              class="w-100 end"
+              id="totalStock"
+              [value]="totalStock | number"
+              readonly
+              pInputText
+            />
+          </div>
+        </div>
+
+        <!-- Average Rate -->
+        <div class="p-col-12 p-grid">
+          <label class="p-col-12 p-md-4 p-lg-4" for="averageRate">
+            <b>{{ "Average Rate" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8 p-0">
+            <input
+              class="w-100 end"
+              id="averageRate"
+              [value]="averageRate | number : '1.4-4'"
+              readonly
+              pInputText
+            />
+          </div>
+        </div>
+
+        <!-- Total Amount -->
+        <div class="p-col-12 p-grid">
+          <label class="p-col-12 p-md-4 p-lg-4" for="totalAmount">
+            <b>{{ "Total Amount" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8 p-0">
+            <input
+              class="w-100 end"
+              id="totalAmount"
+              [value]="totalAmount | number : '1.2-2'"
+              readonly
+              pInputText
+            />
+          </div>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div>
+    <button pButton type="button" class="ui-button-info" (click)="printAsPDF()">
+      print
+    </button>
+  </div>
+
+  <div id="print" style="justify-content: center">
+    <div class="header">
+      <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+    </div>
+
+    <div class="report">
+      <h2>Stock Report</h2>
+    </div>
+
+    <table id="report" class="w-100">
+      <tr>
+        <th>{{ "Item Id. " | translate }}</th>
+        <th>{{ "PartNo" | translate }}</th>
+        <th>{{ "Item Name " | translate }}</th>
+        <th>{{ "Unit " | translate }}</th>
+        <th>{{ "Closing" | translate }}</th>
+      </tr>
+
+      <tr *ngFor="let stockReport of reportStockBaseUnitarry; let i = index">
+        <td>{{ stockReport?.stockRegisterMaterialId }}</td>
+        <td>{{ stockReport?.itemMasterPartNo }}</td>
+        <td>{{ stockReport?.itemMasterItemName }}</td>
+        <td>{{ stockReport?.unitMasterUnitShortName }}</td>
+
+        <td class="end">{{ stockReport?.stockRegisterAmount }}</td>
+      </tr>
+      <tr
+        *ngFor="
+          let _ of [].constructor(
+            getEmptyRowCount(reportStockBaseUnitarry?.length)
+          );
+          let i = index
+        "
+      >
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </div>
+</p-dialog>

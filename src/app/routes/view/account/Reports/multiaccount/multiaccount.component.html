@@ -1,0 +1,324 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="ShowData()"
+      label="Show"
+      [disabled]="!Permission?.View"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="displayPrint()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Close"
+      icon="fa fa-sign-out"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Excel"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Account Statememnt(Multi Account)' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-4">
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-3">
+              <label>{{ "Search Acc" | translate }}</label>
+            </div>
+            <div class="p-col-12 p-md-9">
+              <input type="text" pInputText class="w-100" />
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-3">
+              <label>{{ "Group" | translate }}</label>
+            </div>
+            <div class="p-col-12 p-md-9">
+              <p-dropdown
+                filter="true"
+                [options]="customersList"
+                (onChange)="OnGroupSelect($event)"
+                placeholder="All"
+              ></p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div *ngIf="!isDateChecked" class="p-col-12 p-md-3">
+              <label>{{ "As On" | translate }}</label>
+            </div>
+            <div *ngIf="!isDateChecked" class="p-col-9 p-md-9 p-lg-9">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                [(ngModel)]="selectedAsOnDate"
+                useUtc
+                class="w-100"
+                [showIcon]="true"
+              >
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              <input type="checkbox" [(ngModel)]="isDateChecked" pInputCheck />
+              {{ "By Date" | translate }}
+            </p-header>
+            <div *ngIf="isDateChecked" class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ "From" | translate }}</label>
+              </div>
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [(ngModel)]="startDate"
+                  id="DateFrom"
+                  useUtc
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div *ngIf="isDateChecked" class="p-grid">
+              <div class="p-col-12 p-md-3">
+                <label>{{ "To" | translate }}</label>
+              </div>
+              <div class="p-col-9 p-md-9 p-lg-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [(ngModel)]="endDate"
+                  id="DateTo"
+                  useUtc
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-12">
+              <p-radioButton
+                label="Summary"
+                [(ngModel)]="radioType"
+                [style]="{ cursor: 'pointer' }"
+                name="RadioType"
+                value="Summary"
+              >
+              </p-radioButton>
+              <!-- <label class="p-col-4 p-md-4" style="cursor:pointer"></label> -->
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-12">
+              <p-radioButton
+                label="Detail"
+                [(ngModel)]="radioType"
+                [style]="{ cursor: 'pointer' }"
+                name="RadioType"
+                value="Detail"
+              >
+              </p-radioButton>
+              <!-- <label class="p-col-4 p-md-4" style="cursor:pointer"></label> -->
+            </div>
+          </div>
+        </div>
+        <!-- <div class="p-lg-4 p-md-4 p-sm-4">
+                <div class="p-grid">
+                    <div class="p-col-1">
+                        <input type="checkbox" pInputCheck id="checkbox"/>
+                    </div>
+                    <div class="p-col-3" style="color: rgb(218, 42, 42);cursor: pointer;">
+                        <label>{{'Select All' | translate}}</label>
+                    </div>
+                </div>
+                </div> -->
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <div class="p-grid">
+      <div class="p-col-12">
+        <p-pickList
+          [source]="sourceProducts"
+          [target]="targetProducts"
+          sourceHeader="Drag Account to right side container"
+          targetHeader="select Account"
+          [dragdrop]="true"
+          [responsive]="true"
+          [showSourceControls]="false"
+          [showTargetControls]="false"
+          filterBy="name"
+          sourceFilterPlaceholder="Search by title"
+          targetFilterPlaceholder="Search by title"
+          (onMoveToSource)="EmptySelectedValue($event)"
+          (onTargetSelect)="OnTargetSelect($event)"
+        >
+          >
+          <ng-template let-account pTemplate="item">
+            <div>
+              <h3 style="margin-bottom: -10px; margin-top: -10px; padding: 8px">
+                <!-- {{ account.name }} ( {{ account.value }} ) -->
+                {{ account?.name }} ( {{ account?.value }} )
+              </h3>
+            </div>
+          </ng-template>
+        </p-pickList>
+      </div>
+      <div class="p-col-12">
+        <div>
+          <div class="grid" style="justify-content: center">
+            <div *ngIf="radioType == 'Summary'" class="p-col-12">
+              <hot-table
+                [hotId]="hotid2"
+                [data]="dataset2"
+                [licenseKey]="licensekey"
+                [settings]="MASummary"
+              >
+              </hot-table>
+            </div>
+            <div *ngIf="radioType == 'Detail'" class="p-col-12">
+              <!-- <div id="example1" class="hot"></div> -->
+              <hot-table
+                [hotId]="hotid1"
+                [data]="sourceDataObject"
+                [licenseKey]="licensekey"
+                [settings]="MADetail"
+              >
+              </hot-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button pButton (click)="printAsPDF()">print</button>
+  <div id="print" style="justify-content: center">
+    <div class="abc">
+      <h1>{{ stationmasterObj?.stationMasterStationName }}</h1>
+      <br /><br />
+      <h3>Address : {{ stationmasterObj?.stationMasterAddress }}</h3>
+      <h3>Tel : {{ stationmasterObj?.stationMasterTele1 }}</h3>
+      <h3>Fax : {{ stationmasterObj?.stationMasterFax }}</h3>
+      <h3>Email : {{ stationmasterObj?.stationMasterEmail }}</h3>
+      <br />
+      <h4>ACCOUNT STATEMENT</h4>
+    </div>
+    <table class="def">
+      <tr>
+        <th>VNo.</th>
+        <th>VDate</th>
+        <th>Voucher type</th>
+        <th>Description</th>
+        <th>Debit</th>
+        <th>Credit</th>
+        <th>Balance</th>
+      </tr>
+      <tbody>
+        <tr class="AE">
+          <td colspan="7">
+            <strong>Absolute Royal Technologies LLC</strong>
+          </td>
+        </tr>
+        <tr *ngFor="let item of sourceDataObject">
+          <td>{{ item?.voucherNo }}</td>
+          <td>{{ item?.date }}</td>
+          <td>{{ item?.voucherType }}</td>
+          <td>{{ item?.description }}</td>
+          <td>{{ item?.debit }}</td>
+          <td>{{ item?.credit }}</td>
+          <td>{{ item?.runningBalance }}</td>
+        </tr>
+      </tbody>
+      <tr class="total1">
+        <td></td>
+        <td colspan="2">
+          <strong>Total debit: {{ totalDebit }}</strong>
+        </td>
+        <td colspan="2">
+          <strong>Total credit: {{ totalCredit }}</strong>
+        </td>
+        <td colspan="2">
+          <strong>Total Balance: {{ totalBalance }}</strong>
+        </td>
+      </tr>
+      <tbody>
+        <tr class="AE">
+          <td colspan="7">
+            <strong>Accrude Expense - DEWA</strong>
+          </td>
+        </tr>
+        <tr *ngFor="let item of sourceDataObject">
+          <td>{{ item?.voucherNo }}</td>
+          <td>{{ item?.date }}</td>
+          <td>{{ item?.voucherType }}</td>
+          <td>{{ item?.description }}</td>
+          <td>{{ item?.debit }}</td>
+          <td>{{ item?.credit }}</td>
+          <td>{{ item?.runningBalance }}</td>
+        </tr>
+      </tbody>
+      <tr class="total2">
+        <td></td>
+        <td colspan="2">
+          <strong>Total debit: {{ totalDebit }}</strong>
+        </td>
+        <td colspan="2">
+          <strong>Total credit: {{ totalCredit }}</strong>
+        </td>
+        <td colspan="2">
+          <strong>Total Balance: {{ totalBalance }}</strong>
+        </td>
+      </tr>
+    </table>
+  </div>
+  >
+</p-dialog>

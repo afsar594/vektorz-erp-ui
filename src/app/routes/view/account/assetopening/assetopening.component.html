@@ -1,0 +1,207 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      label="Edit"
+      icon="fa fa-pencil"
+      (click)="edit()"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.cancel"
+      class="ui-button-danger"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      *ngIf="btnFlag.save == true"
+      label="Save"
+      (click)="AssetOpeningFormSubmit()"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      *ngIf="btnFlag.save != true"
+      type="button"
+      label="Update"
+      (click)="saveAssetOpening()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+      [disabled]="!btnFlag.update"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      (click)="LoadAssetOpeningList()"
+      icon="fa fa-list"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      [disabled]="!btnFlag.print || !Permission?.Print"
+      label="Print"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="AOForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Asset Opening' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-8">
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Voucher No" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-4">
+              <input
+                pInputText
+                readonly
+                placeholder="---VoucherNo---"
+                formControlName="assetPurchaseVoucherNo"
+              />
+              <div
+                class="error"
+                *ngIf="
+                  f.assetPurchaseVoucherNo.touched &&
+                  f.assetPurchaseVoucherNo.invalid
+                "
+              >
+                Voucher No is Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Voucher Date" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-4">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                useUtc
+                [showIcon]="true"
+                formControlName="astPurDt"
+              >
+              </p-calendar>
+              <div
+                class="error"
+                *ngIf="f.astPurDt.touched && f.astPurDt.invalid"
+              >
+                Voucher Date is Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Currency" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-10">
+              <p-dropdown
+                filter="true"
+                [options]="currencyList"
+                placeholder="--- Currency---"
+                formControlName="currencyId"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.currencyId.touched && f.currencyId.invalid"
+              >
+                Currency is Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Narration" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-10">
+              <textarea pInputTextarea formControlName="description"></textarea>
+              <div
+                class="error"
+                *ngIf="f.description.touched && f.description.invalid"
+              >
+                Narration is Invalid Entry
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-12 p-md-4"></div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <!-- <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+            <p-tabPanel [header]="'Asset Opening' | translate"> -->
+    <div class="grid">
+      <div class="p-col-12">
+        <hot-table
+          [hotId]="hotid"
+          [data]="dataset"
+          [licenseKey]="licensekey"
+          [settings]="assetopening"
+        >
+        </hot-table>
+      </div>
+    </div>
+    <!-- </p-tabPanel>
+
+        </p-tabView> -->
+  </div>
+  <div class="p-grid p-ai-center">
+    <div class="p-col-8 p-md-8"></div>
+    <label class="p-col-1 p-md-1" for="account">
+      <b>{{ "Grand Total:" | translate }}</b>
+    </label>
+    <div class="p-col-3 p-md-3">
+      <input pInputText formControlName="netAmount" style="width: 100%" />
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+
+<p-toast></p-toast>

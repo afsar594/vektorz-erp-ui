@@ -1,0 +1,416 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Purchase Order' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Show"
+      icon="fa fa-list"
+      class="ui-button-success"
+      (click)="getAllPurchaseReport()"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Clear Selection"
+      icon="fa fa-close"
+      (click)="cancelAll()"
+      class="ui-button-success"
+      [disabled]="!btnFlag.cancel"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right flexSearch">
+    <div class="ui-inputgroup flexSearch">
+      <input type="text" pInputText placeholder="Search" />
+      <button pButton type="button" icon="pi pi-search"></button>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="displayPrintPreview()"
+    ></button>
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+    <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+  </div>
+</p-toolbar>
+<div class="card">
+  <div class="p-grid" [formGroup]="frmSalesReport">
+    <div class="p-col-4">
+      <div class="p-grid">
+        <label class="p-col-4">Supplier</label>
+        <div class="p-col-8">
+          <p-dropdown
+            filter="true"
+            [options]="supplierList"
+            [(ngModel)]="supplier"
+            [ngModelOptions]="{ standalone: true }"
+            name="supplier"
+            optionLabel="suppliersMasterSupplierName"
+            [showClear]="true"
+            placeholder="---- Select Supplier ----"
+          >
+          </p-dropdown>
+        </div>
+        <label class="p-col-4">Job</label>
+        <div class="p-col-8">
+          <p-dropdown
+            filter="true"
+            [options]="jobList"
+            [(ngModel)]="job"
+            [ngModelOptions]="{ standalone: true }"
+            name="job"
+            optionLabel="jobMasterJobName"
+            [showClear]="true"
+            placeholder="---- Select Job ----"
+          >
+          </p-dropdown>
+        </div>
+        <label class="p-col-4">Location</label>
+        <div class="p-col-8">
+          <p-dropdown
+            filter="true"
+            [options]="locationList"
+            [(ngModel)]="location"
+            [ngModelOptions]="{ standalone: true }"
+            name="location"
+            optionLabel="locationMasterLocationName"
+            [showClear]="!locationLocked"
+            [disabled]="locationLocked"
+            placeholder="---- Select Location ----"
+          >
+          </p-dropdown>
+        </div>
+        <label class="p-col-4">Invoice Type</label>
+        <div class="p-col-8">
+          <p-dropdown
+            filter="true"
+            [options]="invoiceTlist"
+            [(ngModel)]="invoiceType"
+            [ngModelOptions]="{ standalone: true }"
+            name="invoiceType"
+            optionLabel="locationMasterLocationName"
+            [showClear]="true"
+            placeholder="---- Select Invoice Type ----"
+          >
+          </p-dropdown>
+        </div>
+        <label class="p-col-4">Currency</label>
+        <div class="p-col-8">
+          <p-dropdown
+            filter="true"
+            [options]="currencyList"
+            [(ngModel)]="currency"
+            [ngModelOptions]="{ standalone: true }"
+            name="currency"
+            optionLabel="currencyMasterCurrencyName"
+            [showClear]="true"
+            placeholder="---- Select Currency ----"
+          >
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-8">
+      <p-panel>
+        <p-header>
+          <input (click)="toggleDate()" type="checkbox" pInputCheck />
+          By Date
+        </p-header>
+        <div class="p-grid">
+          <div class="p-col-1">
+            <label for="fromDate">From</label>
+          </div>
+          <div class="p-col-4 m-lg-4">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              id="dateFrom"
+              [dateFormat]="calenderViewFormat"
+              [view]="calenderView"
+              [showIcon]="true"
+              [(ngModel)]="dateFrom"
+              [ngModelOptions]="{ standalone: true }"
+              name="dateFrom"
+            >
+            </p-calendar>
+          </div>
+          <div class="p-col-1">
+            <label class="p-lg-8" style="padding-left: 20px" for="fromDate"
+              >To</label
+            >
+          </div>
+          <div class="p-col-4">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+              yearRange="2000:2040"
+              useUtc
+              id="dateTo"
+              [dateFormat]="calenderViewFormat"
+              [view]="calenderView"
+              [showIcon]="true"
+              [(ngModel)]="dateTo"
+              [ngModelOptions]="{ standalone: true }"
+              name="dateTo"
+            >
+            </p-calendar>
+          </div>
+        </div>
+
+        <div class="p-grid col-offset-1">
+          <div class="p-col-2">
+            <p-radioButton
+              (onClick)="changedate('date')"
+              name="dateType"
+              inputId="date"
+              value="dateRange"
+              style="margin-right: 10px"
+            >
+            </p-radioButton>
+            <label for="date" class="ml-2">Date</label>
+          </div>
+          <div class="p-col-2">
+            <p-radioButton
+              (onClick)="changedate('month')"
+              name="dateType"
+              inputId="month"
+              value="dateRange"
+              style="margin-right: 10px"
+            >
+            </p-radioButton>
+            <label for="month" class="ml-2">Month</label>
+          </div>
+          <div class="p-col-2">
+            <p-radioButton
+              (onClick)="changedate('year')"
+              name="dateType"
+              inputId="year"
+              value="dateRange"
+              style="margin-right: 10px"
+            >
+            </p-radioButton>
+            <label for="year" class="ml-2">Year</label>
+          </div>
+        </div>
+      </p-panel>
+      <!-- </div> -->
+    </div>
+  </div>
+  <!-- <div class="card card-w-title">
+    <p-panel>
+        <p-header>
+            <b>Purchase Report</b>
+        </p-header>
+        <div class="p-grid">
+            <div class="p-col-12">
+                <hot-table [hotId]="hotid" [licenseKey]="licensekey"
+                    [settings]="purchaseReport">
+                </hot-table>
+            </div>
+        </div>
+    </p-panel>
+</div> -->
+
+  <p-table
+    class="table"
+    [value]="purchaseReportList"
+    dataKey="purchaseID"
+    [tableStyle]="{ 'min-width': '60rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>S no</th>
+        <th>Pur ID</th>
+        <th>Pur Date</th>
+        <th>Pur Type</th>
+        <th>Supplier Name</th>
+        <th>Sup. Ref No.</th>
+        <th>Job No</th>
+        <th>Grass Amount</th>
+        <th>Discount</th>
+        <th>Vat Amount</th>
+        <th>Net Amount</th>
+        <th>Location</th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-purchaseReport
+      let-rowIndex="rowIndex"
+      let-expanded="expanded"
+    >
+      <tr>
+        <td>
+          {{ rowIndex + 1 }}
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="purchaseReport"
+            class="p-button-text p-button-rounded p-button-plain"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+        </td>
+        <td>{{ purchaseReport.purchaseID }}</td>
+        <td>{{ purchaseReport.purchaseDate }}</td>
+        <td>{{ purchaseReport.purchaseType }}</td>
+        <td>{{ purchaseReport.supplierName }}</td>
+        <td>{{ purchaseReport.supplierRefNo }}</td>
+        <td>{{ purchaseReport.jobId }}</td>
+        <td>{{ purchaseReport.gross }}</td>
+        <td>{{ purchaseReport.discount }}</td>
+        <td>{{ purchaseReport.vatAmount }}</td>
+        <td>{{ purchaseReport.netAmount }}</td>
+        <td>{{ purchaseReport.locationName }}</td>
+        <!-- Display other properties of the purchase report -->
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-purchaseReport>
+      <tr>
+        <td colspan="12">
+          <div class="p-2">
+            <p-table
+              [value]="purchaseReport.purchaseDetails"
+              dataKey="purchaseDetailID"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Mat ID</th>
+                  <th>Part No</th>
+                  <th>Item Description</th>
+                  <th>Unit</th>
+                  <th>Rate</th>
+                  <th>Amount</th>
+                </tr>
+                <!-- Table headers for purchase details here -->
+              </ng-template>
+              <ng-template pTemplate="body" let-detail>
+                <tr>
+                  <td>{{ detail.purchaseDetailID }}</td>
+                  <td>{{ detail.partNo }}</td>
+                  <td>{{ detail.itemName }}</td>
+                  <td>{{ detail.quantity }}</td>
+                  <td>{{ detail.rate }}</td>
+                  <td>{{ detail.amount | currency : "USD" }}</td>
+                  <!-- Display other properties of the purchase detail -->
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    header="Purchase Print"
+    [(visible)]="displayMaximizable"
+    [modal]="true"
+    [style]="{ width: '95%' }"
+    [maximizable]="true"
+    [baseZIndex]="10000"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <button
+      pButton
+      type="button"
+      (click)="printAsPDF()"
+      label="Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <div id="printPDF">
+      <div class="p-grid">
+        <div
+          class="p-col-12"
+          style="justify-content: center; align-items: center; display: flex"
+        >
+          <img
+            style="width: 400px"
+            src="../../../../../assets/Images/logo-2.png"
+          />
+        </div>
+      </div>
+      <h1 style="text-align: center">
+        {{ companyDetails?.stationMasterStationName }}
+      </h1>
+      <p-panel>
+        <p-header> Company Details </p-header>
+        <div class="p-grid">
+          <div class="p-col-2">Email</div>
+          <div class="p-col-10">
+            {{ companyDetails?.stationMasterEmail }}
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-2">Contact</div>
+          <div class="p-col-10">
+            {{ companyDetails?.stationMasterTele1 }}
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-2">Country</div>
+          <div class="p-col-10">
+            {{ companyDetails?.stationMasterCountry }}
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-2">Address</div>
+          <div class="p-col-10">
+            {{ companyDetails?.stationMasterCity }}&nbsp;{{
+              companyDetails?.stationMasterAddress
+            }}
+          </div>
+        </div>
+      </p-panel>
+      <table class="printingTable">
+        <thead>
+          <tr>
+            <th *ngFor="let col of cols">{{ col.header }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of purchaseReportList; let i = index">
+            <!-- <td>{{i+1}}</td> -->
+            <td>{{ item.voucherNo }}</td>
+            <td>{{ item.purchaseDate }}</td>
+            <td>{{ item.supplierName }}</td>
+            <td>{{ item.supplierRefNo }}</td>
+            <td>{{ item.jobId }}</td>
+            <td>{{ item.gross }}</td>
+            <td>{{ item.discount }}</td>
+            <td>{{ item.vatAmount }}</td>
+            <td>{{ item.netAmount }}</td>
+            <td>{{ item.locationName }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </p-dialog>
+
+  <p-toast></p-toast>
+  <!-- <p-confirmdialog key="confirm-key" acceptLabel="Yes" rejectLabel="No"
+    header="Confirm"
+    [(visible)]="confirmDialog"></p-confirmdialog> -->
+</div>

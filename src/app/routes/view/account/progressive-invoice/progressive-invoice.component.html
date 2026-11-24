@@ -1,0 +1,484 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="New" (click)="new()" icon="pi pi-plus" class="ui-button-success"></button>
+    <button pButton type="button" [disabled]="!btnFlag.edit || !Permission.Edit" label="Edit" (click)="edit()"
+      icon="pi pi-pencil" class="ui-button-info"></button>
+    <button pButton type="button" [disabled]="!btnFlag.cancel" class="ui-button-danger" (click)="cancel()"
+      label="Cancel" icon="fa fa-ban"></button>
+    <button pButton type="button" [disabled]="!Permission?.Add || btnFlag.new"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'" icon="fa fa-floppy-o" (click)="save()"
+      class="ui-button-success"></button>
+    <button pButton type="button" [disabled]="!Permission?.View" label="List" icon="pi pi-list" (click)="getList()"
+      class="ui-button-success"></button>
+    <button pButton type="button" [disabled]="!btnFlag.delete || !Permission.Delete" label="Delete" icon="pi pi-trash"
+      (click)="delete()" class="ui-button-danger"></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" label="Exit" icon="fa fa-sign-out" class="ui-button-warning"></button>
+    <!-- <button pButton type="button" label="Print Account Trans" icon="fa fa-print"></button> -->
+    <button pButton type="button" label="Print" [disabled]="!btnFlag.edit || !Permission.Print" icon="pi pi-print"
+      (click)="showPrintPreview()" class="ui-button-info"></button>
+
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title" [formGroup]="progressiveinvoiceFormGroup">
+  <p-tabView>
+    <p-tabPanel header="Progressive Invoice">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-8">
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2">{{
+              "Invoice Mode" | translate
+              }}</label>
+
+            <div class="p-col-12 p-md-3 p-0">
+              <p-dropdown filter="true" class="w-100" placeholder="All" [options]="v_ModeList"
+                formControlName="progressiveInvoiceStatus">
+              </p-dropdown>
+              <div class="error" *ngIf="
+                  f.progressiveInvoiceStatus.errors &&
+                  (f.progressiveInvoiceStatus.dirty ||
+                    f.progressiveInvoiceStatus.touched)
+                ">
+                <span *ngIf="f.progressiveInvoiceStatus.errors.required">
+                  Invoice Mode is Mandatory Field*</span>
+              </div>
+            </div>
+            <label class="p-col-12 p-md-2">{{
+              "Invoice Type" | translate
+              }}</label>
+
+            <div class="p-col-12 p-md-3 p-0">
+              <p-dropdown filter="true" class="w-100" placeholder="All" [options]="typeList"
+                formControlName="progressiveInvoiceInvoiceType">
+              </p-dropdown>
+              <div class="error" *ngIf="
+                  f.progressiveInvoiceInvoiceType.errors &&
+                  (f.progressiveInvoiceInvoiceType.dirty ||
+                    f.progressiveInvoiceInvoiceType.touched)
+                ">
+                <span *ngIf="f.progressiveInvoiceInvoiceType.errors.required">
+                  Invoice Type is Mandatory Field*</span>
+              </div>
+            </div>
+            <div class="p-col-12 p-md-2">
+              <p-checkbox [binary]="true" label="Variation Inv" formControlName="progressiveInvoiceIsVariation"></p-checkbox>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2">{{ "Customer" | translate }}</label>
+            <div class="p-col-12 p-md-4 p-0">
+              <p-dropdown filter="true" (onChange)="GetJOb($event)" [options]="CustomerMasterList" class="w-100"
+                placeholder="All" formControlName="progressiveInvoiceCustId">
+              </p-dropdown>
+            </div>
+
+            <label class="p-col-12 p-md-1">{{ "Job No" | translate }}</label>
+            <div class="p-col-12 p-md-5 p-0">
+              <p-dropdown filter="true" (onChange)="onjobSelect($event)" [options]="jobList" class="w-100"
+                placeholder="All" formControlName="progressiveInvoiceJobId">
+              </p-dropdown>
+              <div class="error" *ngIf="
+                  f.progressiveInvoiceJobId.errors &&
+                  (f.progressiveInvoiceJobId.dirty ||
+                    f.progressiveInvoiceJobId.touched)
+                ">
+                <span *ngIf="f.progressiveInvoiceJobId.errors.required">
+                  Job No is Mandatory Field*</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2">{{
+              "Payment Appl. No" | translate
+              }}</label>
+            <div class="p-col-12 p-md-10 p-0">
+              <input class="w-100" formControlName="progressiveInvoicePayAppNo" pInputText />
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2">{{ "Reference" | translate }}</label>
+            <div class="p-col-12 p-md-10 p-0">
+              <textarea rows="2" formControlName="progressiveInvoiceReference" pInputTextarea></textarea>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2">{{
+              "Description" | translate
+              }}</label>
+            <div class="p-col-12 p-md-10 p-0">
+              <textarea rows="2" formControlName="progressiveInvoiceDescription" pInputTextarea></textarea>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-2">{{
+              " Progress Of Work" | translate
+              }}</label>
+            <div class="p-col-12 p-md-10 p-0">
+              <textarea rows="3" formControlName="progressiveInvoiceProgress" pInputTextarea></textarea>
+            </div>
+          </div>
+          <p-panel>
+            <p-header> Details </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2">{{
+                "Job Value" | translate
+                }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="jobValue" pInputText />
+              </div>
+              <label class="p-col-12 p-md-2">{{
+                "Variation Amount" | translate
+                }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="VariationAmt" pInputText />
+              </div>
+              <label class="p-col-12 p-md-2">{{
+                "Total Value" | translate
+                }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="totalJobValue" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2">{{
+                "Amount Due" | translate
+                }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="progressiveInvoiceAmountDue" pInputText />
+              </div>
+              <label class="p-col-12 p-md-2">{{ "Variation Amount Due" | translate }}
+              </label>
+              <div class="p-col-12 p-md-6 p-0">
+                <input class="w-100" readonly formControlName="VariationAmountDue" pInputText />
+              </div>
+            </div>
+          </p-panel>
+          <p-panel>
+            <p-header> Current % Completion </p-header>
+
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2">{{ "Value %" | translate }}</label>
+              <div class="p-col-12 p-md-2">
+                <input class="w-100" formControlName="progressiveInvoiceCurComplPer" pInputText />
+              </div>
+              <div class="p-col-12 p-md-2">
+                <input class="w-100" formControlName="progressiveInvoiceCurComplVal" pInputText />
+              </div>
+              <label class="p-col-12 p-md-2">{{ "Less Retention" | translate }}
+              </label>
+              <div class="p-col-12 p-md-2">
+                <input class="w-100" formControlName="progressiveInvoicePlRetention" pInputText />
+              </div>
+              <div class="p-col-12 p-md-2">
+                <input class="w-100" readonly formControlName="currentRetentionAmt" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2">{{
+                "Less Advance" | translate
+                }}</label>
+              <div class="p-col-12 p-md-4 p-0">
+                <input class="w-100" formControlName="lessAdvance" pInputText />
+              </div>
+              <label class="p-col-12 p-md-2">{{ " +/- Variance" | translate }}
+              </label>
+              <div class="p-col-12 p-md-4 p-0">
+                <input class="w-100" formControlName="Variance" pInputText />
+              </div>
+            </div>
+            <!-- <div class="p-grid p-ai-center"
+              *ngIf="f.progressiveInvoiceInvoiceType.value === 'FINAL'">
+              <label class="p-col-12 p-md-2" style="color:#2a7a2a;font-weight:600">
+                {{ "Retention Release" | translate }}
+              </label>
+              <div class="p-col-12 p-md-4 p-0">
+                <input class="w-100" readonly formControlName="retentionRelease" pInputText
+                  style="background:#e8f5e9;color:#2a7a2a;font-weight:600" />
+              </div>
+            </div> -->
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-4">{{
+              "Invoice No" | translate
+              }}</label>
+            <div class="p-col-12 p-md-8 p-0">
+              <input class="w-100" formControlName="progressiveInvoiceInvNo" pInputText />
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-4">
+              {{ "Invoice Date" | translate }}</label>
+
+            <div class="p-col-12 p-md-8 p-0">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [showButtonBar]="true"
+                [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" class="w-100" [showIcon]="true"
+                useUtc formControlName="progressiveInvoiceInvDate">
+              </p-calendar>
+              <div class="error" *ngIf="
+                  f.progressiveInvoiceInvDate.errors &&
+                  (f.progressiveInvoiceInvDate.dirty ||
+                    f.progressiveInvoiceInvDate.touched)
+                ">
+                <span *ngIf="f.progressiveInvoiceInvDate.errors.required">
+                  Invoice Date is Mandatory Field*</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <label class="p-col-12 p-md-4">
+              {{ "Advance Amount" | translate }}</label>
+            <div class="p-col-12 p-md-8 p-0">
+              <input class="w-100" formControlName="advanceAmount" pInputText />
+            </div>
+          </div>
+
+          <p-panel>
+            <p-header> Previous % Completion </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-5 p-lg-4">
+                {{ "Value % " | translate }}</label>
+              <div class="p-col-12 p-md-2 p-lg-2">
+                <input class="w-100" readonly formControlName="progressiveInvoicePrevComplPer" pInputText />
+              </div>
+              <div class="p-col-12 p-md-6 p-lg-6">
+                <input class="w-100" readonly formControlName="progressiveInvoicePrevComplVal" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-5 p-lg-4">
+                {{ "Retention Amount" | translate }}</label>
+              <div class="p-col-12 p-md-7 p-lg-8 p-0">
+                <input class="w-100" readonly formControlName="PreRetentionAmount" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-5 p-lg-4">
+                {{ "Variation Invoiced" | translate }}</label>
+              <div class="p-col-12 p-md-7 p-lg-8 p-0">
+                <input class="w-100" readonly formControlName="variationInvoiced" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-5 p-lg-4">
+                {{ "Advance Amount Ded." | translate }}</label>
+              <div class="p-col-12 p-md-7 p-lg-8 p-0">
+                <input class="w-100" readonly formControlName="preAdvanceAmtDed" pInputText />
+              </div>
+            </div>
+          </p-panel>
+          <p-panel>
+            <p-header> Cumulative % Completion </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4 p-lg-4">
+                {{ "Value % " | translate }}</label>
+              <div class="p-col-12 p-md-2 p-lg-2">
+                <input class="w-100" readonly formControlName="progressiveInvoiceCumilativePer" pInputText />
+              </div>
+              <div class="p-col-12 p-md-6 p-lg-6">
+                <input class="w-100" readonly formControlName="progressiveInvoiceCumilativeVal" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-5 p-lg-4">
+                {{ "Retention Amount" | translate }}</label>
+              <div class="p-col-12 p-md-7 p-lg-8 p-0">
+                <input class="w-100" readonly formControlName="cumRetentionAmt" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-5 p-lg-4">
+                {{ "Variation Invoiced" | translate }}</label>
+              <div class="p-col-12 p-md-7 p-lg-8 p-0">
+                <input class="w-100" readonly formControlName="cumVariationAmt" pInputText />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-5 p-lg-4">
+                {{ "Advance Amount Ded." | translate }}</label>
+              <div class="p-col-12 p-md-7 p-lg-8 p-0">
+                <input class="w-100" readonly formControlName="cumAdvAmtDed" pInputText />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-12">
+          <p-panel>
+            <p-header> Retention Amount </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2">{{ "Current Retention" | translate }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="currentRetentionAmt" pInputText />
+              </div>
+              <label class="p-col-12 p-md-2">{{ "Previous Retention" | translate }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="PreRetentionAmount" pInputText />
+              </div>
+              <label class="p-col-12 p-md-2">{{ "Cumulative Retention" | translate }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="cumRetentionAmt" pInputText />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header> Advance Invoice </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-4">{{
+                "Advance Amt" | translate
+                }}</label>
+              <div class="p-col-12 p-md-8 p-0">
+                <input class="w-100" [readonly]="
+                    f.progressiveInvoiceInvoiceType.value != 'ADVANCE'
+                  " formControlName="PIadvanceAmt" pInputText />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-8">
+          <p-panel>
+            <p-header> </p-header>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-1">{{ "Gross" | translate }} </label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" readonly formControlName="grossAmt" pInputText />
+              </div>
+
+              <label class="p-col-12 p-md-1">{{ "Vat %" | translate }}</label>
+              <div class="p-col-12 p-md-2 p-0">
+                <input class="w-100" formControlName="PIvatPer" pInputText />
+              </div>
+              <div class="p-col-12 p-md-2 p-0 pl-2">
+                <input class="w-100" formControlName="PIvatAmt" pInputText />
+              </div>
+              <label class="p-col-12 p-md-1">{{ "NetTotal" | translate }}
+              </label>
+              <div class="p-col-12 p-md-3 p-0">
+                <input class="w-100" readonly formControlName="progressiveInvoiceTotal" pInputText />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="p-col-12">
+          <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey" [settings]="progressiveinvoice_entry">
+          </hot-table>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel header="Account Details"> Content 2 </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>
+
+<p-dialog header="Progressive Invoice List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button type="submit" pButton label="Find" (click)="filter()" icon="pi pi-search"></button>
+        <button pButton type="button" label="Clear" (click)="ClearFilter()" icon="fa fa-pencil"
+          class="ui-button-success"></button>
+      </p-header>
+      <form [formGroup]="PIFilterForm">
+        <div class="p-grid">
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                "Voucher No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <input class="w-100" formControlName="PINo" placeholder="Text Here" pInputText />
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                "GRN No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <input class="w-100" formControlName="purchaseGRNNo" pInputText placeholder="Text Here" />
+              </div>
+            </div>
+          </div>
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox formControlName="isDate" [binary]="true" label="Date Range"></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="fromDate" [showIcon]="true"
+                    [disabled]="!PIFilterForm.get('isDate')?.value" class="w-100" useUtc></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="toDate" [showIcon]="true"
+                    [disabled]="!PIFilterForm.get('isDate')?.value" class="w-100" useUtc></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+
+  <p-table #voucherlist [value]="progressiveInvoice" [columns]="cols" [paginator]="true" [rows]="5">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="voucherlist.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-PI_list>
+      <tr>
+        <td>{{ PI_list?.progressiveInvoiceId }}</td>
+        <td>{{ PI_list?.progressiveInvoiceInvDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ PI_list?.jobname }}</td>
+        <td>{{ PI_list?.Customer }}</td>
+        <td>{{ PI_list?.progressiveInvoiceCurComplVal }}</td>
+        <td>{{ PI_list?.progressiveInvoiceCurComplPer }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedSalesVoucherDetails(PI_list.progressiveInvoiceId);
+              displayMaximizable = false
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

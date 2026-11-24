@@ -1,0 +1,202 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="locationFormGroup">
+  <div class="p-grid">
+    <div class="p-col-12 p-md-12 p-sm-12">
+      <div class="card card-w-title">
+        <div class="grid">
+          <div class="col-12">
+            <div class="grid">
+              <hot-table
+                [hotId]="hotid"
+                [licenseKey]="licensekey"
+                [settings]="location_entry"
+                [data]="location_entryDataset"
+              ></hot-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog
+  [header]="btnFlag?.save ? 'Add New Location' : 'Update Location'"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '650px' }"
+>
+  <form [formGroup]="locationFormGroup" class="p-fluid">
+    <div class="p-grid">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "Location Name" | translate }}<span class="required">*</span>
+      </div>
+      <div class="p-col-6">
+        <input
+          class="location"
+          pInputText
+          placeholder="Location Name"
+          formControlName="locationMasterLocationName"
+        />
+        <div
+          class="error"
+          *ngIf="
+            f.locationMasterLocationName.errors &&
+            (f.locationMasterLocationName.dirty ||
+              f.locationMasterLocationName.touched)
+          "
+        >
+          <span *ngIf="f.locationMasterLocationName.errors.required">
+            Location Name is Mandatory Field*</span
+          >
+        </div>
+      </div>
+      <div class="p-col-2"></div>
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">{{ "Address" | translate }}</div>
+      <div class="p-col-6">
+        <input
+          class="location"
+          pInputText
+          placeholder="Address"
+          formControlName="locationMasterLocationAddress"
+        />
+        <div
+          class="error"
+          *ngIf="
+            f.locationMasterLocationAddress.errors &&
+            (f.locationMasterLocationAddress.dirty ||
+              f.locationMasterLocationAddress.touched)
+          "
+        >
+          <span *ngIf="f.locationMasterLocationAddress.errors.required"
+            >Address is Mandatory Field*</span
+          >
+        </div>
+      </div>
+      <div class="p-col-2"></div>
+      <div class="p-col-1"></div>
+      <label class="p-col-3 p-text-right">
+        {{ "Cost Center" | translate }}
+      </label>
+      <div class="p-col-6">
+        <p-dropdown
+          filter="true"
+          [options]="costcenterList"
+          [showClear]="true"
+          class="location"
+          filter="true"
+          [style]="{ width: '100%' }"
+          formControlName="locationMasterLocationCostCenter"
+        >
+        </p-dropdown>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">{{ "Telephone" | translate }}</div>
+      <div class="p-col-6">
+        <input
+          class="location"
+          pInputText
+          placeholder="Telephone"
+          formControlName="locationMasterLocationTelephone"
+        />
+        <div
+          class="error"
+          *ngIf="
+            f.locationMasterLocationTelephone.errors &&
+            (f.locationMasterLocationTelephone.dirty ||
+              f.locationMasterLocationTelephone.touched)
+          "
+        >
+          <span *ngIf="f.locationMasterLocationTelephone.errors.required"
+            >Telephone is Mandatory Field*</span
+          >
+        </div>
+      </div>
+      <div class="p-col-2"></div>
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">{{ "Fax" | translate }}</div>
+      <div class="p-col-6">
+        <input
+          class="location"
+          pInputText
+          placeholder="Fax"
+          formControlName="locationMasterLocationFax"
+        />
+        <div
+          class="error"
+          *ngIf="
+            f.locationMasterLocationFax.errors &&
+            (f.locationMasterLocationFax.dirty ||
+              f.locationMasterLocationFax.touched)
+          "
+        >
+          <span *ngIf="f.locationMasterLocationFax.errors.required"
+            >Fax is Mandatory Field*</span
+          >
+        </div>
+      </div>
+      <div class="p-col-2"></div>
+      <div class="p-col-1"></div>
+      <div class="p-col-3 p-text-right">
+        {{ "In-Active" | translate }}
+      </div>
+      <div class="p-col-6">
+        <p-checkbox
+          [formControl]="
+            locationFormGroup.controls['locationMasterLocationStatus']
+          "
+          [binary]="true"
+          style="height: 18px; width: 18px"
+        >
+        </p-checkbox>
+      </div>
+    </div>
+    <!-- Footer buttons -->
+    <div class="dialog-footer">
+      <button
+        type="button"
+        pButton
+        [icon]="btnFlag?.save ? 'pi pi-save' : 'pi pi-check'"
+        [label]="btnFlag?.save ? 'Save' : 'Update'"
+        (click)="saveLocation()"
+        class="p-button-primary"
+      ></button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>

@@ -1,0 +1,59 @@
+<app-page-header *ngIf="!item || !item1" [nav]='breadcumbmodel' [title]='title'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" icon="fa fa-floppy-o"   *ngIf="!selectedTemplate" (click)="savetemplate()"
+            class="ui-button-success" label="Save"></button>
+        <button pButton type="button" icon="fa fa-floppy-o" *ngIf="selectedTemplate" (click)="updatetemplate()"
+            class="ui-button-success" label="Update"></button>
+
+        <button pButton type="button" [disabled]="!showButton" (click)="deletetemplate()" label="Delete"
+            icon="fa fa-close" class="ui-button-danger"></button>
+
+    </div>
+    <div class="ui-toolbar-group-right">
+        <button pButton type="button" (click)="navigateBack()"  label="Exit"
+            icon="fa fa-close" class="ui-button-warning"></button>
+    </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="templateForm">
+    <p-tabView [activeIndex]="index">
+        <p-tabPanel [header]="'QTemplates'| translate">
+            <div class="p-grid">
+                <div class="p-col-12 p-md-12 p-lg-2"></div>
+                <div class="p-col-12 p-md-12 p-lg-1">{{'Templates For' | translate }} </div>
+                <div class="p-col-12 p-md-12 p-lg-8">
+                    <p-dropdown filter="true" placeholder="---Select---" formControlName='qtemplatesType' [options]="templatList"
+                        (onChange)="getTemplateBytype($event)" [filter]="true"></p-dropdown>
+                </div>
+            </div>
+            <div class="p-grid">
+
+                <div class="p-col-1 p-md-1 p-lg-1"> </div>
+
+                <div class="p-col-5 p-md-5 p-lg-5 box">
+                    <textarea rows="5" formControlName="qtemplatesDescription" cols="30" pInputTextarea></textarea>
+                </div>
+                <div class="p-col-1 p-md-1 p-lg-1"> </div>
+
+                <div class="p-col-5 p-md-5 p-lg-5 box">
+
+                    <p-table [value]="template">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Description</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr style="cursor: pointer;">
+                                <td (click)="selectedTemplateValue(item)">{{item.qtemplatesDescription}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+<p-confirmDialog  key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+<p-toast></p-toast>

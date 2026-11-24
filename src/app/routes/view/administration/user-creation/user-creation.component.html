@@ -1,0 +1,264 @@
+<app-page-header [title]='title| translate'></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" [label]="'New'" (click)="new()" icon="fa fa-plus" class="ui-button-info"></button>
+    <button pButton type="button" [label]="'Edit'" [disabled]='!btnFlag.update' (click)="Edit()" icon="fa fa-pencil"
+      class="ui-button-primary"></button>
+    <button pButton type="button" [label]="btnFlag?.save == true ? 'Save': 'Update'" (click)="save()" icon="fa fa-save"
+      class="ui-button-success"></button>
+    <button pButton type="button" [label]="'Delete'" (click)="delete()" [disabled]='!btnFlag.update' icon="fa fa-close"
+      class="ui-button-danger"></button>
+    <button pButton type="button" [label]="'Exit'" (click)="exit()" icon="fa fa-sign-out"
+      class="ui-button-warning"></button>
+
+  </div>
+</p-toolbar>
+<p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+  <p-tabPanel [header]="'User Creation' | translate" [formGroup]='UserCreationForm'>
+    <div class="p-grid">
+      <div class="p-col-12 p-md-6">
+
+        <div class="p-grid">
+
+          <label class="p-col-12 p-md-4 p-lg-4 " for="account">
+            <b>{{'Login ID ' | translate}}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <input readonly class="w-100" placeholder="ID" formControlName="loginId" pInputText>
+            <div class="error" *ngIf="UserCreationForm.get('loginId').touched">
+              <span *ngIf="UserCreationForm.get('loginId').invalid">
+                Login Id is required*
+              </span>
+            </div>
+          </div>
+
+        </div>
+        <div class="p-grid">
+
+          <label class="p-col-12 p-md-4 p-lg-4" for="account">
+            <b>{{'User Name ' | translate}}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <input class="w-100" placeholder="Name" formControlName="UserNAme" pInputText>
+            <div class="error" *ngIf="UserCreationForm.get('loginId').touched">
+              <span *ngIf="UserCreationForm.get('loginId').invalid">
+                UserName is required*
+              </span>
+            </div>
+          </div>
+
+        </div>
+        <div class="p-grid">
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <label for=""><b>{{'Email' | translate}}</b> </label>
+          </div>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <input class="w-100" placeholder="Email" formControlName="emailId" pInputText>
+            <div class="error" *ngIf="UserCreationForm.get('emailId').touched">
+              <span *ngIf="UserCreationForm.get('emailId').invalid">
+                Invalid email format
+              </span>
+            </div>
+            <!-- <div *ngIf="UserCreationForm.get('emailId').hasError('invalidEmail') && UserCreationForm.get('emailId').touched">
+              Invalid email format
+            </div> -->
+          </div>
+        </div>
+        <div class="p-grid">
+          <label class="p-col-12 p-md-4 p-lg-4" for="account">
+            <b>{{ 'User PassWord ' | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <div class="ui-inputgroup">
+              <input type="text" placeholder="User Password" formControlName="UserPassword"
+                [type]="isPasswordVisible ? 'text' : 'password'" pInputText>
+              <button pButton type="button" (click)="togglePasswordVisibility(true)" icon="pi pi-eye"
+                class="ui-button-warn"></button>
+            </div>
+
+            <div class="error" *ngIf="UserCreationForm.get('UserPassword').touched">
+              <span *ngIf="UserCreationForm.get('UserPassword').invalid">
+                Password is required*
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <label class="p-col-12 p-md-4 p-lg-4" for="account">
+            <b>{{ 'Confirm Password' | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <div class="ui-inputgroup">
+              <input type="text" (input)="password()" placeholder="Confirm Password" formControlName="ConfirmPassword"
+                pInputText [type]="isPassword ? 'text' : 'password'">
+              <button pButton type="button" (click)="togglePasswordVisibility(false)" icon="pi pi-eye"
+                class="ui-button-warn"></button>
+            </div>
+            <div class="error" *ngIf="UserCreationForm.get('ConfirmPassword').touched">
+              <span *ngIf="UserCreationForm.get('UserPassword').invalid">
+                Confirm Password length required*
+              </span>
+              <span *ngIf="matchPass">
+                Password does not match!
+              </span>
+            </div>
+          </div>
+          <div class="p-col-3 p-md-3 p-lg-3" style="margin-left: 100px;">
+            <p-checkbox label="Freeze" formControlName="Isfreeze" [binary]="true"></p-checkbox>
+          </div>
+        </div>
+
+
+        <div class="p-grid">
+          <label class="p-col-12 p-md-4 p-lg-4" for="account">
+            <b>{{'Work Group ' | translate}}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <p-dropdown filter="true" [filter]="true" filterBy="name" formControlName="WorkGroupId" [showClear]="true"
+              [options]="groupList">
+            </p-dropdown>
+
+          </div>
+
+        </div>
+        <div class="p-grid">
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <label for=""><b>{{'Location' | translate}}</b> </label>
+          </div>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <p-dropdown filter="true" placeholder="-- Location --" formControlName='LocationId' [options]="locationList"
+              [filter]="true"> </p-dropdown>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="p-col-12 p-md-6">
+        
+        <div class="p-grid">
+          <label class="p-col-12 p-md-4 p-lg-4 " for="account">
+            <b>{{'Department' | translate}}</b>
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <p-dropdown filter="true" [filter]="true" filterBy="name" formControlName="departmentId" [showClear]="true"
+              [options]="DepartmentMasterList">
+            </p-dropdown>
+
+          </div>
+
+        </div>
+        <div class="p-grid">
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <label for=""><b>{{'Designation' | translate}}</b> </label>
+          </div>
+          <div class="p-col-12 p-md-4 p-lg-8">
+            <p-dropdown filter="true" placeholder="-- Designation --" formControlName='designationId' [options]="DesignationMasterList"
+              [filter]="true"> </p-dropdown>
+
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-12 p-md-4 p-lg-4">
+            <label for=""><b>{{'Employee' | translate}}</b> </label>
+          </div>
+          <div class="p-col-12 p-md-4 p-lg-8">
+            <input type="text" placeholder="-- Employee --" formControlName="employeeName"
+             pInputText>
+
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-12 p-md-4 p-lg-4 ">
+            <label for=""><b>{{'Profile Image' | translate}}</b> </label>
+          </div>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <div class="sign">
+              <div class="p-col-12">
+                <img [src]='UserCreationForm.controls.userImage.value' alt="Selected Image"
+                  style="width: 150px; height: 100px;">
+
+              </div>
+            </div>
+            <span class="p-2"> <input type='file' (change)="onSelectFile($event , 'Profile')"></span>
+
+          </div>
+          <div class="p-col-12 p-md-4 p-lg-4 ">
+            <label for=""><b>{{'Sign ' | translate}}</b> </label>
+          </div>
+          <div class="p-col-12 p-md-8 p-lg-8">
+            <div class="sign">
+              <div class="p-col-12">
+                <img [src]='UserCreationForm.controls.signImg.value' alt="Selected Image"
+                  style="width: 150px; height: 100px;">
+
+              </div>
+            </div>
+            <span class="p-2"> <input type='file' (change)="onSelectFile($event,'sign' )"></span>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+
+    <div class="card card-w-title">
+
+      <p-panel>
+        <p-header>
+          <div class="flexrow w-100">
+            <span class="w-100" style="margin-top: 6px;">
+              {{ "Details" | translate }}
+
+            </span>
+            <span class="w-100 right">
+              <button pButton type="button" (click)="GetAllUserFile()" icon="fa fa-refresh" class="ui-button-success">
+              </button>
+            </span>
+
+          </div>
+        </p-header>
+        <div class="p-grid">
+          <div class="p-col-12">
+            <div class="table-container">
+              <p-table #dt [value]="files" dataKey="id" styleClass="ui-table-customers" [rowHover]="true" [rows]="4"
+                [rowsPerPageOptions]="[5,10,25]" [loading]="loading">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="text-align: center;">Login Id</th>
+                    <th style="text-align: center;">User Name</th>
+                    <th style="text-align: center;">Group Name</th>
+                    <th style="text-align: center;">Freeze</th>
+
+
+                    <th style="text-align:center;width:70px;">View</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-i="rowIndex">
+                  <tr>
+                    <td style="text-align: center;">{{ item.logInId }}</td>
+                    <td style="text-align: center;">{{ item.userName }}</td>
+                    <td style="text-align: center;">{{getGroupName( item.workGroupId) }}</td>
+                    <td style="text-align: center;">{{ item.freeze }}</td>
+
+                    <td style="text-align: center;">
+                      <a class="iconbton" (click)="view(item)">
+                        <i class="pi pi-eye" style="font-size: 26px;"></i>
+                      </a>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+
+    </div>
+  </p-tabPanel>
+</p-tabView>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>

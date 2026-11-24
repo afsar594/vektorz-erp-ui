@@ -1,0 +1,7 @@
+<app-clockdashboard *ngIf="user?.userDashboard === 'clockdashboard'"></app-clockdashboard>
+<app-dashboard *ngIf="user?.userDashboard === 'classic-dashboard'"></app-dashboard>
+<!-- <app-new-dashboard *ngIf="user?.userDashboard !== 'clockdashboard' && user?.userDashboard !== 'classic-dashboard'"></app-new-dashboard> -->
+ <app-dashboard *ngIf="user?.userDashboard !== 'clockdashboard' && user?.userDashboard !== 'classic-dashboard'"></app-dashboard>
+
+
+

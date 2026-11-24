@@ -1,0 +1,128 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      icon="pi pi-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="customersalesdetail">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Customer Sales Details' | translate">
+      <div class="p-grid">
+        <div class="p-col-10 p-md-10 p-lg-10">
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Customer" | translate }}</b>
+            </label>
+            <div class="p-col-11 p-md-11 p-lg-11">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                class="w-100"
+                [options]="CustomerMasterList"
+                formControlName="customername"
+                [showClear]="true"
+                placeholder="--Select Customer--"
+              ></p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.customername.touched && f.customername.invalid"
+              >
+                <span> Customer Name is Mandatory Field*</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "From" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                [showIcon]="true"
+                formControlName="fromdate"
+                useUtc
+                [style]="{ width: '100%' }"
+              >
+              </p-calendar>
+              <div
+                class="error"
+                *ngIf="f.fromdate.touched && f.fromdate.invalid"
+              >
+                <span> From Date is Mandatory Field*</span>
+              </div>
+            </div>
+
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "To" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                formControlName="todate"
+                [showIcon]="true"
+                useUtc
+                [style]="{ width: '100%' }"
+              >
+              </p-calendar>
+              <div class="error" *ngIf="f.todate.touched && f.todate.invalid">
+                <span> To Date is Mandatory Field*</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-2 p-md-2 p-lg-2">
+          <div class="p-grid">
+            <div class="p-col-12">
+              <p-radioButton name="dateType" label="Details"> </p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12">
+              <p-radioButton name="dateType" label="Material Wise">
+              </p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12">
+              <p-radioButton name="dateType" label="Summary"> </p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12">
+              <p-radioButton name="dateType" label="Monthly Comparison">
+              </p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12">
+              <p-radioButton name="dateType" label="All Sales"> </p-radioButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

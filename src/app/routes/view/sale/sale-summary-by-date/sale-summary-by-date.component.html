@@ -1,0 +1,93 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      icon="fa fa-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="save"
+      icon="fa fa-save"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Delete"
+      icon="fa fa-ban"
+      class="ui-button-danger"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Update"
+      icon="fa fa-refresh"
+      class="ui-button-primary"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      icon="fa fa-sign-out"
+      class="ui-button-warning"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Sale Summary By Date' | translate">
+      <p-panel header="Range">
+        <div class="p-grid">
+          <label class="p-col-12 p-md-4 p-lg-1" for="account">
+            {{ "From:" | translate }}
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-4">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [showIcon]="true"
+            >
+            </p-calendar>
+          </div>
+
+          <label class="p-col-12 p-md-4 p-lg-1" for="account">
+            {{ "To:" | translate }}
+          </label>
+          <div class="p-col-12 p-md-8 p-lg-4">
+            <p-calendar
+              appendTo="body"
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              [showIcon]="true"
+            >
+            </p-calendar>
+          </div>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+  </p-tabView>
+  <br />
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Details' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="salesummarybydate"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

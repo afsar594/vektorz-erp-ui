@@ -1,0 +1,911 @@
+<!-- <app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" (click)="new()" class="ui-button-info" label="New" icon="fa fa-plus"></button>
+    <button pButton type="button" (click)="edit()" class="ui-button-success" label="Edit"
+      [disabled]="!btnFlag.edit || !Permission.Edit" icon="fa fa-pencil"></button>
+    <button pButton type="button" (click)="cancel()" class="ui-button-warning" label="Cancel"
+      icon="fa fa-close"></button>
+    <button pButton type="button" (click)="Save()" class="ui-button-success" [label]="btnFlag.save ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add || !btnFlag.new" icon="fa fa-save"></button>
+    <button pButton type="button" (click)="list()" class="ui-button-info" label="List" [disabled]="!Permission?.View"
+      icon="fa fa-bars"></button>
+    <button pButton type="button" (click)="Delete()" class="ui-button-danger" label="Delete"
+      [disabled]="!Permission?.Delete || !btnFlag.delete" icon="fa fa-ban"></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" (click)="callDropdowns(true)" icon="fa fa-refresh" class="ui-button-success"></button>
+    <button pButton type="button" (click)="displayPrint()" class="ui-button-success" label="Print"
+      [disabled]="!Permission?.Print || !btnFlag.print" icon="fa fa-print"></button>
+
+    <p-splitButton label="Print" icon="pi pi-print" [model]="printbtn" styleClass="no-gap-split p-button-primary"
+      [disabled]="!btnFlag.edit || !Permission.Print">
+    </p-splitButton>
+
+    <p-splitButton icon="fa fa-print" [model]="printbtn" label="Estimation" *ngIf="!ESTIMATION"
+      (mouseenter)="estimationPrint = true" [disabled]="!btnFlag.edit || !Permission.Print"
+      styleClass="p-button-outlined mr-2 mb-2">
+    </p-splitButton>
+    <button pButton type="button" (click)="ExitNew()" class="ui-button-danger" label="Exit"
+      icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="boqForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Bill Of Quantity' | translate">
+      <div class="p-grid">
+
+        <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "BOQ No" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <input class="w-100" readonly type="text" formControlName="billofqtyNo" pInputText />
+        </div>
+
+        <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "Date" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+            [yearNavigator]="true" yearRange="2000:2040" useUtc dateFormat="dd-mm-yy" formControlName="date"
+            class="w-100" [showIcon]="true"></p-calendar>
+        </div>
+        <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "Job List" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+
+          <p-dropdown filter="true" class="w-100" formControlName="customerEnqId" [options]="jobList">
+          </p-dropdown>
+
+        </div>
+
+
+
+
+        <label class="p-col-1 p-md-1 p-lg-1"><b>{{ "Status" | translate }}</b></label>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <p-dropdown filter="true" class="w-100" formControlName="status" [options]="v_OPENCLOSE">
+          </p-dropdown>
+        </div>
+        <label class="p-col-1 p-md-1 p-lg-1"><b>{{ "Item" | translate }}</b></label>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <input class="w-100" type="text" formControlName="item" pInputText />
+
+        </div>
+        <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "Remarks" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <textarea rows="2" formControlName="remarks" pInputTextarea></textarea>
+        </div>
+      </div>
+
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-panel>
+      <p-header>
+        <div class="flexrow w-100">
+          <span class="w-100" style="margin-top: 6px">
+            {{ "Item Details" | translate }}
+          </span>
+          <span class="w-100 end">
+            <button pButton type="button" label="Browse From Enquiry" (click)="showenquiry()" icon="fa fa-pencil"
+              class="ui-button-success" [disabled]="!btnFlag.new"></button>
+          </span>
+        </div>
+      </p-header>
+      <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey" [settings]="boquantity">
+      </hot-table>
+
+      <div class="p-grid">
+
+        <div class="p-col-5">
+          <hot-table [hotId]="hotid2" [data]="dataset2" [licenseKey]="licensekey" [settings]="boquantity2">
+          </hot-table>
+
+        </div>
+        <div class="p-col-2"></div>
+        <div class="p-col-5">
+          <div class="p-grid">
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <b>{{ "Control Cost Amount" | translate }}</b>
+            </div>
+            <div class="p-col-8 p-md-8 p-lg-8">
+              <input class="w-100" [value]="
+                  boqForm.get('costantsAmount')?.value | number : '1.2-2'
+                " type="text" pInputText readonly />
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <b>{{ "Contingency %" | translate }}</b>
+            </div>
+            <div class="p-col-8 p-md-3 p-lg-3">
+              <div class="ui-inputgroup">
+
+                <input class="w-100" formControlName="contingencyPercentage" type="text" pInputText
+                  (change)="calculateAmounts('contingencyPercentage')" />
+                <span class="ui-inputgroup-addon">%</span>
+              </div>
+
+            </div>
+
+            <div class="p-col-8 p-md-5 p-lg-5">
+              <input class="w-100" [value]="boqForm.get('contingencyAmount')?.value | number : '1.2-2'" type="text"
+                pInputText readonly />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <b>{{ "Profit %" | translate }}</b>
+            </div>
+            <div class="p-col-8 p-md-3 p-lg-3">
+              <div class="ui-inputgroup">
+
+                <input class="w-100" formControlName="proftPercentage" type="text" pInputText
+                  (change)="calculateAmounts('proftPercentage')" />
+                <span class="ui-inputgroup-addon">%</span>
+              </div>
+
+            </div>
+
+            <div class="p-col-8 p-md-5 p-lg-5">
+              <input class="w-100" [value]="boqForm.get('profitAmount')?.value | number : '1.2-2'" type="text"
+                pInputText readonly />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <b>{{ "Gross Amount" | translate }}</b>
+            </div>
+            <div class="p-col-8 p-md-8 p-lg-8">
+              <input class="w-100" [value]="boqForm.get('grossAmount')?.value | number : '1.2-2'" type="text" pInputText
+                readonly />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <b>{{ "Commission %" | translate }}</b>
+            </div>
+            <div class="p-col-8 p-md-3 p-lg-3">
+              <div class="ui-inputgroup">
+
+                <input class="w-100" formControlName="commissionPer" type="text" pInputText
+                  (change)="calculateAmounts('commissionPer')" />
+                <span class="ui-inputgroup-addon">%</span>
+              </div>
+
+            </div>
+
+            <div class="p-col-8 p-md-5 p-lg-5">
+              <input class="w-100" [value]="boqForm.get('commissionAmount')?.value | number : '1.2-2'" type="text"
+                pInputText readonly />
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <b>{{ "Net Amount in BOQ" | translate }}</b>
+            </div>
+            <div class="p-col-8 p-md-8 p-lg-8">
+              <input class="w-100" [value]="boqForm.get('netAmount')?.value | number : '1.2-2'" type="text" pInputText
+                readonly />
+            </div>
+          </div>
+       
+
+
+
+          <div *ngIf="false" class="p-grid">
+            <div class="p-col-4 p-md-4 p-lg-4">
+              <b>{{ "Qoute Amount" | translate }}</b>
+            </div>
+            <div class="p-col-8 p-md-8 p-lg-8">
+              <input class="w-100" [value]="boqForm.get('quoteAmount')?.value | number : '1.2-2'" type="text" pInputText
+                readonly />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+</div>
+<p-dialog header="Bill of Quantity List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '70%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-table #dt [value]="savedboQuantitylist" [columns]="cols" [paginator]="true" [rows]="5">
+    <ng-template pTemplate="caption">
+      <div class="flexSearch">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-list>
+      <tr>
+        <td>{{ list?.billofqtyNo }}</td>
+        <td>{{ list?.date | date : "dd/MM/yyyy" }}</td>
+        <td>{{ list?.jobname }}</td>
+        <td style="max-width: 150px; word-wrap: break-word; white-space: normal">
+          {{ list?.remarks }}
+        </td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil"
+            (click)="GetSavedboqDetails(list?.id); displayMaximizable = false" class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-dialog header="Enquiry List" [(visible)]="displayMaximizableEnquiry" [modal]="true" [style]="{ width: '70%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button pButton type="button" class="ui-button-info" (click)="getSelectedData()" label="Show"
+        icon="pi pi-search"></button>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <button pButton type="button" class="ui-button-danger" label="Clear" icon="fa fa-ban"
+        (click)="clearfilter()"></button>
+      <button pButton type="button" class="ui-button-danger" (click)="displayMaximizableEnquiry = false" label="Close"
+        icon="pi pi-close"></button>
+    </div>
+  </p-toolbar>
+
+  <div class="card card-w-title">
+    <div class="p-grid">
+      <div class="p-col-6">
+        <div class="p-grid">
+          <label for="">Enquiry no</label>
+          <div class="p-col-12 p-md-12 p-lg-12">
+            <input type="text" pInputText class="w-100" [(ngModel)]="enquiryNo" />
+          </div>
+        </div>
+      </div>
+      <div class="p-col-6">
+        <p-panel>
+          <p-header>
+            <p-checkbox [(ngModel)]="isDate" [binary]="true" label="ByDate"></p-checkbox>
+          </p-header>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-1">{{
+              "From" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-11">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" [(ngModel)]="DateFrom" class="w-200"
+                [disabled]="!isDate">
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-1">{{
+              "To" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-11">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" [(ngModel)]="DateTO" class="w-200"
+                [disabled]="!isDate">
+              </p-calendar>
+            </div>
+          </div>
+        </p-panel>
+      </div>
+    </div>
+    <div class="p-sm-12 p-md-12 p-lg-12">
+      <p-table #dte [value]="EnquiryData" styleClass="ui-table-customers" [rowHover]="true" [rows]="5"
+        [paginator]="true">
+        <ng-template pTemplate="caption">
+          <div class="flexSearch">
+            <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Global Filter"
+              (input)="dte.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of colenquiry" [pSortableColumn]="col.field">
+              {{ col.header | translate }}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-list>
+          <tr (click)="getenquirybyID(list.enquiryID)" [ngClass]="{ 'selected-row': list.isSelect }">
+
+            <td>{{ list?.enquiryNo }}</td>
+            <td>{{ list?.enquiryDate | date:'dd/MM/yyyy' }}</td>
+
+            <td>
+              {{ list?.locationName }}
+            </td>
+            <td>{{ list?.contactPerson }}</td>
+            <td>{{ list?.remarks }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-dialog>
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+<ng-container *ngIf="showSalesLookUp">
+  <app-lookup [header]="'Look Up item'" [dataArry]="dataList" [isServerSearch]="isServerSearch"
+    [selectedItem]="selectItem" [columns]="lookupGridColumns" (selectItemEvent)="selectsales($event)"
+    (exitEvent)="exit($event)" [cell]="activeRow" [width]="widthitem" (clearEvent)="clear($event)"
+    (hideDialogEvent)="hide($event)" [tableheader]="'Sales List'" [(show)]="showSalesLookUp"
+    (searchEvent)="onSearch($event)"></app-lookup>
+</ng-container>
+<app-lookup [header]="'Look Up item'" [dataArry]="dataList" [selectedItem]="selectItem" [columns]="lookupGridColumns"
+  (selectItemEvent)="selectsales($event)" (exitEvent)="exit($event)" [cell]="activeRow" [width]="widthitem"
+  (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" [tableheader]="'Sales List'"
+  [(show)]="formControlLookUp"></app-lookup>
+
+
+<app-lookup [header]="'Look Up Cost Center'" [dataArry]="dataList" [selectedItem]="selectItem"
+  [columns]="lookupGridColumns" (selectItemEvent)="selectCostCenter($event)" (exitEvent)="exit($event)"
+  [cell]="activeRow" [width]="width" (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'" [(show)]="showSalesLookUpCost"></app-lookup> -->
+
+
+
+       <!-- latestly edited file: src/app/routes/view/sale/boquantity/boquantity.component.html -->
+
+       <app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" (click)="new()" class="ui-button-info" label="New" icon="fa fa-plus"></button>
+    <button pButton type="button" (click)="edit()" class="ui-button-success" label="Edit"
+      [disabled]="!btnFlag.edit || !Permission.Edit" icon="fa fa-pencil"></button>
+    <button pButton type="button" (click)="cancel()" class="ui-button-warning" label="Cancel"
+      icon="fa fa-close"></button>
+    <button pButton type="button" (click)="Save()" class="ui-button-success" [label]="btnFlag.save ? 'Save' : 'Update'"
+      icon="fa fa-save"></button>
+    <button pButton type="button" (click)="list()" class="ui-button-info" label="List" [disabled]="!Permission?.View"
+      icon="fa fa-bars"></button>
+    <button pButton type="button" (click)="Delete()" class="ui-button-danger" label="Delete"
+      [disabled]="!Permission?.Delete || !btnFlag.delete" icon="fa fa-ban"></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" (click)="callDropdowns(true)" icon="fa fa-refresh" class="ui-button-success"></button>
+    <!-- <button pButton type="button" (click)="displayPrint()" class="ui-button-success" label="Print"
+      [disabled]="!Permission?.Print || !btnFlag.print" icon="fa fa-print"></button> -->
+    <!-- <button pButton type="button" (click)="showPrint(false)" class="ui-button-success" label="Print Preview"
+            [disabled]="!Permission?.Print || !btnFlag.print " icon="fa fa-print"></button> -->
+
+    <p-splitButton label="Print" icon="pi pi-print" [model]="printbtn" styleClass="no-gap-split p-button-primary"
+      [disabled]="!btnFlag.edit || !Permission.Print">
+    </p-splitButton>
+
+    <!-- <p-splitButton icon="fa fa-print" [model]="printbtn" label="Estimation" *ngIf="!ESTIMATION"
+      (mouseenter)="estimationPrint = true" [disabled]="!btnFlag.edit || !Permission.Print"
+      styleClass="p-button-outlined mr-2 mb-2">
+    </p-splitButton> -->
+    <!-- <button *ngIf="!ESTIMATION" pButton type="button" (click)="showPrint(true)" class="ui-button-success" label="Estimation Print"
+            [disabled]="!Permission?.Print || !btnFlag.print " icon="fa fa-print"></button> -->
+    <button pButton type="button" (click)="ExitNew()" class="ui-button-danger" label="Exit"
+      icon="fa fa-sign-out"></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="boqForm">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Bill Of Quantity' | translate">
+      <div class="p-grid">
+        <!-- <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "BOQ Id" | translate }}</b>
+        </div>
+        <div class="p-col-3 p-md-5 p-lg-5">
+          <input class="w-100" readonly formControlName="id" type="text" pInputText />
+        </div> -->
+        <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "BOQ No" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <input class="w-100" readonly type="text" formControlName="billofqtyNo" pInputText />
+        </div>
+           <label class="p-col-1 p-md-1 p-lg-1"><b>{{ "Status" | translate }}</b></label>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <p-dropdown filter="true" class="w-100" formControlName="status" [options]="v_OPENCLOSE">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="p-grid">
+       
+        <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "Job List" | translate }}<span class="required">*</span></b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+        
+          <p-dropdown filter="true" class="w-100" formControlName="customerEnqId" [options]="jobList">
+          </p-dropdown>
+          <div class="error" *ngIf="
+              boqForm.controls.customerEnqId.touched &&
+              boqForm.controls.customerEnqId.invalid
+            ">
+            Job List is Invalid Entry
+          </div>
+        </div>
+                <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "Remarks" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <textarea style=" width: 100%" formControlName="remarks"
+            pInputTextarea></textarea>
+        </div>
+         <!-- <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "Date" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+            [yearNavigator]="true" yearRange="2000:2040" useUtc dateFormat="dd-mm-yy" formControlName="date"
+            class="w-100" [showIcon]="true"></p-calendar>
+        </div> -->
+      </div>
+
+      <div class="p-grid">
+           <div class="p-col-1 p-md-1 p-lg-1">
+          <b>{{ "Date" | translate }}</b>
+        </div>
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+            [yearNavigator]="true" yearRange="2000:2040" useUtc dateFormat="dd-mm-yy" formControlName="date"
+            class="w-100" [showIcon]="true"></p-calendar>
+        </div>
+     
+   
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <!-- <div class="p-col-12 p-lg-12 p-md-12"> -->
+  <div class="card card-w-title">
+    <p-panel>
+      <p-header>
+        <div class="flexrow w-100">
+          <span class="w-100" style="margin-top: 6px">
+            {{ "Item Details" | translate }}
+          </span>
+          <span class="w-100 end">
+            <!-- <button pButton type="button" label="Browse From Enquiry" (click)="displayMaximizableEnquiry = true"
+              icon="fa fa-pencil" class="ui-button-success" [disabled]="!btnFlag.new"></button> -->
+          </span>
+        </div>
+      </p-header>
+      <hot-table  [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey" [settings]="boquantity">
+      </hot-table>
+
+      <div class="p-grid">
+        <div class="p-col-4"></div>
+        <div class="p-col-3"></div>
+        <div class="p-col-5">
+          <hot-table [hotId]="hotid2" [data]="dataset2" [licenseKey]="licensekey" [settings]="boquantity2">
+          </hot-table>
+<!-- SHOW WHEN cals = true -->
+<div *ngIf="cals; else totalAmountSection">
+
+  <div class="p-grid">
+    <div class="p-col-4 p-md-4 p-lg-4">
+      <b>{{ "Total BOQ Estimate Amount" | translate }}</b>
+    </div>
+
+    <div class="p-col-8 p-md-8 p-lg-8">
+      <input
+        class="w-100"
+        [value]="boqForm.get('totalAmount')?.value | number:'1.2-2'"
+        type="text"
+        pInputText
+        readonly
+      />
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-4 p-md-4 p-lg-4">
+      <b>{{ "Control Cost Amount" | translate }}</b>
+    </div>
+
+    <div class="p-col-8 p-md-8 p-lg-8">
+      <input
+        class="w-100"
+        [value]="boqForm.get('costantsAmount')?.value | number:'1.2-2'"
+        type="text"
+        pInputText
+        readonly
+      />
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-4 p-md-4 p-lg-4">
+      <b>{{ "Variance in Control Cost" | translate }}</b>
+    </div>
+
+    <div class="p-col-8 p-md-8 p-lg-8">
+      <input
+        class="w-100"
+        formControlName="profitAmount"
+        [value]="boqForm.get('profitAmount')?.value | number:'1.2-2'"
+        type="text"
+        pInputText
+      />
+    </div>
+  </div>
+
+  <!-- OPTIONAL -->
+  <div *ngIf="false" class="p-grid">
+    <div class="p-col-4 p-md-4 p-lg-4">
+      <b>{{ "Quote Amount" | translate }}</b>
+    </div>
+
+    <div class="p-col-8 p-md-8 p-lg-8">
+      <input
+        class="w-100"
+        [value]="boqForm.get('quoteAmount')?.value | number:'1.2-2'"
+        type="text"
+        pInputText
+        readonly
+      />
+    </div>
+  </div>
+
+</div>
+
+<!-- ELSE PART -->
+<ng-template #totalAmountSection>
+
+  <div class="p-grid">
+    <div class="p-col-6 p-md-6 p-lg-6">
+      <b>{{ "Total Amount" | translate }}</b>
+    </div>
+
+   <div class="p-col-6 p-md-6 p-lg-6">
+  <input
+    class="w-75"
+    [value]="grossAmt | number:'1.2-2'"
+    type="text"
+    pInputText
+    readonly
+    style="text-align: right;"
+  />
+</div>
+  </div>
+
+</ng-template>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+</div>
+<p-dialog header="Bill of Quantity List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '70%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-table #dt [value]="savedboQuantitylist" [columns]="cols" [paginator]="true" [rows]="5">
+    <ng-template pTemplate="caption">
+      <div class="flexSearch">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-list>
+      <tr>
+        <td>{{ list?.billofqtyNo }}</td>
+        <td>{{ list?.date | date : "dd/MM/yyyy" }}</td>
+        <!-- <td>{{getjobName(list?.customerEnqId)}}</td> -->
+        <td>{{ list?.jobname }}</td>
+        <td style="max-width: 150px; word-wrap: break-word; white-space: normal">
+          {{ list?.remarks }}
+        </td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil"
+            (click)="GetSavedboqDetails(list?.id); displayMaximizable = false" class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-dialog header="Enquiry List" [(visible)]="displayMaximizableEnquiry" [modal]="true" [style]="{ width: '70%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button pButton type="button" class="ui-button-info" (click)="getSelectedData()" label="Show"
+        icon="pi pi-search"></button>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <button pButton type="button" class="ui-button-warning" label="Export" icon="fa fa-refresh"
+        (click)="export()"></button>
+      <button pButton type="button" class="ui-button-danger" label="Clear" icon="fa fa-ban"
+        (click)="clearfilter()"></button>
+      <button pButton type="button" class="ui-button-danger" (click)="displayMaximizableEnquiry = false" label="Close"
+        icon="pi pi-close"></button>
+    </div>
+  </p-toolbar>
+
+  <div class="card card-w-title">
+    <div class="p-grid">
+      <div class="p-col-6">
+        <div class="p-grid">
+          <label for="">Enquiry no</label>
+          <div class="p-col-12 p-md-12 p-lg-12">
+            <input type="text" pInputText class="w-100" [(ngModel)]="enquiryNo" />
+          </div>
+        </div>
+      </div>
+      <div class="p-col-6">
+        <p-panel>
+          <p-header>
+            <p-checkbox [(ngModel)]="isDate" [binary]="true" label="ByDate"></p-checkbox>
+          </p-header>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-1">{{
+              "From" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-11">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" [(ngModel)]="DateFrom" class="w-200"
+                [disabled]="!isDate">
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-1">{{
+              "To" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-11">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                [yearNavigator]="true" yearRange="2000:2040" useUtc showIcon="true" [(ngModel)]="DateTO" class="w-200"
+                [disabled]="!isDate">
+              </p-calendar>
+            </div>
+          </div>
+        </p-panel>
+      </div>
+    </div>
+    <div class="p-sm-12 p-md-12 p-lg-12">
+      <p-table #dte [value]="EnquiryData" [(selection)]="selectedEnquires" dataKey="id" styleClass="ui-table-customers"
+        [rowHover]="true" [rows]="5" [paginator]="true">
+        <ng-template pTemplate="caption">
+          <div class="flexSearch">
+            <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Global Filter"
+              (input)="dte.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of colenquiry" [pSortableColumn]="col.field">
+              {{ col.header | translate }}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-list>
+          <tr (click)="toggleSelection(list)">
+            <td [ngClass]="'text-center'">
+              <input [(ngModel)]="list.isSelect" type="checkbox" class="check" [checked]="isSelected(list)" />
+            </td>
+            <td>{{ list?.enquiryId }}</td>
+            <td>{{ list?.itemName }}</td>
+            <!-- <td>{{getjobName(list?.customerEnqId)}}</td> -->
+            <td>{{ list?.itemQty }}</td>
+            <td>
+              {{ list?.itemRate }}
+            </td>
+            <td>{{ list?.unitName }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-dialog>
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+<ng-container *ngIf="showSalesLookUp">
+  <app-lookup [header]="'Look Up item'" [dataArry]="dataList" [isServerSearch]="isServerSearch"
+    [selectedItem]="selectItem" [columns]="lookupGridColumns" (selectItemEvent)="selectsales($event)"
+    (exitEvent)="exit($event)" [cell]="activeRow" [width]="widthitem" (clearEvent)="clear($event)"
+    (hideDialogEvent)="hide($event)" [tableheader]="'Sales List'" [(show)]="showSalesLookUp"
+    (searchEvent)="onSearch($event)"></app-lookup>
+</ng-container>
+<app-lookup [header]="'Look Up item'" [dataArry]="dataList" [selectedItem]="selectItem" [columns]="lookupGridColumns"
+  (selectItemEvent)="selectsales($event)" (exitEvent)="exit($event)" [cell]="activeRow" [width]="widthitem"
+  (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" [tableheader]="'Sales List'"
+  [(show)]="formControlLookUp"></app-lookup>
+<!-- <app-lookup [header]='"Look Up"' [selectedItem]='selectItem' [eleReference]='elementReference' [dataArry]="dataList"
+    (exitEvent)='exit($event)' (clearEvent)='clear($event)' [formControlName]='control' [columns]='lookupGridColumns'
+    (selectItemEvent)='selectsales($event)' (hideDialogEvent)='hide($event)' [tableheader]="'Sales List'"
+    [(show)]='formControlLookUp'></app-lookup> -->
+
+<app-lookup [header]="'Look Up Cost Center'" [dataArry]="dataList" [selectedItem]="selectItem"
+  [columns]="lookupGridColumns" (selectItemEvent)="selectCostCenter($event)" (exitEvent)="exit($event)"
+  [cell]="activeRow" [width]="width" (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'" [(show)]="showSalesLookUpCost"></app-lookup>
+
+<p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '70%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button pButton type="button" class="ui-button-primary" (click)="printAsPDF()" label="Print"
+    icon="fa fa-print"></button>
+
+  <div id="contentToConvertSv">
+    <!-- <body> -->
+    <div class="print page">
+      <div class="company">
+        <div class="flexrow gaprow w-100">
+          <div class="flexcol w-80">
+            <div>
+              <h2 class="flexcol">
+                {{ stationmasterObj?.stationMasterStationName }}
+              </h2>
+
+              <div class="flexrow">
+                <div class="flexcol">
+                  <b>Address </b>
+                  <b>Tel </b>
+                  <b>TRN</b>
+                  <b>Email </b>
+                </div>
+                <div class="flexcol">
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="flexcol">
+                  <div>{{ stationmasterObj?.stationMasterAddress }}&nbsp;</div>
+                  <div>{{ stationmasterObj?.stationMasterTele1 }}&nbsp;</div>
+                  <div>
+                    {{
+                    stationmasterObj?.stationMasterVatNo
+                    ? stationmasterObj?.stationMasterVatNo
+                    : 104093336600003
+                    }}&nbsp;
+                  </div>
+                  <div>{{ stationmasterObj?.stationMasterEmail }}&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flexcol w-20">
+            <div class="end">
+              <img *ngIf="stationmasterObj?.logotype != 'Rectangular'" class="squreImg" [src]="
+                  'data:image/png;base64,' +
+                  stationmasterObj?.stationMasterLogoImg
+                " />
+              <img *ngIf="stationmasterObj?.logotype == 'Rectangular'" class="rectImg" [src]="
+                  'data:image/png;base64,' +
+                  stationmasterObj?.stationMasterLogoImg
+                " />
+            </div>
+          </div>
+        </div>
+        <div class="center">
+          <h2>Bill of Quantity</h2>
+        </div>
+
+        <div class="flex">
+          <div class="bank1">
+            <div class="flexrow">
+              <div class="flexcol">
+                <b>Voucher No </b>
+                <b>Job </b>
+                <!-- <b>customerEnq </b> -->
+                <b>Remark</b>
+              </div>
+              <div class="flexcol">
+                <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                <!-- <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div> -->
+              </div>
+              <div class="flexcol">
+                <div>{{ savedboQuantity?.billofqtyNo }}&nbsp;</div>
+                <!-- <div>{{savedboQuantity?.date |  date}}&nbsp;</div> -->
+
+                <div>
+                  {{ getjobName(savedboQuantity?.customerEnqId) }}&nbsp;
+                </div>
+                <div style="
+                    max-width: 150px;
+                    word-wrap: break-word;
+                    white-space: normal;
+                  ">
+                  {{ savedboQuantity?.remarks }}&nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin: 3px"></div>
+          <div class="bank2">
+            <div class="flexrow">
+              <div class="flexcol">
+                <b>{{ "Date" | translate }}</b>
+                <b>{{ "Status" | translate }} </b>
+              </div>
+              <div class="flexcol">
+                <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              </div>
+              <div class="flexcol">
+                <div>
+                  {{ savedboQuantity?.date | date : "dd/MM/yyyy" }}&nbsp;
+                </div>
+                <div>{{ savedboQuantity?.status }} &nbsp;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <table id="customers">
+          <tr>
+            <th class="w50">{{ "SNO" | translate }}</th>
+            <th>{{ "Item Name" | translate }}</th>
+            <th class="w50">{{ "Unit" | translate }}</th>
+            <th class="w50">{{ "Qty" | translate }}</th>
+            <th class="w50">{{ "Rate" | translate }}</th>
+            <th class="w50">{{ "Amount" | translate }}</th>
+          </tr>
+          <tr *ngFor="
+              let item of savedboQuantity?.billOfQTyDetails;
+              let i = index
+            ">
+            <td>{{ 1 + i }}</td>
+            <td>
+              <span>{{ getItemMasterName(item?.itemCode) }}</span>
+            </td>
+            <td>
+              <span>{{ getUnitName(item?.unitCode) }}</span>
+            </td>
+            <td class="end">
+              <span>{{ item?.qty }}</span>
+            </td>
+            <td class="end">
+              <span>{{ item?.rate }}</span>
+            </td>
+
+            <td class="end">
+              <span>{{ item?.amount }}</span>
+            </td>
+          </tr>
+          <tr *ngFor="
+              let _ of [].constructor(
+                getEmptyRowCount(savedboQuantity?.billOfQTyDetails?.length)
+              );
+              let i = index
+            ">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- </body> -->
+  </div>
+</p-dialog>

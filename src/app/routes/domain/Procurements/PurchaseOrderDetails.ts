@@ -1,0 +1,47 @@
+export interface PurchaseOrderDetails {
+
+    purchaseOrderDetailsId?: number;
+    purchaseOrderId?: number;
+    purchaseOrderDetailsNo?: string;
+    purchaseOrderDetailsSno?: number;
+    purchaseOrderDetailsMatId?: number;
+    purchaseOrderDetailsItemName?: string;
+    purchaseOrderDetailsUnitId?: number;
+    purchaseOrderDetailsUnitName?: string;
+    purchaseOrderDetailsBatchCode?: string;
+    purchaseOrderDetailsManfDate?: Date;
+    purchaseOrderDetailsExpDate?: Date;
+    purchaseOrderDetailsQuantity?: number;
+    purchaseOrderDetailsRate?: number;
+    purchaseOrderDetailsGrossAmount?: number;
+    purchaseOrderDetailsDiscAmount?: number;
+    purchaseOrderDetailsActualAmount?: number;
+    purchaseOrderDetailsVatPer?: number;
+    purchaseOrderDetailsVatAmt?: number;
+    purchaseOrderDetailsNetAmt?: number;
+    purchaseOrderDetailsRemarks?: string;
+    purchaseOrderDetailsIsEdit?: boolean;
+    purchaseOrderDetailsRfqId?: number;
+    purchaseOrderDetailsRfqdId?: number;
+    purchaseOrderDetailsPrId?: number;
+    purchaseOrderDetailsPrdId?: number;
+    purchaseOrderDetailsPoId?: number;
+    purchaseOrderDetailsPodId?: number;
+    purchaseOrderDetailsQtnId?: number;
+    purchaseOrderDetailsQtndId?: number;
+    purchaseOrderDetailsSalesPrice?: number;
+    purchaseOrderDetailsDelStatus?: boolean;
+    purchaseOrderNetStock?: number;
+    purchaseOrderTillNowQTY?: number;
+    purchaseOrderDetailsJobId?: number;
+    purchaseRequisitionId?: number;
+    purchaseOrderDetailsBalQty?: number;
+    IWidth?: number;
+    ILength?: number;
+    SquareMeter?: number;
+    iWidth?: number;
+    iLength?: number;
+    squareMeter?: number;
+    Boq_Det_Id?: number;
+    boq_Det_Id?: number;
+}

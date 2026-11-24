@@ -1,0 +1,545 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Ageing Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      [label]="'Show' | translate"
+      [disabled]="!Permission?.View"
+      (click)="ApplyFilters('list')"
+      icon="fa fa-search"
+      class="ui-button-success"
+    ></button>
+    <p-splitButton
+      icon="fa fa-print"
+      [model]="printbtns"
+      [label]="'Export As' | translate"
+      [disabled]="!Permission?.Print"
+      styleClass="p-button-outlined mr-2 mb-2"
+    ></p-splitButton>
+    <button
+      pButton
+      type="button"
+      [label]="'Exit' | translate"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Ageing Report' | translate">
+      <div class="p-grid p-fluid">
+        <!-- Account Type & Selection Panel -->
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ 'Report For' | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-radioButton
+                  [(ngModel)]="selectedcustomer"
+                  [style]="{ cursor: 'pointer' }"
+                  name="customerType"
+                  value="Receivable"
+                  [label]="'Customers' | translate"
+                ></p-radioButton>
+                <span style="margin-left: 30px"></span>
+                <p-radioButton
+                  [(ngModel)]="selectedcustomer"
+                  [style]="{ cursor: 'pointer' }"
+                  name="customerType"
+                  value="Payable"
+                  [label]="'Suppliers' | translate"
+                ></p-radioButton>
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center" style="margin-top: 5px;">
+              <div class="p-col-12 p-md-3">
+                <label>{{ (selectedcustomer === 'Payable' ? 'Supplier' : 'Customer') | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-dropdown
+                  filter="true"
+                  [options]="customer"
+                  [(ngModel)]="selectedcustomer"
+                  [placeholder]="'Select Type' | translate"
+                ></p-dropdown>
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center" style="margin-top: 6px;">
+              <div class="p-col-12 p-md-3"></div>
+              <div class="p-col-12 p-md-6">
+                <button
+                  type="button"
+                  (click)="ApplyFilters('list')"
+                  pButton
+                  [label]="'Show' | translate"
+                  icon="fa fa-search"
+                  [disabled]="!Permission?.View"
+                  style="width: 100%; background-color: blueviolet; border-color: blueviolet;"
+                ></button>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+
+        <!-- Date & Keyword Panel -->
+        <div class="p-col-12 p-md-4">
+          <p-panel style="min-height: 145px;">
+            <p-header>
+              <b style="color: rgb(179, 136, 219)">{{ 'Filter' | translate }}</b>
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ 'As On' | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  showIcon="true"
+                  [(ngModel)]="selectedAsOnDate"
+                  style="width: 100%;"
+                ></p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center" style="margin-top: 5px;">
+              <div class="p-col-12 p-md-3">
+                <label>{{ 'Search' | translate }}</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <input
+                  pInputText
+                  style="width: 100%"
+                  [placeholder]="'Search name, acc no, contact...' | translate"
+                  [(ngModel)]="keyword"
+                />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+
+        <!-- Options Panel -->
+        <div class="p-col-12 p-md-3">
+          <p-panel style="min-height: 145px;">
+            <p-header>
+              <b style="color: rgb(179, 136, 219)">{{ 'Action' | translate }}</b>
+            </p-header>
+            <div class="p-grid p-ai-center" style="padding-top: 10px;">
+              <div class="p-col-12">
+                <p-checkbox
+                  [label]="'Unallocated' | translate"
+                  [(ngModel)]="showUnallocated"
+                  [binary]="true"
+                ></p-checkbox>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <!-- Modern Ageing Breakdown Cards (exact design language from outstandingstatement) -->
+  <div class="aging-cards-section">
+    <div class="aging-header">
+      <span class="aging-title"><i class="pi pi-chart-bar"></i> {{ 'Ageing Summary' | translate }}</span>
+      <span class="aging-subtitle">{{ 'Outstanding Bal' | translate }}</span>
+    </div>
+    <div class="aging-cards-grid">
+      <!-- 0 - 30 Days -->
+      <div class="aging-card card-0-30">
+        <div class="card-top">
+          <span class="card-label">{{ '0 - 30 Days' | translate }}</span>
+          <span class="card-badge badge-normal">{{ 'Current' | translate }}</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (ZeroToThirty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ 'Up to 1 month' | translate }}</div>
+      </div>
+
+      <!-- 31 - 60 Days -->
+      <div class="aging-card card-31-60">
+        <div class="card-top">
+          <span class="card-label">{{ '31 - 60 Days' | translate }}</span>
+          <span class="card-badge badge-attention">1-2 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (ThirtyOneToSixty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '1 to 2 months' | translate }}</div>
+      </div>
+
+      <!-- 61 - 90 Days -->
+      <div class="aging-card card-61-90">
+        <div class="card-top">
+          <span class="card-label">{{ '61 - 90 Days' | translate }}</span>
+          <span class="card-badge badge-warning">2-3 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (SixtyOneToNinety || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '2 to 3 months' | translate }}</div>
+      </div>
+
+      <!-- 91 - 180 Days -->
+      <div class="aging-card card-91-180">
+        <div class="card-top">
+          <span class="card-label">{{ '91 - 180 Days' | translate }}</span>
+          <span class="card-badge badge-alert">3-6 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (NinetyOneToOneEighty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '3 to 6 months' | translate }}</div>
+      </div>
+
+      <!-- 181 - 360 Days -->
+      <div class="aging-card card-181-360">
+        <div class="card-top">
+          <span class="card-label">{{ '181 - 360 Days' | translate }}</span>
+          <span class="card-badge badge-danger">6-12 Mo</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (OneEightyToThreeSixty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ '6 months to 1 year' | translate }}</div>
+      </div>
+
+      <!-- Over 360 Days -->
+      <div class="aging-card card-over-360">
+        <div class="card-top">
+          <span class="card-label">{{ '> 360 Days' | translate }}</span>
+          <span class="card-badge badge-critical">{{ 'Critical' | translate }}</span>
+        </div>
+        <div class="card-amount">
+          <span class="currency">AED</span>
+          <span class="amount">{{ (aboveThreeSixty || 0) | number : '1.2-2' }}</span>
+        </div>
+        <div class="card-footer-info">{{ 'Over 1 year overdue' | translate }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modern Ageing Statement Table Card -->
+  <div class="card card-w-title statement-table-card">
+    <div class="table-wrapper">
+      <p-table
+        #dt
+        [value]="dataset"
+        [columns]="cols"
+        [paginator]="true"
+        [rows]="15"
+        [rowsPerPageOptions]="[10, 15, 25, 50, 100]"
+        [loading]="loading"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [globalFilterFields]="[
+          'name',
+          'accNo',
+          'crLimit',
+          'crDys',
+          'zeroThirty',
+          'thirtyOneSixty',
+          'sixtyOneNinety',
+          'ninetyOneToOneEighty',
+          'oneEightOneToThreeSixty',
+          'overThreeSixty',
+          'crBal',
+          'unAllocated',
+          'unAllocatedBal',
+          'outBalance',
+          'contact_Person',
+          'cT_Name',
+          'tel1',
+          'mobile'
+        ]"
+        styleClass="p-datatable-striped p-datatable-sm modern-statement-table"
+        [responsive]="true"
+      >
+        <!-- Caption / Table Header Toolbar -->
+        <ng-template pTemplate="caption">
+          <div class="table-header-container">
+            <div class="header-left">
+              <span class="table-title">
+                <i class="pi pi-table"></i>
+                {{ 'Ageing Report Details' | translate }}
+              </span>
+              <span class="record-count-badge" *ngIf="dataset && dataset.length > 0">
+                {{ dataset.length }} {{ (dataset.length === 1 ? 'Account' : 'Accounts') | translate }}
+              </span>
+              <span class="record-count-badge badge-empty" *ngIf="!dataset || dataset.length === 0">
+                0 {{ 'Accounts' | translate }}
+              </span>
+            </div>
+            <div class="header-right">
+              <span class="p-input-icon-left search-wrapper">
+                <i class="pi pi-search"></i>
+                <input
+                  pInputText
+                  type="text"
+                  (input)="dt.filterGlobal($event.target.value, 'contains')"
+                  [placeholder]="'Search name, acc no, contact...' | translate"
+                  class="table-search-input"
+                />
+              </span>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-filter-slash"
+                [label]="'Reset' | translate"
+                class="p-button-outlined p-button-secondary p-button-sm reset-btn"
+                (click)="dt.reset()"
+              ></button>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Table Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name" class="th-name">
+              {{ 'Account Name' | translate }} <p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="accNo" class="th-acc text-center">
+              {{ 'Acc No' | translate }} <p-sortIcon field="accNo"></p-sortIcon>
+            </th>
+            <th pSortableColumn="crLimit" class="th-cr-limit text-right">
+              {{ 'Cr Limit' | translate }} <p-sortIcon field="crLimit"></p-sortIcon>
+            </th>
+            <th pSortableColumn="crDys" class="th-cr-dys text-center">
+              {{ 'Cr Days' | translate }} <p-sortIcon field="crDys"></p-sortIcon>
+            </th>
+            <th pSortableColumn="zeroThirty" class="th-bucket-0-30 text-right">
+              {{ '0 - 30' | translate }} <p-sortIcon field="zeroThirty"></p-sortIcon>
+            </th>
+            <th pSortableColumn="thirtyOneSixty" class="th-bucket-31-60 text-right">
+              {{ '31 - 60' | translate }} <p-sortIcon field="thirtyOneSixty"></p-sortIcon>
+            </th>
+            <th pSortableColumn="sixtyOneNinety" class="th-bucket-61-90 text-right">
+              {{ '61 - 90' | translate }} <p-sortIcon field="sixtyOneNinety"></p-sortIcon>
+            </th>
+            <th pSortableColumn="ninetyOneToOneEighty" class="th-bucket-91-180 text-right">
+              {{ '91 - 180' | translate }} <p-sortIcon field="ninetyOneToOneEighty"></p-sortIcon>
+            </th>
+            <th pSortableColumn="oneEightyOneToThreeSixty" class="th-bucket-181-360 text-right">
+              {{ '181 - 360' | translate }} <p-sortIcon field="oneEightyOneToThreeSixty"></p-sortIcon>
+            </th>
+            <th pSortableColumn="overThreeSixty" class="th-bucket-over-360 text-right">
+              {{ '> 360' | translate }} <p-sortIcon field="overThreeSixty"></p-sortIcon>
+            </th>
+            <th pSortableColumn="crBal" class="th-cr-bal text-right">
+              {{ 'Cr Bal' | translate }} <p-sortIcon field="crBal"></p-sortIcon>
+            </th>
+            <th pSortableColumn="unAllocated" class="th-unallocated text-right">
+              {{ 'Unallocated' | translate }} <p-sortIcon field="unAllocated"></p-sortIcon>
+            </th>
+            <th pSortableColumn="outBalance" class="th-balance text-right">
+              {{ 'Outstanding Bal' | translate }} <p-sortIcon field="outBalance"></p-sortIcon>
+            </th>
+            <th pSortableColumn="contact_Person" class="th-contact">
+              {{ 'Contact Person' | translate }} <p-sortIcon field="contact_Person"></p-sortIcon>
+            </th>
+            <th pSortableColumn="tel1" class="th-phone text-center">
+              {{ 'Phone' | translate }} <p-sortIcon field="tel1"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <!-- Table Body -->
+        <ng-template pTemplate="body" let-item>
+          <tr (dblclick)="onRowDoubleClick($event, item)" class="statement-row">
+            <!-- Account Name -->
+            <td class="td-name" [title]="item.remarks ? (item.name + ' — ' + item.remarks) : (item.name || '')">
+              <a
+                class="account-link"
+                (click)="viewStatement(item)"
+                title="Click to view statement"
+              >
+                <i class="pi pi-user mr-1" *ngIf="selectedcustomer === 'Receivable'"></i>
+                <i class="pi pi-building mr-1" *ngIf="selectedcustomer === 'Payable'"></i>
+                {{ item.name }}
+              </a>
+            </td>
+
+            <!-- Acc No -->
+            <td class="td-acc text-center">
+              <span class="acc-badge">{{ item.accNo || '-' }}</span>
+            </td>
+
+            <!-- Cr Limit -->
+            <td class="td-cr-limit text-right amount-cell">
+              {{ item.crLimit | number: '1.2-2' }}
+            </td>
+
+            <!-- Cr Days -->
+            <td class="td-cr-dys text-center">
+              <span *ngIf="item.crDys != null && item.crDys !== ''" class="badge-days">
+                {{ item.crDys }}
+              </span>
+              <span *ngIf="item.crDys == null || item.crDys === ''" class="muted-dash">-</span>
+            </td>
+
+            <!-- 0 - 30 Days (Soft Green) -->
+            <td class="td-bucket-0-30 text-right amount-cell cell-0-30">
+              <span class="badge-bucket-0-30">{{ item.zeroThirty | number: '1.2-2' }}</span>
+            </td>
+
+            <!-- 31 - 60 Days (Teal) -->
+            <td class="td-bucket-31-60 text-right amount-cell cell-31-60">
+              <span class="badge-bucket-31-60">{{ item.thirtyOneSixty | number: '1.2-2' }}</span>
+            </td>
+
+            <!-- 61 - 90 Days (Yellow/Amber) -->
+            <td class="td-bucket-61-90 text-right amount-cell cell-61-90">
+              <span class="badge-bucket-61-90">{{ item.sixtyOneNinety | number: '1.2-2' }}</span>
+            </td>
+
+            <!-- 91 - 180 Days (Orange) -->
+            <td class="td-bucket-91-180 text-right amount-cell cell-91-180">
+              <span class="badge-bucket-91-180">{{ item.ninetyOneToOneEighty | number: '1.2-2' }}</span>
+            </td>
+
+            <!-- 181 - 360 Days (Rose) -->
+            <td class="td-bucket-181-360 text-right amount-cell cell-181-360">
+              <span class="badge-bucket-181-360">{{ item.oneEightyOneToThreeSixty | number: '1.2-2' }}</span>
+            </td>
+
+            <!-- > 360 Days (Critical Red) -->
+            <td class="td-bucket-over-360 text-right amount-cell cell-over-360">
+              <span class="badge-bucket-over-360">{{ item.overThreeSixty | number: '1.2-2' }}</span>
+            </td>
+
+            <!-- Cr Bal -->
+            <td class="td-cr-bal text-right amount-cell">
+              <span *ngIf="item.crBal && item.crBal != 0">
+                {{ item.crBal | number: '1.2-2' }}
+              </span>
+              <span *ngIf="!item.crBal || item.crBal == 0" class="muted-dash">-</span>
+            </td>
+
+            <!-- Unallocated -->
+            <td class="td-unallocated text-right settled-cell">
+              <span class="badge-settled" *ngIf="item.unAllocated && item.unAllocated != 0">
+                {{ item.unAllocated | number: '1.2-2' }}
+              </span>
+              <span class="badge-settled-zero" *ngIf="!item.unAllocated || item.unAllocated == 0">
+                0.00
+              </span>
+            </td>
+
+            <!-- Outstanding Balance (COLOR CODED - Warm Amber / Coral Badge like outstandingstatement) -->
+            <td class="td-balance text-right balance-cell" [title]="'Total: ' + (item.allBal | number: '1.2-2') + ' • Out: ' + (item.outBal | number: '1.2-2')">
+              <span
+                class="badge-balance"
+                [ngClass]="getBalanceBadgeClass(item.outBalance)"
+                *ngIf="item.outBalance && item.outBalance != 0"
+              >
+                {{ item.outBalance | number: '1.2-2' }}
+              </span>
+              <span class="badge-balance-zero" *ngIf="!item.outBalance || item.outBalance == 0">
+                0.00
+              </span>
+            </td>
+
+            <!-- Contact Person -->
+            <td class="td-contact" [title]="item.contact_Person || ''">
+              <span>{{ item.contact_Person || '-' }}</span>
+              <small class="contact-type" *ngIf="item.cT_Name && item.cT_Name !== '0'">{{ item.cT_Name }}</small>
+            </td>
+
+            <!-- Phone / Mobile -->
+            <td class="td-phone" [title]="(item.tel1 || '') + (item.mobile ? ' / ' + item.mobile : '')">
+              <span>{{ item.tel1 || '-' }}</span>
+              <small class="mobile-number" *ngIf="item.mobile && item.mobile !== item.tel1">{{ item.mobile }}</small>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Table Footer Totals Row -->
+        <ng-template pTemplate="footer">
+          <tr class="table-footer-row" *ngIf="dataset && dataset.length > 0">
+            <td colspan="2" class="total-label-cell">
+              <i class="pi pi-calculator mr-1"></i> {{ 'Total' | translate }}
+            </td>
+            <td class="text-right total-amount-cell">
+              {{ totalCrLimit | number: '1.2-2' }}
+            </td>
+            <td class="text-center">-</td>
+            <td class="text-right total-amount-cell total-0-30">
+              {{ totalZeroThirty | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-amount-cell total-31-60">
+              {{ totalThirtyOneSixty | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-amount-cell total-61-90">
+              {{ totalSixtyOneNinety | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-amount-cell total-91-180">
+              {{ totalNinetyOneToOneEighty | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-amount-cell total-181-360">
+              {{ totalOneEightOneToThreeSixty | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-amount-cell total-over-360">
+              {{ totalOverThreeSixty | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-amount-cell">
+              {{ totalCrBal | number: '1.2-2' }}
+            </td>
+            <td class="text-right total-settled-cell">
+              <span class="badge-settled total-badge">
+                {{ totalUnallocated | number: '1.2-2' }}
+              </span>
+            </td>
+            <td class="text-right total-balance-cell">
+              <span class="badge-balance total-badge">
+                {{ totalOutBalance | number: '1.2-2' }}
+              </span>
+            </td>
+            <td colspan="2" class="text-center">-</td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="15" class="empty-table-cell">
+              <div class="empty-state-wrapper">
+                <div class="empty-icon-circle">
+                  <i class="pi pi-folder-open"></i>
+                </div>
+                <h4 class="empty-title">{{ 'No records found' | translate }}</h4>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <br /><br />
+</div>

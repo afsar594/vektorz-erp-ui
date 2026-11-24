@@ -1,0 +1,641 @@
+<div class="p-grid dashboard">
+  <!-- Executive Quick Shortcuts Panel -->
+  <!-- <div class="p-col-12" style="padding-bottom: 0.25rem;">
+    <div class="quick-shortcuts-panel">
+      <div class="shortcuts-header">
+        <div class="shortcuts-title-group">
+          <span class="shortcuts-badge-pill">
+            <i class="pi pi-bolt"></i>
+            <span>QUICK ACCESS SHORTCUTS</span>
+          </span>
+          <span class="shortcuts-hint">Press keyboard shortcut or click card to open</span>
+        </div>
+      </div>
+
+      <div class="p-grid shortcuts-grid">
+        <div class="p-col-12 p-md-6" style="padding: 0.35rem 0.5rem;">
+          <div class="shortcut-action-card product-inquiry-card" (click)="openProductInquiry()" role="button" tabindex="0" title="Press F1 to open Product Inquiry">
+            <div class="card-icon-wrapper blue-gradient">
+              <i class="pi pi-search"></i>
+            </div>
+            <div class="card-content">
+              <div class="card-top-line">
+                <span class="card-name">Product Inquiry</span>
+                <span class="kbd-badge"><kbd>F1</kbd></span>
+              </div>
+              <div class="card-description">Stock levels across warehouses, pricing details, purchase & sales history</div>
+            </div>
+            <div class="card-arrow">
+              <i class="pi pi-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-col-12 p-md-6" style="padding: 0.35rem 0.5rem;">
+          <div class="shortcut-action-card sales-issue-card" (click)="openSalesIssue()" role="button" tabindex="0" title="Press F2 to open Sales / Issue">
+            <div class="card-icon-wrapper emerald-gradient">
+              <i class="pi pi-shopping-cart"></i>
+            </div>
+            <div class="card-content">
+              <div class="card-top-line">
+                <span class="card-name">Sales / Issue</span>
+                <span class="kbd-badge"><kbd>F2</kbd></span>
+              </div>
+              <div class="card-description">Direct item sales voucher, catalog selector, real-time discount & tax billing</div>
+            </div>
+            <div class="card-arrow">
+              <i class="pi pi-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="p-col-12 p-md-6 p-lg-3">
+    <div class="p-grid card overview-box overview-box-1">
+      <div class="p-col-4 overview-box-icon">
+        <img src="assets/layout/images/icon-paper.png" />
+      </div>
+      <div class="p-col-8">
+        <app-circle-progress
+          [value]="pdcIssuePer"
+          [strokeColor]="'#76c9f9'"
+        ></app-circle-progress>
+        <span class="overview-box-name">
+          <span class="count">{{ pdcIssueCount }}</span>
+          {{ 'PDC ISSUED' | translate }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="p-col-12 p-md-6 p-lg-3">
+    <div class="p-grid card overview-box overview-box-2">
+      <div class="p-col-4 overview-box-icon">
+        <img src="assets/layout/images/icon-mail.png" />
+      </div>
+
+      <div class="p-col-8">
+        <!-- <span class="overview-box-count">3216</span> -->
+        <app-circle-progress
+          [value]="pdcReceiveper"
+          [strokeColor]="'#1f487e'"
+        ></app-circle-progress>
+        <span class="overview-box-name">
+          <span class="count">{{ pdcReceiveCount }}</span>
+          {{ 'PDC RECEIVED' | translate }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="p-col-12 p-md-6 p-lg-3">
+    <div class="p-grid card overview-box overview-box-3">
+      <div class="p-col-4 overview-box-icon">
+        <img src="assets/layout/images/icon-location.png" />
+      </div>
+      <div class="p-col-8">
+        <span class="overview-box-count">{{ mainCash }}</span>
+        <span class="overview-box-name">{{ 'CASH BALANCE' | translate }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="p-col-12 p-md-6 p-lg-3">
+    <div class="p-grid card overview-box overview-box-4">
+      <div class="p-col-4 overview-box-icon">
+        <img src="assets/layout/images/icon-orders.png" />
+      </div>
+      <div class="p-col-8">
+        <span class="overview-box-count">{{ BankBalance }}</span>
+        <span class="overview-box-name">{{ 'BANK BALANCE' | translate }}</span>
+      </div>
+    </div>
+  </div>
+  <p-panel>
+    <p-header>
+      <div style="float: left; padding: 4px 0"></div>
+      <div style="float: right">
+        <p-splitButton
+          [label]="label1 | translate"
+          [model]="items1"
+          styleClass="p-button-outlined mr-2 mb-2"
+        ></p-splitButton>
+      </div>
+    </p-header>
+
+    <div class="p-grid">
+      <div class="p-col-12 p-md-12 p-lg-4 contacts">
+        <p-panel>
+          <p-header>
+            <div style="float: left; padding: 4px 0">{{ 'Split Summary' | translate }}</div>
+          </p-header>
+          <ul>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/recieved.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name"
+                  >{{ 'Incoming PDC Amount (Recieved) in 5days' | translate }}</span
+                >
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  incomingPdcReceived
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/issued.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name">{{ 'Incoming PDC Amount (Issued) in 5days' | translate }}</span>
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  incomingPdcIssue
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/purchase.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name">{{ 'Current Month Purchase' | translate }}</span>
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  CurrentMonthPurchase
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/sales.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name">{{ 'Current Month Sales' | translate }}</span>
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  CurrentMonthSales
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/purchase.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name">{{ 'Previous Month Purchase' | translate }}</span>
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  PrevMonthPurchase
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/sales.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name">{{ 'Previous Month Sales' | translate }}</span>
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  PrevMonthSales
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/purchase.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name">{{ 'Current Month Expense' | translate }}</span>
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  CurrMonthExpense
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/purchase.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span class="name">{{ 'Previous Month Expense' | translate }}</span>
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  PrevMonthExpense
+                }}</span>
+              </div>
+            </li>
+          </ul>
+        </p-panel>
+        <p-panel>
+          <p-header>
+            <div style="float: left; padding: 4px 0">{{ 'Approved/Pending' | translate }}</div>
+          </p-header>
+          <ul>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/purchase_req.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span
+                  class="name"
+                  (click)="RouterNavigate('Purchase Requisition', 'Pending')"
+                  >{{ 'Purchase Requisition Pending' | translate }}</span
+                >
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  PurchaseRequisitionCount
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/orderpending.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span
+                  class="name"
+                  (click)="RouterNavigate('Purchase Order', 'Pending')"
+                  >{{ 'Purchase Order Pending' | translate }}</span
+                >
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  PurchaseOrderCount
+                }}</span>
+              </div>
+            </li>
+            <li class="clearfix">
+              <img
+                src="assets/layout/images/approved.png"
+                library="verona-layout"
+                width="45"
+              />
+              <div class="contact-info">
+                <span
+                  class="name"
+                  (click)="RouterNavigate('Purchase Order', 'Approved')"
+                  >{{ 'Order Approved' | translate }}</span
+                >
+              </div>
+              <div class="contact-actions">
+                <span class="connection-status online">{{
+                  ApprovedOrdersCount
+                }}</span>
+              </div>
+            </li>
+          </ul>
+        </p-panel>
+      </div>
+
+      <div class="p-grid p-col-12 p-md-12 p-lg-8 contacts">
+        <div class="p-col-12 p-md-12 p-lg-6">
+          <p-panel>
+            <p-header>
+              <div style="float: left; padding: 4px 0">{{ 'Sales' | translate }}</div>
+              <div style="float: right">
+                <!-- <p-splitButton
+                [label]="label1"
+                [model]="items1"
+                (onClick)="selectedChart = 'SALES'"
+                styleClass="p-button-outlined mr-2 mb-2"
+              ></p-splitButton> -->
+              </div>
+            </p-header>
+
+            <div>
+              <p-chart
+                *ngIf="chartData"
+                type="line"
+                [data]="chartData"
+                [options]="chartOptions"
+                [responsive]="true"
+              ></p-chart>
+            </div>
+          </p-panel>
+
+          <p-panel>
+            <p-header>
+              <div style="float: left; padding: 4px 0">{{ 'Purchase' | translate }}</div>
+              <div style="float: right">
+                <!-- <p-splitButton
+                [label]="label1"
+                [model]="items1"
+                (onClick)="selectedChart = 'PURCHASE'"
+                styleClass="p-button-outlined mr-2 mb-2"
+              ></p-splitButton> -->
+              </div>
+            </p-header>
+            <div style="overflow: auto">
+              <p-chart
+                *ngIf="chartData4"
+                type="line"
+                [data]="chartData4"
+                [options]="chartOptions"
+                [responsive]="true"
+                type="line"
+              ></p-chart>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-6">
+          <p-panel>
+            <p-header>
+              <div style="float: left; padding: 4px 0">
+                {{ 'Income/Expense/Profit' | translate }}
+              </div>
+              <div style="float: right">
+                <!-- <p-splitButton
+                [label]="label3"
+                [model]="items3"
+                styleClass="p-button-outlined mr-2 mb-2"
+              ></p-splitButton> -->
+              </div>
+            </p-header>
+            <div style="overflow: auto">
+              <p-chart
+                type="bar"
+                [data]="chartData2"
+                responsive="true"
+              ></p-chart>
+            </div>
+          </p-panel>
+
+          <p-panel>
+            <p-header>
+              <div style="float: left; padding: 4px 0">
+                {{ 'Account Group Balance' | translate }}
+              </div>
+              <div style="float: right">
+                <!-- <p-splitButton
+                [label]="label4"
+                [model]="items4"
+                (onClick)="OnChartChangeEvent($event, 'ACCOUNT_GRP')"
+                styleClass="p-button-outlined mr-2 mb-2"
+              ></p-splitButton> -->
+              </div>
+            </p-header>
+            <div style="overflow: auto">
+              <p-chart
+                type="bar"
+                [data]="chartData3"
+                responsive="true"
+              ></p-chart>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p-tabView (onChange)="LoadTabs($event.index)">
+        <p-tabPanel [header]="'Suppliers' | translate">
+          <p-table
+            #tt1
+            [columns]="suppliercols"
+            [value]="supplierData"
+            [scrollable]="true"
+            scrollDirection="both"
+            scrollHeight="350px"
+            [paginator]="true"
+            [rows]="10"
+          >
+            <ng-template pTemplate="caption">
+              <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                [placeholder]="'Global Filter' | translate"
+                (input)="tt1.filterGlobal($event.target.value, 'contains')"
+                style="width: 85% !important"
+              />
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th *ngFor="let col of columns">
+                  {{ col.header | translate }}
+                </th>
+              </tr>
+              <tr>
+                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                  <input
+                    pInputText
+                    type="text"
+                    style="width: 100%"
+                    (input)="
+                      tt1?.filter(
+                        $event.target.value,
+                        col.field,
+                        col.filterMatchMode
+                      )
+                    "
+                  />
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr [pSelectableRow]="rowData">
+                <td *ngFor="let col of columns">
+                  {{ rowData[col.field] }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+        <p-tabPanel [header]="'Customers' | translate">
+          <p-table
+            #tt2
+            [columns]="customercols"
+            [value]="customerData"
+            [scrollable]="true"
+            scrollDirection="both"
+            scrollHeight="300px"
+            [paginator]="true"
+            [rows]="10"
+          >
+            <ng-template pTemplate="caption">
+              <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                [placeholder]="'Global Filter' | translate"
+                (input)="tt2.filterGlobal($event.target.value, 'contains')"
+                style="width: 85% !important"
+              />
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th *ngFor="let col of columns">
+                  {{ col.header | translate }}
+                </th>
+              </tr>
+              <tr>
+                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                  <input
+                    pInputText
+                    type="text"
+                    style="width: 100%"
+                    (input)="
+                      tt2?.filter(
+                        $event.target.value,
+                        col.field,
+                        col.filterMatchMode
+                      )
+                    "
+                  />
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr [pSelectableRow]="rowData">
+                <td *ngFor="let col of columns">
+                  {{ rowData[col.field] }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+        <p-tabPanel [header]="'PDC Issued' | translate">
+          <p-table
+            #tt3
+            [columns]="pdcIssuecols"
+            [value]="pdcIssueData"
+            [scrollable]="true"
+            scrollDirection="both"
+            scrollHeight="300px"
+            [paginator]="true"
+            [rows]="10"
+          >
+            <ng-template pTemplate="caption">
+              <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                [placeholder]="'Global Filter' | translate"
+                (input)="tt3.filterGlobal($event.target.value, 'contains')"
+                style="width: 85% !important"
+              />
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th *ngFor="let col of columns">
+                  {{ col.header | translate }}
+                </th>
+              </tr>
+              <tr>
+                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                  <input
+                    pInputText
+                    type="text"
+                    style="width: 100%"
+                    (input)="
+                      tt3?.filter(
+                        $event.target.value,
+                        col.field,
+                        col.filterMatchMode
+                      )
+                    "
+                  />
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr [pSelectableRow]="rowData">
+                <td *ngFor="let col of columns">
+                  {{ rowData[col.field] }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+        <p-tabPanel [header]="'PDC Recieved' | translate">
+          <p-table
+            #tt4
+            [columns]="pdcReceivecols"
+            [value]="pdcReceiveData"
+            [scrollable]="true"
+            scrollDirection="both"
+            scrollHeight="300px"
+            [paginator]="true"
+            [rows]="10"
+          >
+            <ng-template pTemplate="caption">
+              <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                [placeholder]="'Global Filter' | translate"
+                (input)="tt4.filterGlobal($event.target.value, 'contains')"
+                style="width: 85% !important"
+              />
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th *ngFor="let col of columns">
+                  {{ col.header | translate }}
+                </th>
+              </tr>
+              <tr>
+                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                  <input
+                    pInputText
+                    type="text"
+                    style="width: 100%"
+                    (input)="
+                      tt4?.filter(
+                        $event.target.value,
+                        col.field,
+                        col.filterMatchMode
+                      )
+                    "
+                  />
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr [pSelectableRow]="rowData">
+                <td *ngFor="let col of columns">
+                  {{ rowData[col.field] }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </p-panel>
+</div>

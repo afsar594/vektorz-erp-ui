@@ -1,0 +1,580 @@
+<app-page-header *ngIf="listmode" [title]="title | translate"></app-page-header>
+
+<div class="modern-ui-container" [formGroup]="newitemForm"
+  [ngStyle]="{ 'background-color': listmode ? '#f8fafc' : 'white' }">
+  <!-- Header -->
+  <div class="ui-header" *ngIf="listmode">
+    <div class="header-content">
+      <div class="ui-toolbar-group-left">
+        <button pButton type="button" label="New" icon="pi pi-plus" (click)="new()"></button>
+        <button pButton type="button" label="Edit" icon="fa fa-pencil" [disabled]="!btnFlag.edit || !Permission?.Edit"
+          class="ui-button-success" (click)="edit()"></button>
+
+        <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag?.cancel" label="Cancel"
+          (click)="cancel()" icon="fa fa-ban"></button>
+        <button pButton type="button" [disabled]="btnFlag.edit || !Permission?.Add"
+          [label]="btnFlag?.save == true ? 'Save' : 'Update'" icon="fa fa-floppy-o" (click)="saveItem()"
+          class="ui-button-success"></button>
+
+        <button pButton type="button" label="List" [disabled]="!Permission?.View" icon="fa fa-list"
+          (click)="onClickTemplateList(false)" class="ui-button-info"></button>
+        <!-- routerLink="/master/item/list" -->
+        <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag.delete || !Permission?.Delete"
+          (click)="delete()" label="Delete" icon="fa fa-trash"></button>
+      </div>
+
+      <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Browse Template" icon="fa fa-plus" (click)="onClickTemplateList(true)"
+          class="ui-button-success"></button>
+        <button pButton type="button" label="Back" (click)="navigateBack()" icon="fa fa-sign-out"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="left-section">
+      <!-- Basic Info PANEL -->
+      <p-panel>
+        <p-header>
+          {{ "Basic Information" | translate }}
+        </p-header>
+
+        <div class="min-panel">
+          <!-- Group -->
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="groupname">
+              {{ "Group" | translate }} <span class="required">*</span>
+            </label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <div class="p-inputgroup">
+                <input type="text" #acctCtrl pInputText placeholder="Search group..." class="w-100" />
+                <button pButton type="button" icon="pi pi-search" (click)="openAccount()"
+                  class="p-button-outlined"></button>
+              </div>
+            </div>
+
+            <!-- Stock Type -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="stockType">{{
+              "Stock Type" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <p-dropdown filter="true" formControlName="itemMasterStockType" [options]="ItemStockList"
+                placeholder="Choose stock type..." class="w-100"></p-dropdown>
+            </div>
+
+            <!-- Brand -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="brand">{{
+              "Brand" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <div class="p-inputgroup">
+                <input type="text" #brandCtrl formControlName="itemMasterVenderId" pInputText
+                  placeholder="Select brand..." class="w-100" />
+                <button pButton icon="pi pi-search" (click)="openBrand()" class="p-button-outlined"></button>
+              </div>
+            </div>
+
+            <!-- Arabic Name -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="arabName">{{
+              "Arabic Name" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input type="text" id="arabName" pInputText placeholder="Enter Arabic name..." class="w-100" />
+            </div>
+
+            <!-- Supplier -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="supplier">{{
+              "Supplier" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <div class="p-inputgroup">
+                <input type="text" #supplierCtrl formControlName="itemMasterSupplierId" pInputText
+                  placeholder="Select supplier..." class="w-100" />
+                <button pButton icon="pi pi-search" (click)="openSupplier()" class="p-button-outlined"></button>
+              </div>
+            </div>
+
+            <!-- Item Name -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="item">
+              {{ "Item Name" | translate }} <span class="required">*</span>
+            </label>
+            <div #itemNameContainer class="p-col-12 p-md-12 p-lg-4 p-0 item-name-container">
+              <textarea formControlName="itemMasterItemName"
+                (input)="onKeyUp($event.target.value)"
+                (focus)="onItemNameFocus()"
+                pInputTextarea
+                placeholder="Enter item name..."
+                rows="3"
+                class="w-100"
+                [class.has-matching-items]="matchingItems && matchingItems.length > 0 && showMatchingDropdown"></textarea>
+
+              <!-- Helper toggle hint when dropdown was closed but matching items exist -->
+              <div *ngIf="matchingItems && matchingItems.length > 0 && !showMatchingDropdown"
+                class="existing-items-hint"
+                (click)="showMatchingDropdown = true"
+                title="Click to view matching items">
+                <i class="pi pi-exclamation-triangle mr-1"></i>
+                <span>{{ matchingItems.length }} existing item(s) found — <a href="javascript:void(0)">view list</a></span>
+              </div>
+
+              <!-- Matching Items Floating Dropdown -->
+              <div class="matching-items-dropdown shadow-lg" *ngIf="showMatchingDropdown && (matchingItems.length > 0 || isSearchingMatchingItems)">
+                <!-- Dropdown Header -->
+                <div class="matching-dropdown-header">
+                  <div class="header-title-wrap">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    <div>
+                      <span class="header-title" *ngIf="!isSearchingMatchingItems">
+                        {{ matchingItems.length }} Matching Existing {{ matchingItems.length === 1 ? 'Item' : 'Items' }} Found
+                      </span>
+                      <span class="header-title" *ngIf="isSearchingMatchingItems">
+                        Searching existing items...
+                      </span>
+                      <span class="header-subtitle">
+                        Pre-existing item in system — check to prevent duplicate
+                      </span>
+                    </div>
+                  </div>
+                  <button type="button" class="close-btn" (click)="closeMatchingDropdown()" title="Dismiss">
+                    <i class="pi pi-times"></i>
+                  </button>
+                </div>
+
+                <!-- Searching Loading State -->
+                <div *ngIf="isSearchingMatchingItems" class="matching-loading-state">
+                  <i class="pi pi-spin pi-spinner"></i>
+                  <span>Checking database for existing items...</span>
+                </div>
+
+                <!-- Results List -->
+                <div *ngIf="!isSearchingMatchingItems && matchingItems.length > 0" class="matching-items-list">
+                  <div *ngFor="let item of matchingItems" class="matching-item-row">
+                    <div class="item-info">
+                      <div class="item-primary-name">
+                        <span class="name-text" [title]="item.itemMasterItemName" [innerHTML]="getHighlightedName(item.itemMasterItemName)"></span>
+                        <span *ngIf="item.itemMasterItemId === newitemForm?.get('itemMasterItemId')?.value" class="badge-current">Current Item</span>
+                      </div>
+                      <div class="item-meta-tags">
+                        <span class="meta-tag id-tag">
+                          #{{ item.itemMasterItemId }}
+                        </span>
+                        <span *ngIf="item.itemMasterPartNo" class="meta-tag">
+                          <strong>Part:</strong> {{ item.itemMasterPartNo }}
+                        </span>
+                        <span *ngIf="item.itemMasterMaterialCode" class="meta-tag">
+                          <strong>Code:</strong> {{ item.itemMasterMaterialCode }}
+                        </span>
+                        <span *ngIf="item.itemMasterCurrentStock != null" class="meta-tag stock-tag">
+                          <strong>Stock:</strong> {{ item.itemMasterCurrentStock }}
+                        </span>
+                        <span *ngIf="item.itemMasterUnitPrice != null" class="meta-tag price-tag">
+                          <strong>Price:</strong> {{ item.itemMasterUnitPrice | number:'1.2-2' }}
+                        </span>
+                      </div>
+                    </div>
+                    <!-- Load button commented out for now:
+                    <div class="item-actions" (click)="$event.stopPropagation()">
+                      <button pButton type="button"
+                        icon="pi pi-folder-open"
+                        label="Load"
+                        class="p-button-sm p-button-outlined p-button-warning action-btn"
+                        (click)="selectExistingItem(item)"
+                        title="Load and edit this existing item">
+                      </button>
+                    </div>
+                    -->
+                  </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="matching-dropdown-footer">
+                  <i class="pi pi-info-circle mr-1"></i>
+                  Press <strong>Esc</strong> to dismiss or click outside.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+
+      <!-- SPECIFICATIONS PANEL -->
+      <p-panel>
+        <p-header>{{ "Specifications" | translate }}</p-header>
+
+        <div class="min-panel">
+          <!-- Material Code -->
+          <div class="p-grid inputGroup">
+            <label class="p-col-12 p-md-12 p-lg-2" for="materialCode">{{
+              "Material Code" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input type="text" formControlName="itemMasterMaterialCode" id="materialCode" pInputText class="w-100" />
+            </div>
+
+            <!-- Part No -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="partNo">{{
+              "Part No" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input formControlName="itemMasterPartNo" id="partNo" pInputText class="w-100" />
+            </div>
+
+            <!-- Item Size -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="itemSize">{{
+              "Item Size" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input formControlName="itemMasterItemSize" id="itemSize" pInputText class="w-100" />
+            </div>
+
+            <!-- Color -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="color">{{
+              "Color" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input formControlName="itemMasterColor" id="color" pInputText class="w-100" />
+            </div>
+
+            <!-- Shape -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="shape">{{
+              "Shape" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input formControlName="itemMasterShape" id="shape" pInputText class="w-100" />
+            </div>
+
+            <!-- Packing -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="packing">{{
+              "Packing" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input formControlName="itemMasterPacking" id="packing" pInputText class="w-100" />
+            </div>
+
+            <!-- Ref -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="ref">{{
+              "Ref" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="ref" formControlName="itemMasterRef" pInputText class="w-100" />
+            </div>
+
+            <!-- Ref. 1 -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="ref1">{{
+              "HS Code" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="ref1" formControlName="itemMasterRef1" pInputText class="w-100" />
+            </div>
+
+            <!-- Ref. 2 -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="ref2">{{
+              "Model No" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="ref2" formControlName="itemMasterRef2" pInputText class="w-100" />
+            </div>
+
+            <!-- Entry Person -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="entryperson">{{
+              "Entry Person" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="entryperson" formControlName="itemMasterUserId" pInputText class="w-100" />
+            </div>
+
+            <!-- Re-order Level -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="reorder">{{
+              "Re-order Level" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="reorder" formControlName="itemMasterReOrderLevel" pInputText class="w-100" />
+            </div>
+
+            <!-- Landing Cost -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="landingCost">{{
+              "Landing Cost" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="landingCost" formControlName="itemMasterLandingCost" pInputText class="w-100" />
+            </div>
+
+            <!-- Stock -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="stock">{{
+              "Stock" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="stock" formControlName="itemMasterCurrentStock" pInputText class="w-100" />
+            </div>
+
+            <!-- VAT % -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="vat">{{
+              "VAT %" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <input id="vat" formControlName="itemMasterVat" pInputText class="w-100" placeholder="0.00" />
+            </div>
+
+            <!-- Inclusive Tax -->
+            <label class="p-col-12 p-md-12 p-lg-2" for="inclusiveTax">{{
+              "Inclusive Tax" | translate
+              }}</label>
+            <div class="p-col-12 p-md-12 p-lg-4 p-0">
+              <p-checkbox id="inclusiveTax" [binary]="true" formControlName="itemMasterInclusiveTax"></p-checkbox>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+
+      <!-- Supplier Information -->
+      <p-panel>
+        <p-header>{{ "Supplier Information" | translate }}</p-header>
+
+        <div class="card-body">
+          <div class="table-wrapper">
+            <hot-table [hotId]="hotidSupplierTbl" [licenseKey]="licensekey"
+              [settings]="supplierTableSettings"></hot-table>
+          </div>
+        </div>
+      </p-panel>
+
+      <!-- Price Details -->
+      <p-panel>
+        <p-header>{{ "Price Level Details" | translate }}</p-header>
+
+        <div class="card-body">
+          <div class="table-wrapper">
+            <hot-table [hotId]="hotidPriceTbl" [licenseKey]="licensekey" [settings]="priceTableSettings"></hot-table>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right-section">
+      <p-panel>
+        <p-header>{{ "Product Image" | translate }}</p-header>
+        <div class="card-body">
+          <div>
+            <img [src]="
+                newitemForm.controls.itemMasterImageBase64.value != null
+                  ? newitemForm.controls.itemMasterImageBase64.value
+                  : '../../../../../../assets/components/images/item.png'
+              " class="product-image" />
+            <div>
+              <input type="file" (change)="onSelectFile($event)" class="file-input" id="fileInput" />
+              <label for="fileInput" class="upload-btn">
+                <i class="pi pi-upload"></i>
+                Upload Image
+              </label>
+            </div>
+
+            <div *ngIf="
+                newitemForm.controls.itemMasterImageBase64.value &&
+                btnFlag?.update
+              ">
+              <button pButton icon="pi pi-trash" (click)="UpdateItemByImg()" class="p-button-danger p-button-sm"
+                pTooltip="Delete"></button>
+              <button pButton icon="pi pi-download" (click)="downloadImage()" class="p-button-success p-button-sm"
+                pTooltip="Download Image"></button>
+              <button pButton icon="pi pi-file-pdf" (click)="downloadImageBypdf()" class="p-button-help p-button-sm"
+                pTooltip="Download PDF"></button>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+
+    
+      <p-panel>
+        <p-header>{{ "Item QR Code" | translate }}</p-header>
+
+        <div class="qr-card-body">
+
+          <div class="qr-preview-box" *ngIf="qrImageBase64; else noQrTemplate">
+
+            <div id="printable-area" class="qr-print-area">
+              <div class="qr-inner-layout">
+
+                <img [src]="qrImageBase64" class="qr-preview-img" alt="Item QR code" />
+
+              </div>
+            </div>
+
+            <div class="qr-hint">
+               {{ itemNameForQr }}
+            </div>
+
+            <div class="qr-status" *ngIf="qrLoadedId">
+              Saved QR ID: {{ qrLoadedId }}
+            </div>
+
+          </div>
+
+          <ng-template #noQrTemplate>
+            <div class="qr-empty-box">
+              <i class="pi pi-qrcode"></i>
+              <span>No QR generated</span>
+            </div>
+          </ng-template>
+
+          <div class="qr-actions">
+
+            <button pButton type="button" icon="pi pi-qrcode" label="Generate QR"
+              class="p-button-info p-button-sm"
+              [disabled]="qrLoading"
+              (click)="generateItemQrCode()">
+            </button>
+
+            <button pButton type="button" icon="pi pi-save" label="Save QR"
+              class="p-button-success p-button-sm"
+              [disabled]="!qrImageBase64 || qrSaveLoading"
+              (click)="saveQrCodeToDb()">
+            </button>
+
+            <!-- Print via dedicated 50x25mm window (deterministic, crisp). -->
+            <button pButton type="button" icon="pi pi-print" label="Print QR"
+              class="p-button-info p-button-sm"
+              [disabled]="!qrImageBase64"
+              (click)="printQrCode()">
+            </button>
+
+            <button pButton type="button" icon="pi pi-image" label="Use As Image"
+              class="p-button-warning p-button-sm"
+              [disabled]="!qrImageBase64"
+              (click)="useQrAsProductImage()">
+            </button>
+
+            <button pButton type="button" icon="pi pi-download" label="Download"
+              class="p-button-secondary p-button-sm"
+              [disabled]="!qrImageBase64"
+              (click)="downloadQrCode()">
+            </button>
+
+            <button pButton type="button" icon="pi pi-times" label="Clear"
+              class="p-button-danger p-button-sm"
+              [disabled]="!qrImageBase64"
+              (click)="clearQrCode()">
+            </button>
+
+          </div>
+
+        </div>
+      </p-panel>
+
+      <!-- Item List (Conditional) -->
+      <ng-container *ngIf="listmode">
+        <p-panel>
+          <p-header>{{ "Recent Items" | translate }}</p-header>
+
+          <div class="card-body">
+            <div class="compact-table">
+              <p-table [value]="itemTableData | async" [paginator]="true" [rows]="5">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>ID</th>
+                    <th>Item Name</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                  <tr>
+                    <td class="item-id">{{ item.itemMasterItemId }}</td>
+                    <td class="item-name">{{ item.itemMasterItemName }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </p-panel>
+      </ng-container>
+    </div>
+
+    <div class="full-width-section">
+      <p-panel>
+        <p-header>{{ "Unit Details" | translate }}</p-header>
+
+        <div class="card-body">
+          <div class="table-wrapper" style="height: 250px">
+            <hot-table [hotId]="hotidUnitTbl" [licenseKey]="licensekey" [settings]="unitTableSettings"></hot-table>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+  </div>
+
+  <!-- Lookup dialogs remain unchanged -->
+
+  <app-lookup [header]="'Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference" [dataArry]="dataList"
+    [formControlName]="control" (exitEvent)="exit($event)" (clearEvent)="clear($event)" [columns]="lookupColumns"
+    (selectItemEvent)="selectControl($event)" (hideDialogEvent)="hide($event)" [tableheader]="'Account List'"
+    [(show)]="showFormControlLookUp"></app-lookup>
+  <app-lookup [header]="'supplier Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference"
+    [dataArry]="dataList" [formControlName]="control" (exitEvent)="exit($event)" (clearEvent)="clear($event)"
+    [columns]="lookupColumns" (selectItemEvent)="selectSupplier($event)" (hideDialogEvent)="hide($event)"
+    [tableheader]="'Account List'" [(show)]="supplierLookUp"></app-lookup>
+
+  <app-lookup [header]="'Look Up'" [dataArry]="dataList" [selectedItem]="selectItem" [columns]="lookupColumns"
+    (selectItemEvent)="selectaccount($event)" (exitEvent)="exit($event)" [cell]="activeRow" (clearEvent)="clear($event)"
+    (hideDialogEvent)="hide($event)" [tableheader]="'Account List'" [(show)]="showGridLookUp"></app-lookup>
+
+  <p-toast *ngIf="listmode"></p-toast>
+
+  <!-------Printer here-->
+  <div style="height: 0; overflow: hidden; display: none">
+    <div class="invoice-POS" id="invoice-POS">
+      <div class="logo"></div>
+      <div class="info">
+        <h2 style="
+            text-align: center;
+            border-bottom: 1px solid black;
+            max-width: 44mm;
+          ">
+          L'atelier des Arts
+        </h2>
+      </div>
+      <!--End Info-->
+
+      <div id="bot">
+        <div id="table" style="width: 100%">
+          <table>
+            <tr>
+              <td>Pigment Powder Metal</td>
+            </tr>
+            <tr>
+              <td>
+                <qrcode [elementType]="'url'" [qrdata]="'your string'" cssClass="aclass" errorCorrectionLevel="L">
+                </qrcode>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <ngx-barcode [bc-value]="'2114343434124-44355'" [bc-display-value]="true">
+                </ngx-barcode>
+              </td>
+            </tr>
+            <tr class="table-title">
+              <td>
+                <h2>AED: 3456</h2>
+              </td>
+              <td class="Rate">
+                <h2>59245668545</h2>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <!--End Table-->
+      </div>
+      <!--End InvoiceBot-->
+    </div>
+  </div>
+
+  <p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+  <!--End Invoice-->
+</div>
+
+<app-lookup [header]="'Item Master'" [dataArry]="dataList" [isServerSearch]="isServerSearch" [selectedItem]="selectItem"
+  [columns]="lookupGridColumns" (selectItemEvent)="selectedItem($event)" (exitEvent)="exit($event)" [cell]="activeRow"
+  (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" (searchEvent)="onSearchItem($event)"
+  [tableheader]="'Item Master List'" [(show)]="showItemMasterLookUp"></app-lookup>

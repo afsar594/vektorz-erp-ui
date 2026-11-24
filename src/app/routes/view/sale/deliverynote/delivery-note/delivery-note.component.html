@@ -1,0 +1,916 @@
+<app-page-header
+  [nav]="[
+    { label: 'Delivery Note' | translate },
+    { label: 'Delivery Note' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'Edit' | translate"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag?.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add || btnFlag.new"
+      (click)="savedelivery()"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="'List' | translate"
+      icon="fa fa-list"
+      [disabled]="!Permission.View"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      [label]="'Delete' | translate"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="initializeControls()"
+      icon="fa fa-refresh"
+      class="ui-button-success"
+    ></button>
+    <p-splitButton
+      icon="fa fa-print"
+      [model]="printbtn"
+      label="Print Report"
+      [disabled]="!btnFlag.edit || !Permission.Print"
+      styleClass="p-button-outlined mr-2 mb-2"
+    >
+    </p-splitButton>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="DeliveryNoteFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Delivery Note' | translate">
+      <!-- <div class="p-grid p-sm-12 p-md-12 p-lg-12">   -->
+      <div class="p-grid p-sm-12 p-md-12 p-lg-12">
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Delivery Note Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="Location">{{
+                  "Location" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerDeliveryNoteLocationId"
+                    [options]="locationList"
+                    filter="true"
+                    (onChange)="locationDropdownChange($event)"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="ui-inputgroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="customer">{{
+                  "Customer" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 ui-inputgroup">
+                  <input
+                    class="w-100"
+                    formControlName="customerDeliveryNoteCustomerName"
+                    pInputText
+                  />
+                  <button
+                    pButton
+                    type="button"
+                    pRipple
+                    icon="pi pi-search"
+                    (click)="handleCustomerClick()"
+                  ></button>
+                </div>
+              </div>
+              <div
+                class="error"
+                *ngIf="
+                  f.customerDeliveryNoteCustomerName.errors &&
+                  (f.customerDeliveryNoteCustomerName.dirty ||
+                    f.customerDeliveryNoteCustomerName.touched)
+                "
+              >
+                <span
+                  *ngIf="f.customerDeliveryNoteCustomerName.errors.required"
+                >
+                  Customer is Mandatory Field*</span
+                >
+              </div>
+            </div>
+
+            <app-lookup
+              [header]="'Look Up'"
+              [dataArry]="CustomerMasterList"
+              [selectedItem]="selectCustomer"
+              [columns]="lookupGridCustomerColumns"
+              (selectItemEvent)="selectCutomer($event)"
+              (exitEvent)="exitCustomerlookUp($event)"
+              [cell]="activeRowCustomerlookUp"
+              (clearEvent)="clearCutomerlookUp($event)"
+              (hideDialogEvent)="hideCustomerlookUp($event)"
+              [tableheader]="'Sales List'"
+              [(show)]="showCustomerLookUp"
+            >
+            </app-lookup>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="salesman">{{
+                "Sales Man" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="customerDeliveryNoteSalesManId"
+                  [options]="SalesManMasterList"
+                  filter="true"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="attention">{{
+                "Attention" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9">
+                <textarea
+                  class="w-100"
+                  id="deliveryNoteAttention"
+                  formControlName="customerDeliveryNoteAttention"
+                  maxlength="500"
+                  pInputText
+                ></textarea>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="deliveryaddress">{{
+                "Delv Addr" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9">
+                <textarea
+                  class="w-100"
+                  id="deliveryNoteDeliveryAddress"
+                  formControlName="customerDeliveryNoteDeliveryAddress"
+                  maxlength="500"
+                  pInputText
+                ></textarea>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-8">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-1" for="deliveryno">{{
+                  "Delv No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <input
+                    class="w-100"
+                    id="customerDeliveryNoteNo"
+                    formControlName="customerDeliveryNoteNo"
+                    readonly
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-1" for="pono">{{
+                  "LPO No" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <input
+                    class="w-100"
+                    id="deliveryNotePONo"
+                    formControlName="customerDeliveryNoteCpoId"
+                    pInputText
+                  />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-1" for="voucherno">{{
+                  "Delv Dt" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    class="w-100"
+                    useUtc
+                    id=""
+                    [showIcon]="true"
+                    formControlName="customerDeliveryNoteDeliveryDate"
+                  >
+                  </p-calendar>
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-1" for="voucherdate">{{
+                  "LPO Dt" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    class="w-100"
+                    useUtc
+                    id=""
+                    [showIcon]="true"
+                    formControlName="customerDeliveryNoteCpoDate"
+                  >
+                  </p-calendar>
+                </div>
+                 
+                <label class="p-col-12 p-md-12 p-lg-1" for="pono">{{
+                  "Vehicle Number" | translate
+                    }}
+                </label>
+
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <input
+                    class="w-100"
+                    id="VehicleNo"
+                    formControlName="customerDeliveryNoteVehicleNo"
+                    pInputText
+                  />
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                 <label class="p-col-12 p-md-12 p-lg-1" for="pono">{{
+                  "Driver" | translate
+                    }}
+                </label>
+
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <input
+                    class="w-100"
+                    id="idDriver"
+                    formControlName="customerDeliveryNoteDriver"
+                    pInputText
+                  />
+                </div>
+
+
+                <label class="p-col-12 p-md-12 p-lg-1" for="currency">{{
+                  "Currency" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="customerDeliveryNoteCurrencyId"
+                    [options]="currencyList"
+                    filter="true"
+                  >
+                  </p-dropdown>
+                </div>
+                  <label class="p-col-12 p-md-12 p-lg-1" for="Job">{{
+                  "Job No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-5">
+                   <p-dropdown filter="true" class="w-100" formControlName="customerDeliveryNoteJobID" 
+                   (onChange)="onJobChange($event)"
+                   [options]="jobList">
+                  </p-dropdown>
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-1" for="voucherno">{{
+                  "Remarks" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-5">
+                  <textarea
+                    class="w-100"
+                    id=""
+                    formControlName="customerDeliveryNoteRemarks"
+                    maxlength="500"
+                    pInputText
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "Browse Image" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4">
+                  <p-fileUpload
+                    chooseLabel=" Browse Image"
+                    mode="basic"
+                    accept="image/*"
+                    maxFileSize="1000000"
+                  ></p-fileUpload>
+
+                  <!-- <button style="width: 200px;height: 30px;"> Browse Image</button> -->
+                </div>
+                <div class="p-col-12 p-md-12 p-lg-4">
+                  <button
+                    pButton
+                    type="button"
+                    (click)="openModal()"
+                    [disabled]="btnFlag.new"
+                    label="Browse For Sales Order"
+                  ></button>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <p-panel>
+        <p-header>
+          {{ "Item Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="deliverynoteentry"
+          >
+          </hot-table>
+        </div>
+        <div style="display: flex; justify-content: flex-end; padding: 6px 8px; background: #f4f4f4; border-top: 1px solid #ddd; font-weight: bold;">
+          <span style="margin-right: 12px;">Total Quantity:</span>
+          <span>{{ totalQty | number: '1.2-2' }}</span>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<ng-container *ngIf="showSalesLookUp">
+  <app-lookup
+    [header]="'Look Up'"
+    [dataArry]="dataList"
+    [isServerSearch]="isServerSearch"
+    [selectedItem]="selectItem"
+    [columns]="lookupGridColumns"
+    (selectItemEvent)="selectsales($event)"
+    (exitEvent)="exit($event)"
+    [cell]="activeRow"
+    (clearEvent)="clear($event)"
+    (searchEvent)="onSearch($event)"
+    (hideDialogEvent)="hide($event)"
+    [tableheader]="'Sales List'"
+    [(show)]="showSalesLookUp"
+  ></app-lookup
+></ng-container>
+
+<app-lookup
+  [header]="'Look Up'"
+  [selectedItem]="selectItem"
+  [eleReference]="elementReference"
+  [dataArry]="dataList"
+  (exitEvent)="exit($event)"
+  (clearEvent)="clear($event)"
+  [formControlName]="control"
+  [columns]="lookupGridColumns"
+  (selectItemEvent)="selectControl($event)"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'"
+  [(show)]="formControlLookUp"
+></app-lookup>
+
+<p-dialog
+  header="Customer Delivery Note List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="deliveryNotearry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-deliverynote>
+      <tr>
+        <td>{{ deliverynote?.customerDeliveryNoteNo }}</td>
+
+        <td>
+          <span>
+            {{ getLocation(deliverynote.customerDeliveryNoteLocationID) }}</span
+          >
+        </td>
+        <td>{{ deliverynote.customerDeliveryNoteCustomerName }}</td>
+        <td>{{ deliverynote.customerDeliveryNoteAttention }}</td>
+        <td>
+          {{
+            deliverynote.customerDeliveryNoteDeliveryDate | date : "dd/MM/yyyy"
+          }}
+        </td>
+        <td>{{ deliverynote.customerDeliveryNoteCPOID }}</td>
+        <td>
+          {{ deliverynote.customerDeliveryNoteCPODate | date : "dd/MM/yyyy" }}
+        </td>
+
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedDeliveryNoteDetails(
+                deliverynote.customerDeliveryNoteDeliveryID
+              );
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<!-- <p-toast></p-toast> -->
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '75%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+  <div id="printPDF" class="print">
+    <div style="justify-content: center">
+      <div class="flex">
+        <div class="contain2">
+          <div class="vouhead">
+            <h2>{{ stationmasterObj?.stationMasterStationName }}</h2>
+          </div>
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Address" | translate }}</b>
+              <b>{{ "Tel" | translate }} </b>
+              <b>{{ "Fax" | translate }} </b>
+              <b>{{ "TRN" | translate }} </b>
+              <b>{{ "Email" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ stationmasterObj?.stationMasterAddress }}&nbsp;</div>
+              <div>{{ stationmasterObj?.stationMasterTele1 }}&nbsp;</div>
+              <div>{{ stationmasterObj?.stationMasterFax }}&nbsp;</div>
+              <div>
+                {{
+                  stationmasterObj?.stationMasterVatNo
+                    ? stationmasterObj?.stationMasterVatNo
+                    : 104093336600003
+                }}&nbsp;
+              </div>
+              <div>{{ stationmasterObj?.stationMasterEmail }}&nbsp;</div>
+            </div>
+          </div>
+        </div>
+        <div class="contain1">
+          <div class>
+            <img
+              *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+              class="squreImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+            <img
+              *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+              class="rectImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+          </div>
+        </div>
+      </div>
+      <div class="center">
+        <h3>{{ "Delivery Notes " | translate }}</h3>
+      </div>
+      <div class="flex">
+        <div class="bank1">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Customer" | translate }} </b>
+              <b>{{ "Location" | translate }} </b>
+              <b>{{ "Sale Person" | translate }}</b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>
+                {{ savedDeliveryNote?.customerDeliveryNoteCustomerName }} &nbsp;
+              </div>
+              <div>
+                {{
+                  getLocation(savedDeliveryNote?.customerDeliveryNoteLocationId)
+                }}
+                &nbsp;
+              </div>
+              <div>
+                {{
+                  getSalesManName(
+                    savedDeliveryNote?.customerDeliveryNoteSalesManId
+                  )
+                }}
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin: 3px"></div>
+        <div class="bank2">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "D N No" | translate }} </b>
+              <b>{{ "D N Date" | translate }} </b>
+              <b>{{ "Remark" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>
+                {{ savedDeliveryNote?.customerDeliveryNoteDeliveryId }} &nbsp;
+              </div>
+
+              <div>
+                {{
+                  savedDeliveryNote?.customerDeliveryNoteDeliveryDate
+                    | date : "dd/MM/yyyy"
+                }}&nbsp;
+              </div>
+
+              <div>
+                {{ savedDeliveryNote?.customerDeliveryNoteRemarks }}&nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table id="customers">
+        <thead>
+          <th>Sr.</th>
+          <th>Item Name</th>
+          <th>Unit</th>
+          <th>Quantity</th>
+        </thead>
+        <tr
+          *ngFor="
+            let customerDeliveryNoterpt of savedDeliveryNote?.customerDeliveryNoteDetails;
+            let i = index
+          "
+        >
+          <td style="text-align: center">{{ 1 + i }}</td>
+          <td>
+            {{
+              customerDeliveryNoterpt?.customerDeliveryNoteDetailsDescription
+            }}
+          </td>
+
+          <td style="text-align: center">
+            {{
+              getUnitName(
+                customerDeliveryNoterpt?.customerDeliveryNoteDetailsUnitId
+              )
+            }}
+          </td>
+
+          <td style="text-align: right">
+            {{ customerDeliveryNoterpt?.customerDeliveryNoteDetailsQty }}
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="
+            let _ of [].constructor(
+              getEmptyRowCount(
+                savedDeliveryNote?.customerDeliveryNoteDetails?.length
+              )
+            );
+            let i = index
+          "
+        >
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+
+        <tr>
+          <td colspan="11"></td>
+        </tr>
+        <tr>
+          <td colspan="11">
+            <div id="page-container">
+              <div id="content-wrap">
+                <div class="border">
+                  <div class="flexrow w-100">
+                    <div
+                      class="flexrow wp-50"
+                      style="justify-content: space-between"
+                    >
+                      <div class="flexcol"></div>
+                      <div class="flexcol"></div>
+                    </div>
+                  </div>
+
+                  <div class="signature-container">
+                    <div class="customer-signature">
+                      <b>Customer Signature</b>
+                    </div>
+                    <div class="authorized-signature">
+                      <b>Authorised Signature</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <footer id="footer"></footer>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <br />
+    </div>
+  </div>
+</p-dialog>
+
+<!-- <p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{width: '90%'}"
+    [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+    <button (click)="printAsPDF()" pButton type="button" class="ui-button-info" label="Print" icon="fa fa-print">
+
+    </button>
+
+    <div id="contentToConvertSv" style="justify-content: center">
+        <div>
+            <h1 class="main">{{stationmasterObj?.stationMasterStationName}}</h1>
+
+            <div class="flexrow">
+                <div class="flexcol">
+                    <b>Address </b>
+                    <b>Tel </b>
+                    <b>Fax </b>
+                    <b>Email </b>
+                </div>
+                <div class="flexcol">
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                </div>
+                <div class="flexcol">
+                    <div class="  "> {{stationmasterObj?.stationMasterAddress}}</div>
+                    <div class="  "> {{stationmasterObj?.stationMasterTele1}} </div>
+                    <div class="  "> {{stationmasterObj?.stationMasterFax}}</div>
+                    <div class="  "> {{stationmasterObj?.stationMasterEmail}}</div>
+                </div>
+            </div>
+        </div>
+        <div class=" center">
+            <h1> {{'Delivery Notes' | translate}} </h1>
+        </div>
+        <div class="border">
+            <div class="flexrow rowgap">
+                <div class="flexrow">
+                    <div class="flexcol">
+                        <b>{{'Customer' | translate}} </b>
+                        <b>{{'Cont. Person' | translate}} </b>
+                        <b>{{'Tel' | translate}} </b>
+                        <b>{{'Mob No' | translate}} </b>
+                        <b>{{'Email' | translate}}</b>
+                        <b>{{'TRN' | translate}}</b>
+                    </div>
+                    <div class="flexcol">
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                    </div>
+                    <div class="flexcol">
+                        <div>{{savedDeliveryNote?.customerDeliveryNoteCustomerName}}</div>
+                        <div></div>
+                        <div> </div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+                <div class="flexrow">
+                    <div class="flexcol">
+                        <b>{{'D N No' | translate}} </b>
+                        <b>{{'D N Date' | translate}} </b>
+                        <b>{{'P O No.' | translate}}</b>
+                        <b>{{'Sale Person' | translate}}</b>
+                        <b>{{'Page no' | translate}}</b>
+                        <b>{{'Remark' | translate}} </b>
+                    </div>
+                    <div class="flexcol">
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+                        <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp; </div>
+
+                    </div>
+                    <div class="flexcol">
+
+                        <div> {{savedDeliveryNote?.customerDeliveryNoteDeliveryId}}</div>
+                        <div> {{savedDeliveryNote?.customerDeliveryNoteDeliveryDate | date:'dd/MM/yyyy'}}</div>
+                        <div>{{getSalesManName(savedDeliveryNote?.customerDeliveryNoteSalesManId)}}</div>
+                        <div></div>
+                        <div> Page 1 of 1</div>
+                        <div> {{ savedDeliveryNote?.customerDeliveryNoteRemarks}}</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div style="justify-content: center;" class=" ">
+            <div style=" border-radius:12px;">
+                <table id="customers">
+                    <tr>
+                        <th>{{'SNO '| translate}}</th>
+                        <th>{{'Item Name' | translate}}</th>
+                        <th>{{'Unit '| translate}}</th>
+                        <th>{{'Quantity '| translate}}</th>
+                    </tr>
+                    <tr
+                        *ngFor="let customerDeliveryNoterpt of savedDeliveryNote?.customerDeliveryNoteDetails ;let i=index">
+                        <td>{{1+i}}</td>
+                        <td>
+                            <span
+                                *ngIf='ItemMasterArray?.length > 0'>{{getItemMasterName(customerDeliveryNoterpt?.customerDeliveryNoteDetailsMatId)}}</span>
+                        </td>
+
+                        <td><span
+                                *ngIf='unitArray?.length > 0'>{{getUnitName(customerDeliveryNoterpt?.customerDeliveryNoteDetailsUnitId)}}</span>
+                        </td>
+
+                        <td>{{customerDeliveryNoterpt?.customerDeliveryNoteDetailsQuantity}}</td>
+                       
+                    </tr>
+                    <tr class="spacer">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="flexrow">
+                <ol>
+                    <li>Except otherwise mentioned and/or pre-agreed, we give no warranty as the goods supplied
+                        substantially meet the manufacturing tolerances and variations.</li>
+                    <li>Goods once sold will not be returned or exchanged.</li>
+                    <li>{{'Interest @ 18% P.A. will be charged on overdue payment.'}}</li>
+                    <li>Buyer must check quantity/quality at the time of delivery of material.</li>
+                </ol>
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table id="border">
+                        <tr>
+                            <th>Customer Signature</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col">
+                    <table id="border">
+                        <tr>
+                            <th>Authorised Signature</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</p-dialog> -->
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>

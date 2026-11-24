@@ -1,0 +1,421 @@
+<div class="matero-page-header">
+  <app-page-header [title]="title | translate"></app-page-header>
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <button
+        pButton
+        type="button"
+        label="Show Statement"
+        (click)="ReportShow()"
+        [disabled]="!Permission?.View"
+        icon="fa fa-search"
+        class="ui-button-info"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Print Statement"
+        (click)="displayPrint()"
+        [disabled]="!Permission?.Print || !dataset?.length"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Close"
+        (click)="ExitNew()"
+        icon="fa fa-sign-out"
+        class="ui-button-danger"
+      ></button>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <button
+        pButton
+        type="button"
+        label="Print Preview"
+        [disabled]="!Permission?.Print || !dataset?.length"
+        icon="fa fa-print"
+        class="ui-button-success"
+        (click)="getReport1()"
+      ></button>
+    </div>
+  </p-toolbar>
+  <div class="card card-w-title" [formGroup]="CSform">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Customer Statement' | translate">
+        <br />
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-1" for="account">
+            {{ "Select Account:" | translate }}
+          </label>
+          <div class="p-col-12 p-md-5">
+            <p-dropdown
+              filter="true"
+              [options]="accountList"
+              filter="true"
+              [showClear]="true"
+              formControlName="selectAccount"
+            >
+            </p-dropdown>
+            <div
+              class="error"
+              *ngIf="f.selectAccount.touched && f.selectAccount.invalid"
+            >
+              Select Account Invalid Entry
+            </div>
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            {{ "LPO NO:" | translate }}
+          </label>
+          <div class="p-col-12 p-md-5">
+            <input
+              pInputText
+              style="width: 100%"
+              formControlName="LPONO"
+              placeholder="LPO NO"
+            />
+            <div class="error" *ngIf="f.LPONO.touched && f.LPONO.invalid">
+              LPONO Invalid Entry
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-6">
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="By Date"></p-checkbox> -->
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="By Date"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2" for="account">
+                  {{ "Date From:" | translate }}
+                </label>
+                <div class="p-col-12 p-md-4">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    [showIcon]="true"
+                    formControlName="DateFrom"
+                    class="w-100"
+                    [disabled]="!CSform.get('isDate').value"
+                  >
+                  </p-calendar>
+                  <div
+                    class="error"
+                    *ngIf="f.DateFrom.touched && f.DateFrom.invalid"
+                  >
+                    Date From Invalid Entry
+                  </div>
+                </div>
+                <label class="p-col-12 p-md-2" for="account">
+                  {{ "Date To:" | translate }}
+                </label>
+                <div class="p-col-12 p-md-4">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    [showIcon]="true"
+                    formControlName="DateTO"
+                    class="w-100"
+                    [disabled]="!CSform.get('isDate').value"
+                  >
+                  </p-calendar>
+                  <div
+                    class="error"
+                    *ngIf="f.DateTO.touched && f.DateTO.invalid"
+                  >
+                    Date To Invalid Entry
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <div class="p-col-12 p-md-4">
+                  <p-radioButton
+                    label="Summary"
+                    value="Summary"
+                    name="reportType"
+                    (ngModelChange)="onReportTypeChange($event)"
+                    id="Summary"
+                    formControlName="type"
+                  >
+                  </p-radioButton>
+                </div>
+                <div class="p-col-12 p-md-4">
+                  <p-radioButton
+                    label="Detailed"
+                    value="Detailed"
+                    id="Detailed"
+                    (ngModelChange)="onReportTypeChange($event)"
+                    name="reportType"
+                    formControlName="type"
+                  >
+                  </p-radioButton>
+                  <!-- <p-radioButton 
+                                    label="Detailed" 
+                                    value="Detailed" 
+                                    id="Detailed" 
+                                    (ngModelChange)="onReportTypeChange($event)" 
+                                    name="reportType" 
+                                    formControlName="type">
+                                  </p-radioButton> -->
+                </div>
+                <div class="p-col-12 p-md-4">
+                  <p-radioButton
+                    label="Ledger"
+                    value="Ledger"
+                    id="Ledger"
+                    name="reportType"
+                    formControlName="type"
+                  >
+                  </p-radioButton>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+          <label class="p-col-12 p-md-1" for="account">
+            {{ "Description:" | translate }}
+          </label>
+          <div class="p-col-12 p-md-5">
+            <!-- <input pInputText style="width: 100%;" formControlName="Description" placeholder="Description"> -->
+            <textarea
+              class="w-100"
+              formControlName="Description"
+              pInputText
+            ></textarea>
+            <div
+              class="error"
+              *ngIf="f.Description.touched && f.Description.invalid"
+            >
+              Description Invalid Entry
+            </div>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+    <br />
+    <div class="card card-w-title">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Customer Statement Details' | translate">
+          <div class="grid">
+            <div class="p-col-12" *ngIf="CSform.get('type').value == 'Summary'">
+              <hot-table
+                [hotId]="hotid"
+                [data]="dataset"
+                [licenseKey]="licensekey"
+                [settings]="CustomerStatementSummery"
+              >
+              </hot-table>
+            </div>
+
+            <div
+              class="p-col-12"
+              *ngIf="CSform.get('type').value == 'Detailed'"
+            >
+              <hot-table
+                [hotId]="hotid"
+                [data]="dataset"
+                [licenseKey]="licensekey"
+                [settings]="CustomerStatement"
+              >
+              </hot-table>
+            </div>
+            <p-panel>
+              <p-header>
+                {{ "Customer Statment" | translate }}
+              </p-header>
+              <div class="p-grid top" [formGroup]="totalform">
+                <div class="p-col-4 p-grid">
+                  <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                    <b>{{ "Total Credit" | translate }}</b>
+                  </div>
+                  <div class="p-col-12 p-md-12 p-lg-8">
+                    <input
+                      id="totalCredit"
+                      type="number"
+                      pInputText
+                      formControlName="totalCredit"
+                    />
+                  </div>
+                </div>
+                <div class="p-col-4 p-grid">
+                  <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                    <b>{{ "total Debit" | translate }}</b>
+                  </div>
+                  <div class="p-col-12 p-md-12 p-lg-8">
+                    <input
+                      id="totalDebit"
+                      type="number"
+                      pInputText
+                      formControlName="totalDebit"
+                    />
+                  </div>
+                </div>
+                <!-- <div class="p-col-4 p-grid">
+              <div class="p-col-12 p-md-12 p-lg-4" for="account">
+                <b>{{ "Total Balance" | translate }}</b>
+              </div>
+              <div class="p-col-12 p-md-12 p-lg-8">
+                <input
+                  id="totalBalance"
+                  type="number"
+                  pInputText
+                  formControlName="totalBalance"
+                />
+              </div>
+            </div> -->
+              </div>
+            </p-panel>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+
+  <p-dialog
+    header="Print Preview"
+    [(visible)]="displayPrintPreview"
+    [modal]="true"
+    [style]="{ width: '80%' }"
+    [maximizable]="true"
+    [baseZIndex]="100"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div>
+      <button
+        pButton
+        type="button"
+        class="ui-button-primary"
+        (click)="printAsPDF()"
+        label="Print"
+        icon="fa fa-print"
+      ></button>
+    </div>
+    <div id="print" style="justify-content: center">
+      <div class="flex">
+        <div class="contain1">
+          <div class="center">
+            <img
+              *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+              class="squreImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+            <img
+              *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+              class="rectImg"
+              [src]="
+                'data:image/png;base64,' +
+                stationmasterObj?.stationMasterLogoImg
+              "
+            />
+          </div>
+        </div>
+        <div class="contain2">
+          <!-- <div class="vouhead">
+                    <h2> {{'Accounts Statement' | translate}}</h2>
+                </div> -->
+          <h2 class="namefont">
+            {{ stationmasterObj?.stationMasterStationName }}
+          </h2>
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>{{ "Address" | translate }}</b>
+              <b class="spac1">{{ "Tel" | translate }} </b>
+              <b>{{ "Fax" | translate }} </b>
+              <b>{{ "Email" | translate }} </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div class="spac1">&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ stationmasterObj?.stationMasterAddress }}</div>
+
+              <div>{{ stationmasterObj?.stationMasterTele1 }}</div>
+              <div>{{ stationmasterObj?.stationMasterFax }}</div>
+              <div>{{ stationmasterObj?.stationMasterEmail }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="ab">STATEMENT OF ACCOUNT</h2>
+      <!-- <div class="second">
+            <h4 class="ad">Acc. Name : {{GetAccountName(reportAccountsTransactionsFormGroup.get('rptAccount').value)}}
+            </h4>
+            <h4 class="ae">Acc. No. : {{ reportAccountsTransactionsFormGroup.get('rptAccount').value }}</h4>
+        </div> -->
+      <div class="second">
+        <div class="row">
+          <h4 class="ad">
+            Acc. Name&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {{
+              GetAccountName(CSform.get("selectAccount")?.value)?.toUpperCase()
+            }}
+          </h4>
+          <h4 class="ae">
+            As on date.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ today | date : "dd/MM/yyyy" }}
+          </h4>
+        </div>
+
+        <div style="display: flex">
+          <!-- <h4 class="ad">Acc. No &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;&nbsp; {{CSform.get('selectAccount')?.value}}
+                </h4> -->
+        </div>
+      </div>
+      <table class="customers">
+        <thead>
+          <tr>
+            <th style="text-align: center; width: 120px">Invoice No.</th>
+            <th style="text-align: center">Invoice Date</th>
+            <th style="text-align: center">Trans. Type</th>
+            <th style="text-align: left">Description</th>
+            <th style="text-align: center">Debit</th>
+            <th style="text-align: center">Credit</th>
+            <th style="text-align: center">Runn. Bal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of dataset">
+            <td>{{ item?.VoucherNo }}</td>
+            <td>{{ item?.Date | date : "dd/MM/yyyy" }}</td>
+            <td>{{ item?.VoucherType }}</td>
+            <td>{{ item?.Particulars }}</td>
+            <td class="end">{{ item?.Debit | number : "1.2-2" }}</td>
+            <td class="end">{{ item?.Credit | number : "1.2-2" }}</td>
+            <td class="end">{{ item?.RunningBalance | number : "1.2-2" }}</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="end">Total:</td>
+            <td class="end">{{ getTotalDebit() | number : "1.2-2" }}</td>
+            <td class="end">{{ getTotalCredit() | number : "1.2-2" }}</td>
+            <td class="end">
+              {{ getTotalDebit() - getTotalCredit() | number : "1.2-2" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </p-dialog>
+  <p-toast [style]="{ marginTop: '80px' }"></p-toast>
+</div>

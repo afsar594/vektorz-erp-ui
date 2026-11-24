@@ -1,0 +1,293 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Show"
+      [disabled]="!Permission?.View"
+      icon="fa fa-search"
+      class="ui-button-info"
+      (click)="getPOTrackingNew()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Excel"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel
+      [header]="'Purchase Order Tracking' | translate"
+      [formGroup]="PTForm"
+    >
+      <div class="p-grid">
+        <div class="p-col-7 p-md-7 p-lg-7">
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Job:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                formControlName="Job"
+                [showClear]="true"
+                filter="true"
+                [options]="jobList"
+              >
+              </p-dropdown>
+              <div class="error" *ngIf="f.Job.touched && f.Job.invalid">
+                Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Supplier:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                formControlName="Supplier"
+                [showClear]="true"
+                filter="true"
+                [options]="supplierList"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.Supplier.touched && f.Supplier.invalid"
+              >
+                Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Item:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                formControlName="Item"
+                [showClear]="true"
+                [options]="ItemMasterList"
+              >
+              </p-dropdown>
+              <div class="error" *ngIf="f.Item.touched && f.Item.invalid">
+                Invalid Entry
+              </div>
+            </div>
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "Location:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+  <p-dropdown
+    filter="true"
+    formControlName="Location"
+    [showClear]="true"
+    [options]="locationList"
+    [disabled]="locationLocked"
+  >
+  </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.Location.touched && f.Location.invalid"
+              >
+                Invalid Entry
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-1 p-md-1 p-lg-1" for="account">
+              <b>{{ "PO No.:" | translate }}</b>
+            </label>
+            <div class="p-col-5 p-md-5 p-lg-5">
+              <p-dropdown
+                filter="true"
+                [options]="pOrderList"
+                formControlName="PONumber"
+                [showClear]="true"
+              >
+              </p-dropdown>
+              <div
+                class="error"
+                *ngIf="f.PONumber.touched && f.PONumber.invalid"
+              >
+                Invalid Entry
+              </div>
+            </div>
+          </div>
+          <p-panel>
+            <p-header> Status </p-header>
+            <div class="p-grid" [formGroup]="PTForm">
+              <div class="p-col-2">
+                <p-radioButton
+                  label="All"
+                  formControlName="StatusType"
+                  name="StatusType"
+                  value=""
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-2">
+                <p-radioButton
+                  label="Pending"
+                  formControlName="StatusType"
+                  name="StatusType"
+                  value="Pending"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-2">
+                <p-radioButton
+                  label="Partial"
+                  formControlName="StatusType"
+                  name="StatusType"
+                  value="Partial"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-2">
+                <p-radioButton
+                  label="Completed"
+                  formControlName="StatusType"
+                  name="StatusType"
+                  value="Close"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-2">
+                <p-radioButton
+                  label="Close"
+                  formControlName="StatusType"
+                  name="StatusType"
+                  value="Close"
+                >
+                </p-radioButton>
+              </div>
+            </div>
+          </p-panel>
+          <!-- <div class="p-col-8 p-md-8 p-lg-8"> -->
+
+          <!-- </div> -->
+        </div>
+
+        <div class="p-col-5 p-md-5 p-lg-5">
+          <p-panel>
+            <p-header>
+              <div class="p-col-12 p-md-12 p-lg-12">
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="ByDate"
+                ></p-checkbox>
+              </div>
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-2 p-md-2 p-lg-2">
+                <label for="PoTracking">
+                  <b>{{ "Date From:" | translate }}</b>
+                </label>
+              </div>
+              <div class="p-col-10 p-md-10 p-lg-10">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  useUtc
+                  formControlName="DateFrom"
+                  [disabled]="!PTForm.get('isDate').value"
+                  class="w-200"
+                >
+                </p-calendar>
+                <div
+                  class="error"
+                  *ngIf="f.DateFrom.touched && f.DateFrom.invalid"
+                >
+                  <span>Date From is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-2 p-md-2 p-lg-2">
+                <label for="PoTracking">
+                  <b>{{ "Date To:" | translate }}</b>
+                </label>
+              </div>
+              <div class="p-col-10 p-md-10 p-lg-10">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  useUtc
+                  formControlName="DateTo"
+                  [disabled]="!PTForm.get('isDate').value"
+                  class="w-100"
+                >
+                </p-calendar>
+                <div class="error" *ngIf="f.DateTo.touched && f.DateTo.invalid">
+                  <span>Date To is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+          <p-panel>
+            <p-header>Type</p-header>
+            <div class="p-grid">
+              <div class="p-col-6">
+                <p-radioButton
+                  name="particularVoucher"
+                  formControlName="POtype"
+                  label="Summary View"
+                  inputId="summaryView"
+                  (click)="showView('summary')"
+                  value="summary"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-6">
+                <p-radioButton
+                  name="particularVoucher"
+                  formControlName="POtype"
+                  label="Detailed View"
+                  inputId="detailedView"
+                  (click)="showView('detail')"
+                  value="detail"
+                >
+                </p-radioButton>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'Details' | translate">
+        <div class="grid">
+          <div class="p-col-12">
+            <hot-table
+              [hotId]="hotid"
+              [data]="dataset"
+              [licenseKey]="licensekey"
+              [settings]="PoTracking"
+            >
+            </hot-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

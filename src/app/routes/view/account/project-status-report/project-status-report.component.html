@@ -1,0 +1,109 @@
+<app-page-header [title]='title| translate'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" (click)='List_REPORT()' label="Show"
+            icon="fa fa-search" class="ui-button-info"></button>
+        <button pButton type="button" label="Clear Selection" (click)="new()" icon="fa fa-ban" class="ui-button-danger"></button>
+        <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out" class="ui-button-warning"></button>
+    </div>
+    <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Excel" icon="fa fa-file-excel-o" class="ui-button-success"></button>
+    </div>
+</p-toolbar>
+
+<div class="card card-w-title" [formGroup]="reportProjectStatusFormGroup">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Project Status Report' | translate">
+            <div class="p-grid p-fluid">
+
+                <!-- Left Column: Customer, Job, Status -->
+                <div class="p-col-12 p-md-5">
+                    <div class="p-grid p-ai-center">
+                        <label class="p-col-12 p-md-3">
+                            <b>{{ 'Customer' | translate }}</b>
+                        </label>
+                        <div class="p-col-12 p-md-9">
+                            <p-dropdown filter="true" [options]="customerList" id="rptCustomerId"
+                                formControlName="rptCustomerId" [showClear]="true" [style]="{ width: '100%' }">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="p-grid p-ai-center">
+                        <label class="p-col-12 p-md-3">
+                            <b>{{ 'Job' | translate }}</b>
+                        </label>
+                        <div class="p-col-12 p-md-9">
+                            <p-dropdown filter="true" [options]="jobList" formControlName="rptJob" id="rptJob"
+                                [showClear]="true" [style]="{ width: '100%' }">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="p-grid p-ai-center">
+                        <label class="p-col-12 p-md-3">
+                            <b>{{ 'Status' | translate }}</b>
+                        </label>
+                        <div class="p-col-12 p-md-9">
+                            <p-dropdown filter="true" [options]="statusList" formControlName="rptStatus"
+                                id="rptStatus" [showClear]="true" [style]="{ width: '100%' }">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Date Range Panel -->
+                <div class="p-col-12 p-md-5">
+                    <p-panel>
+                        <p-header>
+                            <p-checkbox formControlName="isdateSelected" [binary]="true" label="By Date"></p-checkbox>
+                        </p-header>
+                        <div class="p-grid p-ai-center">
+                            <label class="p-col-12 p-md-3">
+                                <b>{{ 'Date From' | translate }}</b>
+                            </label>
+                            <div class="p-col-12 p-md-9">
+                                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true"
+                                    [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040"
+                                    showIcon="true" useUtc formControlName="dateFrom"
+                                    [disabled]="!reportProjectStatusFormGroup.get('isdateSelected')?.value">
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="p-grid p-ai-center">
+                            <label class="p-col-12 p-md-3">
+                                <b>{{ 'Date To' | translate }}</b>
+                            </label>
+                            <div class="p-col-12 p-md-9">
+                                <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true"
+                                    [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040"
+                                    showIcon="true" useUtc formControlName="dateTo"
+                                    [disabled]="!reportProjectStatusFormGroup.get('isdateSelected')?.value">
+                                </p-calendar>
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+
+
+    <div class="card card-w-title">
+        <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+            <p-tabPanel [header]="'Details' | translate">
+                <div class="grid">
+                    <div class="p-col-12">
+                        <div class="table-header">
+                            <div class="sub-header">PROJECT STATUS REPORT</div>
+                        </div>
+                        <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey"
+                            [settings]="projectstatusreport">
+                        </hot-table>
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div>
+
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>

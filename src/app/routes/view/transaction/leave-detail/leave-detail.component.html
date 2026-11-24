@@ -1,0 +1,172 @@
+<!-- <app-page-header [nav]='[{label: "transaction"| translate},{label: "Leave Details"| translate}]'
+    [title]='title| translate'></app-page-header> -->
+<div class="matero-page-header">
+  <div class="matero-page-header-inner">
+    <h2 class="matero-page-title">{{ title }}</h2>
+  </div>
+</div>
+
+<p-toolbar>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Show"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-success"
+      label="Export"
+      icon="fa fa-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Close"
+      icon="fa fa-close"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Approval Details' | translate">
+      <div class="p-grid">
+        <div class="p-col-5 p-lg-5 p-md-5">
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Vou Type" | translate }}</b>
+            </label>
+            <div class="p-col-10 p-md-10 p-lg-10">
+              <p-dropdown filter="true" class="w-100"></p-dropdown>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-2 p-lg-2 p-md-2"></div>
+            <div class="p-col-4 p-lg-4 p-md-4">
+              <p-radioButton
+                style="color: green; font-weight: bold"
+                label="Approved"
+              ></p-radioButton>
+            </div>
+            <div class="p-col-4 p-lg-4 p-md-4">
+              <p-radioButton
+                style="color: brown; font-weight: bold"
+                label="Not Approved"
+              ></p-radioButton>
+            </div>
+            <div class="p-col-2 p-lg-2 p-md-2">
+              <p-radioButton
+                style="color: blue; font-weight: bold"
+                label="All"
+              ></p-radioButton>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-7 p-lg-7 p-md-7">
+          <p-panel>
+            <p-header>
+              <input type="checkbox" pInputCheck /> {{ "By Date" | translate }}
+            </p-header>
+            <div class="p-grid">
+              <div class="p-col-1 p-md-1 p-lg-1">
+                <label>{{ "From:" | translate }}</label>
+              </div>
+              <div class="p-col-5 p-md-5 p-lg-5">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  id="dateFrom"
+                  useUtcn
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+              <div class="p-col-1 p-md-1 p-lg-1">
+                <label>{{ "To:" | translate }}</label>
+              </div>
+              <div class="p-col-5 p-md-5 p-lg-5">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  id="dateTo"
+                  useUtc
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid p-col-12">
+        <p-table
+          #dt
+          [value]="leaveDetail_list"
+          [columns]="cols"
+          [paginator]="true"
+          [rows]="10"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                {{ col.header | translate }}
+                <p-sortIcon [field]="col.field"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-leaveDetail_list>
+            <tr>
+              <td>{{ leaveDetail_list.leaveDetailCode }}</td>
+              <td>{{ leaveDetail_list.leaveDetailVoucherNo }}</td>
+              <td>{{ leaveDetail_list.leaveDetailVoucherType }}</td>
+              <td>
+                {{
+                  leaveDetail_list.leaveDetailCreatedDate | date : "dd/MM/yyyy"
+                }}
+              </td>
+              <td>
+                {{
+                  leaveDetail_list.leaveDetailUpdatedDate | date : "dd/MM/yyyy"
+                }}
+              </td>
+              <td>{{ leaveDetail_list.leaveDetailStatus }}</td>
+              <td>{{ leaveDetail_list.leaveDetailCreatedBy }}</td>
+              <td>{{ leaveDetail_list.leaveDetailLocation }}</td>
+              <td>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-check"
+                  class="ui-button-success"
+                  style="width: 62px"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-times"
+                  class="ui-button-danger"
+                  style="width: 62px"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

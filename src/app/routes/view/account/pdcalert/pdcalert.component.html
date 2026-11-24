@@ -1,0 +1,308 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="onClickSearch()"
+      label="Show Statement"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      (click)="Print()"
+      pButton
+      type="button"
+      label="Print Statement"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      (click)="Export2Excel()"
+      pButton
+      type="button"
+      label="Excel"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'PDC Alert'" [formGroup]="PDCForm">
+      <br />
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-2" for="account">
+          {{ "Date From:" }}
+        </label>
+
+        <div class="p-col-12 p-md-3">
+          <p-calendar
+            appendTo="body"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2000:2040"
+            useUtc
+            [showIcon]="true"
+            formControlName="DateFrom"
+            class="w-200"
+          >
+          </p-calendar>
+        </div>
+
+        <label class="p-col-12 p-md-1" for="account">
+          {{ "Date To:" }}
+        </label>
+
+        <div class="p-col-12 p-md-3">
+          <p-calendar
+            appendTo="body"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2000:2040"
+            useUtc
+            [showIcon]="true"
+            formControlName="DateTO"
+            class="w-200"
+          >
+          </p-calendar>
+        </div>
+      </div>
+      <div class="p-grid">
+        <label class="p-col-12 p-md-2" for="account">
+          {{ "Search Keywords:" }}
+        </label>
+
+        <div class="p-col-12 p-md-7">
+          <input
+            (input)="onSearch($event.target.value)"
+            placeholder="Type to search"
+            pInputText
+            style="width: 100%"
+          />
+        </div>
+      </div>
+
+      <br />
+    </p-tabPanel>
+  </p-tabView>
+  <br />
+  <div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel [header]="'PDC Received'">
+        <div class="p-grid">
+          <div class="p-col-10"></div>
+          <div class="p-col-2">
+            <strong>Total :</strong> {{ getTotal() | number }}
+          </div>
+          <div class="p-col-12">
+            <p-table [value]="PDCPostedList">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ "Vch No" }}</th>
+
+                  <th>{{ "Vch Date" }}</th>
+
+                  <th>{{ "PDC Date" }}</th>
+
+                  <th>{{ "Cheque No." }}</th>
+
+                  <th>{{ "Amount" }}</th>
+
+                  <th>{{ "Posting Days With In" }}</th>
+
+                  <th>{{ "Posting Name" }}</th>
+
+                  <th>{{ "Party Name" }}</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>{{ item.vno }}</td>
+
+                  <td>{{ item.tDate | date : "dd/MM/yyyy" }}</td>
+
+                  <td>{{ item.pDate | date : "dd/MM/yyyy" }}</td>
+
+                  <td>{{ item.cno }}</td>
+
+                  <td class="end">{{ item.cAmount }}</td>
+
+                  <td class="end">{{ calculateDays(item.tDate) }}</td>
+
+                  <td>{{ item.cbName }}</td>
+
+                  <td>{{ item.accName }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel [header]="'PDC Issued'">
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-10"></div>
+          <div class="p-col-12 p-md-2">
+            <strong>Total:</strong> {{ getPDCIssueTotal() | number }}
+          </div>
+          <div class="p-col-12">
+            <p-table [value]="PDCList">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ "Vch No" }}</th>
+
+                  <th>{{ "Vch Date" }}</th>
+
+                  <th>{{ "PDC Date" }}</th>
+
+                  <th>{{ "Cheque No." }}</th>
+
+                  <th>{{ "Amount" }}</th>
+
+                  <th>{{ "Posting Days With In" }}</th>
+
+                  <th>{{ "Posting Name" }}</th>
+
+                  <th>{{ "Part Name" }}</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>{{ item.vno }}</td>
+
+                  <td>{{ item.tDate | date : "dd/MM/yyyy" }}</td>
+
+                  <td>{{ item.pDate | date : "dd/MM/yyyy" }}</td>
+
+                  <td>{{ item.cno }}</td>
+
+                  <td class="end">{{ item.cAmount }}</td>
+
+                  <td>{{ calculateDays(item.tDate) }}</td>
+
+                  <td>{{ item.cbName }}</td>
+
+                  <td>{{ item.accName }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+
+    <p-tabView hidden [activeIndex]="index" (onChange)="handleChange($event)">
+      <p-tabPanel id="print" [header]="'PDC Received'">
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-8"></div>
+          <div class="p-col-12 p-md-4">
+            <strong>Total:</strong> {{ getTotal() | number }}
+          </div>
+        </div>
+        <div class="p-col-12">
+          <p-table [value]="PDCPostedList">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "Vch No" }}</th>
+
+                <th>{{ "Vch Date" }}</th>
+
+                <th>{{ "PDC Date" }}</th>
+
+                <th>{{ "Cheque No." }}</th>
+
+                <th>{{ "Amount" }}</th>
+
+                <th>{{ "Posting Days With In" }}</th>
+
+                <th>{{ "Posting Name" }}</th>
+
+                <th>{{ "Party Name" }}</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td>{{ item.vno }}</td>
+
+                <td>{{ item.tDate | date : "dd/MM/yyyy" }}</td>
+
+                <td>{{ item.pDate | date : "dd/MM/yyyy" }}</td>
+
+                <td>{{ item.cno }}</td>
+
+                <td>{{ item.cAmount }}</td>
+
+                <td>{{ calculateDays(item.tDate) }}</td>
+
+                <td>{{ item.cbName }}</td>
+
+                <td>{{ item.partyName }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-tabPanel>
+
+      <p-tabPanel id="print1" [header]="'PDC Issued'">
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-8"></div>
+          <div class="p-col-12 p-md-4">
+            <strong>Total :</strong> {{ getPDCIssueTotal() | number }}
+          </div>
+        </div>
+        <div class="p-col-12">
+          <p-table [value]="PDCList">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "Vch No" }}</th>
+
+                <th>{{ "Vch Date" }}</th>
+
+                <th>{{ "PDC Date" }}</th>
+
+                <th>{{ "Cheque No." }}</th>
+
+                <th>{{ "Amount" }}</th>
+
+                <th>{{ "Posting Days With In" }}</th>
+
+                <th>{{ "Posting Name" }}</th>
+
+                <th>{{ "Party Name" }}</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td>{{ item.vno }}</td>
+
+                <td>{{ item.tDate | date : "dd/MM/yyyy" }}</td>
+
+                <td>{{ item.pDate | date : "dd/MM/yyyy" }}</td>
+
+                <td>{{ item.cno }}</td>
+
+                <td>{{ item.cAmount }}</td>
+
+                <td>{{ calculateDays(item.tDate) }}</td>
+
+                <td>{{ item.cbName }}</td>
+
+                <td>{{ item.partyName }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

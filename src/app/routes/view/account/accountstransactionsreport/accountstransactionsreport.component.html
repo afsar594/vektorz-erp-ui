@@ -1,0 +1,510 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Accounts Statements' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear&Enable"
+      (click)="new()"
+      icon="fa fa-ban"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="List_REPORT()"
+      [disabled]="!Permission?.View"
+      label="List"
+      icon="fa fa-list"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <button
+        type="button"
+        (click)="showPositionDialog('topright')"
+        pButton
+        icon="pi pi-arrow-down"
+        label="More Option"
+        class="ui-button-warning"
+      ></button>
+      <p-dialog
+        header="Select Options"
+        [(visible)]="displayOptionsDialog"
+        [position]="position"
+        [modal]="true"
+      >
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-12 p-0">
+            <p-listbox
+              name="groupname1"
+              formControlName="selectedOptions"
+              [options]="listboxOptions"
+              [(ngModel)]="selectedOptions"
+              optionLabel="label"
+              [checkbox]="true"
+              [multiple]="true"
+              (onChange)="onOptionChange($event.value)"
+            ></p-listbox>
+          </div>
+        </div>
+        <p-footer>
+          <button
+            type="button"
+            pButton
+            icon="pi pi-check"
+            (click)="onOptionsDialogSubmit()"
+            label="Yes"
+          ></button>
+        </p-footer>
+      </p-dialog>
+
+      <p-splitButton
+        icon="fa fa-print"
+        [model]="printbtn"
+        label="Print Report"
+        styleClass="p-button-outlined mr-2 mb-2"
+      >
+      </p-splitButton>
+      <button
+        pButton
+        type="button"
+        label="Exit"
+        (click)="ExitNew()"
+        icon="fa fa-sign-out"
+      ></button>
+    </div>
+  </div>
+</div>
+<div
+  class="card card-w-title"
+  [formGroup]="reportAccountsTransactionsFormGroup"
+>
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Accounts Statements' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-2">
+          <p-panel>
+            <p-header>
+              {{ "Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptDetails"
+                  id="rptDetails"
+                  class="p-col-12 p-md-6"
+                  label="{{ 'Details' | translate }}"
+                  [value]="true"
+                  (onClick)="makeDetailsTrue()"
+                ></p-radioButton>
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptSummary"
+                  id="rptSummary"
+                  class="p-col-12 p-md-6"
+                  label="{{ 'Summary' | translate }}"
+                  (onClick)="makeSummaryTrue()"
+                ></p-radioButton>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <p-panel>
+            <p-header>
+              {{ "Account Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="account">{{
+                  "Accounts" | translate
+                }}</label>
+                <div class="p-col-12 p-md-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptAccount"
+                    id="rptAccount"
+                    [options]="accountList"
+                  >
+                  </p-dropdown>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.rptAccount.errors &&
+                      (f.rptAccount.dirty || f.rptAccount.touched)
+                    "
+                  >
+                    <span *ngIf="f.rptAccount.errors.required">
+                      Account is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="account">{{
+                  "Cost Center" | translate
+                }}</label>
+                <div class="p-col-12 p-md-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptCostCenter"
+                    id="rptCostCenter"
+                    [options]="costcenterList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="job">{{
+                  "Job" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptJob"
+                    id="rptJob"
+                    [options]="jobList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="location">{{
+                  "Location" | translate
+                }}</label>
+                <div class="p-col-12 p-md-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptLocation"
+                    id="rptLocation"
+                    [options]="locationList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3"></label>
+
+                <div class="p-col-12 p-md-9 p-0">
+                  <p-checkbox
+                    formControlName="rptHideOpeningBalance"
+                    [binary]="true"
+                  ></p-checkbox
+                  ><label for="rptHideOpeningBalance">{{
+                    "Hide Opening
+                                        Balance" | translate
+                  }}</label>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <p-panel>
+            <p-header>
+              {{ "Date Filter" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <p-radioButton
+                name="groupname2"
+                formControlName="rptDateRange"
+                id="rptDateRangeThisMonth"
+                class="p-col-12 p-md-4"
+                label="{{ 'This Month' | translate }}"
+                (onClick)="makeDateRangeThisMonth()"
+              ></p-radioButton>
+              <p-radioButton
+                name="groupname2"
+                formControlName="rptDateRange"
+                id="rptDateRangeLastMonth"
+                class="p-col-12 p-md-4"
+                label="{{ 'Last Month' | translate }}"
+                (onClick)="makeDateRangeLastMonth()"
+              ></p-radioButton>
+              <p-radioButton
+                name="groupname2"
+                formControlName="rptDateRange"
+                id="rptDateRangeCustom"
+                class="p-col-12 p-md-4"
+                label="{{ 'Custom Range' | translate }}"
+                (onClick)="makeDateRangeCustom()"
+              ></p-radioButton>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="rptDtpFrom">{{
+                "From" | translate
+              }}</label>
+              <div class="p-col-12 p-md-8 p-0">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="dateRangeMode === 'customRange'"
+                  class="w-100"
+                  useUtc
+                  id="rptDtpFrom"
+                  formControlName="rptDtpFrom"
+                  [readonlyInput]="isDateRangeReadonly"
+                  [disabled]="!DateRange"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="rptDtpTo">{{
+                "To" | translate
+              }}</label>
+              <div class="p-col-12 p-md-8 p-0">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="dateRangeMode === 'customRange'"
+                  class="w-100"
+                  useUtc
+                  id="rptDtpTo"
+                  formControlName="rptDtpTo"
+                  [readonlyInput]="isDateRangeReadonly"
+                  [disabled]="!DateRange"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <p-radioButton
+                name="groupname2"
+                formControlName="rptAsOnDate"
+                id="rptAsOnDate"
+                [value]="true"
+                class="p-col-12 p-md-4"
+                label="{{ 'As On' | translate }}"
+                (onClick)="makeAsOnDateTrue()"
+              ></p-radioButton>
+
+              <div class="p-col-12 p-md-8 p-0">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  class="w-100"
+                  useUtc
+                  id="rptDtpAson"
+                  formControlName="rptDtpAson"
+                  [disabled]="!AsOnDate"
+                >
+                </p-calendar>
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="vatno">{{
+                "Description" | translate
+              }}</label>
+              <div class="p-col-12 p-md-8 p-0">
+                <input
+                  class="w-100"
+                  id="rptDescription"
+                  formControlName="rptDescription"
+                  maxlength="50"
+                  pInputText
+                />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="narration">{{
+                "Narration" | translate
+              }}</label>
+              <div class="p-col-12 p-md-8 p-0">
+                <textarea
+                  class="w-100"
+                  formControlName="rptNarration"
+                  id="rptNarration"
+                  maxlength="500"
+                  pInputText
+                ></textarea>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <p-listbox
+                id="rptType"
+                [options]="V_TYPEList"
+                [metaKeySelection]="false"
+                [checkbox]="true"
+                [filter]="true"
+                [multiple]="true"
+                optionLabel="label"
+                (onChange)="onVTypeChange($event?.value)"
+                [listStyle]="{ 'max-height': '150px' }"
+              >
+              </p-listbox>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <p-panel>
+            <p-header>
+              {{ "Columns to Show" | translate }}
+            </p-header>
+            <div class="columns-to-show-container">
+              <div *ngFor="let col of toggleableColumns" class="column-checkbox-item">
+                <p-checkbox
+                  [(ngModel)]="columnVisibility[col.label]"
+                  [ngModelOptions]="{standalone: true}"
+                  [binary]="true"
+                  [label]="col.label"
+                  (onChange)="onColumnVisibilityChange(col.label)"
+                ></p-checkbox>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Accounts Statements" | translate }}
+        </p-header>
+        <div class="grid">
+          <div style="display: flex; align-items: center; margin-bottom: 8px; gap: 16px">
+            <div style="display: flex; align-items: center">
+              <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+              <input
+                type="text"
+                pInputText
+                id="globalFilter"
+                placeholder="Global Filter..."
+                (input)="applyGlobalFilter($event)"
+              />
+            </div>
+            <div style="display: flex; align-items: center">
+              <p-checkbox
+                [(ngModel)]="highlightDebitCredit"
+                [ngModelOptions]="{standalone: true}"
+                [binary]="true"
+                label="Highlight Debit/Credit"
+                (onChange)="onHighlightToggle()"
+              ></p-checkbox>
+            </div>
+          </div>
+
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="reportaccountstransactions_entry"
+            [data]="dataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-2">
+          <div class="min-panel">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">{{
+                "Debit" | translate
+              }}</label>
+              <div class="p-col-12 p-md-9 p-0">
+                <input
+                  class="w-100"
+                  formControlName="rptTotDebit"
+                  id="rptTotDebit"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  maxlength="50"
+                  value="{{ getTotalDedit() }}"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-sm-12 p-md-2">
+          <div class="min-panel">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">{{
+                "Credit" | translate
+              }}</label>
+              <div class="p-col-12 p-md-9 p-0">
+                <input
+                  class="w-100"
+                  formControlName="rptTotDebit"
+                  id="rptTotDebit"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  maxlength="50"
+                  value="{{ getTotalCredit() }}"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-sm-12 p-md-2">
+          <div class="min-panel">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="rptTotCredit">{{
+                "Total" | translate
+              }}</label>
+              <div class="p-col-12 p-md-9 p-0">
+                <input
+                  class="w-100"
+                  formControlName="rptTotCredit"
+                  id="rptTotCredit"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  maxlength="50"
+                  [value]="(getTotalDedit() - getTotalCredit())?.toFixed(2)"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

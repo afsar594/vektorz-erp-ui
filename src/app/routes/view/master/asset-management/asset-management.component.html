@@ -1,0 +1,156 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<div class="card card-w-title">
+  <div class="p-grid p-fluid">
+    <div class="p-col-12 p-md-3">
+      <div class="card flex justify-content-center">
+        <!-- <p-tree [value]="asset"></p-tree> -->
+        <p-tree [value]="asset" selectionMode="single" [(selection)]="selectedFile" [contextMenu]="cm"
+          (onNodeSelect)="getItemData($event)" (onNodeContextMenuSelect)="onRightClick($event, cm)"
+          (onNodeExpand)="loadNode($event)" [filter]="true">
+        </p-tree>
+        <p-contextMenu #cm [model]="items"></p-contextMenu>
+      </div>
+    </div>
+    <div class="p-col-12 p-md-9">
+      <p-tabView [activeIndex]="index" (onChange)="handleChange($event)" [formGroup]="assetForm">
+        <p-tabPanel [header]="'Asset' | translate">
+          <div class="p-grid">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "path" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-8">
+              <input pInputText class="w-100" formControlName="path" placeholder="--path--" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ (G ? "Parent Group" : "Group Name") | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-8">
+              <input pInputText class="w-100" readonly formControlName="groupname" placeholder="--Grouup Name--" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Code" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-8">
+              <input pInputText class="w-100" readonly formControlName="code" placeholder="--Code--" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-2" for="account">
+
+              <b>{{ (G ? "Group Name" : "Asset Name") | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-8">
+              <input pInputText class="w-100" readonly formControlName="assetname" placeholder="--Asset Name--" />
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-12 p-md-2" for="account">
+              <b>{{ "Date Created" | translate }}</b>
+            </label>
+            <div class="p-col-12 p-md-8">
+              <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc formControlName="dateCreated"
+                [showIcon]="true">
+              </p-calendar>
+              <div class="error" *ngIf="f.dateCreated.touched && f.dateCreated.invalid">
+                Required Date is Entry
+              </div>
+            </div>
+          </div>
+          <br />
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>
+
+<p-dialog header="Asset" [(visible)]="displayaddedit" [modal]="true" [style]="{ width: '40%' }" [maximizable]="true"
+  [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button pButton type="button" [label]="pagetype == 'Add' ? 'Save' : 'Update'" icon="fa fa-floppy-o"
+    (click)="saveItem(isAddEditGroup == true ? 'group' : 'head')" class="ui-button-success"></button>
+
+  <button pButton type="button" class="ui-button-danger" disabled (click)="delete()" label="Delete"
+    icon="fa fa-trash"></button>
+  <div *ngIf="isAddEditGroup" class="card card-w-title" [formGroup]="assetGroupForm">
+    <div class="p-grid">
+      <!-- <div class="p-col-12"> -->
+
+      <div class="p-grid p-col-12 inputGroup">
+        <label class="p-col-12 p-md-12 p-lg-4" for="groupname">
+          {{ "Parent Group Name" | translate }}</label>
+        <div class="p-col-12 p-md-12 p-lg-8 p-0">
+          <input pInputText class="w-100" formControlName="parentGroupName" placeholder="--path--" />
+
+          <!-- <p-dropdown filter="true" class="w-100" [options]="accountGroupSub" formControlName="assetGroupId"
+            filterBy="label">
+          </p-dropdown> -->
+        </div>
+      </div>
+
+      <div class="p-grid p-col-12 inputGroup">
+        <label class="p-col-12 p-md-12 p-lg-4" for="groupname">
+          {{ "Asset Group Name" | translate }}</label>
+        <div class="p-col-12 p-md-12 p-lg-8 p-0">
+          <textarea rows="2" formControlName="groupName" pInputTextarea autoResize="autoResize"></textarea>
+        </div>
+      </div>
+
+      <div class="p-grid p-col-12 inputGroup">
+        <label class="p-col-12 p-md-12 p-lg-4" for="dateCreated">
+          {{ "Created Date" | translate }}
+        </label>
+
+        <div class="p-col-12 p-md-12 p-lg-8 p-0">
+          <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+            [yearNavigator]="true" yearRange="2000:2040" class="w-100" [showIcon]="true" useUtc
+            formControlName="dateCreated" id="dateCreated">
+          </p-calendar>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div [formGroup]="assetForm1" *ngIf="!isAddEditGroup">
+    <div class="p-grid">
+      <label class="p-col-2 p-md-2 p-lg-4" for="account" FormControl>
+        <b>{{ "Group Name" | translate }}</b>
+      </label>
+      <div class="p-col-9 p-md-9 p-lg-8">
+        <input pInputText readonly class="w-100" formControlName="groupname" placeholder="--Grouup Name--" />
+      </div>
+    </div>
+
+    <div class="p-grid">
+      <label class="p-col-2 p-md-2 p-lg-4" for="account" FormControl>
+        <b>{{ "Asset Name" | translate }}</b>
+      </label>
+      <div class="p-col-9 p-md-9 p-lg-8">
+        <input pInputText class="w-100" formControlName="assetname" placeholder="--Asset Name--" />
+        <div class="error" *ngIf="f.assetname.touched && f.assetname.invalid">
+          Required Asset Name is Entry
+        </div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <label class="p-col-2 p-md-2 p-lg-4" for="account" FormControl>
+        <b>{{ "Date Created" | translate }}</b>
+      </label>
+      <div class="p-col-9 p-md-9 p-lg-8">
+        <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+          [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc formControlName="dateCreated"
+          [showIcon]="true">
+        </p-calendar>
+        <div class="error" *ngIf="f.dateCreated.touched && f.dateCreated.invalid">
+          Required Date is Entry
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>
+
+<p-toast></p-toast>

@@ -1,0 +1,40 @@
+<p-dialog header="Proforma Invoice Search" [(visible)]="displayProformaModal" (onHide)="closeModal()" [modal]="true"
+    [style]="{width: '70vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+
+    <p-toolbar [formGroup]="SalesOrderStatus" styleClass="p-mb-4">
+        <div class="ui-toolbar-group-left" style="display: flex; align-items: center; gap: 1rem;">
+            <button pButton type="button" class="ui-button-info" (click)="filter()" label="Find" icon="pi pi-search"></button>
+            <button pButton type="button" class="ui-button-danger" label="Clear" icon="fa fa-ban" (click)="clearfilter()"></button>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; margin-left: 2rem;">
+                <p-checkbox formControlName="isDate" binary="true" label="By Date"></p-checkbox>
+                <p-calendar formControlName="DateFrom" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" placeholder="From Date"></p-calendar>
+                <p-calendar formControlName="DateTO" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" placeholder="To Date"></p-calendar>
+            </div>
+        </div>
+    </p-toolbar>
+
+    <div style="margin-top: 1rem;">
+        <p-table #dt [value]="customers" [paginator]="true" [rows]="5" selectionMode="single"
+            (onRowSelect)="selectRow($event.data)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem"></th>
+                    <th pSortableColumn="voucherNo">Vch No <p-sortIcon field="voucherNo"></p-sortIcon></th>
+                    <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+                    <th pSortableColumn="locationId">Location <p-sortIcon field="locationId"></p-sortIcon></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-customer>
+                <tr [pSelectableRow]="customer" style="cursor: pointer;">
+                    <td>
+                        <p-tableRadioButton [value]="customer"></p-tableRadioButton>
+                    </td>
+                    <td>{{ customer.voucherNo }}</td>
+                    <td>{{ customer.date | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ customer.locationId }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>

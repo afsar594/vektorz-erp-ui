@@ -1,0 +1,99 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<div class="toolbar">
+  <div>
+    <button pButton type="button" label="New" (click)="new()" icon="pi pi-plus" class="ui-button-info"></button>
+    <button pButton type="button" label="Edit" [disabled]="operation.insert" icon="fa fa-pencil" (click)="edit()" class="ui-button-success"></button>
+    <button pButton type="button" label="List" icon="fa fa-list" (click)="showMaximizableDialog()" class="ui-button-info"></button>
+    <button pButton class="ui-button-info" [label]="btnlabel" (click)="save()"></button>
+    <button pButton class="ui-button-warning" label="Clear" (click)="reset()"></button>
+    <button pButton class="ui-button-danger" label="Delete" (click)="remove()" [disabled]="operation.insert"></button>
+  </div>
+
+  <div>
+    <button pButton type="button" (click)="ExitNew()" label="Exit" icon="fa fa-sign-out"></button>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="costEstimationItemFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel header="Cost Estimation Item Master">
+      <div class="p-grid p-ai-center">
+        
+        <div class="p-col-12 p-md-1">
+          Item Name<span class="required">*</span>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <input pInputText placeholder="Item Name" formControlName="itemName" class="w-100" />
+          <div class="error" *ngIf="f.itemName.errors && (f.itemName.dirty || f.itemName.touched)">
+            <span *ngIf="f.itemName.errors.required">Item Name is Mandatory Field*</span>
+          </div>
+        </div>
+
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Cost Estimation Item List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="p-grid">
+    <div class="p-col-12">
+      <p-table #dt [value]="itemList" [columns]="cols" [paginator]="true" [rows]="8">
+        <ng-template pTemplate="caption">
+          <div class="p-grid" style="text-align: right">
+            <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+            <div>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                placeholder="Global Filter"
+                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                style="width: auto"
+              />
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of cols">
+              {{ col.header }}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.itemName }}</td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                (click)="updateValues(item)"
+                iconPos="left"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

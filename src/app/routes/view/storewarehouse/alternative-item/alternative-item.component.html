@@ -1,0 +1,103 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<div class="card card-w-title">
+  <div class="p-grid p-ai-center">
+    <div class="p-col-12 p-md-1">
+      {{ "Item" | translate }}
+    </div>
+    <div class="p-col-12 p-md-6">
+      <p-dropdown
+        filter="true"
+        filter="true"
+        [style]="{ width: '100%' }"
+        options=""
+        placeholder="---All---"
+        [showClear]="true"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="p-col-12">
+      <hot-table
+        [hotId]="hotid"
+        [data]="dataset"
+        [licenseKey]="licensekey"
+        [settings]="Alternative"
+      >
+      </hot-table>
+    </div>
+  </div>
+</div>
+
+<!-- <p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" (click)=" ItemSearch()" label="New" icon="fa fa-plus" class="ui-button-info"></button>
+        <button pButton type="button" label="Edit"  icon="fa fa-pencil" class="ui-button-success"></button>
+        <button pButton type="button" label="Save" icon="fa fa-floppy-o" class="ui-button-success"></button>
+        <button pButton type="button" label="List" icon="fa fa-list" class="ui-button-info"></button>
+        <button pButton type="button" label="Cancel" class="ui-button-danger" icon="fa fa-ban"></button>
+        <button pButton type="button" label="Print" icon="fa fa-print" class="ui-button-success"></button>
+        <button pButton type="button" class="ui-button-danger" label="Delete" icon="fa fa-close"></button>
+        <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+    </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]='AIForm'>
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Alternative Item' | translate">
+            <div class="p-grid">
+                <div class="p-col-12">
+
+                    <div class="p-grid">
+                        <label class="p-col-1 p-md-1 p-lg-1 " for="account">
+                            <b>{{'Dec No:' | translate}}</b>
+                        </label>
+                        <div class="p-col-4 p-md-4 p-lg-4">
+                            <input pInputText style="width: 100%;" formControlName="DecNo">
+                            <div class="error" *ngIf="f.DecNo.touched && f.DecNo.invalid">Dec No
+                                is Invalid Entry
+                            </div>
+                        </div>
+                         
+                        <label class="p-col-1 p-md-1 p-lg-1 " for="account">
+                            <b>{{' Date:' | translate}}</b>
+                        </label>
+                        <div class="p-col-4 p-md-4 p-lg-4">
+                            <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" useUtc formControlName='Date' style="width: 100%;" 
+                                [showIcon]="true">
+                            </p-calendar>
+                            <div class="error" *ngIf="f.Date.touched && f.Date.invalid"> Date Invalid Entry
+                            </div>
+                        </div>
+                      
+                    </div>     
+                    <div class="p-grid">
+                        <label class="p-col-1 p-md-1 p-lg-1 " for="account">
+                            <b>{{'Remarks:' | translate}}</b>
+                        </label>
+                        <div class="p-col-7 p-md-7 p-lg-7">
+                            <textarea style="min-height:60px;width:100%;margin-top:5px;" formControlName="Remarks"
+                                pInputTextarea></textarea>
+                            <div class="error" *ngIf="f.Remarks.touched && f.Remarks.invalid"> Remarks Invalid
+                                Entry
+                            </div>
+                        </div> 
+                    </div>  
+                </div>                                                                            
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+    <div class="card card-w-title">
+        <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+            <p-tabPanel [header]="'Alternative Item' | translate">
+                <div class="grid">
+                    <div class="p-col-12">
+                        <hot-table [hotId]="hotid" [data]=" dataset" [licenseKey]="licensekey"
+                            [settings]="Alternative">
+
+                        </hot-table>
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div> -->

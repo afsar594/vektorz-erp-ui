@@ -1,0 +1,156 @@
+<app-page-header [nav]="[
+    { label: 'storewarehouse' | translate },
+    { label: 'openingstock' | translate }
+  ]" [title]="title | translate"></app-page-header>
+
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="New" icon="fa fa-plus" (click)="new()" class="ui-button-info"></button>
+    <button pButton type="button" label="Edit" (click)="edit()" [disabled]="!btnFlag.edit || !Permission.Edit"
+      icon="fa fa-pencil" class="ui-button-success"></button>
+    <button pButton type="button" label="Cancel" [disabled]="!btnFlag.cancel" icon="fa fa-close"
+      class="ui-button-danger"></button>
+    <button pButton type="button" [label]="btnFlag.save == true ? 'Save' : 'Update'" (click)="saveOpeningStock()"
+      icon="fa fa-floppy-o" [disabled]="!Permission?.Add" class="ui-button-success"></button>
+    <button pButton type="button" label="List" [disabled]="!Permission?.View" (click)="showMaximizableDialog()"
+      icon="fa fa-bars" class="ui-button-primary"></button>
+    <button pButton type="button" label="Delete" [disabled]="!btnFlag.delete || !Permission?.Delete" (click)="delete()"
+      icon="fa fa-trash" class="ui-button-danger"></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" [disabled]="!btnFlag.edit || !Permission?.Print" (click)="displayPrint()"
+      label="Print" icon="fa fa-print" class="ui-button-success"></button>
+    <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"></button>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="OpeningStockFormGroup">
+  <p-panel>
+    <p-header> Opening Stock </p-header>
+
+    <div class="p-grid">
+      <div class="p-col-12 p-md-12 p-lg-1"></div>
+      <div class="p-col-12 p-md-12 p-lg-1">
+        <label for="location">{{ "Location" | translate }}</label>
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-4">
+        <p-dropdown filter="true" class="w-100" placeholder="Location" formControlName="openingStockVoucherLocationId"
+          [options]="locationList" [filter]="true">
+        </p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-1">
+        <label for="location">{{ "Voucher No" | translate }}</label>
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-4">
+        <input class="w-100" placeholder="Voucher No" formControlName="openingStockVoucherNo" readonly pInputText />
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 p-md-12 p-lg-1"></div>
+      <div class="p-col-12 p-md-12 p-lg-1">
+        <label style="width: 100px" for="date">{{ "Date" | translate }}</label>
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-4">
+        <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+          [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" useUtc
+          formControlName="openingStockVoucherDate" dateFormat="dd/M/yy" id="date"></p-calendar>
+        <div class="error" *ngIf="
+            f.openingStockVoucherDate.errors &&
+            (f.openingStockVoucherDate.dirty ||
+              f.openingStockVoucherDate.touched)
+          ">
+          <span *ngIf="f.openingStockVoucherDate.errors.required">
+            Date is Mandatory Field*</span>
+        </div>
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-1">
+        <label style="width: 100px" for="date">{{
+          "Remarks" | translate
+          }}</label>
+      </div>
+      <div class="p-col-12 p-md-12 p-lg-4">
+        <textarea class="w-100" formControlName="openingStockVoucherRemarks" pInputText></textarea>
+      </div>
+    </div>
+  </p-panel>
+  <ng-container *ngIf="showstorewarehouseLookUp">
+    <app-lookup [header]="'Item Look Up'" [dataArry]="dataList" [isServerSearch]="isServerSearch"
+      [selectedItem]="selectItem" [searchText]="''" [columns]="lookupGridColumns"
+      (selectItemEvent)="selectsales($event)" (exitEvent)="exit($event)" [cell]="activeRow" [width]="width"
+      (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" (searchEvent)="onSearch($event)"
+      [tableheader]="'Sales List'" [(show)]="showstorewarehouseLookUp"></app-lookup>
+  </ng-container>
+
+  <app-lookup [header]="'Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference" [dataArry]="dataList"
+    (exitEvent)="exit($event)" (clearEvent)="clear($event)" [formControlName]="control" [columns]="lookupGridColumns"
+    (selectItemEvent)="selectstorewarehouse($event)" (hideDialogEvent)="hide($event)" [tableheader]="'job List'"
+    [(show)]="showstorewarehouseJobLookUp"></app-lookup>
+  <p-panel>
+    <p-header>
+      {{ "Opening Stock Details" | translate }}
+    </p-header>
+    <div class="grid">
+      <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="openingstockentry">
+      </hot-table>
+    </div>
+
+    <div class="p-grid inputGroup" style="justify-content: end">
+      <div class="p-field p-grid">
+        <label for="firstname3" class="p-col-fixed" style="width: 100px">Total :
+        </label>
+        <div class="p-col">
+          <input id="firstname3" type="text" formControlName="openingStockVoucherDetailsTotal" pInputText />
+        </div>
+      </div>
+    </div>
+  </p-panel>
+  <p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+    [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+</div>
+
+<p-dialog header="Opening Stock Voucher List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-table #dt [value]="openingStockarry" [columns]="cols" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-openingStockVoucher_list>
+      <tr>
+        <td>{{ openingStockVoucher_list?.openingStockVoucherNo }}</td>
+        <td>
+          {{
+          getLocation(openingStockVoucher_list?.openingStockVoucherLocationId)
+          }}
+        </td>
+        <td>{{ openingStockVoucher_list?.openingStockVoucherRemarks }}</td>
+        <td>
+          {{
+          openingStockVoucher_list?.openingStockVoucherDate
+          | date : "dd/MM/yyyy"
+          }}
+        </td>
+        <!-- <td>{{openingStockVoucher_list?.openingStockVoucherDetailsTotal}}</td> -->
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedOpeningStockVoucherDetails(openingStockVoucher_list?.openingStockVoucherNo );
+              displayMaximizable = false
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+<p-toast></p-toast>

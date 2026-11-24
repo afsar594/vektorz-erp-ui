@@ -1,0 +1,172 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Show"
+      (click)="show()"
+      [disabled]="!Permission?.View"
+      icon="pi pi-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Export"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="clearfilter()"
+      label="Clear"
+      icon="fa fa-ban"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="getPOReport()"
+      label="Print Report"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="CustomerQuotationDetail">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Customer Quotation Details' | translate">
+      <div class="p-grid">
+        <div class="p-col-6 p-md-6 p-lg-6">
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Cust Name" | translate }}</b>
+            </label>
+            <div class="p-col-10 p-md-10 p-lg-10">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                [options]="CustomerMasterList"
+                formControlName="CustomerID"
+                optionLabel=""
+                [showClear]="true"
+                (onChange)="onChange($event, 'customer')"
+              ></p-dropdown>
+            </div>
+          </div>
+          <div class="p-grid">
+            <label class="p-col-2 p-md-2 p-lg-2" for="account">
+              <b>{{ "Status" | translate }}</b>
+            </label>
+            <div class="p-col-10 p-md-10 p-lg-10">
+              <p-dropdown
+                filter="true"
+                [options]="status"
+                formControlName="customerstatus"
+                optionLabel=""
+                [showClear]="true"
+                (onChange)="onChange($event, 'status')"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-6 p-md-6 p-lg-6">
+          <p-panel>
+            <p-header>
+              <p-checkbox
+                formControlName="isDate"
+                [binary]="true"
+                label="ByDate"
+              ></p-checkbox>
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-1 p-md-1 p-lg-1" for="account">
+                <b>{{ "From" | translate }}</b>
+              </label>
+              <div class="p-col-5 p-md-5 p-lg-5">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  formControlName="fromDate"
+                  [disabled]="!CustomerQuotationDetail.get('isDate').value"
+                  useUtc
+                  [style]="{ width: '100%' }"
+                >
+                </p-calendar>
+              </div>
+
+              <label class="p-col-1 p-md-1 p-lg-1" for="account">
+                <b>{{ "To" | translate }}</b>
+              </label>
+              <div class="p-col-5 p-md-5 p-lg-5">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  formControlName="toDate"
+                  [disabled]="!CustomerQuotationDetail.get('isDate').value"
+                  [showIcon]="true"
+                  useUtc
+                  [style]="{ width: '100%' }"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="p-col-12">
+          <p-table [value]="dataset" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="text-align: center; width: 120px">Qtn No</th>
+                <th style="text-align: center">Voucher.No</th>
+                <th style="text-align: center">Voucher Type</th>
+                <th style="text-align: center">Date</th>
+                <th style="text-align: center">Customer</th>
+                <th style="text-align: center">Amount</th>
+                <th style="text-align: center">Status</th>
+                <th style="text-align: center; width: 120px">View</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td style="text-align: center">{{ item?.quotationId }}</td>
+                <td style="text-align: center">{{ item?.voucherNo }}</td>
+                <td style="text-align: center">
+                  {{ GetVtype(item?.voucherType) }}
+                </td>
+                <td style="text-align: center">
+                  {{ item?.quotationDate | date : "dd/MM/yyyy" }}
+                </td>
+                <td style="text-align: center">{{ item?.customerName }}</td>
+                <td style="text-align: center">{{ item?.netAmount }}</td>
+                <td style="text-align: center">
+                  {{ item?.status === true ? "Open" : "Close" }}
+                </td>
+                <td style="text-align: center">
+                  <a class="iconbton" (click)="ViewDetail(item?.quotationId)">
+                    <i class="pi pi-eye" style="font-size: 26px"></i>
+                  </a>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

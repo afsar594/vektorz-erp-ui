@@ -1,0 +1,379 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      label="List"
+      icon="fa fa-list"
+      [disabled]="btnFlag.list || !Permission?.View"
+      (click)="getcustomerEnquiryReport()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear All"
+      (click)="clearall()"
+      icon="fa fa-floppy-o"
+    ></button>
+    <!-- <button pButton type="button" class="ui-button-danger" label="Cancel" [disabled]="btnFlag.cancel"
+            icon="fa fa-times"></button> -->
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      (click)="displayPrint()"
+      label="Print"
+      icon="fa fa-print"
+      [disabled]="!Permission?.Print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="displayExcel()"
+      label="Excel"
+      icon="pi pi-file-excel"
+      [disabled]="!Permission?.Print"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="customerEnquiryFormGroup">
+  <p-panel>
+    <p-header>
+      {{ "Customer Enquiry" | translate }}
+    </p-header>
+    <div class="p-grid">
+      <div class="p-col-6">
+        <div class="p-grid">
+          <div class="p-col-2 p-md-2 p-lg-2">
+            <b>{{ "Enquiry No" | translate }}</b>
+          </div>
+          <div class="p-col-10 p-md-10 p-lg-10">
+            <!-- <input id="enquiryNo" type="number" pInputText formControlName="enquiryNo">
+                        <div class="error" *ngIf="f.enquiryNo.touched && f.enquiryNo.invalid">
+                            <span>Enquir No. is Mandatory Field*</span>
+                        </div> -->
+            <p-dropdown
+              [filter]="true"
+              class="w-100"
+              formControlName="enquiryNo"
+              [options]="EnqueryNoList"
+            >
+            </p-dropdown>
+            <div
+              class="error"
+              *ngIf="
+                f.enquiryNo.errors && (f.enquiryNo.dirty || f.enquiryNo.touched)
+              "
+            >
+              <span *ngIf="f.enquiryNo.errors.required">
+                Enquir No. is Mandatory Field*</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-2 p-md-2 p-lg-2">
+            <b>{{ "SalesMan" | translate }}</b>
+          </div>
+          <div class="p-col-10 p-md-10 p-lg-10">
+            <!-- <p-dropdown filter="true" [options]="customerNameList" placeholder="--- Select Customer Name ---"
+                            optionLabel="locationMasterLocationName" [showClear]="true" formControlName="customerName">
+                        </p-dropdown> -->
+            <p-dropdown
+              [filter]="true"
+              class="w-100"
+              formControlName="salesManId"
+              [options]="SalesManMasterList"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="p-grid">
+          <!-- <div class="p-col-2 p-md-2 p-lg-2">
+            <b>{{ "Enquiry Status" | translate }}</b>
+          </div>
+          <div class="p-col-10 p-md-10 p-lg-10">
+            <p-dropdown
+              [filter]="true"
+              class="w-100"
+              formControlName="EnquiryStatus"
+              [options]="enquiryStatusList"
+            >
+            </p-dropdown>
+          </div> -->
+
+            <div class="p-col-2 p-md-2 p-lg-2">
+            <b>{{ "Customer" | translate }}</b>
+          </div>
+          <div class="p-col-10 p-md-10 p-lg-10">
+            <p-dropdown
+              [filter]="true"
+              class="w-100"
+              formControlName="customerName"
+              [options]="customerNameList"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-6">
+        <app-datefilter
+          [enableDate]="enableDate"
+          (enableDateChange)="enableDate = $event"
+        ></app-datefilter>
+      </div>
+      <!-- <div class="p-col-6">
+                <p-panel>
+                    <p-header>
+                        <div class="p-col-12 p-md-12 p-lg-12">
+                            <span (click)="toggleDateRange()" [style]="{'cursor':'pointer'}">
+                                <p-checkbox label="Date Range" [(ngModel)]="useDateRange"
+                                    [ngModelOptions]="{standalone: true}" [binary]="true"
+                                    [style]="{'cursor':'pointer'}"></p-checkbox>
+                            </span>
+                        </div>
+                    </p-header>
+                    <div class="p-grid">
+                        <div class="p-col-2 p-md-2 p-lg-2"><b>{{'Date To'| translate}}</b></div>
+                        <div class="p-col-10 p-md-10 p-lg-10">
+                            <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" dateFormat="dd-mm-yy" formControlName="dateTo" [showIcon]="true"></p-calendar>
+                            <div class="error" *ngIf="f.dateTo.touched && f.dateTo.invalid">
+                                <span>Date To is Mandatory Field*</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-grid">
+                        <div class="p-col-2 p-md-2 p-lg-2"><b>{{'Date From'| translate}}</b></div>
+                        <div class="p-col-10 p-md-10 p-lg-10">
+                            <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2040" dateFormat="dd-mm-yy" formControlName="dateFrom" [showIcon]="true"></p-calendar>
+                            <div class="error" *ngIf="f.dateFrom.touched && f.dateFrom.invalid">
+                                <span>Date From is Mandatory Field*</span>
+                            </div>
+                        </div>
+                    </div>
+                </p-panel>
+            </div> -->
+    </div>
+  </p-panel>
+</div>
+<div class="card card-w-title">
+  <p-panel>
+    <p-header>
+      {{ "Details" | translate }}
+    </p-header>
+    <div class="grid">
+      <!-- Old Table commented out as requested
+      <hot-table
+        [hotId]="hotid"
+        height="auto"
+        [data]="dataset"
+        [licenseKey]="licensekey"
+        [settings]="customerEnquirySearch"
+      >
+        <hot-column
+          data="customer_Master_Customer_Name"
+          [readOnly]="true"
+          title="SalesMan"
+        ></hot-column>
+        <hot-column
+          data="enquiry_Master_Enquiry_ID"
+          [readOnly]="true"
+          title="Enquiry No"
+        ></hot-column>
+        <hot-column
+          data="enquiry_About_Enquiry_About"
+          title="Enquiry About"
+        ></hot-column>
+        <hot-column
+          data="business_Type_Master_Business_Type_Name"
+          title="Business Type"
+        ></hot-column>
+        <hot-column
+          data="currency_Master_Currency_Name"
+          title="Currency Name"
+        ></hot-column>
+        <hot-column
+          data="enquiry_Master_Contact_Email"
+          title="Contact Email"
+        ></hot-column>
+        <hot-column
+          data="enquiry_Master_Enquiry_Date"
+          title="Enquiry Date"
+          [readOnly]="true"
+          [renderer]="dateRenderer.bind(this)"
+          className="htCenter"
+        >
+        </hot-column>
+        <hot-column
+          data="enquiry_Status_Enquiry_Status"
+          title="Enquiry Status"
+        ></hot-column>
+        <hot-column
+          data="location_Master_Location_Name"
+          title="Location Name"
+        ></hot-column>
+        <hot-column data="enquiry_Master_Remarks" title="Remarks"></hot-column>
+      </hot-table>
+      -->
+      <hot-table
+        [hotId]="hotid"
+        height="auto"
+        [data]="dataset"
+        [licenseKey]="licensekey"
+        [settings]="customerEnquirySearch"
+      >
+        <!-- <hot-column data="enquiry_Master_Enquiry_ID" [readOnly]="true" title="Enquiry ID"></hot-column> -->
+        <hot-column data="enquiry_Master_Enquiry_No" [readOnly]="true" title="Enquiry No"></hot-column>
+        <hot-column data="enquiry_Master_Enquiry_Date" [readOnly]="true" title="Enquiry Date" [renderer]="dateRenderer.bind(this)" className="htCenter"></hot-column>
+        <hot-column data="enquiry_Master_Remarks" [readOnly]="true" title="Remarks"></hot-column>
+        <!-- <hot-column data="customer_Master_Customer_No" [readOnly]="true" title="Customer No"></hot-column> -->
+        <hot-column data="customer_Master_Customer_Name" [readOnly]="true" title="Customer Name"></hot-column>
+        <hot-column data="customer_Master_Customer_Contact_Person" [readOnly]="true" title="Contact Person"></hot-column>
+        <!-- <hot-column data="location_Master_Location_ID" [readOnly]="true" title="Location ID"></hot-column> -->
+        <hot-column data="location_Master_Location_Name" [readOnly]="true" title="Location Name"></hot-column>
+        <!-- <hot-column data="salesManId" [readOnly]="true" title="Salesman ID"></hot-column> -->
+        <hot-column data="salesname" [readOnly]="true" title="Salesman Name"></hot-column>
+        <!-- <hot-column data="customer_Quotation_QID" [readOnly]="true" title="Quotation ID"></hot-column> -->
+        <hot-column data="customer_Quotation_VoucherNo" [readOnly]="true" title="Quotation Voucher No"></hot-column>
+        <hot-column data="customer_Quotation_Quotation_Date" [readOnly]="true" title="Quotation Date" [renderer]="dateRenderer.bind(this)" className="htCenter"></hot-column>
+        <hot-column data="approvalStatus" [readOnly]="true" title="Approval Status"></hot-column>
+        <hot-column data="status" [readOnly]="true" title="Status"></hot-column>
+      </hot-table>
+    </div>
+  </p-panel>
+</div>
+<div style="visibility: hidden">
+  <table
+    *ngIf="CustomerEnquiry == 'CustomerEnquirySearch'"
+    id="CustomerEnquirySearch"
+    class="Acc"
+  >
+    <tr>
+      <th>SL.No</th>
+      <!-- <th>Enquiry ID</th> -->
+      <th>Enquiry No</th>
+      <th>Enquiry Date</th>
+      <th>Remarks</th>
+      <!-- <th>Customer No</th> -->
+      <th>Customer Name</th>
+      <th>Contact Person</th>
+      <!-- <th>Location ID</th> -->
+      <th>Location Name</th>
+      <!-- <th>Salesman ID</th> -->
+      <th>Salesman Name</th>
+      <!-- <th>Quotation ID</th> -->
+      <th>Quotation Voucher No</th>
+      <th>Quotation Date</th>
+      <th>Approval Status</th>
+      <th>Status</th>
+    </tr>
+    <tr *ngFor="let item of report; let i = index">
+      <td>{{ i + 1 }}</td>
+      <!-- <td>{{ item?.enquiry_Master_Enquiry_ID }}</td> -->
+      <td>{{ item?.enquiry_Master_Enquiry_No }}</td>
+      <td>{{ item?.enquiry_Master_Enquiry_Date | date:'dd/MM/yyyy' }}</td>
+      <td>{{ item?.enquiry_Master_Remarks }}</td>
+      <!-- <td>{{ item?.customer_Master_Customer_No }}</td> -->
+      <td>{{ item?.customer_Master_Customer_Name }}</td>
+      <td>{{ item?.customer_Master_Customer_Contact_Person }}</td>
+      <!-- <td>{{ item?.location_Master_Location_ID }}</td> -->
+      <td>{{ item?.location_Master_Location_Name }}</td>
+      <!-- <td>{{ item?.salesManId }}</td> -->
+      <td>{{ item?.salesname }}</td>
+      <!-- <td>{{ item?.customer_Quotation_QID }}</td> -->
+      <td>{{ item?.customer_Quotation_VoucherNo }}</td>
+      <td>{{ item?.customer_Quotation_Quotation_Date | date:'dd/MM/yyyy' }}</td>
+      <td>{{ item?.approvalStatus }}</td>
+      <td>{{ item?.status }}</td>
+    </tr>
+  </table>
+</div>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button (click)="printAsPDF()" pButton>print</button>
+
+  <div
+    id="print"
+    style="font-family: italic !important; justify-content: center"
+  >
+    <!-- <img style="margin-left: 420px;" src="../../../../../assets/Images/logo-2.png" alt> -->
+
+    <img
+      style="margin-left: 420px"
+      *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+      class="squreImg"
+      [src]="'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg"
+    />
+    <img
+      style="margin-left: 420px"
+      *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+      class="rectImg"
+      [src]="'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg"
+    />
+
+    <h1>Customer Enquiry Report</h1>
+    <br /><br />
+    <h3>Address: &nbsp; {{ stationmasterObj?.stationMasterAddress }}</h3>
+    <h3>Tel : {{ stationmasterObj?.stationMasterTele1 }}</h3>
+
+    <h3>Fax : {{ stationmasterObj?.stationMasterFax }}</h3>
+    <h3>TRN : {{ stationmasterObj?.stationMasterVatNo }}</h3>
+    <h3>Email : {{ stationmasterObj?.stationMasterEmail }}</h3>
+    <!-- <h3>Sales Report Summary {{currentDate | date:'dd/MM/yyyy'}}</h3> -->
+
+    <table *ngIf="CustomerEnquiry == 'CustomerEnquirySearch'" class="Acc">
+      <tr>
+        <th>SL.No</th>
+        <!-- <th>Enquiry ID</th> -->
+        <th>Enquiry No</th>
+        <th>Enquiry Date</th>
+        <th>Remarks</th>
+        <!-- <th>Customer No</th> -->
+        <th>Customer Name</th>
+        <th>Contact Person</th>
+        <!-- <th>Location ID</th> -->
+        <th>Location Name</th>
+        <!-- <th>Salesman ID</th> -->
+        <th>Salesman Name</th>
+        <!-- <th>Quotation ID</th> -->
+        <th>Quotation Voucher No</th>
+        <th>Quotation Date</th>
+        <th>Approval Status</th>
+        <th>Status</th>
+      </tr>
+      <tr *ngFor="let item of report; let i = index">
+        <td>{{ i + 1 }}</td>
+        <!-- <td>{{ item?.enquiry_Master_Enquiry_ID }}</td> -->
+        <td>{{ item?.enquiry_Master_Enquiry_No }}</td>
+        <td>{{ item?.enquiry_Master_Enquiry_Date | date:'dd/MM/yyyy' }}</td>
+        <td>{{ item?.enquiry_Master_Remarks }}</td>
+        <!-- <td>{{ item?.customer_Master_Customer_No }}</td> -->
+        <td>{{ item?.customer_Master_Customer_Name }}</td>
+        <td>{{ item?.customer_Master_Customer_Contact_Person }}</td>
+        <!-- <td>{{ item?.location_Master_Location_ID }}</td> -->
+        <td>{{ item?.location_Master_Location_Name }}</td>
+        <!-- <td>{{ item?.salesManId }}</td> -->
+        <td>{{ item?.salesname }}</td>
+        <!-- <td>{{ item?.customer_Quotation_QID }}</td> -->
+        <td>{{ item?.customer_Quotation_VoucherNo }}</td>
+        <td>{{ item?.customer_Quotation_Quotation_Date | date:'dd/MM/yyyy' }}</td>
+        <td>{{ item?.approvalStatus }}</td>
+        <td>{{ item?.status }}</td>
+      </tr>
+    </table>
+  </div>
+</p-dialog>

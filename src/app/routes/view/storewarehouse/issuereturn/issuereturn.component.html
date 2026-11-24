@@ -1,0 +1,776 @@
+<!-- <p>issuereturn works!</p> -->
+
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Issue Return' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      [disabled]="!btnFlag.cancel"
+      label="Cancel"
+      (click)="new()"
+      icon="fa fa-ban"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="saveIssueReturn()"
+      [disabled]="!Permission?.Add || btnFlag.new"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right flexSearch">
+    <div class="ui-inputgroup flexSearch">
+      <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
+      <button
+        pButton
+        type="button"
+        (click)="GetSavedIssueReturnDetails(search)"
+        icon="pi pi-search"
+      ></button>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+
+    <!-- <p-checkbox label="Suppess Allocation in Print" ></p-checkbox> -->
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="issueReturnFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Issue Return' | translate">
+      <div class="p-grid p-sm-12 p-md-12 p-lg-12">
+        <div class="p-sm-12 p-md-12 p-lg-3">
+          <p-panel>
+            <p-header>
+              {{ "Issue Return Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="voucherno">{{
+                  "Voucher No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="issueReturnNo"
+                    id="voucherno"
+                    pInputText
+                  />
+                  <div class="error" *ngIf="f.issueReturnDate.errors"></div>
+                </div>
+                <p-message
+                  severity="error"
+                  *ngIf="f.issueReturnNo?.errors?.Exist && !btnFlag.update"
+                  text="Voucher No is exist"
+                ></p-message>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="voucherdate">{{
+                  "Voucher Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    formControlName="issueReturnDate"
+                    id="voucherdate"
+                  >
+                  </p-calendar>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnDate.errors &&
+                      (f.issueReturnDate.dirty || f.issueReturnDate.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnDate.errors.required">
+                      Voucher date is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="suppinvno">{{
+                  "RET IV No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="issueReturnIvNoForRet"
+                    id="refno"
+                    maxlength="50"
+                    pInputText
+                  />
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnIvNoForRet.errors &&
+                      (f.issueReturnIvNoForRet.dirty ||
+                        f.issueReturnIvNoForRet.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnIvNoForRet.errors.required">
+                      Reference no is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="zerovat">{{
+                  "RET IV DATE" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    formControlName="issueReturnIvDateForRet"
+                    id="voucherdate"
+                  >
+                  </p-calendar>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnIvDateForRet.errors &&
+                      (f.issueReturnIvDateForRet.dirty ||
+                        f.issueReturnIvDateForRet.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnIvDateForRet.errors.required">
+                      Voucher date is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="refno"
+                  >{{ "Reference No" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input
+                    class="w-100"
+                    formControlName="issueReturnRefNo"
+                    id="refno"
+                    maxlength="50"
+                    pInputText
+                  />
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnRefNo.errors &&
+                      (f.issueReturnRefNo.dirty || f.issueReturnRefNo.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnRefNo.errors.required">
+                      Reference no is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="currency">{{
+                  "Currency" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueReturnCurrencyId"
+                    [options]="currencyList"
+                  >
+                  </p-dropdown>
+                  <!-- <div  class="p-inputgroup">
+                                    <input type="text"  #currCtrl
+                                     pInputText placeholder="Currency">
+
+                                </div>
+                                <div class="p-col-12 p-md-12 p-lg-1">
+                                    <button type="button" pButton pRipple icon="pi pi-search" (click)='openCurrency()'
+                                    styleClass="p-button-warn"></button>
+                                </div> -->
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnCurrencyId.errors &&
+                      (f.issueReturnCurrencyId.dirty ||
+                        f.issueReturnCurrencyId.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnCurrencyId.errors.required">
+                      Currency is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Account Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup" *ngIf="!JOBCOST">
+                <label class="p-col-12 p-md-12 p-lg-3" for="job">{{
+                  "Job" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueReturnJobId"
+                    [options]="jobList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                  "Department" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueReturnDepartmentId"
+                    [options]="departmentList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="address">{{
+                  "CostCenter" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueReturnCostCenterId"
+                    [options]="costcenterList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="location">{{
+                  "Location" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueReturnLocationId"
+                    [options]="locationList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnLocationId.errors &&
+                      (f.issueReturnLocationId.dirty ||
+                        f.issueReturnLocationId.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnLocationId.errors.required">
+                      Location is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="account"
+                  >{{ "Cr Acc" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueReturnCreditAccNo"
+                    [options]="accountList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnCreditAccNo.errors &&
+                      (f.issueReturnCreditAccNo.dirty ||
+                        f.issueReturnCreditAccNo.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnCreditAccNo.errors.required">
+                      Account is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="vatno"
+                  >{{ "Dr Acc" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="issueReturnDebitAccNo"
+                    [options]="accountList"
+                  >
+                  </p-dropdown>
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnDebitAccNo.errors &&
+                      (f.issueReturnDebitAccNo.dirty ||
+                        f.issueReturnDebitAccNo.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnDebitAccNo.errors.required">
+                      Account is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-5">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2"></label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <label class="w-100"></label>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2"></label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <label class="w-100"></label>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "GRN No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="issueReturnGrno"
+                    formControlName="issueReturnGrno"
+                    pInputText
+                  />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "GRN Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="issueReturnGrdate"
+                    formControlName="issueReturnGrdate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "LPO No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="issueReturnLpono"
+                    formControlName="issueReturnLpono"
+                    pInputText
+                  />
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "LPO Date" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="issueReturnLpodate"
+                    formControlName="issueReturnLpodate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "REQ No" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input
+                    class="w-100"
+                    id="issueReturnReqNo"
+                    formControlName="issueReturnReqNo"
+                    pInputText
+                  />
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "REQ Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="issueReturnReqDate"
+                    formControlName="issueReturnReqDate"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="narration"
+                  >{{ "Narration" | translate
+                  }}<span class="required">*</span></label
+                >
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <textarea
+                    class="w-100"
+                    rows="3"
+                    formControlName="issueReturnDescription"
+                    id="narration"
+                    maxlength="500"
+                    pInputText
+                  ></textarea>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.issueReturnDescription.errors &&
+                      (f.issueReturnDescription.dirty ||
+                        f.issueReturnDescription.touched)
+                    "
+                  >
+                    <span *ngIf="f.issueReturnDescription.errors.required">
+                      Narration is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Item Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="issuereturn_entry"
+            [data]="issuereturn_entryDataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [dataArry]="dataList"
+        [selectedItem]="selectItem"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectsales($event)"
+        (exitEvent)="exit($event)"
+        [cell]="activeRow"
+        (clearEvent)="clear($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Sales List'"
+        [(show)]="showSalesLookUp"
+      ></app-lookup>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Sales List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+
+      <p-panel>
+        <p-header>
+          {{ "Bill Summary" | translate }}
+        </p-header>
+
+        <div class="p-grid">
+          <div class="p-col-4 p-offset-8">
+            <div class="p-col-12 p-grid">
+              <label class="p-col-4 p-col-align-end" for="account">
+                <b>{{ "Total Gross Amt" | translate }}</b>
+              </label>
+              <div class="p-col-6 p-col-align-end p-0">
+                <input
+                  class="w-100"
+                  id="issueReturnTotalGrossAmount"
+                  formControlName="issueReturnTotalGrossAmount"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+              }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+        Content 3
+    </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog
+  header="Issue Return List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p-table
+    #dt
+    [value]="issueReturnarry"
+    [columns]="cols"
+    [paginator]="true"
+    [rows]="10"
+  >
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')"
+          style="width: auto"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-issuereturn_list>
+      <tr>
+        <td>{{ issuereturn_list.issueReturnNo }}</td>
+        <td>{{ issuereturn_list.issueReturnDate }}</td>
+        <td>{{ issuereturn_list.issueReturnDepartmentId }}</td>
+        <td>{{ issuereturn_list.issueReturnCurrencyId }}</td>
+        <td>{{ issuereturn_list.issueReturnDescription }}</td>
+        <td>{{ issuereturn_list.issueReturnTotalGrossAmount }}</td>
+        <td>{{ issuereturn_list.issueReturnTotalDisAmount }}</td>
+        <td>{{ issuereturn_list.issueReturnVatAmt }}</td>
+        <td>{{ issuereturn_list.issueReturnVatRoundSign }}</td>
+        <td>{{ issuereturn_list.issueReturnVatRountAmt }}</td>
+        <td>{{ issuereturn_list.issueReturnNetAmount }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedIssueReturnDetails(issuereturn_list.issueReturnId);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

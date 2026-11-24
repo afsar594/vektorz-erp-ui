@@ -1,0 +1,381 @@
+<app-page-header [title]="title | translate"> </app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="getReport()"
+      [disabled]="!Permission?.View"
+      label="Show"
+      icon="fa fa-plus"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="resetForm()"
+      label="Clear Selection"
+      icon="fa fa-pencil"
+      class="ui-button-danger"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="ExitNew()"
+      label="Exit"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      (click)="getPOReport()"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <form [formGroup]="DORform">
+    <p-tabView [activeIndex]="index">
+      <p-tabPanel [header]="'Delivery Order Report' | translate">
+        <div class="p-grid">
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid">
+              <label class="p-col-1 p-md-12 p-lg-2">{{
+                "Location" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10">
+                <p-dropdown
+                  filter="true"
+                  [options]="locationList"
+                  formControlName="Location"
+                  optionLabel=""
+                  [showClear]="true"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-2">{{
+                "Customer" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10">
+                <p-dropdown
+                  appDropdownOptionTitle
+                  filter="true"
+                  [options]="customerList"
+                  formControlName="Customer"
+                  optionLabel=""
+                  [showClear]="true"
+                ></p-dropdown>
+              </div>
+            </div>
+            <!-- <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-2">{{
+                "Invoice Status" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10">
+                <p-dropdown
+                  filter="true"
+                  [options]="invoiceStatusList"
+                  optionLabel
+                  [showClear]="true"
+                  name="invoiceStatus"
+                  formControlName="invoiceStatus"
+                  placeholder="---- Select Invoice Status ----"
+                >
+                </p-dropdown>
+              </div>
+            </div> -->
+          </div>
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <p-panel>
+              <p-header>
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="By Date"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid">
+                <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                  <b>{{ "Date From:" }}</b>
+                </label>
+                <div
+                  *ngIf="this.DORform.controls.isRadioBtn.value == 'Date'"
+                  class="p-col-4 p-md-4 p-lg-4"
+                >
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    [disabled]="!this.DORform.controls.isDate.value"
+                    useUtc
+                    formControlName="DateFrom"
+                    class="w-200"
+                  >
+                  </p-calendar>
+                </div>
+                <div
+                  *ngIf="this.DORform.controls.isRadioBtn.value == 'Month'"
+                  class="p-col-4 p-md-4 p-lg-4"
+                >
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    showIcon="true"
+                    [disabled]="!this.DORform.controls.isDate.value"
+                    view="month"
+                    dateFormat="mm/yy"
+                    formControlName="DateFrom"
+                    class="w-200"
+                  >
+                  </p-calendar>
+                </div>
+                <div
+                  *ngIf="this.DORform.controls.isRadioBtn.value == 'Year'"
+                  class="p-col-4 p-md-4 p-lg-4"
+                >
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    showIcon="true"
+                    [disabled]="!this.DORform.controls.isDate.value"
+                    view="year"
+                    dateFormat="yy"
+                    inputId="yearpicker"
+                    formControlName="DateFrom"
+                    class="w-200"
+                  >
+                  </p-calendar>
+                </div>
+                <label class="p-col-2 p-md-2 p-lg-2" for="account">
+                  <b>{{ "Date To:" }}</b>
+                </label>
+                <div
+                  *ngIf="this.DORform.controls.isRadioBtn.value == 'Date'"
+                  class="p-col-4 p-md-4 p-lg-4"
+                >
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    [disabled]="!this.DORform.controls.isDate.value"
+                    useUtc
+                    formControlName="DateTO"
+                    class="w-200"
+                  >
+                  </p-calendar>
+                </div>
+                <div
+                  *ngIf="this.DORform.controls.isRadioBtn.value == 'Month'"
+                  class="p-col-4 p-md-4 p-lg-4"
+                >
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    [disabled]="!this.DORform.controls.isDate.value"
+                    view="month"
+                    dateFormat="mm/yy"
+                    formControlName="DateTO"
+                    class="w-200"
+                  >
+                  </p-calendar>
+                </div>
+                <div
+                  *ngIf="this.DORform.controls.isRadioBtn.value == 'Year'"
+                  class="p-col-4 p-md-4 p-lg-4"
+                >
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    showIcon="true"
+                    [disabled]="!this.DORform.controls.isDate.value"
+                    view="year"
+                    dateFormat="yy"
+                    inputId="yearpicker"
+                    formControlName="DateTO"
+                    class="w-200"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+            </p-panel>
+
+            <p-panel>
+              <p-header> Print Type </p-header>
+              <div class="p-grid">
+                <div class="p-col-2"></div>
+                <div class="p-col-4">
+                  <p-radioButton
+                    label="Summary"
+                    formControlName="PrintType"
+                    value="Summary"
+                    (click)="printType()"
+                  >
+                  </p-radioButton>
+                </div>
+                <div class="p-col-4">
+                  <p-radioButton
+                    label="Details"
+                    formControlName="PrintType"
+                    value="Details"
+                    (click)="printType()"
+                  >
+                  </p-radioButton>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+        <p-panel>
+          <p-header>
+            {{ "Report Details" | translate }}
+          </p-header>
+          <div class="grid">
+            <!-- <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="deliveryorderreport">
+                    </hot-table> -->
+            <p-table
+              [value]="files"
+              dataKey="delId"
+              [tableStyle]="{ 'min-width': '30rem' }"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 5rem"></th>
+                  <th pSortableColumn="name">
+                    Customer Name <p-sortIcon field="name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="Date">
+                    Delivery Date <p-sortIcon field="Date"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="ID">
+                    Delivery ID <p-sortIcon field="ID"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="Status">
+                    Delivery Status <p-sortIcon field="Status"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="Location">
+                    Location<p-sortIcon field="Location"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template
+                pTemplate="body"
+                let-delivery
+                let-expanded="expanded"
+              >
+                <tr>
+                  <!-- Add a button for toggling row expansion -->
+                  <td>
+                    <button
+                      type="button"
+                      pButton
+                      pRipple
+                      [pRowToggler]="delivery"
+                      class="p-button-text p-button-rounded p-button-plain"
+                      [icon]="
+                        expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
+                      "
+                    ></button>
+                  </td>
+                  <td>
+                    {{ delivery?.customerName ? delivery.customerName : "N/A" }}
+                  </td>
+                  <td>
+                    {{ delivery?.deliveryDate ? delivery.deliveryDate : "N/A" }}
+                  </td>
+                  <td>{{ delivery?.delId ? delivery.delId : "N/A" }}</td>
+                  <td>
+                    {{
+                      delivery?.deliveryStatus ? delivery.deliveryStatus : "N/A"
+                    }}
+                  </td>
+                  <td>{{ delivery?.location ? delivery.location : "N/A" }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="rowexpansion" let-delivery>
+                <tr>
+                  <td colspan="6">
+                    <div class="p-3">
+                      <p-table [value]="delivery.itemList" dataKey="materialId">
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th>Material ID</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                          <tr>
+                            <td>
+                              {{ item?.materialId ? item?.materialId : "N/A" }}
+                            </td>
+                            <td>
+                              {{
+                                item?.description ? item?.description : "N/A"
+                              }}
+                            </td>
+                            <td>{{ item?.qty ? item?.qty : "N/A" }}</td>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                          <tr>
+                            <td colspan="3">
+                              No items available for this delivery.
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-panel>
+        <div class="p-grid">
+          <div class="p-col-8 p-md-8 p-lg-8"></div>
+          <label class="p-col-1 p-md-1 p-lg-1">{{ "Total" | translate }}</label>
+          <div class="p-col-3 p-md-3 p-lg-3">
+            <input type="text" pInputText />
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </form>
+</div>

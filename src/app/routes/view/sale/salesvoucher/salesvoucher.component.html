@@ -1,0 +1,907 @@
+<app-page-header [nav]="[
+    { label: 'sales' | translate },
+    { label: 'Sales voucher' | translate }
+  ]" [title]="title | translate"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="New" (click)="new()" icon="pi pi-plus"></button>
+    <button pButton type="button" label="Edit" (click)="edit()" [disabled]="!btnFlag.edit || !Permission.Edit"
+      icon="fa fa-pencil" class="ui-button-success"></button>
+
+    <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag.cancel" label="Cancel"
+      (click)="cancel()" icon="fa fa-ban"></button>
+    <button pButton type="button" [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add || btnFlag.new" (click)="saveSalesVoucher()" icon="fa fa-floppy-o"
+      class="ui-button-success"></button>
+
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button pButton type="button" [disabled]="!Permission?.View" label="List" icon="fa fa-list"
+      (click)="showMaximizableDialog(false)" class="ui-button-info"></button>
+
+    <button pButton type="button" class="ui-button-danger" (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission.Delete" label="Delete" icon="fa fa-trash"></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" (click)="callDropdowns(true)" icon="fa fa-refresh" class="ui-button-success"></button>
+    <button pButton type="button" label="Browse Template" (click)="showMaximizableDialog(true)" icon="fa fa-plus"
+      class="ui-button-info"></button>
+
+    <p-splitButton icon="fa fa-print" [model]="printbtn" label="Print Report"
+      [disabled]="!btnFlag.edit || !Permission.Print" styleClass="p-button-outlined mr-2 mb-2">
+    </p-splitButton>
+
+    <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"></button>
+    <!-- <p-checkbox label="Suppess Allocation in Print" ></p-checkbox> -->
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="salesVoucherFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Sales Voucher' | translate">
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-6 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Customer Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                  "Invoice Type" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherType"
+                    (onChange)="loadCardAcc($event)" [options]="v_typeList">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.salesVoucherType.errors &&
+                      (f.salesVoucherType.dirty || f.salesVoucherType.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherType.errors.required">
+                      Type is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                  "Vat Type" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherVatType"
+                    [options]="v_vattypeList" value="Local">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.salesVoucherVatType.errors &&
+                      (f.salesVoucherVatType.dirty ||
+                        f.salesVoucherVatType.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherVatType.errors.required">
+                      Type is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="account">{{ "Customer" | translate
+                  }}<span class="required">*</span></label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherPartyId"
+                    appDropdownOptionTitle
+                    [options]="CustomerMasterFilter" (onChange)="onSelectionChange($event)">
+                  </p-dropdown>
+
+                  <div class="error" *ngIf="
+                      f.salesVoucherPartyId.errors &&
+                      (f.salesVoucherPartyId.dirty ||
+                        f.salesVoucherPartyId.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherPartyId.errors.required">
+                      Customer is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="vatno">{{
+                  "VAT No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <input class="w-100" id="salesVoucherPartyVatNo" readonly formControlName="salesVoucherPartyVatNo"
+                    maxlength="50" pInputText />
+                </div>
+              </div>
+
+              <div class="p-grid">
+                <div class="p-col-12 p-md-12 p-lg-3"></div>
+                <div class="p-col-12 p-md-12 p-lg-7">
+                  <button pButton [disabled]="!browseBTN" type="button" style="width: 180px; font-size: 18px"
+                    label="Export" (click)="showDialog()" icon="fa fa-sign-out" class="ui-button-success"></button>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+
+          <div class="p-grid">
+            <div class="p-col-12 p-md-6 p-lg-6">
+              <button pButton [disabled]="!browseBTN" type="button" label="Browse For Delv Notes"
+                (click)="BrowsDelivery()" icon="fa fa-plus" class="ui-button-info"></button>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6">
+              <button pButton [disabled]="!browseBTN" type="button" label="Browse For Sales Order"
+                (click)="BrowsSalesOrder()" icon="fa fa-plus" class="ui-button-info"></button>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12 p-md-6 p-lg-6">
+              <button pButton type="button" [disabled]="!browseBTN" label="Browse For Purchase Requisition"
+                icon="fa fa-plus" class="ui-button-info" (click)="BrowsPurchaseForm()"></button>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6">
+              <button pButton [disabled]="!browseBTN" type="button" label="Import From Proforma Invoice"
+                (click)="openProformaInvoice()" icon="fa fa-plus" class="ui-button-info"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-sm-12 p-md-6 p-lg-3">
+          <p-panel [ngStyle]="{ height: panelHeight + 'px' }">
+            <p-header>
+              {{ "Sales Voucher Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="voucherno">{{
+                  "Vch. No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName="salesVoucherNo" id="voucherno" pInputText />
+                </div>
+                <p-message severity="error" *ngIf="f.salesVoucherNo?.errors?.Exist && !btnFlag.update"
+                  text="Voucher No is exist"></p-message>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="voucherdate">{{
+                  "Vch. Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc
+                    formControlName="salesVoucherDate" id="voucherdate">
+                  </p-calendar>
+
+                  <div class="error" *ngIf="
+                      f.salesVoucherDate.errors &&
+                      (f.salesVoucherDate.dirty || f.salesVoucherDate.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherDate.errors.required">
+                      Voucher Date is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="suppinvno">{{
+                  "Cont Person" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" id="salesVoucherContPerson" readonly formControlName="salesVoucherContPerson"
+                    maxlength="50" pInputText />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="refno">{{
+                  "Reference No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName="salesVoucherRefNo" id="refno" maxlength="50" pInputText />
+                  <!-- <div class="error" *ngIf="f.salesVoucherRefNo.errors
+                                    && (f.salesVoucherRefNo.dirty || f.salesVoucherRefNo.touched)">
+                                        <span *ngIf="f.salesVoucherRefNo.errors.required">
+                                            Reference no is Mandatory Field*</span>
+                                    </div> -->
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="salesman">{{
+                  "Sales Man" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherSalesManId"
+                    [options]="SalesManMasterList">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.salesVoucherSalesManId.errors &&
+                      (f.salesVoucherSalesManId.dirty ||
+                        f.salesVoucherSalesManId.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherSalesManId.errors.required">
+                      Sales Man is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="currency">{{
+                  "Currency" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherCurrencyId"
+                    [options]="currencyList">
+                  </p-dropdown>
+                  <!-- <div  class="p-inputgroup">
+                                        <input type="text"  #currCtrl
+                                         pInputText placeholder="Currency">
+
+                                    </div>
+                                    <div class="p-col-12 p-md-12 p-lg-1">
+                                        <button type="button" pButton pRipple icon="pi pi-search" (click)='openCurrency()'
+                                        styleClass="p-button-warn"></button>
+                                    </div> -->
+
+                  <div class="error" *ngIf="
+                      f.salesVoucherCurrencyId.errors &&
+                      (f.salesVoucherCurrencyId.dirty ||
+                        f.salesVoucherCurrencyId.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherCurrencyId.errors.required">
+                      Currency is Mandatory Field*</span>
+                  </div>
+                </div>
+
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="deliveryRequriedOn">{{
+                  "Delivery Required On" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName="deliveryRequriedOn" id="refno" pInputText />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="termsofDelivery">{{
+                  "Terms of Delivery" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName="termsofDelivery" id="termsofDelivery" pInputText />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="projectRefNo">{{
+                  "Project Ref No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName="projectRefNo" id="projectRefNo" pInputText />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4" for="Item">{{
+                  "Item" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName="item" id="item" pInputText />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <div class="p-col-12 p-md-12 p-lg-12 p-0">
+                  <p-checkbox formControlName="salesVoucherExcludeVat" label="Zero VAT" id="salesVoucherExcludeVat"
+                    [binary]="true" (onChange)="zerovat()"></p-checkbox>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-5">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "Delv No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input class="w-100" id="salesVoucherDlvNo" formControlName="salesVoucherDlvNo" pInputText />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "Delv Date" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc
+                    id="salesVoucherDlvDate" formControlName="salesVoucherDlvDate">
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "SO No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input class="w-100" id="salesVoucherSono" formControlName="salesVoucherSono" pInputText />
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "SO Date" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc
+                    id="salesVoucherSodate" formControlName="salesVoucherSodate">
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "QTN No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input class="w-100" id="salesVoucherQtnNo" formControlName="salesVoucherQtnNo" pInputText />
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "QTN Date" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc
+                    id="salesVoucherQtnDate" formControlName="salesVoucherQtnDate">
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherno">{{
+                  "ENQ No" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <input class="w-100" id="salesVoucherEnqNo" formControlName="salesVoucherEnqNo" pInputText />
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "ENQ Date" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc
+                    id="salesVoucherEnqDate" formControlName="salesVoucherEnqDate">
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="job">{{
+                  "Dpt" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherDptId"
+                    [options]="DepartmentMasterList">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.salesVoucherDptId.errors &&
+                      (f.salesVoucherDptId.dirty || f.salesVoucherDptId.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherDptId.errors.required">
+                      Currency is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup" *ngIf="!JOBCOST">
+                <label class="p-col-12 p-md-12 p-lg-2" for="job">{{
+                  "Job" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherJobId" [options]="jobList">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.salesVoucherJobId.errors &&
+                      (f.salesVoucherJobId.dirty || f.salesVoucherJobId.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherJobId.errors.required">
+                      Job is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="location">{{
+                  "Location" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId"
+                    [options]="locationList">
+                  </p-dropdown>
+
+                  <div class="error" *ngIf="
+                      f.salesVoucherLocationId.errors &&
+                      (f.salesVoucherLocationId.dirty ||
+                        f.salesVoucherLocationId.touched)
+                    ">
+                    <span *ngIf="f.salesVoucherLocationId.errors.required">
+                      Location is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "Cost Center" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="salesVoucherCostCenterId"
+                    [options]="costcenterList">
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Item Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="salesvoucher_entry"
+            [data]="salesvoucher_entryDataset"></hot-table>
+        </div>
+      </p-panel>
+
+      <ng-container *ngIf="showSalesLookUp">
+        <app-lookup [header]="'Item Look Up'" [dataArry]="dataList" [isServerSearch]="isServerSearch"
+          [selectedItem]="selectItem" [searchText]="''" [columns]="lookupGridColumns"
+          (selectItemEvent)="selectsales($event)" (exitEvent)="exit($event)" [cell]="activeRow" [width]="width"
+          (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" (searchEvent)="onSearch($event)"
+          [tableheader]="'Sales List'" [(show)]="showSalesLookUp"></app-lookup>
+      </ng-container>
+      <app-lookup [header]="'Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference"
+        [dataArry]="dataList" (exitEvent)="exit($event)" (clearEvent)="clear($event)" [formControlName]="control"
+        [columns]="lookupGridColumns" (selectItemEvent)="selectControl($event)" (hideDialogEvent)="hide($event)"
+        [tableheader]="'Sales List'" [(show)]="formControlLookUp"></app-lookup>
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-4"></div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Sales Charges" | translate }}
+            </p-header>
+            <div class="grid">
+              <hot-table [hotId]="hotCid" [licenseKey]="licensekey" [settings]="salesCharges_entry"
+                [data]="salesCharges_entryDataset"></hot-table>
+              <div class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesChargesTotalAmount">
+                  <b>{{ "Total Amount" | translate }}</b>
+                </label>
+                <div class="p-col-12 p-md-8 p-lg-8 p-0">
+                  <input class="w-100 end" id="salesChargesTotalAmount" [(ngModel)]="salesChargesTotalAmount"
+                    [ngModelOptions]="{ standalone: true }" readonly pInputText />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Bill Summary" | translate }}
+            </p-header>
+
+            <div class="p-grid">
+              <!-- Total Gross Amount -->
+              <div class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesVoucherTotalGrossAmount">
+                  <b>{{ "Total Gross Amt" | translate }}</b>
+                </label>
+                <div class="p-col-12 p-md-8 p-lg-8 p-0">
+                  <input id="salesVoucherTotalItemDisAmount" class="w-100 end"
+                    formControlName="salesVoucherTotalGrossAmount" readonly pInputText />
+                </div>
+              </div>
+
+              <div class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesVoucherTotalItemDisAmount">
+                  <b>{{ "Total Disc Amt" | translate }}</b>
+                </label>
+                <div class="p-col-12 p-md-8 p-lg-8 p-0">
+                  <input id="salesVoucherTotalItemDisAmount" class="w-100 end"
+                    formControlName="salesVoucherTotalItemDisAmount" readonly pInputText />
+                </div>
+              </div>
+
+              <!-- Total Disc -->
+              <div class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesVoucherTotalDisPer">
+                  <b>{{ "Total Disc" | translate }}</b>
+                </label>
+                <div class="p-col-6 p-md-2 p-lg-2 p-0" style="margin-top: -9px">
+                  <input id="salesVoucherTotalDisPer" class="w-100 end" formControlName="salesVoucherTotalDisPer"
+                    (change)="CalcDiscFromPer()" pInputText />
+                </div>
+                <span class="p-col-2 p-md-1 p-lg-1">
+                  <b>%</b>
+                </span>
+                <div class="p-col-12 p-md-5 p-lg-5 p-0">
+                  <input id="salesVoucherTotalDisAmount" class="w-100 end" formControlName="salesVoucherTotalDisAmount"
+                    (change)="CalcDiscFromAmt()" pInputText />
+                </div>
+              </div>
+
+              <!-- Vatable Amt -->
+              <div *ngIf="!VATEXLUDE" class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesVoucherTotalActualAmount">
+                  <b>{{ "Vatable Amt" | translate }}</b>
+                </label>
+                <div class="p-col-12 p-md-8 p-lg-8 p-0">
+                  <input id="salesVoucherTotalActualAmount" class="w-100 end"
+                    formControlName="salesVoucherTotalActualAmount" readonly (change)="GetTotal()" pInputText />
+                </div>
+              </div>
+
+              <!-- VAT -->
+              <div *ngIf="!VATEXLUDE" class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesVoucherVatPer">
+                  <b>{{ "VAT" | translate }}</b>
+                </label>
+                <div class="p-col-6 p-md-2 p-lg-2 p-0" style="margin-top: -9px">
+                  <input id="salesVoucherVatPer" [readOnly]="f.salesVoucherExcludeVat.value" class="w-100 end"
+                    formControlName="salesVoucherVatPer" (change)="GetTotal()" pInputText />
+                </div>
+                <span class="p-col-2 p-md-1 p-lg-1">
+                  <b>%</b>
+                </span>
+                <div class="p-col-12 p-md-5 p-lg-5 p-0">
+                  <input id="salesVoucherVatAmt" class="w-100 end" [readOnly]="f.salesVoucherExcludeVat.value"
+                    formControlName="salesVoucherVatAmt" (change)="GetTotal()" pInputText />
+                </div>
+              </div>
+
+              <!-- Round Off -->
+              <div class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesVoucherVatRoundSign">
+                  <b>{{ "Round OFF" | translate }}</b>
+                </label>
+                <div class="p-col-6 p-md-2 p-lg-2 p-0" style="margin-top: -9px">
+                  <p-dropdown filter="true" id="salesVoucherVatRoundSign" formControlName="salesVoucherVatRoundSign"
+                    (onChange)="GetTotal()" class="w-100" [options]="v_RoundoffList" value="-">
+                  </p-dropdown>
+                </div>
+                <span class="p-col-2 p-md-1 p-lg-1">
+                  <b>-</b>
+                </span>
+                <div class="p-col-12 p-md-5 p-lg-5 p-0">
+                  <input id="salesVoucherVatRountAmt" class="w-100 end" formControlName="salesVoucherVatRountAmt"
+                    (change)="GetTotal()" pInputText />
+                </div>
+              </div>
+
+              <!-- Net Amt -->
+              <div class="p-col-12 p-grid">
+                <label class="p-col-12 p-md-4 p-lg-4" for="salesVoucherNetAmount">
+                  <b>{{ "Net Amt" | translate }}</b>
+                </label>
+                <div class="p-col-12 p-md-8 p-lg-8 p-0">
+                  <input id="salesVoucherNetAmount" class="w-100 end" formControlName="salesVoucherNetAmount" readonly
+                    pInputText />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+                }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+        Content 3
+    </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table [value]="dataset">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+              <tr>
+                <td style="text-align: center">{{ rowData.UserName }}</td>
+                <td style="text-align: center">
+                  {{ rowData.Date | date : "dd/MM/yyyy" }}
+                </td>
+                <td style="text-align: center">
+                  {{ rowData.Time | date : "HH:mm:ss" }}
+                </td>
+                <td style="text-align: center">{{ rowData.Actions }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog header="Sales Voucher List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <div class="toolbar">
+    <div class="ui-toolbar-group-left">
+      <button type="submit" pButton label="Find" icon="pi pi-search" (click)="filter()"></button>
+      <button pButton type="button" label="Clear" (click)="ClearFilter()" icon="fa fa-pencil"
+        class="ui-button-success"></button>
+    </div>
+  </div>
+  <div class="p-col-12">
+    <p-panel>
+      <!-- <p-header>
+
+
+            </p-header> -->
+      <form [formGroup]="salesVoucherFilterForm">
+        <div class="p-grid">
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                "Customer" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <p-dropdown filter="true" class="w-100" formControlName="salesVoucherPartyId"
+                  appDropdownOptionTitle
+                  [options]="CustomerMasterList" (onChange)="onSelectionChange($event)"></p-dropdown>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">{{
+                "Invoice Type" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <p-dropdown filter="true" class="w-100" (onChange)="loadCardAcc($event)"
+                  formControlName="salesVoucherType" [options]="v_typeList">
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox formControlName="isDate" [binary]="true" label="Date Range"></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="fromDate" [showIcon]="true"
+                    [disabled]="!salesVoucherFilterForm.get('isDate')?.value" class="w-100" useUtc></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="toDate" [showIcon]="true"
+                    [disabled]="!salesVoucherFilterForm.get('isDate')?.value" class="w-100" useUtc></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+
+  <p-table #dt [value]="salesVoucherarry" [columns]="cols" [paginator]="true" [rows]="5">
+    <ng-template pTemplate="caption">
+      <div class="flexSearch">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-salesvoucher_list>
+      <tr>
+        <td>{{ salesvoucher_list.salesVoucherNo }}</td>
+        <td>{{ salesvoucher_list.salesVoucherDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ salesvoucher_list.salesVoucherPartyName }}</td>
+        <td>{{ salesvoucher_list.currencyMasterCurrencyName }}</td>
+        <!-- <td>{{salesvoucher_list.salesVoucherDescription}}</td> -->
+        <td class="end">
+          {{ salesvoucher_list.salesVoucherTotalGrossAmount }}
+        </td>
+        <td class="end">{{ salesvoucher_list.salesVoucherTotalDisAmount }}</td>
+        <td class="end">{{ salesvoucher_list.salesVoucherVatAmt }}</td>
+        <!-- <td class="end">{{salesvoucher_list.salesVoucherVatRoundSign}}</td> -->
+        <td class="end">{{ salesvoucher_list.salesVoucherVatRountAmt }}</td>
+        <td class="end">{{ salesvoucher_list.salesVoucherNetAmount }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedSalesVoucherDetails(salesvoucher_list.salesVoucherId);
+              displayMaximizable = false
+            " class="ui-button-info"></button>
+          <button pButton type="button" icon="pi pi-print" (click)="
+              showPrint(salesvoucher_list.salesVoucherId, 'SalesVoucherVAT')
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+
+<p-dialog [(visible)]="displayDialog" header="Sale History" [modal]="true" [closable]="true"
+  [style]="{ width: '50vw' }">
+  <p-table [paginator]="true" [rows]="5">
+    <ng-template pTemplate="header">
+      <tr>
+        <th><p-checkbox></p-checkbox></th>
+        <th>Item Id</th>
+        <th>Description</th>
+        <th>Rate</th>
+        <th>Last Sale Date</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog [(visible)]="displayDialogPrice" [header]="priceItemName" [closable]="true" [style]="{ width: '30vw' }">
+  <h5>Last Purchase Prices</h5>
+  <p-table [value]="lastPurchasePrices">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ "Date" | translate }}</th>
+        <th>{{ "Price" | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-p>
+      <tr>
+        <td>{{ p?.date }}</td>
+        <td class="end">{{ p?.price }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <h5>Last Sales Prices</h5>
+  <p-table [value]="lastSalesPrices">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ "Date" | translate }}</th>
+        <th>{{ "Price" | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-p>
+      <tr>
+        <td>{{ p?.date }}</td>
+        <td class="end">{{ p?.price }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog header="Purhase Form" [(visible)]="displayMaximizable2" [modal]="true" [style]="{ width: '70%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <div class="toolbar">
+    <div class="ui-toolbar-group-left">
+      <button type="button" pButton label="Find" icon="pi pi-search" (click)="LoadPR()"></button>
+
+      <button pButton type="button" label="Clear" icon="pi pi-refresh" class="ui-button-success"
+        (click)="clearFilters()"></button>
+    </div>
+    <!-- <div class="ui-toolbar-group-right">
+      <button
+        type="button"
+        pButton
+        label="Export"
+        icon="pi pi-check"
+        (click)="selectPR()"
+      ></button>
+      
+    </div> -->
+  </div>
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <input [(ngModel)]="isDate" type="checkbox" pInputCheck />
+        {{ "By Date" | translate }}
+      </p-header>
+      <div class="p-grid inputGroup">
+        <label class="p-col-12 p-md-12 p-lg-2"> Date From </label>
+
+        <div class="p-col-12 p-md-12 p-lg-4 p-0">
+          <p-calendar [(ngModel)]="dateFrom" appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true"
+            [showIcon]="true" [disabled]="!isDate" class="w-100"></p-calendar>
+        </div>
+
+        <label class="p-col-12 p-md-12 p-lg-2"> Date To </label>
+
+        <div class="p-col-12 p-md-12 p-lg-4 p-0">
+          <p-calendar [(ngModel)]="dateTo" appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true"
+            [showIcon]="true" [disabled]="!isDate" class="w-100"></p-calendar>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+
+  <p-table [columns]="cols" [paginator]="true" [value]="PR" [rows]="5">
+    <ng-template pTemplate="header">
+      <tr>
+        <th></th>
+        <th>Vch No</th>
+        <th>Date</th>
+        <th>Location</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-purchase>
+      <tr>
+        <td>
+          <p-radioButton name="prradio" value="{{ purchase.purchaseRequisitionId }}"
+            (onClick)="selectPR(purchase.purchaseRequisitionId)"></p-radioButton>
+        </td>
+
+        <td>{{ purchase.purchaseRequisitionNo }}</td>
+        <td>{{ purchase.purchaseRequisitionDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ purchase.loc }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<app-lookup [header]="'Charge Master'" [selectedItem]="selectItem" [eleReference]="elementReference"
+  [dataArry]="dataList" (exitEvent)="exit($event)" (clearEvent)="clear($event)" [formControlName]="control"
+  [columns]="lookupGridColumns" (selectItemEvent)="selectChargeControl($event)" (hideDialogEvent)="hide($event)"
+  [tableheader]="'Charge List'" [(show)]="chargeMasterLookUp"></app-lookup>
+
+  <app-proforma-invoice-status [(displayProformaModal)]="isProformaModalOpen" (onItemSelected)="selectValue($event)"></app-proforma-invoice-status>

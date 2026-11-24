@@ -1,0 +1,203 @@
+<!-- <app-page-header [title]='title| translate'></app-page-header> -->
+<p-toolbar>
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      class="ui-button-info"
+      (click)="show()"
+      label="Show"
+      icon="pi pi-search"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-primary"
+      [disabled]="!(selectedCustomers.length > 0)"
+      (click)="export()"
+      label="Export"
+      icon="fa fa-download"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear"
+      icon="fa fa-ban"
+      (click)="clearfilter()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="close()"
+      label="Close"
+      icon="pi pi-close"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="deliveryform">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Delivery Note List' | translate">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <div class="p-grid">
+            <label class="p-col-12 p-md-12 p-lg-3">{{
+              "Customer Name" | translate
+            }}</label>
+            <div class="p-col-12 p-md-12 p-lg-9">
+              <p-dropdown
+                appDropdownOptionTitle
+                filter="true"
+                [options]="customerList"
+                formControlName="Customercode"
+                optionLabel=""
+                [showClear]="true"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-6">
+          <p-panel>
+            <p-header>
+              <p-checkbox
+                formControlName="ischeck"
+                [binary]="true"
+                label="By Date"
+              ></p-checkbox>
+            </p-header>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "From" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  useUtc
+                  formControlName="fromDate"
+                  class="w-200"
+                  [disabled]="!deliveryform.get('ischeck').value"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid">
+              <label class="p-col-12 p-md-12 p-lg-1">{{
+                "To" | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-11">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  showIcon="true"
+                  useUtc
+                  formControlName="toDate"
+                  class="w-200"
+                  [disabled]="!deliveryform.get('ischeck').value"
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <div class="p-sm-12 p-md-12 p-lg-12">
+        <div class="p-col-12">
+          <p-panel>
+            <p-header> Details </p-header>
+
+            <p-table
+              #dt
+              [value]="deliveryList"
+              [(selection)]="selectedCustomers"
+              dataKey="customerDeliveryNoteDeliveryId"
+              styleClass="ui-table-customers"
+              [rowHover]="true"
+              [rows]="10"
+              [paginator]="true"
+              [showCurrentPageReport]="true"
+              [globalFilterFields]="[
+                'customerDeliveryNoteDeliveryId',
+                'customerDeliveryNoteDeliveryDate',
+                'customerId',
+                'customerName'
+              ]"
+            >
+              <!-- Global Search Bar -->
+              <ng-template pTemplate="caption">
+                <div class="flexSearch">
+                  <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    size="50"
+                    placeholder="Global Filter"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    style="width: auto"
+                  />
+                </div>
+              </ng-template>
+
+              <!-- Header -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 40px"></th>
+                  <th pSortableColumn="customerDeliveryNoteDeliveryId">
+                    Delivery No
+                    <p-sortIcon
+                      field="customerDeliveryNoteDeliveryId"
+                    ></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="customerDeliveryNoteDeliveryDate">
+                    Date
+                    <p-sortIcon
+                      field="customerDeliveryNoteDeliveryDate"
+                    ></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="customerName">
+                    Customer
+                    <p-sortIcon field="customerName"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+
+              <!-- Body -->
+              <ng-template pTemplate="body" let-del>
+                <tr
+                  class="ui-selectable-row"
+                  (click)="toggleSelection(del?.customerDeliveryNoteDeliveryId)"
+                >
+                  <td>
+                    <input
+                      type="checkbox"
+                      class="check"
+                      [checked]="isSelected(del)"
+                    />
+                  </td>
+                  <td>{{ del.customerDeliveryNoteDeliveryId }}</td>
+                  <td>
+                    {{
+                      del.customerDeliveryNoteDeliveryDate | date : "dd/MM/yyyy"
+                    }}
+                  </td>
+                  <td>{{ del.customerName }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

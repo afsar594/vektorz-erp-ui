@@ -1,0 +1,79 @@
+
+
+<div class="modal-header">
+    <!-- <h4 class="modal-title">Customer Sales Order List</h4>
+    <button type="button" class="close" aria-label="Close" (click)="CloseModel()">
+      <span aria-hidden="true">&times;</span>
+    </button> -->
+</div>
+<div class="modal-body">
+  <div class="container">
+    <div class="card card-w-title">
+          <div class="grid">
+            <div class="p-col-12">
+              <p-table
+                [rowsPerPageOptions]="[10,25,50,100]"
+                [value]="dataset"
+                [paginator]="true"
+                [rows]="10"
+                [totalRecords]="totalRecords"
+                sortMode="single"
+                sortField="allocationVoucherVoucherDate"
+                [sortOrder]="-1"
+              >
+              
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th pSortableColumn="allocationVoucherId">ID <p-sortIcon field="allocationVoucherId"></p-sortIcon></th>
+                    <th pSortableColumn="allocationVoucherType">Voucher Type <p-sortIcon field="allocationVoucherType"></p-sortIcon></th>
+                    <th pSortableColumn="allocationVoucherVoucherNo">Voucher No. <p-sortIcon field="allocationVoucherVoucherNo"></p-sortIcon></th>
+                    <th pSortableColumn="allocationVoucherVoucherAccNo">Account No. <p-sortIcon field="allocationVoucherVoucherAccNo"></p-sortIcon></th>
+                    <th pSortableColumn="allocationVoucherVoucherDate">Voucher Date <p-sortIcon field="allocationVoucherVoucherDate"></p-sortIcon></th>
+                    <th>Action</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                  <tr style="cursor:pointer">
+                    <td><a (click)="CloseModel(item.allocationVoucherId)">{{item.allocationVoucherId}}</a></td>
+                    <td>{{item.allocationVoucherType}}</td>
+                    <td>{{item.allocationVoucherVoucherNo}}</td>
+                    <td>{{item.allocationVoucherVoucherAccNo}}</td>
+                    <td>{{item.allocationVoucherVoucherDate | date:'dd/MM/yyyy'}}</td>
+                    <td><button (click)="onselect(item.allocationVoucherId)" pButton pRipple type="button"
+                        icon="fa fa-edit" class="p-button-rounded"></button></td>
+                  </tr>
+                </ng-template>
+              </p-table>
+              <!-- <hot-table [hotId]="hotid" [data]="dataset" [licenseKey]="licensekey"
+                                [settings]="CustomerSalesOrder">
+                            </hot-table> -->
+            </div>
+          </div>
+    </div>
+  </div>
+  <!-- <div class="modal-body">
+    <div class="container">
+        <div class="card card-w-title">
+            <p-tabView >
+                <p-tabPanel [header]="'Voucher Allocation' | translate">
+                    <div class="grid">
+                        <div class="p-col-12">
+                            <hot-table [hotId]="hotid" [data]=" dataset" [licenseKey]="licensekey"
+                                [settings]="CustomerSalesOrder">
+        
+                            </hot-table>
+                        </div>
+                    </div>
+                </p-tabPanel>
+        
+            </p-tabView>
+        </div>
+    </div>
+  
+  
+  </div> -->
+  <div class="modal-footer">
+    <!-- <button type="button" class="btn btn-outline-dark" (click)="CloseModel()">
+      Close
+    </button> -->
+  </div>

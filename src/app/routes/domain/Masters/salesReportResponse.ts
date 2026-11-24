@@ -1,0 +1,34 @@
+export interface salesReportReponseModel {
+  grossAmount: number;
+  grossAmt?: number;
+  discount: number;
+  vatAmount: number;
+  netAmount: number;
+  salRetAmt: number;
+  salesVoucherContPerson: string;
+  salesVoucherCurrencyId: number;
+  salesVoucherDate: string;
+  salesVoucherDescription: string;
+  salesVoucherDptID: number;
+  salesVoucherExcludeVAT: boolean;
+  salesVoucherId: number;
+  salesVoucherJobId: number;
+  salesVoucherLocationID: number;
+  salesVoucherNetAmount: number;
+  salesVoucherNo: string;
+  salesVoucherPartyId: number;
+  salesVoucherPartyName: string;
+  salesVoucherPartyVatNo: string;
+  salesVoucherRefNo: string;
+  salesVoucherSalesManID: number;
+  salesVoucherTotalActualAmount: number;
+  salesVoucherTotalDisAmount: number;
+  salesVoucherTotalDisPer: number;
+  salesVoucherTotalGrossAmount: number;
+  salesVoucherTotalItemDisAmount: number;
+  salesVoucherType: string;
+  salesVoucherVat_RountAmt: number;
+  net: number;
+  itemName: string;
+  soldQty: number;
+}

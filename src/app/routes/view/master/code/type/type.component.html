@@ -1,0 +1,101 @@
+<!-- <app-page-header [nav]='breadcumbmodel' [title]='title'></app-page-header> -->
+<app-page-header [nav]='breadcumbmodel' [title]='title| translate'></app-page-header>
+<div class="toolbar">
+    <div class="ui-toolbar-group-left">
+      <button pButton type="button" [label]="'New' | translate" (click)='new()' icon="pi pi-plus"></button>
+      <button pButton type="button" [label]="'Edit' | translate" (click)='edit()'
+        [disabled]='!btnFlag?.edit || !Permission?.Edit' icon="fa fa-pencil" class="ui-button-success"></button>
+  
+      <button pButton type="button" class="ui-button-danger" [disabled]='!btnFlag?.cancel' [label]="'Cancel' | translate"
+         icon="fa fa-ban"></button>
+         
+      <button pButton type="button" class="ui-button-success" (click)='saveType()'
+      [disabled]='!btnFlag.save || !Permission?.Add' label="Save" icon="fa fa-floppy-o"></button>
+     
+      <button pButton type="button" class="ui-button-success" (click)='saveType()'
+      [disabled]='!btnFlag.update || !Permission.Edit' label="Update" icon="fa fa-floppy-o"></button>
+       
+      <button pButton type="button" class="ui-button-danger" (click)='delete()'
+        [disabled]='!btnFlag.delete || !Permission.Delete' label="Delete" icon="fa fa-trash"></button>
+  
+    </div>
+      <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Exit" (click)='ExitNew()' icon="fa fa-sign-out"></button> 
+       
+    </div>
+  </div>
+<div class="card card-w-title" [formGroup]='typeFormGroup'>
+    <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Band Name' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+           <p-dropdown filter="true" [placeholder]="'Band Name'| translate" [options]="vendorListNew"  [filter]="true"  formControlName='typeMasterVendorId' [style]="{'width': '100%'}"   ></p-dropdown>
+            <div class="error" *ngIf="f.typeMasterVendorId.errors 
+            && (f.typeMasterVendorId.dirty || f.typeMasterVendorId.touched)">
+                <span *ngIf="f.typeMasterVendorId.errors.required">
+                    {{'Band Name is Mandatory Field*' | translate}}</span>
+            </div>
+
+        </div>
+   
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Type Name'| translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText [placeholder]="'Type Name' | translate" formControlName='typeMasterTypeName' style="border-color: black; width: 300px;" maxlength="50">
+            <div class="error" *ngIf="f.typeMasterTypeName.errors 
+            && (f.typeMasterTypeName.dirty || f.typeMasterTypeName.touched)">
+                <span *ngIf="f.typeMasterTypeName.errors.required">{{'Type Name is Mandatory
+                    Field*' | translate}}</span>
+            </div>
+
+        </div>
+
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Status' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-2">
+ 
+            <p-checkbox    [binary]="true"  formControlName='typeMasterStatus'>{{'Status' | translate}}</p-checkbox>
+        </div>
+
+    </div>
+
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <p-table [value]="typeList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th colspan="1"  style="text-align: center; ">{{'Code' | translate}}</th>
+                        <th colspan="8"  style="text-align: left ; ">{{'Name' | translate}}</th>
+                        <th colspan="1"  style="text-align: center; ">{{'Status' | translate}}</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-type>
+                    <tr>
+                        <td colspan="1"  style="text-align: center; ">{{type.typeMasterTypeId}}</td>
+                      
+                        <td colspan="8"   class="colname">{{type.typeMasterTypeName}}</td>
+                        <td colspan="1"  style="text-align: center; ">
+                        
+                            <ng-container   *ngIf="type.typeMasterStatus===false">
+                                <input   type="checkbox" [checked]=false [disabled]=true style="border-color: red;" >  
+                            </ng-container>
+
+                            <ng-container   *ngIf="type.typeMasterStatus===true">
+                                <input   type="checkbox" [checked]=true [disabled]=true style="border-color: red;" >  
+                            </ng-container>
+                        
+                        
+                        </td>
+                        <td th colspan="1" >
+                            <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(type)'
+                                iconPos="left"></button>
+                          
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+
+        </div>
+    </div>
+</div>

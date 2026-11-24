@@ -1,0 +1,53 @@
+<p *ngIf="!showDialog && !showMessageDialog">{{ message }}</p>
+
+<!-- Rejection Reason Dialog -->
+<p-dialog
+  header="Rejection Reason"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [closable]="false"
+  [baseZIndex]="10000"
+  [style]="{ width: '400px' }"
+>
+  <div class="p-fluid">
+    <label for="reason">Please enter the reason for rejection:</label>
+    <textarea
+      id="reason"
+      rows="4"
+      [(ngModel)]="rejectionReason"
+      pInputTextarea
+      autoResize
+    ></textarea>
+  </div>
+  <p-footer>
+    <button
+      pButton
+      label="Submit"
+      (click)="submitRejectionReason()"
+      class="p-button-danger"
+      [disabled]="!rejectionReason.trim()"
+    ></button>
+  </p-footer>
+</p-dialog>
+
+<!-- Message Popup Dialog -->
+<p-dialog
+  header="Notice"
+  [(visible)]="showMessageDialog"
+  [modal]="true"
+  [closable]="false"
+  [baseZIndex]="10001"
+  [style]="{ width: '400px' }"
+>
+  <div class="p-d-flex p-jc-center p-ai-center" style="padding: 1rem">
+    <p>{{ message }}</p>
+  </div>
+  <p-footer>
+    <button
+      pButton
+      label="OK"
+      (click)="closeMessageDialog()"
+      autofocus
+    ></button>
+  </p-footer>
+</p-dialog>

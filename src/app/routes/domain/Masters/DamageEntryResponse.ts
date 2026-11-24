@@ -1,0 +1,21 @@
+export interface DamageEntryResponseModel {
+    VoucherNo?: string,
+    ItemId?: string,
+    ItemName?: string,
+    Unit?: string,
+    Price?: string,
+    Amount?: string,
+    Qty?: number,
+    ItemBarcode?: string,
+    Remarks?: string,
+    editable?: boolean,
+    jobId?:string,
+    VoucherDate?:string,
+    Narration?: string,
+    Location?:string,
+    Quantity?:string
+    StockItemName?:string,
+    StockItemType?:string,
+    PartNo?:string,
+    LocationFrom?:string,
+}

@@ -1,0 +1,325 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear&Enable"
+      (click)="new()"
+      icon="fa fa-ban"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="List_REPORT()"
+      [disabled]="!Permission?.View"
+      label="List"
+      icon="fa fa-list"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <button
+      (click)="getReport1()"
+      pButton
+      type="button"
+      label="Print Statement"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      (click)="Export2Excel()"
+      pButton
+      type="button"
+      label="Excel"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView
+    [formGroup]="reportAccountsTransactionsFormGroup"
+    [activeIndex]="index"
+  >
+    <p-tabPanel [header]="'Bank Statements' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-3">
+          <p-panel>
+            <p-header>
+              {{ "Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptDetails"
+                  id="rptDetails"
+                  class="p-col-12 p-md-6"
+                  label="{{ 'Details' | translate }}"
+                  [value]="true"
+                  (onClick)="makeDetailsTrue()"
+                ></p-radioButton>
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptSummary"
+                  id="rptSummary"
+                  class="p-col-12 p-md-6"
+                  label="{{ 'Summary' | translate }}"
+                  (onClick)="makeSummaryTrue()"
+                ></p-radioButton>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header>
+              {{ "Account Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="account">{{
+                  "Accounts" | translate
+                }}</label>
+                <div class="p-col-12 p-md-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptAccount"
+                    id="rptAccount"
+                    [options]="accountListdropdown"
+                  >
+                  </p-dropdown>
+
+                  <div
+                    class="error"
+                    *ngIf="
+                      f.rptAccount.errors &&
+                      (f.rptAccount.dirty || f.rptAccount.touched)
+                    "
+                  >
+                    <span *ngIf="f.rptAccount.errors.required">
+                      Account is Mandatory Field*</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <p-panel>
+            <p-header>
+              {{ "Date Filter" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <!-- <label class="p-col-12 p-md-2" for="voucherno">{{'From'| translate}}</label> -->
+              <p-radioButton
+                name="groupname2"
+                formControlName="rptDateRange"
+                id="rptDateRange"
+                class="p-col-12 p-md-4"
+                label="{{ 'From' | translate }}"
+                (onClick)="makeDateRangeTrue()"
+              ></p-radioButton>
+
+              <div class="p-col-12 p-md-8 p-0">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  class="w-100"
+                  useUtc
+                  id="rptDtpFrom"
+                  formControlName="rptDtpFrom"
+                >
+                </p-calendar>
+              </div>
+              <label for="" class="p-col-12 p-md-2"></label>
+              <label class="p-col-12 p-md-2" for="voucherdate">{{
+                "To" | translate
+              }}</label>
+
+              <div class="p-col-12 p-md-8 p-0">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  class="w-100"
+                  useUtc
+                  id="rptDtpTo"
+                  formControlName="rptDtpTo"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <p-radioButton
+                name="groupname2"
+                formControlName="rptAsOnDate"
+                id="rptAsOnDate"
+                [value]="true"
+                class="p-col-12 p-md-4"
+                label="{{ 'As On' | translate }}"
+                (onClick)="makeAsOnDateTrue()"
+              ></p-radioButton>
+
+              <div class="p-col-12 p-md-8 p-0">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [showIcon]="true"
+                  class="w-100"
+                  useUtc
+                  id="rptDtpAson"
+                  formControlName="rptDtpAson"
+                >
+                </p-calendar>
+              </div>
+
+              <!-- <label class="p-col-12 p-md-3"
+                                for="voucherdate"></label>
+
+                            <div class="p-col-12 p-md-3 p-0">
+
+
+
+                            </div> -->
+            </div>
+
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="vatno">{{
+                "Description" | translate
+              }}</label>
+              <div class="p-col-12 p-md-8 p-0">
+                <input
+                  class="w-100"
+                  id="rptDescription"
+                  formControlName="rptDescription"
+                  maxlength="50"
+                  pInputText
+                />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-4" for="narration">{{
+                "Narration" | translate
+              }}</label>
+              <div class="p-col-12 p-md-8 p-0">
+                <textarea
+                  class="w-100"
+                  formControlName="rptNarration"
+                  id="rptNarration"
+                  maxlength="500"
+                  pInputText
+                ></textarea>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <!-- <div class="p-col-12 p-md-2">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <p-listbox
+                id="rptType"
+                [options]="V_TYPEList"
+                [metaKeySelection]="false"
+                [checkbox]="true"
+                [filter]="true"
+                [multiple]="true"
+                optionLabel="label"
+                (onChange)="onVTypeChange($event?.value)"
+                [listStyle]="{ 'max-height': '150px' }"
+              >
+              </p-listbox>
+            </div>
+          </p-panel>
+        </div> -->
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Banks Statements" | translate }}
+        </p-header>
+        <div class="grid">
+          <div style="display: flex; margin-bottom: 8px">
+            <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+            <input
+              type="text"
+              pInputText
+              id="globalFilter"
+              placeholder="Global Filter..."
+              (input)="applyGlobalFilter($event)"
+            />
+          </div>
+
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="reportaccountstransactions_entry"
+            [data]="dataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-6"></div>
+        <div class="p-sm-12 p-md-2">
+          <div class="min-panel">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">{{
+                "Debit" | translate
+              }}</label>
+              <div class="p-col-12 p-md-9 p-0">
+                <input
+                  class="w-100"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  maxlength="50"
+                  [value]="getTotalDedit() | number : '1.2-2'"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-sm-12 p-md-2">
+          <div class="min-panel">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">{{
+                "Credit" | translate
+              }}</label>
+              <div class="p-col-12 p-md-9 p-0">
+                <input
+                  class="w-100"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  maxlength="50"
+                  [value]="getTotalCredit() | number : '1.2-2'"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

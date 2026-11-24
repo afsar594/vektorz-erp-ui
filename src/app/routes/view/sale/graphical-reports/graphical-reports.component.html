@@ -1,0 +1,97 @@
+<app-page-header [title]="title | translate"> </app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Close"
+      icon="fa fa-Close"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Graphical Reports' | translate">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <div class="p-grid">
+            <div class="p-col-2 p-md-2 p-lg-2">
+              <label for="From">Date From : </label>
+            </div>
+            <div class="p-col-10 p-md-10 p-lg-10">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                class="w-100"
+                [showIcon]="true"
+                useUtc
+                formControlName="DateFrom"
+                id="dateFrom"
+              >
+              </p-calendar>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-2 p-md-2 p-lg-2">
+              <label for="to">Date To : </label>
+            </div>
+            <div class="p-col-10 p-md-10 p-lg-10">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                class="w-100"
+                [showIcon]="true"
+                useUtc
+                formControlName="DateFrom"
+                id="dateFrom"
+              >
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-6">
+          <div class="p-grid">
+            <div class="p-col-1 p-md-1 p-sm-1"></div>
+            <div class="p-col-11 p-md-11 p-sm-11">
+              <p-radioButton label="Suppliers wise Purchase"></p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-1 p-md-1 p-sm-1"></div>
+            <div class="p-col-11 p-md-11 p-sm-11">
+              <p-radioButton label="Sales Man wise Sales"></p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-1 p-md-1 p-sm-1"></div>
+            <div class="p-col-11 p-md-11 p-sm-11">
+              <p-radioButton label="Monthly Purchase"></p-radioButton>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-1 p-md-1 p-sm-1"></div>
+            <div class="p-col-11 p-md-11 p-sm-11">
+              <p-radioButton label="Monthly Sales"></p-radioButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

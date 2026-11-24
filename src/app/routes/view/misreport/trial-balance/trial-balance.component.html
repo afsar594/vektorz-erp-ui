@@ -1,0 +1,230 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Trial Balance' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="showReport()"
+      [disabled]="!Permission?.View"
+      label="Show"
+      icon="fa fa-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Format"
+      icon="fa fa-list"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+  <div class="ui-toolbar-group-right">
+    <div class="p-inputgroup">
+      <input type="text" pInputText placeholder="Search" />
+      <button pButton type="button" icon="pi pi-search"></button>
+    </div>
+    <p-splitButton
+      icon="fa fa-print"
+      [model]="printbtn"
+      label="Print Report"
+      [disabled]="!Permission.Print"
+      styleClass="p-button-outlined mr-2 mb-2"
+    >
+    </p-splitButton>
+    <button
+      pButton
+      type="button"
+      [routerLink]="'/dashoard'"
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+
+    <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Trial Balance Sheet' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <p-header>
+              <input [(ngModel)]="isDate" type="checkbox" pInputCheck />
+              {{ "By Date" | translate }}
+            </p-header>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ "Date From" | translate }}</label>
+              </div>
+              <div class="p-col-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [disabled]="!isDate"
+                  [(ngModel)]="startDate"
+                  id="dateFrom"
+                  useUtc
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>{{ "Date To" | translate }}</label>
+              </div>
+              <div class="p-col-8">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  [disabled]="!isDate"
+                  [(ngModel)]="endDate"
+                  id="dateTo"
+                  useUtc
+                  class="w-100"
+                  [showIcon]="true"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-4">
+                <p-radioButton
+                  name="dateType"
+                  label="Date"
+                  inputId="date"
+                  value="dateRange"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-radioButton
+                  name="dateType"
+                  label="Month"
+                  inputId="month"
+                  value="dateRange"
+                >
+                </p-radioButton>
+              </div>
+              <div class="p-col-12 p-md-4">
+                <p-radioButton
+                  name="dateType"
+                  inputId="year"
+                  label="Year"
+                  value="dateRange"
+                >
+                </p-radioButton>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <p-panel>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-3">
+                <label>Cost Center</label>
+              </div>
+              <div class="p-col-12 p-md-9">
+                <p-dropdown
+                  filter="true"
+                  [options]="costCenterList"
+                  placeholder="--- Select Cost Center ---"
+                  optionLabel="costCenterMasterCostCenterName"
+                  [showClear]="true"
+                  [(ngModel)]="costcenter"
+                  filter="true"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-7">
+                <p-checkbox
+                  [(ngModel)]="isChecked"
+                  binary="true"
+                  label="Hide Zero Transaction"
+                ></p-checkbox>
+              </div>
+              <div class="p-col-12 p-md-5">
+                <p-checkbox label="Print Group Wise"></p-checkbox>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <p-panel>
+            <div class="p-grid p-ai-center">
+              <div class="p-col-12 p-md-12">
+                <p-radioButton
+                  name="particularVoucher"
+                  inputId="dateRangeSummary"
+                  value="Summary"
+                  [(ngModel)]="selectedView"
+                  (onClick)="(sourceDataObject == [])"
+                ></p-radioButton>
+                <label class="p-col-12 p-md-4" for="dateRangeSummary"
+                  >Summary View</label
+                >
+              </div>
+              <div class="p-col-12 p-md-12">
+                <p-radioButton
+                  name="particularVoucher"
+                  inputId="dateRangeDetailed"
+                  value="Detailed"
+                  [(ngModel)]="selectedView"
+                  (onClick)="(sourceDataObject == [])"
+                ></p-radioButton>
+                <label class="p-col-12 p-md-4" for="dateRangeDetailed"
+                  >Detailed View</label
+                >
+              </div>
+              <div class="p-col-12 p-md-12">
+                <p-radioButton
+                  name="particularVoucher"
+                  inputId="dateRangeGroup"
+                  value="Group"
+                  [(ngModel)]="selectedView"
+                  (onClick)="(sourceDataObject == [])"
+                ></p-radioButton>
+                <label class="p-col-12 p-md-4" for="dateRangeGroup"
+                  >Group View</label
+                >
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="card card-w-title">
+        <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+          <p-tabPanel [header]="'Trial Balance Sheet' | translate">
+            <div id="example1" class="hot"></div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>

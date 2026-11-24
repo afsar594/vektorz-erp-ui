@@ -1,0 +1,236 @@
+<app-page-header [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="ApplyAllFilter()"
+      label="Show"
+      [disabled]="!Permission?.View"
+      icon="pi pi-search"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Excel"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      [disabled]="!Permission?.Print"
+      icon="fa fa-print"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      icon="fa fa-sign-out"
+      class="ui-button-danger"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Salesman Wise Outstanding Statement' | translate">
+      <div class="p-grid">
+        <label class="p-col-1 p-md-1 p-lg-1" for="account">
+          <b>{{ "Sales Man" | translate }}</b>
+        </label>
+        <div class="p-col-4 p-md-4 p-lg-4">
+          <p-dropdown
+            filter="true"
+            [style]="{ width: '100%' }"
+            (onChange)="SalesmanDropdownChange($event)"
+            placeholder="--- SalesMan ---"
+            [options]="Salesman"
+            [(ngModel)]="selectedSalesMan"
+          >
+          </p-dropdown>
+        </div>
+        <label class="p-col-1 p-md-1 p-lg-1" for="account">
+          <b>{{ "Customer" | translate }}</b>
+        </label>
+        <div class="p-col-4 p-md-4 p-lg-4">
+          <p-multiSelect
+            [style]="{ width: '100%' }"
+            placeholder="---Customer---"
+            [options]="Customers"
+            [(ngModel)]="selectedCustomers"
+            filter="true"
+          >
+          </p-multiSelect>
+        </div>
+      </div>
+      <div class="p-grid">
+        <label class="p-col-1 p-md-1 p-lg-1" for="account">
+          <b>{{ "Start Date" | translate }}</b>
+        </label>
+        <div class="p-col-3 p-md-3 p-lg-3" style="width: 20%">
+          <p-calendar
+            appendTo="body"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2000:2040"
+            useUtc
+            [showIcon]="true"
+            [(ngModel)]="startDate"
+          >
+          </p-calendar>
+        </div>
+        <label class="p-col-1 p-md-1 p-lg-1" for="account"> </label>
+        <div class="p-col-3 p-md-3 p-lg-3" style="width: 20%">
+          <p-calendar
+            appendTo="body"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2000:2040"
+            useUtc
+            [showIcon]="true"
+            [(ngModel)]="endDate"
+          >
+          </p-calendar>
+        </div>
+        <div
+          class="p-col-2"
+          style="
+            margin-left: 45px;
+            color: white;
+            background-color: green;
+            margin-top: 10px;
+          "
+        >
+          <p-radioButton
+            [(ngModel)]="DetailOrSummary"
+            name="Summary"
+            value="Summary"
+          >
+          </p-radioButton>
+          <label style="padding-left: 10px" for="Sales">Summary</label>
+        </div>
+        <div
+          class="p-col-2"
+          style="
+            margin-left: 45px;
+            color: white;
+            background-color: rgb(224, 11, 11);
+            margin-top: 10px;
+          "
+        >
+          <p-radioButton
+            [(ngModel)]="DetailOrSummary"
+            name="Detail"
+            value="Detail"
+          >
+          </p-radioButton>
+          <label style="padding-left: 10px" for="Sales">Detailed</label>
+        </div>
+      </div>
+      <div class="card card-w-title">
+        <p-tabView
+          *ngIf="DetailOrSummary == 'Detail'"
+          [activeIndex]="index"
+          (onChange)="handleChange($event)"
+        >
+          <p-tabPanel [header]="'Detailed' | translate">
+            <div class="grid">
+              <div class="p-col-12">
+                <hot-table
+                  [hotId]="hotid2"
+                  [data]="dataset2"
+                  [licenseKey]="licensekey"
+                  [settings]="detailed"
+                >
+                </hot-table>
+              </div>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+      <div class="card card-w-title">
+        <p-tabView
+          *ngIf="DetailOrSummary == 'Summary'"
+          [activeIndex]="index"
+          (onChange)="handleChange($event)"
+        >
+          <p-tabPanel [header]="'Summary' | translate">
+            <div class="grid">
+              <div class="p-col-12">
+                <hot-table
+                  [hotId]="hotid3"
+                  [data]="dataset3"
+                  [licenseKey]="licensekey"
+                  [settings]="summary"
+                >
+                </hot-table>
+              </div>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+  <!-- <div class="card card-w-title">
+        <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+            <p-tabPanel [header]="'Salesman Wise Outstanding Statement' | translate">
+                <div class="grid">
+                    <div class="p-col-12">
+                        <hot-table [hotId]="hotid" [data]=" dataset" [licenseKey]="licensekey"
+                            [settings]="salesman">
+                        </hot-table>
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </div> -->
+  <div class="p-grid">
+    <div class="p-col-2 p-md-2 p-lg-2">
+      <label style="font-size: 18px; color: rgb(206, 26, 35); padding-left: 35%"
+        ><b>Total</b></label
+      >
+    </div>
+    <div class="p-col-2 p-md-2 p-lg-2" style="text-align: center">
+      <label><b>Debit</b></label>
+      <input
+        pInputText
+        style="width: 100%; background-color: rgb(22, 114, 45)"
+      />
+    </div>
+    <div class="p-col-2 p-md-2 p-lg-2" style="text-align: center">
+      <label><b>Credit</b></label>
+      <input
+        pInputText
+        style="width: 100%; background-color: rgb(153, 24, 24)"
+      />
+    </div>
+    <div class="p-col-2 p-md-2 p-lg-2" style="text-align: center">
+      <label><b>Settled</b></label>
+      <input
+        pInputText
+        style="width: 100%; background-color: rgb(153, 24, 24)"
+      />
+    </div>
+    <div class="p-col-2 p-md-2 p-lg-2" style="text-align: center">
+      <label><b>Balance</b></label>
+      <input
+        pInputText
+        style="width: 100%; background-color: rgb(153, 24, 24)"
+      />
+    </div>
+    <div class="p-col-2 p-md-2 p-lg-2" style="text-align: center">
+      <label><b>Running Balance</b></label>
+      <input
+        pInputText
+        style="width: 100%; background-color: rgb(153, 24, 24)"
+      />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+export interface OpeningVoucherDetails{
+    openingVoucherDetailsId?:number,
+    openingVoucherDetailsOpId?:string,
+    openingVoucherDetailsVoucherNo?:string,
+    openingVoucherDetailsVDate?:Date,
+    openingVoucherDetailsDebit?:number,
+    openingVoucherDetailsCredit?:number,
+    openingVoucherDetailsRefNo?:string,
+    openingVoucherDetailsRemarks?:string,
+    openingVoucherDetailsFsno?:number,
+    openingVoucherDetailsUserId?:number,
+    openingVoucherDetailsLastUpdateTime?:Date,
+    openingVoucherDetailsDrCr?:string,
+    openingVoucherDetailsDelStatus?:Boolean,
+}

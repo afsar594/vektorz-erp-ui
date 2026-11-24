@@ -1,0 +1,119 @@
+<app-page-header [nav]='[{label: "Master"| translate},{label: "Unit"| translate}]' [title]='title| translate'></app-page-header>
+<div class="toolbar">
+    <div class="ui-toolbar-group-left">
+      <button pButton type="button" [label]="'New' | translate" (click)='new()' icon="pi pi-plus"></button>
+      <button pButton type="button" [label]="'Edit' | translate" (click)='edit()'
+        [disabled]='!btnFlag?.edit || !Permission?.Edit' icon="fa fa-pencil" class="ui-button-success"></button>
+
+         <button pButton type="button" [label]="btnFlag.save == true ? 'Save': 'Update'"
+         [disabled]='!Permission?.Add' (click)='saveUnit()' icon="fa fa-floppy-o"
+         class="ui-button-success"></button>
+           
+      <button pButton type="button" class="ui-button-danger" (click)='delete()'
+        [disabled]='!btnFlag.delete || !Permission.Delete' label="Delete" icon="fa fa-trash"></button>
+        <button pButton type="button" class="ui-button-danger" (click)='reset()' [disabled]='!btnFlag?.cancel' [label]="'Cancel' | translate"
+         icon="fa fa-ban"></button>
+    </div>
+      <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Exit" (click)='ExitNew()' icon="fa fa-sign-out"></button> 
+       
+    </div>
+  </div>
+<div class="card card-w-title" [formGroup]='unitFormGroup' > 
+    <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Short Name' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText    [placeholder]="'Short Name' | translate" formControlName='unitMasterUnitShortName' style="border-color: black;width: 300px;"  maxlength="20">
+            <div class="error" *ngIf="f.unitMasterUnitShortName.errors 
+            && (f.unitMasterUnitShortName.dirty || f.unitMasterUnitShortName.touched)">
+                <span *ngIf="f.unitMasterUnitShortName.errors.required">
+                    {{'Short Name is Mandatory Field*' | translate}}</span>
+            </div>
+
+        </div>
+
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Full Name' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText    [placeholder]="'Full Name' | translate" formControlName='unitMasterUnitFullName' style="border-color: black; width: 300px;" maxlength="100" >
+            <div class="error" *ngIf="f.unitMasterUnitFullName.errors 
+            && (f.unitMasterUnitFullName.dirty || f.unitMasterUnitFullName.touched)">
+                <span *ngIf="f.unitMasterUnitFullName.errors.required">{{'Full Name is Mandatory
+                    Field*' | translate}}</span>
+            </div>
+
+        </div>
+    </div>
+ 
+<div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Description' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+  
+            <textarea pInputTextarea [rows]="3" [cols]="25" [placeholder]="'Description' | translate"  formControlName='unitMasterUnitDescription' style="border-color: black; width: 300px;"  maxlength="200"></textarea>
+
+
+
+            <div class="error" *ngIf="f.unitMasterUnitDescription.errors 
+            && (f.unitMasterUnitDescription.dirty || f.unitMasterUnitDescription.touched)">
+                <span *ngIf="f.unitMasterUnitDescription.errors.required">{{'Description is Mandatory
+                    Field*' | translate}}</span>
+            </div>
+
+        </div>
+    
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Inactive' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-2">
+ 
+            <p-checkbox    [binary]="true"  formControlName='unitMasterUnitStatus'  >{{'Status' | translate}}</p-checkbox>
+        </div>
+    </div>
+
+     <div class="p-grid">
+        <div class="p-col-12">
+            <p-table [value]="unitList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th colspan="1"   >{{'Code' | translate}}</th>
+                        <th colspan="2"   style="text-align: left ;">{{'Short Name' | translate}}</th>
+                         <th colspan="3" style="text-align: left ;" >{{'Full Name' | translate }}</th>
+                        <th colspan="4"  style="text-align: left ;">{{'Description' | translate}}</th>
+                        <th colspan="1" style="text-align: center; " > {{'Inactive' | translate}}</th>
+                        <th  colspan="1">{{'Action' | translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-unit>
+                    <tr>
+                        <td style="text-align: center ;"  colspan="1">{{unit.unitMasterUnitId}}</td>
+                        <td  colspan="2"   class="colname" >{{unit.unitMasterUnitShortName}}</td>
+                        <td colspan="3"   class="colname">{{unit.unitMasterUnitFullName}}</td>
+                        <td colspan="4"   class="colname" >{{unit.unitMasterUnitDescription}}</td>
+ 
+                        <td   style="text-align: center; " colspan="1">
+                          
+                            <ng-container   *ngIf="unit.unitMasterUnitStatus===false">
+                                <input   type="checkbox" [checked]=false [disabled]=true   >  
+                            </ng-container>
+
+                            <ng-container   *ngIf="unit.unitMasterUnitStatus===true">
+                                <input   type="checkbox" [checked]=true [disabled]=true   >  
+                            </ng-container>
+
+                             </td> 
+                        
+
+
+                         <td  colspan="1">
+                            <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(unit)'
+                                iconPos="left"></button>
+                         
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+
+        </div>
+    </div>
+</div> 
+<p-toast></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>

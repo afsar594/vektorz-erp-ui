@@ -1,0 +1,409 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<div class="toolbar">
+  <div>
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      icon="pi pi-plus"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      [disabled]="!Permission?.Edit || operation.insert"
+      icon="fa fa-pencil"
+      (click)="edit()"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      class="ui-button-info"
+      [label]="btnlabel"
+      (click)="saveSupplier()"
+    ></button>
+    <button
+      pButton
+      class="ui-button-warning"
+      label="Clear"
+      (click)="reset()"
+    ></button>
+    <button
+      pButton
+      class="ui-button-danger"
+      label="Delete"
+      [disabled]="!Permission?.Delete"
+      (click)="removeSupplier()"
+    ></button>
+  </div>
+
+  <div>
+    <!-- <div class="p-inputgroup">
+      <input type="text" pInputText placeholder="Search" />
+      <button pButton type="button" icon="pi pi-search"></button>
+    </div> -->
+    <!-- <button pButton type="button" label="Print" icon="fa fa-print" class="ui-button-success"></button> -->
+    <button
+      pButton
+      type="button"
+      (click)="ExitNew()"
+      label="Exit"
+      icon="fa fa-sign-out"
+    ></button>
+  </div>
+</div>
+<div class="card card-w-title" [formGroup]="supplierFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Supplier Master' | translate">
+      <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-1">
+          {{ "Supp Name" | translate }}<span class="required">*</span>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Supplier Name"
+            class="supplier"
+            formControlName="suppliersMasterSupplierName"
+          />
+          <div
+            class="error"
+            *ngIf="
+              f.suppliersMasterSupplierName.errors &&
+              (f.suppliersMasterSupplierName.dirty ||
+                f.suppliersMasterSupplierName.touched)
+            "
+          >
+            <span *ngIf="f.suppliersMasterSupplierName.errors.required">
+              Supplier Name is Mandatory Field*</span
+            >
+          </div>
+        </div>
+        <div class="p-col-12 p-md-1">{{ "Ref Acc No." | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="RefAccNo"
+            class="supplier"
+            readonly
+            formControlName="suppliersMasterSupplierReffAcNo"
+          />
+        </div>
+        <div class="p-col-12 p-md-1">{{ "CONT Person" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="ContactPerson"
+            class="supplier"
+            formControlName="suppliersMasterSupplierContactPerson"
+          />
+        </div>
+      </div>
+
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="voucherno">{{
+          "Location" | translate
+        }}</label>
+        <div class="p-col-12 p-md-3">
+          <p-dropdown
+            filter="true"
+            class="w-100"
+            formControlName="suppliersMasterSupplierLocationId"
+            [options]="locationList"
+          >
+          </p-dropdown>
+          <div
+            class="error"
+            *ngIf="
+              f.suppliersMasterSupplierLocationId.errors &&
+              (f.suppliersMasterSupplierLocationId.dirty ||
+                f.suppliersMasterSupplierLocationId.touched)
+            "
+          >
+            <span *ngIf="f.suppliersMasterSupplierLocationId.errors.required"
+              >Location Name is Mandatory Field*</span
+            >
+          </div>
+        </div>
+        <div class="p-col-12 p-md-1">{{ "PO Box" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="POBox"
+            class="supplier"
+            formControlName="suppliersMasterSupplierPoBox"
+          />
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "Email" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Email"
+            class="supplier"
+            formControlName="suppliersMasterSupplierEmail"
+          />
+        </div>
+      </div>
+
+      <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-1">{{ "Country" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <p-dropdown
+            filter="true"
+            [options]="countryListNew"
+            class="supplier"
+            (onChange)="onCountryChange($event)"
+            formControlName="suppliersMasterSupplierCountryId"
+            [filter]="true"
+          ></p-dropdown>
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "City" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <p-dropdown
+            filter="true"
+            [options]="citylistNew"
+            formControlName="suppliersMasterSupplierCityId"
+            class="supplier"
+            [filter]="true"
+          ></p-dropdown>
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "Vat No" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="VatNo"
+            class="supplier"
+            formControlName="suppliersMasterSupplierVatNo"
+          />
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-1">{{ "Telephone1" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Tel1"
+            class="supplier"
+            formControlName="suppliersMasterSupplierTel1"
+          />
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "Telephone2" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Tel2"
+            class="supplier"
+            formControlName="suppliersMasterSupplierTel2"
+          />
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "Mobile" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Mobile"
+            class="supplier"
+            formControlName="suppliersMasterSupplierMobile"
+          />
+        </div>
+      </div>
+
+      <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-1">{{ "Fax" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Fax"
+            class="supplier"
+            formControlName="suppliersMasterSupplierFax"
+          />
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "Web Site" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Website"
+            class="supplier"
+            formControlName="suppliersMasterSupplierWebSite"
+          />
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "WhatsApp" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <input
+            pInputText
+            placeholder="Whats App.No"
+            class="supplier"
+            formControlName="suppliersMasterSupplierWhatsAppNo"
+          />
+        </div>
+      </div>
+
+      <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-1">{{ "Currency" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <p-dropdown
+            filter="true"
+            [options]="currencylistNew"
+            formControlName="suppliersMasterSupplierCurrencyId"
+            class="supplier"
+            [filter]="true"
+          ></p-dropdown>
+        </div>
+
+        <div class="p-col-12 p-md-1"></div>
+        <div class="p-col-12 p-md-3">
+          <p-checkbox
+            name="PDStatus"
+            label="InActive"
+            [binary]="true"
+            formControlName="suppliersMasterSupplierStatus"
+          ></p-checkbox>
+        </div>
+      </div>
+      <div class="p-grid p-ai-center">
+        <div class="p-col-12 p-md-1">{{ "Remarks" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <textarea
+            rows="3"
+            cols="30"
+            pInputTextarea
+            class="supplier"
+            pInputText
+            placeholder="Remarks"
+            formControlName="suppliersMasterSupplierRemarks"
+          >
+Remarks </textarea
+          >
+        </div>
+
+        <div class="p-col-12 p-md-1">{{ "Pay Terms" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <textarea
+            rows="3"
+            cols="30"
+            pInputTextarea
+            class="supplier"
+            pInputText
+            placeholder="PaymentsTerms"
+            formControlName="suppliersMasterSupplierPaymentTerms"
+          >
+Payment Terms </textarea
+          >
+        </div>
+        <div class="p-col-12 p-md-1">{{ "Address" | translate }}</div>
+        <div class="p-col-12 p-md-3">
+          <!-- <input pInputText placeholder="Address" class="supplier"
+                        formControlName='suppliersMasterSupplierAddress'> -->
+          <textarea
+            rows="4"
+            cols="30"
+            pInputTextarea
+            class="supplier"
+            pInputText
+            placeholder="Address"
+            formControlName="suppliersMasterSupplierAddress"
+          >
+          </textarea>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog
+  header="SuppLier Master List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="p-grid">
+    <div class="p-col-12">
+      <p-table
+        #dt
+        [value]="SupplierList"
+        [columns]="cols"
+        [paginator]="true"
+        [rows]="8"
+      >
+        <ng-template pTemplate="caption">
+          <div class="p-grid" style="text-align: right">
+            <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+            <div>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                placeholder="Global Filter"
+                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                style="width: auto"
+              />
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of cols">
+              {{ col.header }}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-Supplier>
+          <tr>
+            <td>{{ Supplier.suppliersMasterSupplierId }}</td>
+            <td>{{ Supplier.suppliersMasterSupplierName }}</td>
+            <td>{{ Supplier.suppliersMasterSupplierMobile }}</td>
+            <td>
+              <ng-container
+                *ngIf="Supplier.suppliersMasterSupplierStatus === true"
+              >
+                <input type="checkbox" [checked]="true" [disabled]="true" />
+              </ng-container>
+              <ng-container
+                *ngIf="Supplier.suppliersMasterSupplierStatus === false"
+              >
+                <input type="checkbox" [checked]="false" [disabled]="true" />
+              </ng-container>
+            </td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                (click)="updateValues(Supplier.suppliersMasterSupplierId)"
+                iconPos="left"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-dialog>
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

@@ -1,0 +1,689 @@
+<!-- <p>contravoucher works!</p> -->
+
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Contra Voucher' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button
+      pButton
+      type="button"
+      label="New"
+      (click)="new()"
+      [disabled]="!btnFlag?.new"
+      icon="pi pi-plus"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Edit"
+      (click)="edit()"
+      [disabled]="!btnFlag?.edit || !Permission?.Edit"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Cancel"
+      (click)="cancel()"
+      icon="fa fa-ban"
+    ></button>
+    <!-- <button pButton type="button" [label]="btnFlag.save == true ? 'Save': 'Update'" [disabled]='!btnFlag.update' (click)='saveContraVoucher()'
+            icon="fa fa-floppy-o" class="ui-button-success"></button> -->
+    <button
+      pButton
+      type="button"
+      [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      (click)="saveContraVoucher()"
+      [disabled]="!Permission?.Add"
+      icon="fa fa-floppy-o"
+      class="ui-button-success"
+    ></button>
+
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button
+      pButton
+      type="button"
+      label="List"
+      [disabled]="!Permission?.View"
+      icon="fa fa-list"
+      (click)="showMaximizableDialog()"
+      class="ui-button-info"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right p-d-flex p-flex-wrap responsive-toolbar">
+    <div class="flexSearch">
+      <div class="ui-inputgroup">
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="search"
+          placeholder="Search"
+        />
+        <button
+          pButton
+          type="button"
+          (click)="GetSavedContraVoucherDetails(search)"
+          icon="pi pi-search"
+        ></button>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        label="Print"
+        [disabled]="!btnFlag.print || !Permission?.Print"
+        (click)="displayPrint()"
+        icon="fa fa-print"
+        class="ui-button-success"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        label="Exit"
+        (click)="ExitNew()"
+        icon="fa fa-sign-out"
+      ></button>
+    </div>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="contraVoucherFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Contra Voucher' | translate">
+      <p-panel>
+        <p-header>
+          {{ "Contra Voucher Details" | translate }}
+        </p-header>
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-7 m-5">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="voucherno">{{
+                "Voucher No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-4">
+                <input
+                  formControlName="contraVoucherVno"
+                  id="voucherno"
+                  pInputText
+                />
+              </div>
+              <label class="p-col-12 p-md-2" for="voucherdate">{{
+                "Voucher Date" | translate
+              }}</label>
+              <div class="p-col-12 p-md-4">
+                <p-calendar
+                  appendTo="body"
+                  dateFormat="dd/mm/yy"
+                  [showButtonBar]="true"
+                  [monthNavigator]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2040"
+                  useUtc
+                  [showIcon]="true"
+                  formControlName="contraVoucherDate"
+                  id="voucherdate"
+                >
+                </p-calendar>
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="refno">{{
+                "Reference No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10">
+                <input
+                  formControlName="contraVoucherRefNo"
+                  id="refno"
+                  pInputText
+                />
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="currency">{{
+                "Currency" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10">
+                <p-dropdown
+                  filter="true"
+                  class="w-100"
+                  formControlName="contraVoucherCurrencyId"
+                  [options]="currencyList"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12 p-md-5">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-2" for="narration">{{
+                "Narration" | translate
+              }}</label>
+              <div class="p-col-12 p-md-10">
+                <textarea
+                  rows="6"
+                  formControlName="contraVoucherNarration"
+                  id="narration"
+                  maxlength="500"
+                  pInputText
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-panel>
+
+      <p-panel>
+        <p-header>
+          {{ "Account Details" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="contravoucher_entry"
+            [data]="contravoucher_entryDataset"
+          ></hot-table>
+        </div>
+        <div class="p-grid p-ai-center" style="justify-content: end">
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total Credit" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input
+              id="totalCredit"
+              readonly
+              formControlName="contraVoucherCrAmount"
+              pInputText
+            />
+          </div>
+
+          <label class="p-col-12 p-md-1" for="account">
+            <b>{{ "Total Debit" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input
+              readonly
+              id="totalDebit"
+              formControlName="contraVoucherDrAmount"
+              pInputText
+            />
+          </div>
+
+          <label class="p-col-12 p-md-1" for="diff">
+            <b>{{ "Difference" | translate }}</b>
+          </label>
+          <div class="p-col-12 p-md-2">
+            <input id="diff" [value]="difference" readonly pInputText />
+          </div>
+        </div>
+      </p-panel>
+      <app-lookup
+        [header]="'Look Up'"
+        [dataArry]="dataList"
+        [selectedItem]="selectItem"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectaccount($event)"
+        (exitEvent)="exit($event)"
+        [cell]="activeRow"
+        (clearEvent)="clear($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="showAccountLookUp"
+      ></app-lookup>
+
+      <app-lookup
+        [header]="'Look Up'"
+        [selectedItem]="selectItem"
+        [eleReference]="elementReference"
+        [dataArry]="dataList"
+        (exitEvent)="exit($event)"
+        (clearEvent)="clear($event)"
+        [formControlName]="control"
+        [columns]="lookupGridColumns"
+        (selectItemEvent)="selectControl($event)"
+        (hideDialogEvent)="hide($event)"
+        [tableheader]="'Account List'"
+        [(show)]="formControlLookUp"
+      ></app-lookup>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Account Details' | translate">
+      <p-table [value]="accountTransactionList">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ "Account No" | translate }}</th>
+            <th>{{ "Account Name" | translate }}</th>
+            <th>{{ "Debit" | translate }}</th>
+            <th>{{ "Credit" | translate }}</th>
+            <th>{{ "Particulars" | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-accountTrans>
+          <tr>
+            <td>{{ accountTrans?.accountsTransactionsAccNo }}</td>
+            <td>
+              <span *ngIf="accountArray?.length > 0">{{
+                getAccountName(accountTrans?.accountsTransactionsAccNo)
+              }}</span>
+            </td>
+            <td>{{ accountTrans?.accountsTransactionsDebit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsCredit }}</td>
+            <td>{{ accountTrans?.accountsTransactionsParticulars }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+            Content 3
+        </p-tabPanel> -->
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Contra Voucher List"
+  [(visible)]="displayMaximizable"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button
+          type="submit"
+          pButton
+          label="Find"
+          (click)="filter()"
+          icon="pi pi-search"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Clear"
+          icon="fa fa-pencil"
+          (click)="ClearFilter()"
+          class="ui-button-success"
+        ></button>
+      </p-header>
+      <form [formGroup]="contraVoucherFilterForm">
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">{{
+                "Voucher No" | translate
+              }}</label>
+              <div class="p-col-12 p-md-9">
+                <input
+                  class="w-100"
+                  formControlName="contraVoucherNo"
+                  pInputText
+                />
+              </div>
+            </div>
+            <div class="p-grid p-ai-center">
+              <label class="p-col-12 p-md-3" for="account">{{
+                "RefNo" | translate
+              }}</label>
+              <div class="p-col-12 p-md-9">
+                <input
+                  class="w-100"
+                  formControlName="contraVoucherRefNo"
+                  pInputText
+                />
+              </div>
+              <!-- <label class="p-col-12 p-md-2" for="account">{{ 'Location/Mobile' | translate }}</label>
+                      <div class="p-col-12 p-md-10 ">
+                        <p-dropdown filter="true" class="w-100" formControlName="salesVoucherLocationId" [options]="locationList"></p-dropdown>
+                        <div class="error" *ngIf="f.salesVoucherLocationId.errors && (f.salesVoucherLocationId.dirty || f.salesVoucherLocationId.touched)">
+                          <span *ngIf="f.salesVoucherLocationId.errors.required">Location is Mandatory Field*</span>
+                        </div>
+                      </div> -->
+            </div>
+            <div class="p-grid p-ai-center">
+              <!-- <label class="p-col-12 p-md-2" for="vatno">{{ 'LPO No' | translate }}</label>
+                      <div class="p-col-12 p-md-10 ">
+                        <input class="w-100" formControlName="lpoNo" placeholder="LPO No" maxlength="50" pInputText>
+                      </div> -->
+            </div>
+            <div class="p-grid p-ai-center">
+              <!-- <label class="p-col-12 p-md-2" for="account">{{ 'Voucher No' | translate }}</label>
+                      <div class="p-col-12 p-md-10 ">
+                        <input class="w-100" formControlName="voucherNo" placeholder="Voucher No" pInputText>
+                      </div> -->
+            </div>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-ai-center"></div>
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox
+                  formControlName="isDate"
+                  [binary]="true"
+                  label="Date Range"
+                ></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    formControlName="fromDate"
+                    [showIcon]="true"
+                    [disabled]="!contraVoucherFilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To Date" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    useUtc
+                    formControlName="toDate"
+                    [showIcon]="true"
+                    [disabled]="!contraVoucherFilterForm.get('isDate').value"
+                    class="w-100"
+                    useUtc
+                  ></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+  <p-table [value]="contraVoucherarry" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ "Voucher No" | translate }}</th>
+        <th>{{ "Date" | translate }}</th>
+        <th>{{ "Currency" | translate }}</th>
+        <th>{{ "Vchr.Debit" | translate }}</th>
+        <th>{{ "Vchr.Credit" | translate }}</th>
+        <th>{{ "Particulars" | translate }}</th>
+        <th>{{ "Dtls.Debit" | translate }}</th>
+        <th>{{ "Dtls.Credit" | translate }}</th>
+        <th>{{ "Ref.No" | translate }}</th>
+        <th>{{ "View" }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-contravoucher_list>
+      <tr>
+        <td>{{ contravoucher_list.contraVoucherVno }}</td>
+        <td>
+          {{ contravoucher_list.contraVoucherDate | date : "dd/MM/yyyy" }}
+        </td>
+        <td *ngIf="contravoucher_list?.contraVoucherCurrencyId != null">
+          {{ getCurrency(contravoucher_list.contraVoucherCurrencyId) }}
+        </td>
+        <td>{{ contravoucher_list.contraVoucherDrAmount }}</td>
+        <td>{{ contravoucher_list.contraVoucherCrAmount }}</td>
+        <td>{{ contravoucher_list.contraVoucherNarration }}</td>
+        <td>{{ contravoucher_list.contraVoucherDrAmount }}</td>
+        <td>{{ contravoucher_list.contraVoucherCurrencyId }}</td>
+        <td>{{ contravoucher_list.contraVoucherRefNo }}</td>
+
+        <td>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            (click)="
+              GetSavedContraVoucherDetails(contravoucher_list.contraVoucherId);
+              displayMaximizable = false
+            "
+            class="ui-button-info"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button
+    pButton
+    type="button"
+    class="ui-button-info"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="pi pi-print"
+  ></button>
+  <div>
+    <div id="print" style="justify-content: center">
+      <h1 class="main1">{{ stationmasterObj?.stationMasterStationName }}</h1>
+      <div class="flex">
+        <div class="payment1">
+          <div class="flexrow">
+            <div class="flexcol">
+              <b>Address </b>
+              <b>Tel </b>
+              <b>Fax </b>
+              <b>Email </b>
+            </div>
+            <div class="flexcol">
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>
+                {{ stationmasterObj?.stationMasterAddress | translate }}
+              </div>
+              <div>{{ stationmasterObj?.stationMasterTele1 | translate }}</div>
+              <div>{{ stationmasterObj?.stationMasterFax | translate }}</div>
+              <div>{{ stationmasterObj?.stationMasterEmail }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="payment2">
+          <!-- <img src="../../../../../assets/Images/logo-2.png" /> -->
+          <img
+            *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+            class="squreImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+          <img
+            *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+            class="rectImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+        </div>
+      </div>
+      <div class="center">
+        <h2>{{ "Contra Voucher" | translate }}</h2>
+      </div>
+      <div class="flex1">
+        <div class="contain1">
+          <div class="inflex">
+            <div class="voucher">
+              <b>{{ "Contra Voucher No" | translate }}</b>
+              <div class="space1">
+                <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              </div>
+              <div>{{ savedContraVoucher?.contraVoucherVno }}</div>
+            </div>
+
+            <div class="date">
+              <b>{{ "Date" | translate }}</b>
+              <div class="space1">
+                <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              </div>
+              <div>
+                {{
+                  savedContraVoucher?.contraVoucherDate | date : "dd/MM/yyyy"
+                }}
+              </div>
+            </div>
+          </div>
+          <div class="flexrow">
+            <div class="flexcol">
+              <!-- <b>{{'Voucher No' | translate}}</b> -->
+
+              <b>{{ "Ref No" | translate }}</b>
+              <b>{{ "Being" | translate }}</b>
+            </div>
+            <div class="flexcol space">
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+              <div>&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            </div>
+            <div class="flexcol">
+              <div>{{ savedContraVoucher?.contraVoucherRefNo }}</div>
+              <div>{{ savedContraVoucher?.contraVoucherNarration }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table">
+        <table id="customers">
+          <tr>
+            <!-- <th>{{'S No. '| translate}}</th> -->
+            <th>{{ "Acc. No" | translate }}</th>
+            <th>{{ " Acc. Name " | translate }}</th>
+            <th>{{ "Credit " | translate }}</th>
+            <th>{{ "Debit " | translate }}</th>
+            <th>{{ "Remarks" | translate }}</th>
+          </tr>
+          <tr
+            *ngFor="
+              let contraVoucher of savedContraVoucher?.contraVoucherDetails;
+              let i = index
+            "
+          >
+            <td>{{ contraVoucher?.contraVoucherDetailsAccNo }}</td>
+
+            <td>
+              <span>{{
+                getAccountName(contraVoucher?.contraVoucherDetailsAccNo)
+              }}</span>
+            </td>
+            <td>
+              {{ contraVoucher?.contraVoucherDetailsCrAmount | number : "0.2" }}
+            </td>
+            <td>
+              {{ contraVoucher?.contraVoucherDetailsDrAmount | number : "0.2" }}
+            </td>
+
+            <td>{{ contraVoucher?.contraVoucherDetailsNarration }}</td>
+          </tr>
+
+          <tr>
+            <td colspan="2"></td>
+            <td>
+              <b
+                >Total Credit =
+                {{ savedContraVoucher?.contraVoucherCrAmount }}</b
+              >
+            </td>
+            <td>
+              <b>
+                Total Debit = {{ savedContraVoucher?.contraVoucherDrAmount }}</b
+              >
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="page-footer">
+        <div class="table">
+          <table id="customers">
+            <thead>
+              <th>Reciever's Signature</th>
+              <th>{{ "Verified by&Signature:" | translate }}</th>
+              <th>Date of Print: {{ date }}</th>
+            </thead>
+            <tbody>
+              <td></td>
+              <td></td>
+              <td>Page No: 1</td>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>

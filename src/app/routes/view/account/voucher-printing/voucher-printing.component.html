@@ -1,0 +1,342 @@
+<!-- <app-page-header 
+    [title]='title| translate'></app-page-header> -->
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Stock Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      (click)="ApplyAllFilter()"
+      label="Find"
+      icon="fa fa-search"
+      [disabled]="!Permission?.View"
+      class="ui-button-info"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="DownloadVoucherPrint(null, 'XLSX')"
+      icon="fa fa-file-excel-o"
+      class="ui-button-success"
+      label="Excel"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <div class="ui-inputgroup">
+        <input type="text" pInputText placeholder="Search" />
+        <button pButton type="button" icon="pi pi-search"></button>
+      </div>
+      <button
+        pButton
+        type="button"
+        (click)="displayPrint()"
+        label="Print"
+        [disabled]="!Permission?.Print"
+        icon="fa fa-print"
+        class="ui-button-success"
+      ></button>
+      <button
+        pButton
+        type="button"
+        (click)="ExitNew()"
+        label="Exit"
+        icon="fa fa-sign-out"
+      ></button>
+      <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+    </div>
+  </div>
+</p-toolbar>
+
+<div class="card card-w-title">
+  <p-panel header="Voucher Printing">
+    <div class="p-grid">
+      <div class="p-col-4">
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-4" for="chequeNo">Cheque No</label>
+          <div class="p-col-12 p-md-8">
+            <input type="text" pInputText />
+          </div>
+        </div>
+        <div class="p-grid p-ai-center">
+          <label class="p-col-12 p-md-4">Voucher Type</label>
+          <div class="p-col-12 p-md-8">
+            <p-dropdown
+              filter="true"
+              [showClear]="true"
+              placeholder="select voucher type"
+              [filter]="true"
+              [options]="voucherType"
+              (onShow)="GetVoucherTypeDropdown()"
+              [(ngModel)]="selectedVoucherType"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-1"></div>
+      <div class="p-col-7">
+        <div class="p-grid">
+          <div class="p-col-3">
+            <p-radioButton
+              label="Particular Voucher"
+              name="particularVoucher"
+              [(ngModel)]="radioBtnType"
+              inputId="particularVoucher"
+              value="particularVoucher"
+            ></p-radioButton>
+          </div>
+          <div class="p-col-3">
+            <p-radioButton
+              label="Voucher Range"
+              name="voucherRange"
+              [(ngModel)]="radioBtnType"
+              inputId="voucherRange"
+              value="voucherRange"
+            ></p-radioButton>
+          </div>
+          <div class="p-col-3">
+            <p-radioButton
+              label="Date Range"
+              name="dateRange"
+              [(ngModel)]="radioBtnType"
+              inputId="dateRange"
+              value="dateRange"
+            ></p-radioButton>
+          </div>
+        </div>
+        <div class="p-grid p-ai-center" style="margin-top: 10px">
+          <ng-container *ngIf="radioBtnType == 'particularVoucher'">
+            <label class="p-col-3">Particular Voucher</label>
+            <div class="p-col-4">
+              <p-autoComplete
+                [(ngModel)]="selectedParticularVoucher"
+                [suggestions]="particularVoucher"
+                (completeMethod)="searchVouchers($event, 'voucherNumber')"
+                placeholder="Search vouchers"
+                field="label"
+                [dropdown]="true"
+                [forceSelection]="true"
+              >
+              </p-autoComplete>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="radioBtnType == 'voucherRange'">
+            <label class="p-col-2">From Voucher</label>
+            <div class="p-col-4">
+              <p-autoComplete
+                [(ngModel)]="selectedVoucherStart"
+                [suggestions]="voucherStart"
+                (completeMethod)="searchVouchers($event, 'voucherNumber')"
+                placeholder="Search Voucher"
+                field="label"
+                [dropdown]="true"
+              >
+              </p-autoComplete>
+            </div>
+            <label class="p-col-2">To Voucher</label>
+            <div class="p-col-4">
+              <p-autoComplete
+                [(ngModel)]="selectedVoucherEnd"
+                [suggestions]="voucherEnd"
+                (completeMethod)="searchVouchers($event, 'voucherNumber')"
+                placeholder="Search Voucher"
+                field="label"
+                [dropdown]="true"
+                [forceSelection]="true"
+              >
+              </p-autoComplete>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="radioBtnType == 'dateRange'">
+            <label class="p-col-2">Date From</label>
+            <div class="p-col-4">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                [showIcon]="true"
+                class="w-100"
+                useUtc
+                [(ngModel)]="startDate"
+                [maxDate]="endDate"
+                [readonlyInput]="true"
+              ></p-calendar>
+            </div>
+            <label class="p-col-2">Date To</label>
+            <div class="p-col-4">
+              <p-calendar
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                [showButtonBar]="true"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2040"
+                [showIcon]="true"
+                class="w-100"
+                useUtc
+                [(ngModel)]="endDate"
+                [minDate]="startDate"
+                [readonlyInput]="true"
+              ></p-calendar>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </p-panel>
+</div>
+<div class="card card-w-title">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Details' | translate">
+      <div class="grid">
+        <div class="p-col-12">
+          <!-- In your component template -->
+          <hot-table
+            [hotId]="hotid"
+            [data]="dataset"
+            [licenseKey]="licensekey"
+            [settings]="VoucherPrinting"
+          ></hot-table>
+          <div class="pagination-controls">
+            <button (click)="previousPage()" [disabled]="currentPage <= 1">
+              Previous
+            </button>
+
+            <span class="page-info">
+              Page {{ currentPage }} of {{ totalPages }} ({{ totalRecords }}
+              records)
+            </span>
+
+            <button
+              (click)="nextPage()"
+              [disabled]="currentPage == totalPages || totalRecords == 0"
+            >
+              Next
+            </button>
+
+            <select
+              [(ngModel)]="pageSize"
+              (change)="onPageSizeChange()"
+              [disabled]="totalRecords <= 0"
+            >
+              <option *ngFor="let option of pageOption" [value]="option">
+                {{ option }} per page
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <!-- <button (click)="printAsPDF()" class="ui-button-primary">
+        print
+    </button> -->
+  <button
+    pButton
+    type="button"
+    class="ui-button-primary"
+    (click)="printAsPDF()"
+    label="Print"
+    icon="fa fa-print"
+  ></button>
+
+  <div
+    id="print"
+    style="font-family: italic !important; justify-content: center"
+  >
+    <div class="flex">
+      <div class="contain1">
+        <div class="center">
+          <!-- <img src="../../../../../assets/Images/logo-2.png" /> -->
+          <img
+            *ngIf="stationmasterObj?.logotype != 'Rectangular'"
+            class="squreImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+          <img
+            *ngIf="stationmasterObj?.logotype == 'Rectangular'"
+            class="rectImg"
+            [src]="
+              'data:image/png;base64,' + stationmasterObj?.stationMasterLogoImg
+            "
+          />
+        </div>
+      </div>
+      <div class="contain2">
+        <!-- <div class="vouhead">
+                    <h2> {{'Accounts Statement' | translate}}</h2>
+                </div> -->
+        <h1>Inspire System</h1>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>{{ "Address" | translate }}</b>
+            <b>{{ "Tel" | translate }} </b>
+            <b>{{ "Fax" | translate }} </b>
+            <b>{{ "Email" | translate }} </b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>{{ stationmasterObj?.stationMasterAddress }}</div>
+            <div>{{ stationmasterObj?.stationMasterTele1 }}</div>
+            <div>{{ stationmasterObj?.stationMasterFax }}</div>
+            <div>{{ stationmasterObj?.stationMasterEmail }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center">
+      <h2>Voucher Details {{ currentDate | date : "dd/MM/yyyy" }}</h2>
+    </div>
+    <table class="Acc">
+      <tr>
+        <th>Voucher Type</th>
+        <th>Voucher No</th>
+        <th>Acc No</th>
+        <th>Acc Name</th>
+        <th>Particular</th>
+        <th>Date</th>
+        <th>Debit</th>
+        <th>Credit</th>
+      </tr>
+      <tr *ngFor="let item of dataset">
+        <td>{{ item?.accountsTransactionsVoucherType }}</td>
+        <td>{{ item?.accountsTransactionsVoucherNo }}</td>
+        <td>{{ item?.accountsTransactionsAccNo }}</td>
+        <td>{{ item?.accountsTransactionsAccName }}</td>
+        <td>{{ item?.accountsTransactionsParticulars }}</td>
+        <td>{{ item?.accountsTransactionsTransDate }}</td>
+        <td>{{ item?.accountsTransactionsDebit }}</td>
+        <td>{{ item?.accountsTransactionsCredit }}</td>
+      </tr>
+    </table>
+  </div>
+</p-dialog>

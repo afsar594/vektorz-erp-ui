@@ -1,0 +1,61 @@
+
+.ab {
+
+  text-align: center;
+  margin-top: 25px;
+  margin-bottom: 5px;
+}
+
+
+.customers {
+
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  margin: auto;
+
+}
+.customers td,
+.customers th {
+
+  border: 1px solid #ddd;
+  padding: 8px;
+
+}
+.customers tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+.customers tr:hover {
+  background-color: #ddd;
+}
+.customers th {
+
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: rgb(247, 240, 240);
+  color: black;
+
+
+}
+
+.total {
+  justify-content:flex-end;
+  display: flex;
+  gap: 28px;
+  width: 90%;
+  margin-top: 10px;
+}
+
+
+.end{
+  text-align: flex-end;
+}
+.center {
+  text-align: center;
+}
+
+.af {
+  margin-top: 1%;
+  text-align: center;
+}

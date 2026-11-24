@@ -1,0 +1,32 @@
+<app-page-header [title]='title| translate'>
+</app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" label="Show" icon="pi pi-plus" class="ui-button-success"></button>
+        <button pButton type="button" label="Clear Selection" icon="fa fa-pencil" class="ui-button-info"></button>
+        <button pButton type="button" label="Exit" icon="fa fa-sign-out" class="ui-button-danger"></button>
+
+    </div>
+</p-toolbar>
+<div class="card card-w-title">
+    <p-tabView [activeIndex]="index">
+        <p-tabPanel [header]="'SuppLier List'| translate">
+
+            <div class="p-grid p-ai-center">
+                <div class="p-col-12 p-md-12 p-lg-1">{{'Search' | translate}}</div>
+                <div class="p-col-12 p-md-12 p-lg-6">
+                    <input pInputText placeholder="Search">
+                </div>
+            </div>
+            <div class="card card-w-title">
+                <div class="grid">
+                    <div class="p-col-12">
+                        <hot-table [hotId]="hotid" [data]=" dataset" [licenseKey]="licensekey"
+                            [settings]="supplierlist">
+                        </hot-table>
+                    </div>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

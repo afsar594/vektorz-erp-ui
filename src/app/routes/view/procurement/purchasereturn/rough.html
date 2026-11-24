@@ -1,0 +1,154 @@
+<div class="p-sm-12 p-md-12 p-lg-4">
+    <p-panel>
+        <p-header>
+            {{'Supplier Details'| translate}}
+        </p-header>
+        <div class="min-panel">
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="account" style="color:darkred;">{{'Type'|
+                    translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                    <!-- <p-dropdown filter="true" class="w-100" formControlName='purchaseReturnPartyId'
+            [options]="accountList">
+        </p-dropdown>
+        <div class="error" *ngIf="f.purchaseReturnPartyId.errors 
+        && (f.purchaseReturnPartyId.dirty || f.purchaseReturnPartyId.touched)">
+            <span *ngIf="f.purchaseReturnPartyId.errors.required">
+                Account is Mandatory Field*</span>
+        </div> -->
+                    <p-dropdown filter="true" class="w-100" formControlName='purchaseReturnType'
+                        [options]="v_typeList" value="CREDIT"> </p-dropdown>
+                </div>
+            </div>
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="account">{{'Supplier'| translate}}</label>
+                
+                <div class=" p-col-12 p-md-12 p-lg-10 p-0 p-inputgroup">
+                 
+                    <input type="text" pInputText  class="w-100" #suppCtrl placeholder="Supplier">
+                    <button pButton type="button" pRipple (click)='openSupplier()' icon="pi pi-search"></button>
+                </div>
+                <div class="error" *ngIf="f.purchaseReturnPartyId.errors 
+                && (f.purchaseReturnPartyId.dirty || f.purchaseReturnPartyId.touched)">
+                    <span *ngIf="f.purchaseReturnPartyId.errors.required">
+                        Account is Mandatory Field*</span>
+                </div>
+             </div>
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="address">{{'Address'| translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                    <!-- <textarea class="w-100" formControlName='purchaseReturnDescription' id="narration" maxlength="500"  
+                    pInputText></textarea>
+
+                <div class="error" *ngIf="f.purchaseReturnDescription.errors 
+                && (f.purchaseReturnDescription.dirty || f.purchaseReturnDescription.touched)">
+                    <span *ngIf="f.purchaseReturnDescription.errors.required">
+                        Narration is Mandatory Field*</span>
+                </div> -->
+
+                    <textarea [rows]="3" class="w-100" id='purchaseReturnPartyAddress'
+                        formControlName='purchaseReturnPartyAddress' maxlength="500"
+                         pInputText></textarea>
+
+
+                </div>
+            </div>
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="vatno">{{'VAT No'| translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">                   
+                    <input class="w-100" id='purchaseReturnPartyVatNo'
+                        formControlName='purchaseReturnPartyVatNo' 
+                        maxlength="50" pInputText>
+                </div>
+            </div>
+
+        </div>
+    </p-panel>
+</div>
+<div class="p-sm-12 p-md-12 p-lg-5">
+    <p-panel>
+        <p-header>
+            {{'Tracking Details'| translate}}
+        </p-header>
+        <div class="min-panel">
+
+
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="job" style="color:darkred;">{{'Job'|
+                    translate}}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">    
+                    <p-dropdown filter="true" class="w-100" formControlName='purchaseReturnJobId' [options]="jobList"
+                        >
+                    </p-dropdown>
+                </div>
+              
+            </div>
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="location"
+                    style="color:darkred;">{{'Location'| translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                    <p-dropdown filter="true" class="w-100" formControlName='purchaseReturnLocationId'
+                        [options]="locationList" >
+                    </p-dropdown>
+                    <div class="error" *ngIf="f.purchaseReturnLocationId.errors 
+                  && (f.purchaseReturnLocationId.dirty || f.purchaseReturnLocationId.touched)">
+                        <span *ngIf="f.purchaseReturnLocationId.errors.required">
+                            Location is Mandatory Field*</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="narration"
+                    style="color:darkred;">{{'Narration'| translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                    <textarea [rows]="3" class="w-100" formControlName='purchaseReturnDescription'
+                        id="narration" maxlength="500" 
+                        pInputText></textarea>
+
+                    <div class="error" *ngIf="f.purchaseReturnDescription.errors 
+&& (f.purchaseReturnDescription.dirty || f.purchaseReturnDescription.touched)">
+                        <span *ngIf="f.purchaseReturnDescription.errors.required">
+                            Narration is Mandatory Field*</span>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2" for="refno" style="color:darkred;">
+                    {{'Reference No'| translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0"><input class="w-100"
+                        formControlName='purchaseReturnRefNo' id="refno" 
+                        maxlength="50" pInputText>
+                    <div class="error" *ngIf="f.purchaseReturnRefNo.errors 
+&& (f.purchaseReturnRefNo.dirty || f.purchaseReturnRefNo.touched)">
+                        <span *ngIf="f.purchaseReturnRefNo.errors.required">
+                            Reference no is Mandatory Field*</span>
+                    </div>
+                </div>
+
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="zerovat">{{'Zero VAT'| translate}}</label>
+                <!-- <input class="p-col-12 p-md-12 p-lg-4" id="currency" pInputText> -->
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                    <!-- <p-dropdown filter="true" class="w-100" formControlName='purchaseReturnCurrencyId'
+[options]="currencyList">
+</p-dropdown>
+<div class="error" *ngIf="f.purchaseReturnCurrencyId.errors 
+&& (f.purchaseReturnCurrencyId.dirty || f.purchaseReturnCurrencyId.touched)">
+<span *ngIf="f.purchaseReturnCurrencyId.errors.required">
+Currency is Mandatory Field*</span>
+</div> -->
+                    <p-checkbox formControlName='purchaseReturnExcludeVat' id="purchaseReturnExcludeVat"
+                        [binary]="true" (onChange)="GetTotal()"></p-checkbox>
+                </div>
+            </div>
+
+
+        </div>
+    </p-panel>
+</div>

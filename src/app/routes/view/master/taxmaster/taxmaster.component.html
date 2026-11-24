@@ -1,0 +1,97 @@
+<app-page-header 
+    [title]='title| translate'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <button pButton type="button" (click)="onSave()"   [disabled]="!Permission?.Add" label="Save" icon="pi pi-plus"></button>
+        <!-- <button pButton type="button" (click)="onEdit()" [disabled]="!editForm" label="Edit" icon="fa fa-pencil"
+            class="ui-button-success"></button> -->
+            <button pButton type="button" (click)="onEdit()" [disabled]="!Permission?.Edit" label="Edit" icon="fa fa-pencil"
+            class="ui-button-success"></button>
+        <button pButton type="button" (click)="onCancel()" class="ui-button-danger" label="Cancel"
+            icon="fa fa-ban"></button>
+    </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]='TaxMasterForm'>
+    <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1">Tax Type <span style="color: red;">*</span></div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText placeholder="Enter Tax Type" type="text" style="width: 100%;" formControlName='tM_Type'>
+            <div class="error" *ngIf="submitted && f.tM_Type.errors">
+                <span *ngIf="submitted && f.tM_Type.errors && f.tM_Type.errors.required">Tax Type is
+                    Required</span>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-1">Tax Name <span style="color: red;">*</span></div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText placeholder="Enter Tax Name" type="text" style="width: 100%;" formControlName='tM_Name'>
+            <div class="error" *ngIf="submitted && f.tM_Name.errors">
+                <span *ngIf="submitted && f.tM_Name.errors && f.tM_Name.errors.required">Tax Name is
+                    Required</span>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-1">Tax Percentage <span style="color: red;">*</span></div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText placeholder="Enter Tax Percentage" type="number" style="width: 100%;"
+                formControlName='tM_Percentage'>
+            <div class="error" *ngIf="submitted && f.tM_Percentage.errors">
+                <span *ngIf="submitted && f.tM_Percentage.errors && f.tM_Percentage.errors.required">Tax Percentage is
+                    Required</span>
+            </div>
+        </div>
+    </div>
+    <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-1">Tax CGST <span style="color: red;">*</span></div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText placeholder="Enter Tax CGST" type="number" style="width: 100%;" formControlName='tM_CGST'>
+            <div class="error" *ngIf="submitted && f.tM_CGST.errors">
+                <span *ngIf="submitted && f.tM_CGST.errors && f.tM_CGST.errors.required">Tax CGST is
+                    Required</span>
+            </div>
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-1">Tax SGST <span style="color: red;">*</span></div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText placeholder="Enter Tax SGST" type="number" style="width: 100%;" formControlName='tM_SGST'>
+            <div class="error" *ngIf="submitted && f.tM_SGST.errors">
+                <span *ngIf="submitted && f.tM_SGST.errors && f.tM_SGST.errors.required">Tax SGST is
+                    Required</span>
+            </div>
+        </div>
+    </div>
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class='matero-page-header'>
+                <div class="matero-page-header-inner">
+                    <h2 class="matero-page-title">Tax List</h2>
+                </div>
+            </div>
+            <p-table [value]="this.apiService.TaxMasterArray">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Tax Type</th>
+                        <th>Tax Name</th>
+                        <th>Tax Percentage</th>
+                        <th>Tax CGST</th>
+                        <th>Tax SGST</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{item.tmType}}</td>
+                        <td>{{item.tmName}}</td>
+                        <td>{{item.tmPercentage}}</td>
+                        <td>{{item.tmCgst}}</td>
+                        <td>{{item.tmSgst}}</td>
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)='onPatchValue(item)'
+                                iconPos="left"></button>
+                            <button pButton type="button" icon="pi pi-trash" (click)='onDelete(item)'
+                                iconPos="left"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+</div>

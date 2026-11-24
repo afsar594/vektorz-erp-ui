@@ -1,0 +1,30 @@
+<app-page-header [title]='title| translate'></app-page-header>
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+         <button pButton type="button" label="Close" icon="fa fa-close" class="ui-button-danger"></button>
+    </div>
+</p-toolbar>
+<div class="card card-w-title">
+    <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+        <p-tabPanel [header]="'Item Details'| translate">
+            <div class="p-grid">
+                <label class="p-col-1 p-md-1 p-lg-1 " for="account">
+                    <b>{{'Search Item:' | translate}}</b>
+                </label>
+                <div class="p-col-4 p-md-4 p-lg-4 ui-inputgroup">
+                    <input pInputText style="width: 100%;">
+                    <button pButton type="button" icon="fa fa-search" class="ui-button-info"></button>
+                </div>
+            </div>
+            <p-panel>
+                <p-header>
+                    {{'Item Details'| translate}}
+                </p-header>
+                <div class="grid">
+                    <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="itemdetails">
+                    </hot-table>
+                </div>
+            </p-panel>
+        </p-tabPanel>
+    </p-tabView>
+</div>

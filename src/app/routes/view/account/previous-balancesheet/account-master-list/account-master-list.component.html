@@ -1,0 +1,42 @@
+
+
+<div class="modal-header">
+    <!-- <h4 class="modal-title">Item Master</h4>
+    <button type="button" class="close" aria-label="Close" (click)="CloseModel()">
+      <span aria-hidden="true">&times;</span>
+    </button> -->
+  </div>
+  <div class="modal-body">
+    <div class="container">
+        <div class="card card-w-title">
+            <p-tabView >
+                <p-tabPanel [header]="'Item Master List' | translate">
+                    <div class="grid">
+                        <div class="p-col-12">
+                            <hot-table [hotId]="hotid" [data]=" dataset" [licenseKey]="licensekey"
+                                [settings]="CustomerSalesOrder">
+        
+                            </hot-table>
+                        </div>
+                    </div>
+                </p-tabPanel>
+        
+            </p-tabView>
+        </div>
+    </div>
+  
+  
+  </div>
+  <div class="modal-footer">
+    <!-- <button type="button" class="btn btn-outline-dark" (click)="CloseModel()">
+      Close
+    </button> -->
+  </div>
+   
+    
+    
+    
+    
+  
+  
+  

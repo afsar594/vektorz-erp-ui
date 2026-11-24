@@ -1,0 +1,523 @@
+<!-- <app-page-header 
+    [title]='title| translate'></app-page-header> -->
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'List Master' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      label="Show"
+      [disabled]="!Permission?.View"
+      icon="pi pi-plus"
+      (click)="showRecords()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Clear"
+      (click)="cancelAll()"
+      icon="fa fa-pencil"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="edit()"
+      label="Edit"
+      icon="fa fa-floppy-o"
+      [disabled]="!Permission?.Edit"
+      class="ui-button-success"
+    ></button>
+    <button
+      pButton
+      type="button"
+      (click)="getUpdatedValues()"
+      [disabled]="!isEditItem || !Permission?.Add"
+      label="Update"
+      icon="fa fa-floppy-o"
+    ></button>
+    <button
+      pButton
+      style="float: right; margin-right: 20px"
+      type="button"
+      class="ui-button-danger"
+      (click)="ExitNew()"
+      label="Exit"
+      icon="fa fa-ban"
+    ></button>
+
+    <!-- <button pButton type="button" (click)="Update()" [disabled]='isEditItem' label="Update" icon="fa fa-floppy-o" 
+            ></button>
+            <button pButton type="button" (click)="edit()" label="Edit" icon="fa fa-floppy-o" 
+            class="ui-button-success"></button> -->
+
+    <!-- <button pButton type="button" class="ui-button-danger" [disabled]='btnFlag.delete' label="Delete"
+                icon="fa fa-trash"></button>
+            <button pButton type="button" [label]="btnFlag.save == true ? 'Save': 'Update'" icon="fa fa-floppy-o"
+                [disabled]='btnFlag.save' class="ui-button-success"></button>
+            <button pButton type="button" [disabled]='btnFlag.list' label="List" icon="fa fa-list" class="ui-button-info"
+                ></button> -->
+  </div>
+  <!-- <div class="ui-toolbar-group-right">
+            <div class="p-inputgroup">
+                <input type="text" pInputText placeholder="Search">
+                <button pButton type="button" icon="pi pi-search"></button>
+            </div>
+            <button pButton type="button" label="Print" icon="fa fa-print" class="ui-button-success"></button>
+            <button pButton type="button" label="Exit" icon="fa fa-sign-out"></button>
+            <p-checkbox label="Suppress Allocation in Print"></p-checkbox>
+        </div> -->
+</p-toolbar>
+
+<div class="card" [formGroup]="ItemListMasterFormGroup">
+  <div class="p-grid">
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-3">
+          <label>{{ "Barcode" | translate }}</label>
+        </div>
+        <div class="p-col-9">
+          <input
+            class="w-100"
+            type="text"
+            formControlName="itemlistbarcode"
+            style="width: 99% !important"
+            style="margin-top: -5px"
+            pInputText
+            placeholder="Enter Barcode"
+          />
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-3">
+          <label>{{ "Product Code" | translate }}</label>
+        </div>
+        <div class="p-col-9">
+          <input
+            type="text"
+            pInputText
+            formControlName="itemlistProductCode"
+            style="width: 99% !important"
+            style="margin-top: -5px"
+            pInputText
+            placeholder="Products Code"
+          />
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-3">
+          <label>{{ "Name" | translate }}</label>
+        </div>
+        <div class="p-col-9">
+          <div class="ui-inputgroup">
+            <input
+              type="text"
+              #acctCtrl
+              pInputText
+              formControlName="itemlistItemName"
+              style="margin-top: -5px"
+              placeholder="Item List"
+            />
+            <button
+              pButton
+              type="button"
+              pRipple
+              icon="pi pi-search"
+              (click)="openItem()"
+              styleClass="p-button-warn"
+              style="margin-top: -5px"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-3">
+          <label>{{ "Vendor" | translate }}</label>
+        </div>
+        <div class="p-col-9">
+          <div class="ui-inputgroup">
+            <input
+              type="text"
+              #acctCtrl
+              pInputText
+              formControlName="itemlistvendorId"
+              placeholder="Vendor"
+              style="margin-top: -5px"
+            />
+            <button
+              pButton
+              type="button"
+              pRipple
+              icon="pi pi-search"
+              (click)="openVendor()"
+              styleClass="p-button-warn"
+              style="margin-top: -5px"
+            ></button>
+          </div>
+          <!-- <input class="w-100" type="text" formControlName="itemlistvendorId" pInputText placeholder="Enter Vendor" /> -->
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-3">
+          <label>{{ "Supplier" | translate }}</label>
+        </div>
+        <div class="p-col-9">
+          <div class="ui-inputgroup">
+            <input
+              type="text"
+              #supplierCtrl
+              class="w-100"
+              formControlName="itemlistSuplier"
+              pInputText
+              style="margin-top: -5px"
+              placeholder="Supplier"
+            />
+            <button
+              type="button"
+              pButton
+              pRipple
+              icon="pi pi-search"
+              (click)="openSupplier()"
+              styleClass="p-button-warn"
+              style="margin-top: -5px"
+            ></button>
+          </div>
+          <!-- <input class="w-100" type="text" formControlName="itemlistSuplier" pInputText placeholder="Enter Supplier" /> -->
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-3">
+          <label>{{ "Group" | translate }}</label>
+        </div>
+        <div class="p-col-9">
+          <!-- <input class="w-100" type="text" formControlName="itemlistSuplier" pInputText placeholder="Enter Group" /> -->
+          <div class="ui-inputgroup">
+            <input
+              type="text"
+              #acctCtrl
+              pInputText
+              placeholder="Group"
+              formControlName="itemlistGroup"
+              style="margin-top: -5px"
+            />
+            <button
+              pButton
+              type="button"
+              pRipple
+              icon="pi pi-search"
+              (click)="openAccount()"
+              styleClass="p-button-warn"
+              style="margin-top: -5px"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-3">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <label>{{ "* Item Master" | translate }}</label>
+        </div>
+        <div class="p-col-6 ctrl">-Ctrl + Up</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-6">
+          <label>{{ "* Barcode Print" | translate }}</label>
+        </div>
+        <div class="p-col-6 ctrl">-Ctrl + Left</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-6">
+          <label>{{ "* Barcode Direct Print" | translate }}</label>
+        </div>
+        <div class="p-col-6 ctrl">-Ctrl + Right</div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-6">
+          <label>{{ "* List" | translate }}</label>
+        </div>
+        <div class="p-col-6 ctrl">-Ctrl + Down</div>
+      </div>
+    </div>
+    <div class="p-col-1">
+      <!-- <div>
+                <input type="radio" name="searchType" formControlName="startWith" pInputRadio value="startWith" /> Start
+                With
+            </div>
+            <div>
+                <input type="radio" name="searchType" formControlName="startWith" pInputRadio value="Containing" />
+                Containing
+            </div> -->
+      <table>
+        <tr>
+          <td>
+            <input
+              type="radio"
+              name="searchType"
+              formControlName="startWith"
+              pInputRadio
+              value="startWith"
+            />
+            <div class="st">Start With</div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input
+              type="radio"
+              name="searchType"
+              formControlName="startWith"
+              pInputRadio
+              value="startWith"
+            />
+            <div class="st">Containing</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- <div class="card">
+  <p-panel>
+    <p-header> Items </p-header>
+    <div class="p-grid">
+      <div class="p-col-12">
+        <hot-table
+          [hotId]="hotidIL"
+          [licenseKey]="licensekey"
+          [settings]="itemListMaster_entry"
+          [data]="itemListMaster_entryDataset"
+        ></hot-table>
+      </div>
+    </div>
+  </p-panel>
+</div> -->
+<p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+  <div class="grid">
+    <div class="p-col-12">
+      <div class="p-col-12">
+        <div class="p-grid">
+          <div class="p-col-3"></div>
+          <div class="p-col-6">
+            <div style="text-align: right; display: flex">
+              <!-- <i class="pi pi-search" style="margin: 4px 4px 0 0"></i> -->
+              <input
+                type="text"
+                pInputText
+                [(ngModel)]="globalGridSearch"
+                size="50"
+                placeholder="Global Search"
+                style="width: auto; margin-right: 10px"
+              />
+              <button
+                type="submit"
+                pButton
+                label="Search"
+                icon="pi pi-search"
+                (click)="onGlobalGridSearch()"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Handsontable replacing p-table -->
+      <hot-table
+        [hotId]="hotidIL"
+        [licenseKey]="licensekey"
+        [settings]="itemListMaster_entry"
+        [data]="dataset"
+      ></hot-table>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-controls" style="margin-top: 5px">
+        <button (click)="previousPage()" [disabled]="currentPage <= 1">
+          Previous
+        </button>
+
+        <span class="page-info">
+          Page {{ currentPage }} of {{ totalPages }} ({{ totalRecords }}
+          records)
+        </span>
+
+        <button
+          (click)="nextPage()"
+          [disabled]="currentPage == totalPages || totalRecords == 0"
+        >
+          Next
+        </button>
+
+        <select
+          [(ngModel)]="pageSize"
+          (change)="onPageSizeChange()"
+          [disabled]="totalRecords <= 0"
+        >
+          <option *ngFor="let option of pageOption" [value]="option">
+            {{ option }} per page
+          </option>
+        </select>
+      </div>
+    </div>
+  </div></p-tabView
+>
+
+<!-- <div class="card">
+        <p-panel>
+            <p-header>
+                {{'Items' | translate}}
+            </p-header>
+            <div class="p-grid">
+                <div class="p-col-12">
+                    <div class="table-container">
+                        <p-table #dt [value]="items" [(selection)]="selectedCustomers" dataKey="id" styleClass="ui-table-customers" [rowHover]="true"
+                        [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[5,10, 25]" [loading]="loading" (selectionChange)="onSelectionChange()"
+                        >
+    
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="text-align: left;width: 100px;">Item Id</th>
+                                    <th style="text-align: left;width: 159px;">Part No</th>
+                                    <th style="text-align: left; width: 300px;">Item Name</th>
+                                    <th style="text-align: left;width: 100px;">Stock</th>
+                                    <th style="text-align: left;width: 159px;">Barcode</th>
+                                    <th style="text-align: left;width: 159px;">Group</th>
+                                    <th style="text-align: left;width: 159px;">Vendor Name</th>
+                                    <th style="text-align: left;width: 159px;">Price</th>
+                                    <th style="text-align: left;width: 159px;">Unit</th>
+                                    <th style="text-align: left;width: 159px;">Unit Barcode</th>
+                                    <th style="text-align: left;width: 159px;">Conver</th>
+                                    <th style="text-align: left;width: 159px;">Rate</th>
+                                    <th style="text-align: left;width: 159px;">Packing</th>
+                                    <th style="text-align: left;width: 159px;">Description</th>
+                                    <th style="text-align: left;width: 159px;">Unit.Cost</th>
+                                    <th style="text-align: left;width: 159px;">Unit.Price</th>
+                                    <th style="text-align: left;width: 159px;">SupplierName</th>
+                                    <th style="text-align:center;width:90px;">Update</th>
+                                    <th style="text-align:center;width:90px;">View</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr class="ui-selectable-row">
+                                    <td>{{item?.itemId}}</td>
+                                    <td>{{item?.partNo}}</td>
+                                    <td>{{item?.item_Name}}</td>
+                                    <td>{{item?.stock}}</td>
+                                    <td>{{ item?.uD_Barcode ? item.uD_Barcode : 0 }}</td>
+                                    <td>{{item?.groupName}}</td>
+                                    <td>{{item?.vendorName}}</td>
+                                    <td>{{item?.price}}</td>
+                                    <td>{{item?.uD_UNIT}}</td>
+                                    <td>{{item?.uD_Barcode}}</td>
+                                    <td>{{item?.unit_Details_ConversionType}}</td>
+                                    <td *ngIf="RateValue">{{item?.unit_Details_Rate}}</td>
+                                    <td *ngIf="!RateValue"><input pInputText [(ngModel)]="item.unit_Details_Rate" style="width:100%;"></td>
+                                    <td>{{item?.packing }}</td>
+                                    <td>{{item?.uD_Discrption}}</td>
+                                    <td>{{item?.uD_UnitCost}}</td>
+                                    <td>{{item?.uD_UnitPrice }}</td>
+                                    <td>{{item?.supplierName}}</td>
+    
+                                    <td style="text-align: center;">
+                                        <button pButton type="button" icon="pi pi-pencil" (click)="Update(item)"
+                                            class="ui-button-info"></button>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button pButton type="button" icon="pi pi-pencil" (click)="export(item?.itemId)"
+                                            class="ui-button-info"></button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="p-sm-12 p-md-12 p-lg-12">
+                        <div class="p-grid">
+                            <div class="p-col-8 p-md-8 p-lg-8">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+    </div> -->
+
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>
+
+<app-lookup
+  [header]="'SupplierLook Up'"
+  [dataArry]="dataList"
+  [selectedItem]="selectItem"
+  [columns]="lookupColumns"
+  (selectItemEvent)="selectSupplier($event)"
+  (exitEvent)="exit($event)"
+  [cell]="activeRowCustomerlookUp"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'"
+  [(show)]="showFormControlLookUpSupplier"
+>
+</app-lookup>
+<app-lookup
+  [header]="'Group Look Up'"
+  [dataArry]="dataList"
+  [selectedItem]="selectItem"
+  [columns]="lookupColumns"
+  (selectItemEvent)="selectGroup($event)"
+  (exitEvent)="exit($event)"
+  [cell]="activeRowCustomerlookUp"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'"
+  [(show)]="showFormControlLookUpGroup"
+>
+</app-lookup>
+<!-- <app-lookup
+  [header]="'Item Look Up'"
+  [dataArry]="dataList"
+  [selectedItem]="selectItem"
+  [columns]="lookupColumns"
+  (selectItemEvent)="selectedItem($event)"
+  (exitEvent)="exit($event)"
+  [cell]="activeRowCustomerlookUp"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'"
+  [(show)]="showFormControlLookUpItem"
+>
+</app-lookup> -->
+<ng-container *ngIf="showFormControlLookUpItem">
+  <app-lookup
+    [header]="'Item Look Up'"
+    [dataArry]="dataList"
+    [isServerSearch]="isServerSearch"
+    [selectedItem]="selectItem"
+    [searchText]="''"
+    [columns]="lookupColumns"
+    (selectItemEvent)="selectedItem($event)"
+    (exitEvent)="exit($event)"
+    [cell]="activeRow"
+    (clearEvent)="clear($event)"
+    (hideDialogEvent)="hide($event)"
+    (searchEvent)="onSearch($event)"
+    [tableheader]="'Item List'"
+    [(show)]="showFormControlLookUpItem"
+  ></app-lookup>
+</ng-container>
+<app-lookup
+  [header]="'Vendor Look Up'"
+  [dataArry]="dataList"
+  [selectedItem]="selectItem"
+  [columns]="lookupColumns"
+  (selectItemEvent)="selectedVendor($event)"
+  (exitEvent)="exit($event)"
+  [cell]="activeRowCustomerlookUp"
+  (hideDialogEvent)="hide($event)"
+  [tableheader]="'Sales List'"
+  [(show)]="showFormControlLookUpVendor"
+>
+</app-lookup>

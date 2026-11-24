@@ -1,0 +1,1673 @@
+<app-page-header [nav]="[
+    { label: 'account' | translate },
+    { label: 'Job Master' | translate }
+  ]" [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left p-d-flex p-flex-wrap responsive-toolbar">
+    <button pButton type="button" label="New" (click)="new()" icon="pi pi-plus"></button>
+    <button pButton type="button" label="Edit" (click)="edit()" 
+      icon="fa fa-pencil" class="ui-button-success"></button>
+
+    <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag.cancel" label="Cancel"
+      (click)="cancel()" icon="fa fa-ban"></button>
+    <button pButton type="button" [label]="btnFlag.save == true ? 'Save' : 'Update'" (click)="saveJobMaster()"
+    icon="fa fa-floppy-o" class="ui-button-success"></button>
+
+    <!-- <button pButton type="button" label="Find" icon="fa fa-search"></button> -->
+    <button pButton type="button" label="List" icon="fa fa-list" (click)="showMaximizableDialog()"
+     class="ui-button-info"></button>
+
+    <!-- <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete"
+      label="Delete"
+      icon="fa fa-trash"
+    ></button> -->
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="p-inputgroup">
+      <input type="text" pInputText [ngModelOptions]="{ standalone: true }" [(ngModel)]="search" placeholder="Search" />
+      <button pButton type="button" (click)="GetSavedJobMasterJobDetailsString(search)" icon="pi pi-search"></button>
+    </div>
+
+    <button pButton type="button" label="Print" (click)="print()" [disabled]="!Permission?.Print" icon="fa fa-print"
+      class="ui-button-success"></button>
+
+    <!-- <button pButton type="button" label="Print Preview" (click)="printCReport()" [disabled]="!Permission?.Print"
+            icon="fa fa-print" class="ui-button-success"></button> -->
+    <p-splitButton icon="fa fa-print" [model]="printbtn" label="Print Report"
+      [disabled]="!btnFlag.edit || !Permission.Print" styleClass="p-button-outlined mr-2 mb-2">
+    </p-splitButton>
+    <button pButton type="button" label="Exit" (click)="ExitNew()" icon="fa fa-sign-out"></button>
+
+    <!-- <p-checkbox label="Suppess Allocation in Print" ></p-checkbox> -->
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="jobMasterFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Job Master' | translate">
+      <!-- <div class="p-grid"> -->
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              {{ "Job Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterNo">{{
+                  "Job Code" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input class="w-100" id="jobMasterNo" formControlName="jobMasterNo" pInputText readonly placeholder="Auto Generated"/>
+                </div>
+
+                <label class="p-col-12 p-md-2" for="jobMasterJobDate">{{
+                  "Job Handover Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" class="w-100" useUtc [showIcon]="true"
+                    id="jobMasterJobDate" formControlName="jobMasterJobDate">
+                  </p-calendar>
+                  <div class="error" *ngIf="
+                      f.jobMasterJobDate.errors &&
+                      (f.jobMasterJobDate.dirty || f.jobMasterJobDate.touched)
+                    ">
+                    <span *ngIf="f.jobMasterJobDate.errors.required">
+                      Job Handover Date is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterJobNumber">{{
+                  "Job No" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-4">
+                  <input class="w-100" id="jobMasterJobNumber" formControlName="jobMasterJobNumber" pInputText
+                    [maxLength]="30" />
+                </div>
+
+                <label class="p-col-12 p-md-2" for="zerovat">{{
+                  "Close" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-2">
+                  <p-checkbox formControlName="jobMasterStatusVal" id="jobMasterStatusVal" [binary]="true"
+                    (onChange)="GetTotal()"></p-checkbox>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3">{{ "Job Name" | translate }}
+                  <span class="required">*</span></label>
+                <div class="p-col-12 p-md-9">
+                  <!-- <input class="w-100" id='jobMasterJobName' formControlName='jobMasterJobName'
+                                        maxlength="50" pInputText> -->
+                  <textarea class="w-100" formControlName="jobMasterJobName" [maxLength]="150" pInputText></textarea>
+                  <div class="error" *ngIf="
+                      f.jobMasterJobName.errors &&
+                      (f.jobMasterJobName.dirty || f.jobMasterJobName.touched)
+                    ">
+                    <span *ngIf="f.jobMasterJobName.errors.required">
+                      Job Name is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterConsultant">{{
+                  "Consultant" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-9">
+                  <input class="w-100" id="jobMasterConsultant" formControlName="jobMasterConsultant" maxlength="100"
+                    pInputText />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterContractorName">{{
+                  "Contractor" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-9">
+                  <input class="w-100" id="jobMasterContractorName" formControlName="jobMasterContractorName"
+                    maxlength="200" pInputText />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="account">{{ "Customer" | translate }}
+                  <span class="required">*</span></label>
+                <div class="p-col-12 p-md-9">
+                  <p-dropdown filter="true" class="w-100" formControlName="jobMasterCustomerId"
+                    appDropdownOptionTitle
+                    [options]="CustomerMasterList" (onChange)="onCustomerChange($event)">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.jobMasterCustomerId.errors &&
+                      (f.jobMasterCustomerId.dirty ||
+                        f.jobMasterCustomerId.touched)
+                    ">
+                    <span *ngIf="f.jobMasterCustomerId.errors.required">
+                      Customer is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="customerQuotation">{{ "Customer Quotation" | translate }}</label>
+                <div class="p-col-12 p-md-9">
+                  <p-dropdown filter="true" class="w-100" formControlName="jobMasterJobCustQtnId"
+                    [options]="CustomerQuotationList">
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="account">{{ "Sales Man" | translate }}
+                  <!-- <span class="required">*</span> -->
+                </label>
+                <div class="p-col-12 p-md-9">
+                  <p-dropdown filter="true" class="w-100" formControlName="jobMasterSalesManId"
+                    [options]="SalesManMasterList">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.jobMasterSalesManId.errors &&
+                      (f.jobMasterSalesManId.dirty ||
+                        f.jobMasterSalesManId.touched)
+                    ">
+                    <span *ngIf="f.jobMasterSalesManId.errors.required">
+                      Sales Engineer is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="account">{{
+                  "Department" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-9">
+                  <p-dropdown filter="true" class="w-100" formControlName="jobMasterDepartmentId"
+                    [options]="DepartmentMasterList">
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="narration">{{
+                  "Remarks" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-9">
+                  <textarea class="w-100" formControlName="jobMasterRemarks" id="narration" maxlength="300"
+                    pInputText></textarea>
+
+                  <div class="error" *ngIf="
+                      f.jobMasterRemarks.errors &&
+                      (f.jobMasterRemarks.dirty || f.jobMasterRemarks.touched)
+                    ">
+                    <span *ngIf="f.jobMasterRemarks.errors.required">
+                      Remarks is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="p-grid p-ai-center">
+                                <label class="p-col-12 p-md-3" for="address">{{'Job CFM Ref'|
+                                    translate}}</label>
+                                <div class="p-col-12 p-md-9">
+
+                                    <textarea class="w-100" id='jobMasterJobConfReff'
+                                        formControlName='jobMasterJobConfReff' maxlength="500"
+                                        style="border-color: black;  " pInputText></textarea>
+
+
+                                </div>
+                            </div> -->
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Currency" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <p-dropdown filter="true" formControlName="jobMasterCurrency" [options]="currencyList"
+                    (onChange)="getcurRate()">
+                  </p-dropdown>
+                  <div class="error" *ngIf="
+                      f.jobMasterCurrency.errors &&
+                      (f.jobMasterCurrency.dirty || f.jobMasterCurrency.touched)
+                    ">
+                    <span *ngIf="f.jobMasterCurrency.errors.required">
+                      Currency is Mandatory Field*</span>
+                  </div>
+                </div>
+
+                <label class="p-col-12 p-md-2 PL" for="jobMasterCurVal">{{
+                  "Current Currency Rate" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input id="jobMasterCurVal" class="w-100" formControlName="jobMasterCurVal"
+                    style="border-color: black; text-align: right" pInputText />
+                  <div class="error" *ngIf="
+                      f.jobMasterCurVal.errors &&
+                      (f.jobMasterCurVal.dirty || f.jobMasterCurVal.touched)
+                    ">
+                    <span *ngIf="f.jobMasterCurVal.errors.required">
+                      Current Currency Rate is Mandatory Field*</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Status" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <p-dropdown filter="true" class="w-100" formControlName="jobMasterStatus" [options]="Job_StatusList">
+                  </p-dropdown>
+                </div>
+                <label class="p-col-12 p-md-2 PL" for="jobMasterJobValue">{{
+                  "Value" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterJobValue" (change)="totalValue()"
+                    formControlName="jobMasterJobValue" type="number" pInputText />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center" *ngIf="HIDERETENTION">
+                <label class="p-col-12 p-md-3" for="voucherdate">{{
+                  "Retention" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input (change)="CalcRetention('value')" id="jobMasterRetention" class="w-100"
+                    formControlName="jobMasterRetention" pInputText />
+                </div>
+
+                <div class="p-col-12 p-md-2 PL">
+                  <b class="PL">{{ " % " | translate }}</b>
+                </div>
+                <div class="p-col-12 p-md-3">
+                  <input id="jobMasterRetensionPer" class="w-100" (change)="CalcRetention('per')"
+                    formControlName="jobMasterRetensionPer" pInputText />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterBalance">{{
+                  "Balance" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input class="w-100" id="jobMasterBalance" formControlName="jobMasterBalance" type="number"
+                    pInputText />
+                </div>
+                <label class="p-col-12 p-md-2" for="jobMasterPerInv">{{
+                  "% Invoiced" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterPerInv" formControlName="jobMasterPerInv" type="number"
+                    pInputText />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterOpenInv">{{
+                  "Open INV Amt" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input class="w-100" id="jobMasterOpenInv" formControlName="jobMasterOpenInv" type="number"
+                    pInputText />
+                </div>
+
+                <label class="p-col-12 p-md-2" for="jobMasterTotVariation">{{
+                  "Total Val" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterTotVariation" formControlName="jobMasterTotVariation" readonly
+                    type="number" pInputText />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <!-- </div> -->
+
+        <div class="p-col-12 p-md-7">
+          <p-panel>
+            <p-header>
+              {{ "Job Scope" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <hot-table [hotId]="JobScopehotid" [licenseKey]="licensekey" [settings]="jobScope_entry"
+                [data]="jobScope_entryDataset"></hot-table>
+              <!-- <div  class="p-grid p-ai-center">
+                                <label class="p-col-12 p-md-3" for="jobMasterGridTotScope">{{'Amount'|
+                                    translate}}</label>
+                                <div class="p-col-12 p-md-9">
+                                    <input class="w-100" id="jobMasterGridTotScope"
+                                        formControlName='jobMasterGridTotScope' readonly type="number" pInputText>
+                                </div>
+
+
+                            </div> -->
+              <div class="p-grid p-ai-center">
+                <div class="p-sm-12 p-md-7">
+                  <p-panel>
+                    <p-header>
+                      {{ "Job Details Status" | translate }}
+                    </p-header>
+                    <div class="p-grid p-ai-center">
+                      <label class="p-col-12 p-md-5" for="jobMasterUpdateStatus">{{ "Status" | translate }}</label>
+                      <div class="p-col-12 p-md-7">
+                        <p-dropdown filter="true" class="w-100" id="jobMasterUpdateStatus"
+                          formControlName="jobMasterUpdateStatus" [options]="JobScope_StatusList">
+                        </p-dropdown>
+                      </div>
+                    </div>
+
+                    <div class="p-grid p-ai-center">
+                      <label class="p-col-12 p-md-5" for="jobMasterUpdateDate">{{ "Completed Date" | translate
+                        }}</label>
+
+                      <div class="p-col-12 p-md-7">
+                        <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                          [yearNavigator]="true" yearRange="2000:2040" class="w-100" [showIcon]="true" useUtc
+                          id="jobMasterUpdateDate" formControlName="jobMasterUpdateDate">
+                        </p-calendar>
+                      </div>
+                    </div>
+
+                    <div class="p-grid p-ai-center">
+                      <div class="p-col-12 p-md-12">
+                        <button pButton type="button" class="p-col-12 p-md-12" label="Apply"
+                          id="jobMasterUpdateBtn"></button>
+                      </div>
+                    </div>
+                  </p-panel>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+          <p-panel>
+            <p-header>
+              {{ "Job Files" | translate }}
+            </p-header>
+
+            <div class="min-panel">
+              <hot-table [hotId]="JobfileshotiD" [licenseKey]="licensekey" [settings]="Jobfiles"
+                [data]="JobfilesDataset"></hot-table>
+            </div>
+          </p-panel>
+
+          <p-panel>
+            <p-header>
+              {{ "Cost Control Summary" | translate }}
+            </p-header>
+
+            <div class="min-panel">
+              <hot-table [hotId]="costcenterhotiD" [licenseKey]="licensekey" [settings]="costcenter"
+                [data]="costcenterDataset"></hot-table>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              {{ "Cash Flow Indicator" | translate }}
+            </p-header>
+            <div class="grid">
+              <hot-table [hotId]="Budjethotid" [licenseKey]="licensekey" [settings]="Budjet_entry"
+                [data]="Budjet_entryDataset"></hot-table>
+            </div>
+            <div class="p-sm-12 p-md-12">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2"> </label>
+                <div class="p-col-12 p-md-4"></div>
+
+                <label class="p-col-12 p-md-2" for="jobMasterGridTotBudject">{{
+                  "Amount" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input class="w-100" id="jobMasterGridTotBudject" formControlName="jobMasterGridTotBudject" readonly
+                    type="number" pInputText />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+
+        <div class="p-col-12 p-md-7">
+          <p-panel>
+            <p-header>
+              {{ "Bank Guarantees(If Any)" | translate }}
+            </p-header>
+            <div class="grid">
+              <hot-table [hotId]="BankGuaranteeshotid" [licenseKey]="licensekey" [settings]="BankGuarantees_entry"
+                [data]="BankGuarantees_entryDataset"></hot-table>
+            </div>
+            <div class="p-sm-12 p-md-12">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-2"> </label>
+                <div class="p-col-12 p-md-4"></div>
+
+                <label class="p-col-12 p-md-2" for="jobMasterGridTotVariation">{{ "Total Guarantee Amount" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-4">
+                  <input class="w-100" id="jobMasterGridTotBank" formControlName="jobMasterGridTotBank" readonly
+                    type="number" pInputText />
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+    <!-- <p-tabPanel [header]="'Account Details'| translate">
+        <p-table [value]="accountTransactionList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>{{'Account No' | translate}}</th>
+                    <th>{{'Account Name'| translate}}</th>
+                    <th>{{'Particulars'| translate}}</th>
+                    <th>{{'Debit'  | translate}}</th>
+                    <th>{{'Credit'| translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-accountTrans>
+                <tr>
+                    <td>{{accountTrans?.accountsTransactionsAccNo}}</td>
+                    <td><span
+                            *ngIf='accountArray?.length > 0'>{{getAccountName(accountTrans?.accountsTransactionsAccNo)}}</span>
+                    </td>
+                    <td>{{accountTrans?.accountsTransactionsParticulars}}</td>
+                    <td>{{accountTrans?.accountsTransactionsDebit}}</td>
+                    <td>{{accountTrans?.accountsTransactionsCredit}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </p-tabPanel> -->
+    <!-- <p-tabPanel [header]="'Allocation Details'| translate">
+        Content 3
+    </p-tabPanel> -->
+    <p-tabPanel [header]="'Other Details' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-sm-12 p-md-7">
+          <p-panel>
+            <p-header>
+              {{ "Job Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterContractType">{{
+                  "Contract /PO #" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterContractType" formControlName="jobMasterContractType" pInputText />
+                </div>
+
+                <label class="p-col-12 p-md-3" for="jobMasterCommenceDate">
+                  {{ "Project Commencement Date" | translate }}</label>
+                <div class="p-col-12 p-md-3">
+                  <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true"
+                                        yearRange="2000:2040" class="w-100" [showIcon]="true" useUtc
+                                        id='jobMasterCommenceDate' formControlName='jobMasterCommenceDate'>
+                                    </p-calendar> -->
+
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" class="w-100" [showIcon]="true" useUtc
+                    id="jobMasterCommenceDate" formControlName="jobMasterCommenceDate"></p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterWorkDays">
+                  {{
+                  "Project Completion timeline(in week)" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <!-- <input class="w-100" id='jobMasterWorkDays' formControlName='jobMasterWorkDays'
+                                        type="number" pInputText> -->
+                  <input type="number" class="w-100" id="jobMasterWorkDays" formControlName="jobMasterWorkDays"
+                    pInputText (change)="setupAutoCalculation()" />
+                </div>
+
+                <label class="p-col-12 p-md-3" for="jobMasterOrgCompDate">
+                  {{ "Orginal Completion Date" | translate }}</label>
+                <div class="p-col-12 p-md-3">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" class="w-100" [showIcon]="true" useUtc
+                    (onSelect)="setupAutoCalculationday()" id="jobMasterOrgCompDate"
+                    formControlName="jobMasterOrgCompDate"></p-calendar>
+                  <!-- <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true" [yearNavigator]="true"
+                                        yearRange="2000:2040" class="w-100" [showIcon]="true" useUtc
+                                        id='jobMasterOrgCompDate' formControlName='jobMasterOrgCompDate'>
+                                    </p-calendar> -->
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="jobMasterPayTermDays">
+                  {{ "Payment Terms(In Days)" | translate }}</label>
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterPayTermDays" formControlName="jobMasterPayTermDays" type="number"
+                    pInputText />
+                </div>
+                <label class="p-col-12 p-md-3" for="jobMasterAdvPerc">
+                  {{ "Advance %" | translate }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterAdvPerc" formControlName="jobMasterAdvPerc" pInputText
+                    (change)="CalcAdvanceAmuntTotal('per')" type="number" />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Site Location" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <textarea class="w-100" [rows]="1" formControlName="jobMasterSiteLocation" id="narration"
+                    pInputText></textarea>
+                </div>
+
+                <label class="p-col-12 p-md-3" for="jobMasterJobAdvanceAmount">{{ "Advance Amt" | translate }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" formControlName="jobMasterJobAdvanceAmount" id="jobMasterJobAdvanceAmount"
+                    type="number" (change)="CalcAdvanceAmuntTotal('amt')" maxlength="50" pInputText />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "MEP Contractor" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <textarea class="w-100" [rows]="1" formControlName="jobMasterMEPContractor" id="narration"
+                    pInputText></textarea>
+                </div>
+
+                <label class="p-col-12 p-md-3" for="jobMasterVariationAmount">{{
+                  "Variation Amt" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" formControlName="jobMasterVariationAmount" id="jobMasterVariationAmount"
+                    type="number" maxlength="50" pInputText />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Plant Type (Treatment)" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <textarea class="w-100" [rows]="1" formControlName="jobMasterPlantType" id="narration"
+                    pInputText></textarea>
+                </div>
+                <label class="p-col-12 p-md-3" for="jobMasterAdvPercOnVar">
+                  {{ "Advance % on Variation" | translate }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterAdvPercOnVar" formControlName="jobMasterAdvPercOnVar"
+                    (change)="CalcjobMasterTotVariation('per')" type="number" pInputText />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Capacity" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <textarea class="w-100" [rows]="1" formControlName="jobMasterCapacity" id="narration"
+                    pInputText></textarea>
+                </div>
+
+                <label class="p-col-12 p-md-3" for="jobMasterAdvAmountOnVar">
+                  {{ "Advance Amt on Variation" | translate }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterAdvAmountOnVar" (change)="CalcjobMasterTotVariation('amt')"
+                    formControlName="jobMasterAdvAmountOnVar" type="number" pInputText />
+                </div>
+              </div>
+
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Payment Terms" | translate
+                  }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <textarea class="w-100" [rows]="2" formControlName="jobMasterPaymentTerms" id="narration"
+                    pInputText></textarea>
+                </div>
+                <label class="p-col-12 p-md-3" for="jobMasterAdvAmountTotal">
+                  {{ "Total Advance Amt" | translate }}</label>
+
+                <div class="p-col-12 p-md-3">
+                  <input class="w-100" id="jobMasterAdvAmountTotal" formControlName="jobMasterAdvAmountTotal" readonly
+                    type="number" pInputText />
+                </div>
+              </div>
+              <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-3" for="voucherno">{{
+                  "Scheme Details" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-3">
+                  <textarea class="w-100" [rows]="1" formControlName="jobMasterScheme" id="narration"
+                    pInputText></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid p-ai-center" *ngIf="HIDERETENTION">
+              <div class="p-sm-12 p-md-12">
+                <p-panel>
+                  <p-header>
+                    {{ "Retention And Advance Account Settings" | translate }}
+                  </p-header>
+                  <div class="p-grid p-ai-center">
+                    <label class="p-col-12 p-md-5" for="jobMasterRetAccNo">
+                      {{ "Retention Acc" | translate }}</label>
+                    <div class="p-col-12 p-md-7">
+                      <input class="w-100" formControlName="jobMasterJobRetAccName" readonly type="text" pInputText />
+                    </div>
+                  </div>
+                  <div class="p-grid p-ai-center">
+                    <label class="p-col-12 p-md-5" for="jobMasterAdvAccNo">
+                      {{ "Advance Acc" | translate }}</label>
+
+                    <div class="p-col-12 p-md-7">
+                      <input class="w-100" formControlName="jobMasterJobAdvAccName" readonly type="text" pInputText />
+
+                    </div>
+                  </div>
+
+                  <div class="p-grid p-ai-center">
+                    <div class="p-col-12 p-md-offset-4">
+                      <button pButton type="button" label="Create and Set Retention And Advance Account"
+                        (click)="createRetentionAndAdvanceAcc()" style="height: 35px"></button>
+                    </div>
+                  </div>
+                </p-panel>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-5">
+          <p-panel>
+            <p-header>
+              {{ "Variation" | translate }}
+            </p-header>
+            <div class="p-md-12">
+              <hot-table [hotId]="Variationhotid" [licenseKey]="licensekey" [settings]="Variation_entry"
+                [data]="Variation_entryDataset"></hot-table>
+            </div>
+            <div class="p-grid p-fluid">
+              <div class="p-sm-12 p-md-5"></div>
+              <div class="p-sm-12 p-md-7">
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5" for="jobMasterGridTotVariation">{{ "Amount" | translate }}</label>
+                  <div class="p-col-12 p-md-7">
+                    <input class="w-100" id="jobMasterGridTotVariation" formControlName="jobMasterGridTotVariation"
+                      readonly type="number" pInputText />
+                  </div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+                <div class="p-grid p-ai-center">
+                  <label class="p-col-12 p-md-5"> </label>
+                  <div class="p-col-12 p-md-7"></div>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Job Details' | translate">
+      <div class="p-sm-12 p-md-offset-10">
+        <button pButton type="button" label="Print Payment & Receipt" icon="fa fa-print"
+          class="ui-button-success"></button>
+      </div>
+      <div class="p-sm-12 p-md-12">
+        <p-panel>
+          <p-header>
+            {{ "Payment Voucher" | translate }}
+          </p-header>
+
+          <div class="grid">
+            <hot-table [hotId]="Paymenthotid" [licenseKey]="licensekey" [settings]="Payment_entry"
+              [data]="Payment_entryDataset"></hot-table>
+          </div>
+        </p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-sm-12 p-md-8"></div>
+          <div class="p-sm-12 p-md-4">
+            <div class="p-col-12 p-grid">
+              <label class="p-col-2" for="account">
+                <b>{{ "Amount " | translate }}</b>
+              </label>
+              <div class="p-col-5">
+                <input type="text" class="w-100" [ngModelOptions]="{ standalone: true }" [(ngModel)]="totalPaytC"
+                  pInputText />
+              </div>
+              <div class="p-col-5">
+                <input type="text" class="w-100" [ngModelOptions]="{ standalone: true }" [(ngModel)]="totalPAyD"
+                  pInputText />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-sm-12 p-md-12">
+        <p-panel>
+          <p-header>
+            {{ "Receipt Voucher" | translate }}
+          </p-header>
+          <div class="grid">
+            <hot-table [hotId]="Receipthotid" [licenseKey]="licensekey" [settings]="Receipt_entry"
+              [data]="Receipt_entryDataset"></hot-table>
+          </div>
+        </p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-sm-12 p-md-8"></div>
+          <div class="p-sm-12 p-md-4">
+            <div class="p-col-12 p-grid">
+              <label class="p-col-2" for="account">
+                <b>{{ "Amount " | translate }}</b>
+              </label>
+              <div class="p-col-5">
+                <input type="text" [ngModelOptions]="{ standalone: true }" [(ngModel)]="totalReciptC" class="w-100"
+                  pInputText />
+              </div>
+
+              <div class="p-col-5">
+                <input type="text" [ngModelOptions]="{ standalone: true }" [(ngModel)]="totalReciptD" class="w-100"
+                  pInputText />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              {{ "Sub Job" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-col-12">
+                <hot-table [hotId]="SubJobhotid" [licenseKey]="licensekey" [settings]="SubJob"></hot-table>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-6">
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-3">
+              <label>Total Job Value:</label>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <input pInputText style="width: 100%; background-color: rgb(22, 114, 45)" />
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-3">
+              <label>Total Inv Value:</label>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <input pInputText style="width: 100%; background-color: rgb(219, 29, 29)" />
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-3">
+              <label>Total Pay Value:</label>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <input pInputText style="width: 100%; background-color: rgb(182, 152, 21)" />
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-3">
+              <label>Total Rec Value:</label>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <input pInputText style="width: 100%; background-color: rgb(219, 29, 29)" />
+            </div>
+          </div>
+          <div class="p-grid p-ai-center">
+            <div class="p-col-12 p-md-3">
+              <label>Total Exp Value:</label>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <input pInputText style="width: 100%; background-color: rgb(182, 152, 21)" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Expense Cost Details' | translate">
+      <div class="p-col-12 p-md-12">
+        <div class="p-sm-12 p-md-offset-10 btn">
+          <button pButton type="button" label="Expense Print" icon="fa fa-print" class="ui-button-success"></button>
+        </div>
+        <p-panel>
+          <p-header>
+            {{ "Expense" | translate }}
+          </p-header>
+          <div class="min-panel">
+            <div class="p-col-12">
+              <hot-table [hotId]="Expensehotid" [licenseKey]="licensekey" [settings]="Expense_entry"></hot-table>
+            </div>
+          </div>
+        </p-panel>
+        <div class="p-grid p-ai-center">
+          <div class="p-col-12 p-md-8"></div>
+          <div class="p-col-12 p-md-4">
+            <div class="p-col-12">
+              <label class="p-md-2" for="account">
+                <b>{{ "Amount " | translate }}</b>
+              </label>
+              <div class="p-md-5">
+                <input type="text" class="w-100" [(ngModel)]="totalExpd" [ngModelOptions]="{ standalone: true }"
+                  pInputText />
+              </div>
+              <div class="p-md-5">
+                <input type="text" class="w-100" [(ngModel)]="totalExpC" [ngModelOptions]="{ standalone: true }"
+                  pInputText />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="p-sm-12 p-md-12">
+                <p-panel>
+                    <p-header>
+                        {{'Job Cost Details'| translate}}
+                    </p-header>
+                    <div class="min-panel">
+                        <div class="grid">
+                            <hot-table [hotId]="JobCostDetailhotid" [licenseKey]="licensekey" [settings]="JobCostDetail">
+
+                            </hot-table>
+                        </div>
+                    </div>
+                </p-panel>
+            </div> -->
+    </p-tabPanel>
+
+    <p-tabPanel [header]="'Document' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-sm-12 p-md-3">
+          <p-panel>
+            <p-header>
+              <div class="flexrow w-100">
+                <span class="w-100" style="margin-top: 6px">
+                  {{ "Files" | translate }}
+                </span>
+                <span class="w-100 right">
+                  <div style="display: flex; align-items: center; gap: 4px">
+                    <button pButton type="button" icon="pi pi-paperclip" label="Attach" class="p-button-sm"
+                      [disabled]="!btnFlag.edit" (click)="showFileAttachmentDialog()"></button>
+                    <button pButton type="button" [disabled]="!btnFlag.edit" icon="pi pi-download" style="width: 130px"
+                      label="Download All" class="p-button-lg" (click)="downloadAllDocuments()"></button>
+                  </div>
+                </span>
+              </div>
+            </p-header>
+
+            <div style="width: 100%; height: 60vh; overflow-y: scroll">
+              <p-tree [value]="files" selectionMode="single" [(selection)]="selectedFile"
+                (onNodeSelect)="onNodeSelect($event)">
+                <ng-template let-node pTemplate="default">
+                  <span>{{ node.label }}</span>
+                  <i *ngIf="isChildNode(node)" class="pi pi-trash delete-icon" (click)="onDeleteNode(node)"
+                    style="margin-left: 20px; cursor: pointer; color: red">
+                  </i>
+                </ng-template>
+              </p-tree>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-9">
+          <p-panel>
+            <p-header>
+              {{ "Document Preview" | translate }}
+            </p-header>
+            <div style="width: 100%; height: 62vh">
+              <iframe *ngIf="previewUrl" [src]="previewUrl" width="100%" height="100%" frameborder="0">
+              </iframe>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <p-tabPanel [header]="'Project Execution' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-col-6">
+          <div></div>
+        </div>
+        <div class="p-col-6 end">
+          <button pButton type="button" (click)="showPrint()" label="Report" icon="fa fa-download"
+            class="ui-button-success"></button>
+        </div>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-6">
+          <div class="min-panel">
+            <div class="grid">
+              <p-table [tableStyle]="{ 'min-width': '30rem' }" [value]="this.staffEX" styleClass="p-datatable-striped">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Staff</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                  <tr style="cursor: pointer">
+                    <td>
+                      <input (click)="selectStaffEX(rowIndex)" type="text" pInputText
+                        [ngModelOptions]="{ standalone: true }" [style]="{ width: 'auto' }"
+                        [(ngModel)]="item.jobMasterStaffName" class="no-border p-0" />
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              {{ "Equipment" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="grid">
+                <hot-table [hotId]="Equipmenthotid" [licenseKey]="licensekey" [settings]="Equipment"></hot-table>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-col-12 p-md-6">
+        <p-panel>
+          <p-header>
+            {{ "Execution Detail" | translate }}
+          </p-header>
+          <div class="min-panel">
+            <div class="grid">
+              <hot-table [hotId]="Detailhotid" [licenseKey]="licensekey" [settings]="Detail"></hot-table>
+            </div>
+          </div>
+        </p-panel>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Daily Timesheet' | translate">
+      <!-- <div class="p-grid p-ai-center">
+                <label class="p-col-12 p-md-1" for="account">{{'Job'| translate}}</label>
+                <div class="p-col-12 p-md-5">
+                    <p-dropdown filter="true" class="w-100" formControlName='jobId' [options]="jobList">
+                    </p-dropdown>
+                </div>
+            </div> -->
+      <div class="p-grid p-ai-center">
+        <label class="p-col-12 p-md-1" for="account">{{
+          "Remarks" | translate
+          }}</label>
+        <div class="p-col-12 p-md-5">
+          <textarea pInputTextarea formControlName="remarks"></textarea>
+        </div>
+        <label class="p-col-12 p-md-1" for="account">{{
+          "Client Remark" | translate
+          }}</label>
+        <div class="p-col-12 p-md-5">
+          <textarea pInputTextarea formControlName="clientRemarks"></textarea>
+        </div>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 p-md-6">
+          <div class="min-panel">
+            <div class="grid">
+              <div class="col-12">
+                <div class="min-panel">
+                  <p-table [tableStyle]="{ 'min-width': '30rem' }" [value]="this.staffTS"
+                    styleClass="p-datatable-striped">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>Staff</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                      <tr style="cursor: pointer">
+                        <td>
+                          <input (click)="selectStaffts(rowIndex)" type="text" pInputText [style]="{ width: 'auto' }"
+                            [ngModelOptions]="{ standalone: true }" [(ngModel)]="item.jobMasterStaffName"
+                            class="no-border p-0" />
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              {{ "Equipment" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-col-12">
+                <hot-table [hotId]="EquipmenthotidDT" [licenseKey]="licensekey" [settings]="EquipmentDT"
+                  [data]="EquipmentDataset">
+                </hot-table>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 p-md-6">
+          <p-panel>
+            <p-header>
+              {{ "Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <!-- <div class="grid">
+                                <hot-table [hotId]="DetailhotiDDT" [licenseKey]="licensekey"
+                                    [settings]="DetailDT"></hot-table>
+                            </div> -->
+              <div class="grid">
+                <div class="col-12">
+                  <p-table [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '30rem' }"
+                    [value]="this.DetailDatasetDT" styleClass="p-datatable-striped">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>Time In</th>
+                        <th>Time Out</th>
+                        <th>Remarks</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                      <tr style="cursor: pointer">
+                        <!-- <td>
+                                                    <p-calendar   appendTo="body" [showButtonBar]="false" [appendTo]="'body'" utc
+                                                        [(ngModel)]="item.timeIn" [ngModelOptions]="{standalone: true}"
+                                                        [showTime]="true" [hourFormat]="24" [style]="{width:'100%'}"
+                                                        class="no-border">
+                                                    </p-calendar>
+                                                </td>
+                                                <td>
+
+                                                    <p-calendar   appendTo="body" [showButtonBar]="false" [appendTo]="'body'"
+                                                        [(ngModel)]="item.timeOut" [ngModelOptions]="{standalone: true}"
+                                                        [showTime]="true" [hourFormat]="24" [style]="{width:'100%'}"
+                                                        class="no-border">
+                                                    </p-calendar>
+                                                </td> -->
+                        <td>
+                          <p-calendar appendTo="body" [showButtonBar]="false" [appendTo]="'body'" utc
+                            [(ngModel)]="item.timeIn" [ngModelOptions]="{ standalone: true }" [showTime]="true"
+                            [hourFormat]="24" [style]="{ width: '100%' }" class="no-border"
+                            (onChange)="validateTime(rowIndex)">
+                          </p-calendar>
+                        </td>
+                        <td>
+                          <p-calendar appendTo="body" [showButtonBar]="false" [appendTo]="'body'"
+                            [(ngModel)]="item.timeOut" [ngModelOptions]="{ standalone: true }" [showTime]="true"
+                            [hourFormat]="24" [style]="{ width: '100%' }" class="no-border"
+                            (onChange)="validateTime(rowIndex)">
+                          </p-calendar>
+                        </td>
+                        <td>
+                          <input (keyup.enter)="pushEmptyDataInDetails(false)" type="text" pInputText
+                            [style]="{ width: '100%' }" [ngModelOptions]="{ standalone: true }"
+                            [(ngModel)]="item.remarks" />
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog header="Job Master List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <p-table #dt2 [value]="jobMasterarry" [columns]="cols" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div class="flexSearch" style="text-align: left">
+        <input type="text" [(ngModel)]="search" pInputText size="50" placeholder="Global Filter" autofocus="true"
+          (input)="
+            $event.target.value != '' && $event.target.value != null
+              ? dt2.filterGlobal($event.target.value, 'contains')
+              : null
+          " style="width: 90%" />
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field" ngClass="col.header == 'Name' ? 'width2' : ''">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-jobmaster_list>
+      <tr>
+        <td>{{ jobmaster_list.jobMasterJobNumber }}</td>
+        <td>{{ jobmaster_list.jobMasterJobNo }}</td>
+        <td>{{ jobmaster_list.jobMasterJobDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ jobmaster_list.jobMasterJobName }}</td>
+        <td>{{ jobmaster_list.jobMasterJobRemarks }}</td>
+        <td>{{ jobmaster_list.jobMasterJobRelativeNo }}</td>
+        <td>{{ jobmaster_list.jobMasterJobConsultantReff }}</td>
+        <td>{{ jobmaster_list.jobMasterJobConsultant }}</td>
+        <td>
+          <span *ngIf="jobmaster_list.jobMasterJobStatus != null">
+            {{ getStatus(jobmaster_list.jobMasterJobStatus) }}</span>
+        </td>
+        <td>{{ jobmaster_list.jobMasterJobType }}</td>
+        <td>{{ jobmaster_list.jobMasterJobContractorName }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="
+              GetSavedJobMasterJobDetails(jobmaster_list.jobMasterJobNo);
+              displayMaximizable = false
+            " class="ui-button-info"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+<p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button pButton type="button" class="ui-button-primary" label="Print" icon="fa fa-print"
+    (click)="printAsPDF()"></button>
+
+  <div id="contentToConvert">
+    <h2>JOB REPORT</h2>
+    <div class="payment1">
+      <div class="flex-container">
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Job</b>
+            <b>Job No.</b>
+            <b>Customer</b>
+            <b>Reference</b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>{{ savedJobMaster?.jobMasterJobName }}</div>
+            <div>{{ savedJobMaster?.jobMasterJobNo }}</div>
+            <div>{{ savedJobMaster?.jobMasterJobCustomerId }}</div>
+            <div>{{ savedJobMaster?.jobMasterJobConsultantReff }}</div>
+          </div>
+        </div>
+        <div class="flexrow">
+          <div class="flexcol">
+            <b>Date</b>
+            <b>Remarks</b>
+            <b> Consultant</b>
+          </div>
+          <div class="flexcol">
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+            <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="flexcol">
+            <div>
+              {{ savedJobMaster?.jobMasterJobDate | date : "dd/MM/yyyy" }}
+            </div>
+            <div>{{ savedJobMaster?.jobMasterJobRemarks }}</div>
+            <div>{{ savedJobMaster?.jobMasterJobConsultant }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="job-report-container">
+      <div class="summary">
+        <h3>SUMMARY</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Job Value</th>
+              <th>Invoiced Amount</th>
+              <th>Payments</th>
+              <th>Receipts</th>
+              <th>Expenses</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {{
+                savedJobMaster?.jobMasterJobValue == null
+                ? 0
+                : savedJobMaster?.jobMasterJobValue
+                }}
+              </td>
+              <td>
+                {{
+                savedJobMaster?.jobMasterJobTotalInvValue == null
+                ? 0
+                : savedJobMaster?.jobMasterJobTotalInvValue
+                }}
+              </td>
+
+              <td>
+                {{
+                savedJobMaster?.jobMasterJobTotalPayValue == null
+                ? 0
+                : savedJobMaster?.jobMasterJobTotalPayValue
+                }}
+              </td>
+              <td>
+                {{
+                savedJobMaster?.jobMasterJobTotalRecValue == null
+                ? 0
+                : savedJobMaster?.jobMasterJobTotalRecValue
+                }}
+              </td>
+              <td>
+                {{
+                savedJobMaster?.jobMasterJobTotalExpValue == null
+                ? 0
+                : savedJobMaster?.jobMasterJobTotalExpValue
+                }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="cost-analysis-container">
+          <div class="cost-center">
+            <h3>Cost Center</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Budget Amt</th>
+                  <th>Variation</th>
+                  <th>Net Budget</th>
+                  <!-- <th>Actual</th>
+                                    <th>Variance</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of savedJobMaster?.jobMasterBudgetDetails">
+                  <td>{{ item.jobMasterBudgetDetailsBudAmount }}</td>
+                  <td>{{ item.jobMasterBudgetDetailsVariance }}</td>
+                  <td>{{ item.jobMasterBudgetDetailsActual }}</td>
+                  <!-- <td>{{item?.jobMasterBudgetDetailsActual}}</td>
+                                    <td>{{item?.jobMasterBudgetDetailsVariance}}</td> -->
+                </tr>
+                <!-- Add more rows as needed -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="job-cost-analysis">
+            <h3>Job Cost Analysis</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Job Value</th>
+                  <th>Total Cost</th>
+                  <th>Profit</th>
+                  <th>Profit %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ savedJobMaster?.jobMasterJobValue }}</td>
+                  <td>{{ expenceDiff }}</td>
+                  <!-- <td>
+                                        {{savedJobMaster?.jobMasterGridTotBudject}}
+                                     </td> -->
+                  <td>{{ jobProfit }}</td>
+                  <td>{{ jobProfitper }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="expenses-report-container">
+      <h3>EXPENSES</h3>
+      <table class="expenses-table">
+        <thead>
+          <tr>
+            <th>Acc. No</th>
+            <th>Account</th>
+            <th>Voucher No</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Cheque No</th>
+            <th>Chq. Date</th>
+            <th>Description</th>
+            <th>Cost Center</th>
+            <th>Debit</th>
+            <th>Credit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of savedJobMaster?.jobMasterExpenses">
+            <td>{{ a.accNo }}</td>
+            <td>{{ a.accName }}</td>
+            <td>{{ a.voucherNo }}</td>
+            <td>{{ a.transDate | date : "dd/MM/yyyy" }}</td>
+            <td>{{ a.voucherType }}</td>
+            <td>{{ a.chqNo }}</td>
+            <td>{{ a.chqDate }}</td>
+            <td>{{ a.description }}</td>
+            <td>{{ a.costName }}</td>
+            <td>{{ a.drAmt }}</td>
+            <td>{{ a.crAmt }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="total-expenses-container">
+        <div class="expenses-summary">
+          <div class="total-label">
+            <span>TOTAL EXPENSES</span>
+          </div>
+          <div class="amount">
+            <span>{{ totalExpd }}</span>
+            <span>{{ totalExpC }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="expenses-report-container">
+      <h3>PAYMENTS</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Acc. No</th>
+            <th>Account</th>
+            <th>Voucher No</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Cheque No</th>
+            <th>Chq. Date</th>
+            <th>Description</th>
+            <!-- <th>Note</th> -->
+            <th>Debit</th>
+            <th>Credit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of Payment_list">
+            <td>{{ p.accountTransactionAccNo }}</td>
+            <td>{{ p.accountTransactionAccName }}</td>
+            <td>{{ p.accountTransactionPaymentVoucher }}</td>
+            <td>{{ p.accountsTransactionsTransDate | date : "dd/MM/yyyy" }}</td>
+            <td>{{ p.accountTransactionPaymentType }}</td>
+            <td>{{ p.accountsTransactionsChqNo }}</td>
+            <td>{{ p.accountsTransactionsChqDate }}</td>
+            <td>{{ p.accountTransactionDescription }}</td>
+            <td>{{ p.accountTransactionDebit }}</td>
+            <td>{{ p.accountTransactionCredit }}</td>
+          </tr>
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+      <div class="total-expenses-container">
+        <div class="expenses-summary">
+          <div class="total-label">
+            <span>TOTAL PAYMENTS</span>
+          </div>
+          <div class="amount">
+            <span>{{ totalPAyD }}</span>
+            <span>{{ totalPaytC }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="expenses-report-container">
+      <h3>RECEIPT</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Acc. No</th>
+            <th>Account</th>
+            <th>Voucher No</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Cheque No</th>
+            <th>Chq. Date</th>
+            <th>Description</th>
+            <!-- <th>Note</th> -->
+            <th>Debit</th>
+            <th>Credit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of Receipt_list">
+            <td>{{ p.accountTransactionAccNo }}</td>
+            <td>{{ p.accountTransactionAccName }}</td>
+            <td>{{ p.accountTransactionPaymentVoucher }}</td>
+            <td>{{ p.accountsTransactionsTransDate | date : "dd/MM/yyyy" }}</td>
+            <td>{{ p.accountTransactionPaymentType }}</td>
+            <td>{{ p.accountsTransactionsChqNo }}</td>
+            <td>{{ p.accountsTransactionsChqDate }}</td>
+            <td>{{ p.accountTransactionDescription }}</td>
+            <td>{{ p.accountTransactionDebit }}</td>
+            <td>{{ p.accountTransactionCredit }}</td>
+          </tr>
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+      <div class="total-expenses-container">
+        <div class="expenses-summary">
+          <div class="total-label">
+            <span>TOTAL RECEIPTS</span>
+          </div>
+          <div class="amount">
+            <span>{{ totalReciptD }}</span>
+            <span>{{ totalReciptC }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+<app-lookup [header]="'Look Up'" [dataArry]="dataList" [selectedItem]="selectItem" [columns]="lookupGridColumns"
+  (selectItemEvent)="selectCostCenter($event)" (exitEvent)="exit($event)" [cell]="activeRow"
+  (clearEvent)="clear($event)" (hideDialogEvent)="hide($event)" [tableheader]="'Procurements List'"
+  [(show)]="showcostCenterLookUp"></app-lookup>
+
+<!-- =============================== -->
+
+<p-dialog header="Staff List" [(visible)]="displaystaffList" [modal]="true" [style]="{ width: '30%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <p-table #uList [value]="staffArray" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="uList.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Staff Code</th>
+        <th>Staff Name</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{ item.staffCode }}</td>
+        <td (click)="selectStaff(item)" style="cursor: pointer">
+          {{ item.firstName }} {{ item.lastName }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog header="Print Preview" [(visible)]="displayReportPreview" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+  <button pButton type="button" class="ui-button-primary" label="Print" icon="fa fa-print"
+    (click)="printAsPDF()"></button>
+
+  <div id="contentToConvert">
+    <div class="report-container">
+      <div class="container">
+        <img class="logo" src="../../../../../assets/Images/GeoMak_Logo_2020.jpg" />
+      </div>
+      <div class="container">
+        <h1 class="bold">Project Completion Report</h1>
+      </div>
+      <div class="client-info">
+        <table>
+          <tr>
+            <td><strong>Client Name</strong></td>
+            <td>{{ gerName(savedJobMaster?.jobMasterJobCustomerId) }}</td>
+          </tr>
+          <tr>
+            <td><strong>Survey Location:</strong></td>
+            <td>YAS Marina, Abu Dhabi, UAE</td>
+          </tr>
+          <tr>
+            <td><strong>Date:</strong></td>
+            <td>
+              {{ savedJobMaster?.jobMasterJobDate | date : "dd/MM/yyyy" }}
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Survey Vessel:</strong></td>
+            <td>{{ savedJobMaster?.jobMasterJobConsultantReff }}</td>
+          </tr>
+          <tr>
+            <td><strong>Sheet No.:</strong></td>
+            <td>01/01</td>
+          </tr>
+          <tr>
+            <td><strong>Project Name:</strong></td>
+            <td>{{ stationmasterObj?.stationMasterStationName }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <table>
+        <tr>
+          <th class="bold">Survey Personnel</th>
+          <th class="bold">Equipment Deployed</th>
+        </tr>
+        <tr *ngFor="let staff of savedJobMaster?.jobStaff; let i = index">
+          <td>{{ staff?.jobMasterStaffName }}</td>
+          <td *ngIf="savedJobMaster?.jobEquipment[i]">
+            {{ savedJobMaster?.jobEquipment[i]?.jobMasterEquipName }}
+          </td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <th class="bold width">Date</th>
+          <th class="bold">Description</th>
+        </tr>
+        <tr *ngFor="let item of savedJobMaster?.jobExcutionDetails">
+          <td class="bold">
+            {{ item?.jobMasterExecDate | date : "dd-MM-yyyy" }}
+          </td>
+          <td>{{ item?.jobMasterExecDescription }}</td>
+        </tr>
+      </table>
+
+      <div class="comments-section">
+        <h4 style="text-align: left; margin-top: 0%">Client's Comments</h4>
+        <!-- <p>-- No additional comments --</p> -->
+      </div>
+
+      <div class="signatures-section">
+        <div class="signatures">
+          <div class="signature-block">
+            <p><strong>Project Manager</strong></p>
+            <div class="signature-line"></div>
+          </div>
+          <div class="signature-block">
+            <p><strong>Client's Representative</strong></p>
+            <div class="signature-line"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">Survey Completion Date: 29-04-2024</div>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog header="Add Attachments" [modal]="true" [(visible)]="fileAttachmentDialogVisibility"
+  [style]="{ width: '50rem' }">
+  <div class="card">
+    <p-fileUpload name="files" [maxFileSize]="1000000" [customUpload]="true"
+      (uploadHandler)="customUploadHandler($event)" [showUploadButton]="true" [showCancelButton]="true"
+      [multiple]="true" [accept]="'.pdf'" [auto]="false" [mode]="'advanced'" [uploadLabel]="'Upload'"
+      [cancelLabel]="'Cancel'" [chooseLabel]="'Choose'">
+      <ng-template #empty>
+        <div>Drag and drop files here to upload.</div>
+      </ng-template>
+      <ng-template #content>
+        <ul *ngIf="attachmentsToUploaded.length">
+          <li *ngFor="let file of attachmentsToUploaded">
+            {{ file.name }} - {{ file.size }} bytes
+          </li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
+</p-dialog>

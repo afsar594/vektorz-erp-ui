@@ -1,0 +1,481 @@
+<app-page-header
+  [nav]="[
+    { label: 'account' | translate },
+    { label: 'Sales Voucher Report' | translate }
+  ]"
+  [title]="title | translate"
+></app-page-header>
+
+<p-toolbar>
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      class="ui-button-danger"
+      label="Clear&Enable"
+      (click)="new()"
+      icon="fa fa-ban"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      (click)="List_REPORT()"
+      label="List"
+      icon="fa fa-list"
+    ></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <!-- <div style="display: inline-block;" class="ui-inputgroup">
+
+        <input type="text" pInputText [(ngModel)]='search' placeholder="Search">
+        <button pButton type="button" (click)=GetSavedPurchaseVoucherDetails(search) icon="pi pi-search"></button>
+    </div> -->
+    <button
+      pButton
+      type="button"
+      label="Print Report"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="displayPrint()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Print"
+      icon="fa fa-print"
+      class="ui-button-success"
+      (click)="Print_REPORT()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Excel"
+      icon="fa fa-excel"
+      class="ui-button-success"
+      (click)="Print_REPORT()"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Exit"
+      (click)="ExitNew()"
+      icon="fa fa-sign-out"
+    ></button>
+
+    <!-- <p-checkbox label="Suppess Allocation in Print" ></p-checkbox> -->
+  </div>
+</p-toolbar>
+<div class="card card-w-title" [formGroup]="reportSalesVoucherFormGroup">
+  <p-tabView [activeIndex]="index">
+    <p-tabPanel [header]="'Sales Voucher Report' | translate">
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Account Detail" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <!-- <p-radioButton formControlName='rptDetails' id="rptDetails" class="p-col-12 p-md-12 p-lg-6" label="{{'Details'| translate}}"    (onClick)="SummaryDetails()" ></p-radioButton>
+                            <p-radioButton  formControlName='rptSummary' id="rptSummary" class="p-col-12 p-md-12 p-lg-6" label="{{'Summary'| translate}}"  (onClick)="SummaryDetails()" ></p-radioButton> -->
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptDetails"
+                  id="rptDetails"
+                  class="p-col-12 p-md-12 p-lg-6"
+                  label="{{ 'Details' | translate }}"
+                  [value]="Details"
+                  (onClick)="makeDetailsTrue('detail')"
+                ></p-radioButton>
+                <p-radioButton
+                  name="groupname"
+                  formControlName="rptSummary"
+                  id="rptSummary"
+                  class="p-col-12 p-md-12 p-lg-6"
+                  label="{{ 'Summary' | translate }}"
+                  [value]="Summary"
+                  (onClick)="makeDetailsTrue('summary')"
+                ></p-radioButton>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptInvoiceType">{{
+                  "Inv.Type" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptInvoiceType"
+                    id="rptInvoiceType"
+                    [options]="v_typeList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptCustomer">{{
+                  "Customer" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    appDropdownOptionTitle
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptCustomer"
+                    id="rptCustomer"
+                    [options]="CustomerMasterList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptSalesMan">{{
+                  "Sales Man" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptSalesMan"
+                    id="rptSalesMan"
+                    [options]="SalesManMasterList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              <p-checkbox
+                formControlName="rptDateRange"
+                id="rptDateRange"
+                (onChange)="makeDateRangeTrue()"
+              ></p-checkbox>
+              {{ "Date Filter" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label for="rptDateRange" class="p-col-12 p-md-12 p-lg-2">{{
+                  "From" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="rptDtpFrom"
+                    formControlName="rptDtpFrom"
+                  >
+                  </p-calendar>
+                </div>
+
+                <label class="p-col-12 p-md-12 p-lg-2" for="voucherdate">{{
+                  "To" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar
+                    appendTo="body"
+                    dateFormat="dd/mm/yy"
+                    [showButtonBar]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2040"
+                    showIcon="true"
+                    class="w-100"
+                    useUtc
+                    id="rptDtpTo"
+                    formControlName="rptDtpTo"
+                  >
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptBrand">{{
+                  "Brand" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptBrand"
+                    id="rptBrand"
+                    [options]="VendorMasterList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptItemGroup">{{
+                  "Item Group" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptItemGroup"
+                    id="rptItemGroup"
+                    [options]="ItemMasterGroupList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptItem">{{
+                  "Item" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptItem"
+                    id="rptItem"
+                    [options]="ItemMasterList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <p-panel>
+            <p-header>
+              {{ "Tracking Details" | translate }}
+            </p-header>
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptLocation">{{
+                  "Location" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptLocation"
+                    id="rptLocation"
+                    [options]="locationList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="job">{{
+                  "Job" | translate
+                }}</label>
+
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptJob"
+                    id="rptJob"
+                    [options]="jobList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-3" for="rptDpt">{{
+                  "Department" | translate
+                }}</label>
+                <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                  <p-dropdown
+                    filter="true"
+                    class="w-100"
+                    formControlName="rptDpt"
+                    id="rptDpt"
+                    [options]="DepartmentMasterList"
+                  >
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+      <p-panel>
+        <p-header>
+          {{ "Sales Voucher Report" | translate }}
+        </p-header>
+        <div class="grid">
+          <hot-table
+            [hotId]="hotid"
+            [licenseKey]="licensekey"
+            [settings]="reportsalesvoucher_entry"
+            [data]="reportsalesvoucher_entryDataset"
+          ></hot-table>
+        </div>
+      </p-panel>
+
+      <div class="p-grid">
+        <div class="p-sm-12 p-md-12 p-lg-8">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <!-- <label  formControlName='rptTotRunningBalanceCreditDebit' id='rptTotRunningBalanceCreditDebit'  class="p-col-12 p-md-12 p-lg-12" for="account"     style="color: red;text-align: right; font: bolder;">{{TotRunningBalanceCreditDebit| translate}}</label> -->
+            </div>
+          </div>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-2">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-4" for="account">{{
+                "Disc.Amt." | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <input
+                  class="w-100"
+                  formControlName="rptDiscAmt"
+                  id="rptTotDebit"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  maxlength="50"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-sm-12 p-md-12 p-lg-2">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-4" for="rptNetAmt">{{
+                "Net.Amt." | translate
+              }}</label>
+              <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                <input
+                  class="w-100"
+                  formControlName="rptNetAmt"
+                  id="rptNetAmt"
+                  readonly
+                  style="border-color: black; text-align: right"
+                  maxlength="50"
+                  pInputText
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog
+  header="Print Preview"
+  [(visible)]="displayPrintPreview"
+  [modal]="true"
+  [style]="{ width: '90%' }"
+  [maximizable]="true"
+  [baseZIndex]="100"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <button (click)="printAsPDF()" pButton>print</button>
+
+  <div
+    id="print"
+    style="font-family: italic !important; justify-content: center"
+  >
+    <img
+      style="margin-left: 420px"
+      [src]="
+        stationmasterObj?.stationMasterLogoImg
+          ? stationmasterObj?.stationMasterLogoImg
+          : '../../../../../assets/Images/logo-2.png'
+      "
+      alt
+    />
+    <h1>Voucher Report</h1>
+    <br /><br />
+    <h3>Address: &nbsp; {{ stationmasterObj?.stationMasterAddress }}</h3>
+    <h3>Tel : {{ stationmasterObj?.stationMasterTele1 }}</h3>
+    <h3>Fax : {{ stationmasterObj?.stationMasterFax }}</h3>
+    <h3>Email : {{ stationmasterObj?.stationMasterEmail }}</h3>
+    <h3>Sales Report Summary {{ currentDate }}</h3>
+
+    <table *ngIf="Details" class="Acc">
+      <tr>
+        <th>SL.No</th>
+        <th>Voucher No</th>
+        <th>Voucture Date</th>
+        <th>Customer</th>
+        <th>Gross Amt</th>
+        <th>Discount</th>
+        <th>Vat Amt</th>
+        <th>Net Amt</th>
+      </tr>
+      <tr *ngFor="let item of reportSalesVoucher; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item?.salesVoucherNo }}</td>
+        <td>{{ item?.salesVoucherDate }}</td>
+        <!-- <td>{{item?.salesVoucherDescription}}</td> -->
+        <td>{{ item?.customerMasterCustomerName }}</td>
+        <td>{{ item?.salesVoucherTotalGrossAmount }}</td>
+        <td>{{ item?.salesVoucherTotalDisAmount }}</td>
+        <th>{{ item?.salesVoucherVatAmt }}</th>
+        <td>{{ item?.salesVoucherNetAmount }}</td>
+      </tr>
+    </table>
+    <table *ngIf="Summary" class="Acc">
+      <tr>
+        <th>SL.No</th>
+        <th>Voucher No</th>
+        <th>Voucture Date</th>
+        <th>Customer</th>
+        <th>Sales Man</th>
+        <th>P.O Np.</th>
+        <th>Job No</th>
+        <th>Gross Amt</th>
+        <th>Discount</th>
+        <th>Vat Amt</th>
+        <th>Round A</th>
+        <th>Net Amt</th>
+      </tr>
+      <tr *ngFor="let item of reportSalesVoucher; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item?.salesVoucherNo }}</td>
+        <td>{{ item?.salesVoucherDate | date : "dd/MM/yyyy" }}</td>
+        <td>{{ item?.customerMasterCustomerName }}</td>
+        <td>{{ item?.salesManMasterSalesManName }}</td>
+        <td>{{ item?.salesVoucherJobId }}</td>
+        <td>{{ item?.salesVoucherTotalGrossAmount }}</td>
+        <td>{{ item?.salesVoucherTotalDisAmount }}</td>
+        <th>{{ item?.salesVoucherVatAmt }}</th>
+        <td>{{ item?.salRetAmt }}</td>
+
+        <td>{{ item?.salesVoucherNetAmount }}</td>
+      </tr>
+    </table>
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+  [(visible)]="confirmDropDatabaseDialogVisible"
+></p-confirmDialog>

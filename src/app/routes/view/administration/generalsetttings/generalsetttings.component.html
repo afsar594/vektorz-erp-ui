@@ -1,0 +1,497 @@
+<app-page-header *ngIf="listmode" [title]="title | translate"></app-page-header>
+<p-toolbar>
+  <div class="ui-toolbar-group-left"></div>
+
+  <div class="ui-toolbar-group-right">
+    <button
+      pButton
+      type="button"
+      [label]="'Save'"
+      icon="fa fa-floppy-o"
+      (click)="globalUpdateSetting()"
+      class="ui-button-success"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      [label]="'Exit'"
+      icon="fa fa-floppy-o"
+      (click)="ExitNew()"
+      class="ui-button-success"
+    ></button>
+  </div>
+</p-toolbar>
+<div class="p-grid w-100">
+  <div class="p-col-12">
+    <p-tabView (onChange)="handleChange2($event)">
+      <p-tabPanel header="General Settings">
+        <p-tabView>
+          <p-tabPanel header="Boolean">
+            <p-table #dt [value]="list" [columns]="cols">
+              <ng-template pTemplate="caption">
+                <div class="flexSearch" style="text-align: right">
+                  <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    size="50"
+                    placeholder="Filter Setting"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    style="width: auto"
+                  />
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of cols">
+                    {{ col.header | translate }}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td *ngIf="data.generalSettingsValueType === 'BOOLEAN'">
+                    {{ data.generalSettingsDescription }}
+                  </td>
+                  <td *ngIf="data.generalSettingsValueType === 'BOOLEAN'">
+                    <p-checkbox
+                      name="group1"
+                      [label]="data.generalSettingsBoolValue ? 'YES' : 'NO'"
+                      [(ngModel)]="data.generalSettingsBoolValue"
+                      binary="true"
+                      (onChange)="handleData($event)"
+                    >
+                    </p-checkbox>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+          <p-tabPanel header="Value">
+            <p-table #dtv [value]="list" [columns]="cols">
+              <ng-template pTemplate="caption">
+                <div class="flexSearch" style="text-align: right">
+                  <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    size="50"
+                    placeholder="Filter Setting"
+                    (input)="dtv.filterGlobal($event.target.value, 'contains')"
+                    style="width: auto"
+                  />
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of cols">
+                    {{ col.header | translate }}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td *ngIf="data.generalSettingsValueType != 'BOOLEAN'">
+                    {{ data.generalSettingsDescription }}
+                  </td>
+                  <td *ngIf="data.generalSettingsValueType != 'BOOLEAN'">
+                    <div *ngIf="data.generalSettingsValueType === 'FILE'">
+                      <p-dropdown
+                        filter="true"
+                        [options]="data.options"
+                        optionLabel="keyText"
+                        dataKey="keyValue"
+                        [(ngModel)]="data.generalSettingsTextValue"
+                        [filter]="true"
+                        [showClear]="true"
+                      >
+                      </p-dropdown>
+                    </div>
+
+                    <div *ngIf="data.generalSettingsValueType === 'NUMERIC'">
+                      <p-inputNumber
+                        class="w-100"
+                        [(ngModel)]="data.generalSettingsNumValue"
+                      ></p-inputNumber>
+                    </div>
+
+                    <div *ngIf="data.generalSettingsValueType === 'TEXT'">
+                      <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="data.generalSettingsTextValue"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+        </p-tabView>
+      </p-tabPanel>
+      <p-tabPanel header="Inventory Settings">
+        <p-table #dtIB [value]="list2" [columns]="cols">
+          <ng-template pTemplate="caption">
+            <div class="flexSearch" style="text-align: right">
+              <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+              <input
+                type="text"
+                pInputText
+                size="50"
+                placeholder="Filter Setting"
+                (input)="dtIB.filterGlobal($event.target.value, 'contains')"
+                style="width: auto"
+              />
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th *ngFor="let col of cols">
+                {{ col.header | translate }}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-data>
+            <tr>
+              <td>{{ data.generalSettingsDescription }}</td>
+              <td>
+                <div *ngIf="data.generalSettingsValueType === 'BOOLEAN'">
+                  <p-checkbox
+                    name="group1"
+                    [value]="data.generalSettingsBoolValue"
+                    [label]="data.generalSettingsBoolValue ? 'YES' : 'NO'"
+                    [(ngModel)]="data.generalSettingsBoolValue"
+                    (onChange)="handleData($event)"
+                    binary="true"
+                  >
+                  </p-checkbox>
+                </div>
+
+                <div *ngIf="data.generalSettingsValueType === 'FILE'">
+                  <p-dropdown
+                    filter="true"
+                    [options]="data.options"
+                    optionLabel="keyText"
+                    dataKey="keyValue"
+                    [(ngModel)]="data.generalSettingsTextValue"
+                    [filter]="true"
+                    [showClear]="true"
+                  >
+                  </p-dropdown>
+                </div>
+
+                <div *ngIf="data.generalSettingsValueType === 'NUMERIC'">
+                  <p-inputNumber
+                    class="w-100"
+                    [(ngModel)]="data.generalSettingsNumValue"
+                  ></p-inputNumber>
+                </div>
+
+                <div *ngIf="data.generalSettingsValueType === 'TEXT'">
+                  <input
+                    type="text"
+                    pInputText
+                    [(ngModel)]="data.generalSettingsTextValue"
+                  />
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-tabPanel>
+      <p-tabPanel header="Account Settings">
+        <p-tabView>
+          <p-tabPanel header="Boolean">
+            <p-table [value]="list3" #dtAB [columns]="cols">
+              <ng-template pTemplate="caption">
+                <div class="flexSearch" style="text-align: right">
+                  <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    size="50"
+                    placeholder="Filter Setting"
+                    (input)="dtAB.filterGlobal($event.target.value, 'contains')"
+                    style="width: auto"
+                  />
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <!-- <tr>
+                                        <th class="th1">Description</th>
+                                        <th>Value</th>
+                                    </tr> -->
+                <tr>
+                  <th *ngFor="let col of cols">
+                    {{ col.header | translate }}
+                    <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td *ngIf="data.generalSettingsValueType === 'BOOLEAN'">
+                    {{ data.generalSettingsDescription }}
+                  </td>
+                  <td *ngIf="data.generalSettingsValueType === 'BOOLEAN'">
+                    <p-checkbox
+                      name="group1"
+                      [value]="data.generalSettingsBoolValue"
+                      [label]="data.generalSettingsBoolValue ? 'YES' : 'NO'"
+                      [(ngModel)]="data.generalSettingsBoolValue"
+                      (onChange)="handleData($event)"
+                      binary="true"
+                    >
+                    </p-checkbox>
+
+                    <div *ngIf="data.generalSettingsValueType === 'FILE'">
+                      <p-dropdown
+                        filter="true"
+                        [options]="data.options"
+                        optionLabel="keyText"
+                        dataKey="keyValue"
+                        [(ngModel)]="data.generalSettingsTextValue"
+                        [filter]="true"
+                        [showClear]="true"
+                      >
+                      </p-dropdown>
+                    </div>
+
+                    <div *ngIf="data.generalSettingsValueType === 'NUMERIC'">
+                      <p-inputNumber
+                        class="w-100"
+                        [(ngModel)]="data.generalSettingsNumValue"
+                      ></p-inputNumber>
+                    </div>
+
+                    <div *ngIf="data.generalSettingsValueType === 'TEXT'">
+                      <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="data.generalSettingsTextValue"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+          <p-tabPanel header="Value">
+            <p-table [value]="list3" #dtAV [columns]="cols">
+              <ng-template pTemplate="caption">
+                <div class="flexSearch" style="text-align: right">
+                  <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    size="50"
+                    placeholder="Filter Setting"
+                    (input)="dtAV.filterGlobal($event.target.value, 'contains')"
+                    style="width: auto"
+                  />
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <!-- <tr>
+                                        <th class="th1">Description</th>
+                                        <th>Value</th>
+                                    </tr> -->
+                <tr>
+                  <th *ngFor="let col of cols">
+                    {{ col.header | translate }}
+                    <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td *ngIf="data.generalSettingsValueType != 'BOOLEAN'">
+                    {{ data.generalSettingsDescription }}
+                  </td>
+                  <td *ngIf="data.generalSettingsValueType != 'BOOLEAN'">
+                    <!-- <div *ngIf="data.generalSettingsValueType === 'BOOLEAN'">
+                                                <p-checkbox name="group1"
+                                                [value]="data.generalSettingsBoolValue"
+                                                [label]="data.generalSettingsBoolValue ? 'YES': 'NO'"
+                                                [(ngModel)]="data.generalSettingsBoolValue"
+                                                (onChange)="handleData($event)" binary="true">
+                                            </p-checkbox>
+                                           
+                                                 
+                                            </div> -->
+
+                    <div *ngIf="data.generalSettingsValueType === 'FILE'">
+                      <p-dropdown
+                        filter="true"
+                        [options]="data.options"
+                        optionLabel="keyText"
+                        dataKey="keyValue"
+                        [(ngModel)]="data.generalSettingsTextValue"
+                        [filter]="true"
+                        [showClear]="true"
+                      >
+                      </p-dropdown>
+                    </div>
+
+                    <div *ngIf="data.generalSettingsValueType === 'NUMERIC'">
+                      <p-inputNumber
+                        class="w-100"
+                        [(ngModel)]="data.generalSettingsNumValue"
+                      ></p-inputNumber>
+                    </div>
+
+                    <div *ngIf="data.generalSettingsValueType === 'TEXT'">
+                      <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="data.generalSettingsTextValue"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+        </p-tabView>
+      </p-tabPanel>
+      <p-tabPanel [header]="'Options Settings' | translate">
+        <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+          <p-tabPanel [header]="'Boolean' | translate">
+            <p-table [value]="optionsetting" #dtOB [columns]="colsOp">
+              <ng-template pTemplate="caption">
+                <div class="flexSearch" style="text-align: right">
+                  <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    size="50"
+                    placeholder="Filter Setting"
+                    (input)="dtOB.filterGlobal($event.target.value, 'contains')"
+                    style="width: auto"
+                  />
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <!-- <tr>
+                                        <th class="th1">Description</th>
+                                        <th>Value</th>
+                                    </tr> -->
+                <tr>
+                  <th *ngFor="let col of colsOp">
+                    {{ col.header | translate }}
+                    <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td *ngIf="data.optionsMasterValueType == 'Boolean'">
+                    {{ data.optionsMasterFullDescription }} ({{
+                      data.optionsMasterDescription
+                    }})
+                  </td>
+                  <td *ngIf="data.optionsMasterValueType == 'Boolean'">
+                    <div>
+                      <!-- <p-checkbox name="group1" binary="true"
+                                                [label]="data.optionsMasterType === 'YES' ? 'Yes': 'No'"
+                                                [(ngModel)]="data.optionsMasterType"
+                                                (onChange)="handleData($event)">x
+                                            </p-checkbox> -->
+                      <p-checkbox
+                        name="group1"
+                        binary="true"
+                        [label]="
+                          data.optionsMasterType === 'YES' ? 'Yes' : 'No'
+                        "
+                        [ngModel]="convertToBoolean(data.optionsMasterType)"
+                        (ngModelChange)="
+                          handleData2(
+                            $event ? 'YES' : 'NO',
+                            data.optionsMasterFullDescription
+                          )
+                        "
+                      >
+                      </p-checkbox>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+          <p-tabPanel [header]="'Value' | translate">
+            <p-table [value]="optionsetting" #dtOV [columns]="colsOp">
+              <ng-template pTemplate="caption">
+                <div class="flexSearch" style="text-align: right">
+                  <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    size="50"
+                    placeholder="Filter Setting"
+                    (input)="dtOV.filterGlobal($event.target.value, 'contains')"
+                    style="width: auto"
+                  />
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <!-- <tr>
+                                        <th class="th1">Description</th>
+                                        <th>Value</th>
+                                    </tr> -->
+                <tr>
+                  <th *ngFor="let col of colsOp">
+                    {{ col.header | translate }}
+                    <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td *ngIf="data.optionsMasterValueType != 'Boolean'">
+                    {{ data.optionsMasterFullDescription }} ({{
+                      data.optionsMasterDescription
+                    }})
+                  </td>
+                  <td *ngIf="data.optionsMasterValueType != 'Boolean'">
+                    <div
+                      *ngIf="data.optionsMasterValueType === 'Numeric'"
+                      class="w-100"
+                    >
+                      <p-inputNumber
+                        class="w-100"
+                        [(ngModel)]="data.optionsMasterType"
+                      ></p-inputNumber>
+                    </div>
+
+                    <div *ngIf="data.optionsMasterValueType === 'File'">
+                      <p-dropdown
+                        filter="true"
+                        [options]="data.options"
+                        optionLabel="keyText"
+                        dataKey="keyValue"
+                        [(ngModel)]="data.optionsMasterType"
+                        [filter]="true"
+                        [showClear]="true"
+                      >
+                      </p-dropdown>
+                    </div>
+
+                    <div *ngIf="data.optionsMasterValueType === 'Value'">
+                      <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="data.optionsMasterType"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-tabPanel>
+        </p-tabView>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+<p-toast></p-toast>

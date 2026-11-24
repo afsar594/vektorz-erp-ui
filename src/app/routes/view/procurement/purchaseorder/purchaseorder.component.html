@@ -1,0 +1,1356 @@
+<app-page-header [nav]="[
+    { label: 'account' | translate },
+    { label: 'Purchase Order' | translate }
+  ]" [title]="title | translate"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button pButton type="button" label="New" (click)="new()" icon="pi pi-plus"></button>
+    <button pButton type="button" label="Edit" (click)="edit()" [disabled]="!btnFlag.edit || !Permission?.Edit" icon="fa fa-pencil"
+      class="ui-button-success"></button>
+
+    <button pButton type="button" class="ui-button-danger" [disabled]="!btnFlag.cancel" label="Cancel"
+      (click)="cancel()" icon="fa fa-ban"></button>
+    <button pButton type="button" [label]="btnFlag.save == true ? 'Save' : 'Update'"
+      [disabled]="!Permission?.Add || btnFlag.new" (click)="savePurchaseOrder()" icon="fa fa-floppy-o"
+      class="ui-button-success"></button>
+    <button pButton type="button" label="List" [disabled]="!Permission?.View" icon="fa fa-list"
+      (click)="showMaximizableDialog()" class="ui-button-info"></button>
+
+    <button pButton type="button" class="ui-button-danger" (click)="delete()"
+      [disabled]="!btnFlag.delete || !Permission?.Delete" label="Delete" icon="fa fa-trash"></button>
+  </div>
+
+  <div class="ui-toolbar-group-right">
+    <div class="flexSearch">
+      <button pButton type="button" (click)="callDropdowns(true)" icon="fa fa-refresh"
+        class="ui-button-success"></button>
+      <div class="ui-inputgroup">
+        <input type="text" pInputText [(ngModel)]="search" [ngModelOptions]="{ standalone: true }"
+          placeholder="Search" />
+        <button pButton type="button" (click)="GetSavedPurchaseOrderDetails(search)" icon="pi pi-search"></button>
+      </div>
+
+      <button pButton type="button" label="Browse Template" (click)="showMaximizableDialog(true)"
+        icon="fa fa-plus" class="ui-button-success"></button>
+
+      <!-- <button pButton type="button" (click)=" getPOReport()" [disabled]='isPrintEnabled || !Permission?.Print'
+        label="Print Report" icon="fa fa-print" class="ui-button-success"></button> -->
+
+      <button pButton type="button" (click)="getPOReport()" [disabled]="isPrintEnabled || !Permission?.Print" label="Print Report"
+        icon="fa fa-print" class="ui-button-success"></button>
+
+      <!-- <button pButton type="button"  (click)="displayPrint()" [disabled]='!btnFlag.edit || !Permission?.Print'
+        label="Print" icon="fa fa-print" class="ui-button-success"></button> -->
+
+      <button pButton type="button" label="Back" (click)="navigateBack()" icon="fa fa-sign-out"></button>
+    </div>
+  </div>
+</div>
+
+<div class="card card-w-title" [formGroup]="purchaseOrderFormGroup">
+  <p-tabView [activeIndex]="index" (onChange)="handleChange($event)">
+    <p-tabPanel [header]="'Purchase Order' | translate">
+      <div class="p-grid p-sm-12 p-md-12 p-lg-12">
+        <div class="p-sm-12 p-md-12 p-lg-4">
+          <div class="min-panel">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="voucherno">{{
+                "PO.No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <input class="w-100" formControlName="purchaseOrderNo" readonly id="voucherno"
+                  style="border-color: black; text-decoration: darkslateblue" pInputText />
+                <div class="error" *ngIf="f.purchaseOrderDate.errors"></div>
+              </div>
+              <p-message severity="error" *ngIf="f.purchaseOrderNo?.errors?.Exist && !btnFlag.update"
+                text="Voucher No is exist"></p-message>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="account">{{ "Supplier" | translate
+                }}<span class="required">*</span></label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <div class="ui-inputgroup w-100">
+                  <input type="text" class="w-100" #suppCtrl (click)="openSupplier()" pInputText
+                    placeholder="Supplier" />
+                  <button type="button" pButton pRipple icon="pi pi-search" (click)="openSupplier()"
+                    [disabled]="isButtonDisabled" styleClass="p-button-warn"></button>
+                </div>
+
+                <div class="error" *ngIf="
+                    f.purchaseOrderPartyId?.errors &&
+                    (f.purchaseOrderPartyId?.dirty ||
+                      f.purchaseOrderPartyId?.touched)
+                  ">
+                  <span *ngIf="f.purchaseOrderPartyId?.errors?.required">
+                    Supplier is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="vatno">{{
+                "Cont Person" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <input class="w-100" formControlName="purchaseOrderContPerson" id="purchaseOrderContPerson"
+                  pInputText />
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="address">{{
+                "Address" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <textarea class="w-100" id="purchaseOrderPartyAddress" formControlName="purchaseOrderPartyAddress"
+                  maxlength="500" pInputText></textarea>
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup" *ngIf="!JOBCOST">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="job">{{
+                "Job" | translate
+                }}</label>
+
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <p-dropdown filter="true" class="w-100" formControlName="purchaseOrderJobId" [options]="jobList">
+                </p-dropdown>
+
+                <!-- <div class="error" *ngIf="f.purchaseOrderJobId?.invalid && (f.purchaseOrderJobId?.touched || f.purchaseOrderJobId?.dirty)">
+                  <span>Job is a mandatory field*</span>
+                </div> -->
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="location">{{
+                "Location" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <p-dropdown filter="true" class="w-100" #locationCtrol formControlName="purchaseOrderLocationId"
+                  [options]="locationList" [disabled]="locationLocked">
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="narration">{{
+                "Remark" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <textarea class="w-100" [rows]="2" formControlName="purchaseOrderDescription" id="narration"
+                  maxlength="500" pInputText></textarea>
+
+                <!-- <div class="error" *ngIf="f.purchaseOrderDescription?.errors
+                                    && (f.purchaseOrderDescription?.dirty || f.purchaseOrderDescription?.touched)">
+                </div> -->
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="refno">{{
+                "Project Ref" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <input class="w-100" formControlName="purchaseOrderRefNo" id="refno" pInputText />
+                <div class="error" *ngIf="
+                    f.purchaseOrderRefNo?.errors &&
+                    (f.purchaseOrderRefNo?.dirty ||
+                      f.purchaseOrderRefNo?.touched)
+                  ">
+                  <span *ngIf="f.purchaseOrderRefNo?.errors?.required">
+                    Project Reference is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3 p-0" for="currency">{{
+                "Currency" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <p-dropdown filter="true" class="w-100" formControlName="purchaseOrderCurrencyId"
+                  [options]="currencyList">
+                </p-dropdown>
+                <div class="error" *ngIf="
+                    f.purchaseOrderCurrencyId?.errors &&
+                    (f.purchaseOrderCurrencyId?.dirty ||
+                      f.purchaseOrderCurrencyId?.touched)
+                  ">
+                  <span *ngIf="f.purchaseOrderCurrencyId?.errors?.required">
+                    Currency is Mandatory Field*</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <div class="p-col-12 p-md-12 p-lg-4">
+                <p-checkbox formControlName="purchaseOrderExcludeVat" label="Zero VAT" id="purchaseOrderExcludeVat"
+                  [binary]="true" (onChange)="zerovat()"></p-checkbox>
+              </div>
+
+              <label class="p-col-12 p-md-12 p-lg-2 p-0" for="vatno">{{
+                "VAT No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-6 p-0">
+                <input class="w-100" id="purchaseOrderPartyVatNo" formControlName="purchaseOrderPartyVatNo"
+                  pInputText />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-grid p-sm-12 p-md-12 p-lg-8">
+          <div class="p-sm-12 p-md-12 p-lg-6">
+            <div class="min-panel">
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="voucherdate">{{
+                  "Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" [showIcon]="true" class="w-100" useUtc
+                    formControlName="purchaseOrderDate" id="voucherdate">
+                  </p-calendar>
+                  <!-- <div class ="error" *ngif = f.pOVD.value=0> -->
+                  <div class="error" *ngIf="
+                      f.purchaseOrderDate?.errors &&
+                      (f.purchaseOrderDate?.dirty ||
+                        f.purchaseOrderDate?.touched)
+                    ">
+                    <span *ngIf="f.purchaseOrderDate?.errors?.required">
+                      Voucher date is Mandatory Field*</span>
+                  </div>
+                  <!-- </div> -->
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="currency">{{
+                  "Status" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="purchaseOrderStatus" [options]="v_OPENCLOSE"
+                    value="CREDIT">
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="vatno">{{
+                  "Delivery Period" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName="purchaseOrderDelivPlace" id="purchaseOrderDelivPlace"
+                    pInputText />
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="currency">{{
+                  "Order Type" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName="purchaseOrderOrdertype" [options]="Ordertype"
+                    value="CREDIT">
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-sm-12 p-md-12 p-lg-6">
+            <div class="min-panel">
+              <!-- <div class="p-grid inputGroup">
+
+                <label class="p-col-12 p-md-12 p-lg-4 " for="purchaseOrderApproveEnable">{{'Approved'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-2 p-0">
+                  <p-checkbox formControlName='purchaseOrderApproveEnable' id="purchaseOrderApproveEnable"
+                    [binary]="true"></p-checkbox>
+                </div>
+                <label class="p-col-12 p-md-12 p-lg-2 p-0" for="voucherdate">{{'Date'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-4 p-0">
+                  <p-calendar   appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" class="w-100" showIcon="true" useUtc
+                    formControlName='purchaseOrderApproveDate' id="purchaseOrderApproveDate">
+                  </p-calendar>
+
+                </div>
+
+              </div> -->
+              <!-- <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="currency">{{'Status'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <p-dropdown filter="true" class="w-100" formControlName='purchaseOrderApproveStatus'
+                    [options]="v_OPENCLOSE" value="CREDIT">
+                  </p-dropdown>
+
+                </div>
+
+              </div> -->
+              <!-- <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="currency">{{'Approved By'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+                  <input class="w-100" formControlName='purchaseOrderApproveUserId' id="purchaseOrderApproveUserId"
+                    pInputText>
+
+                </div>
+
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="vatno">{{'Prepared By'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+
+                  <input class="w-100" formControlName='purchaseOrderPreparedBy' id="purchaseOrderPreparedBy"
+                    pInputText>
+
+                </div>
+              </div>
+
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="vatno">{{'Recommend By'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+
+                  <input class="w-100" formControlName='purchaseOrderRecommendedBy' id="purchaseOrderRecommendedBy"
+                    pInputText>
+                </div>
+              </div> -->
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="vatno">{{'Item'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+
+                  <input class="w-100" formControlName='item' id="Item" pInputText>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-4 p-0" for="vatno">{{'Quote Ref No'|
+                  translate}}</label>
+                <div class="p-col-12 p-md-12 p-lg-8 p-0">
+
+                  <input class="w-100" formControlName='quoterefno' id="Quoterefno" pInputText>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="p-sm-12 p-md-12 p-lg-12">
+            <p-panel>
+              <p-header>
+                <div class="ui-toolbar-group-right">
+                  <button pButton type="button" class="ui-button-info" (click)="Selecttemplate('select')"
+                    [disabled]="!template" label="Create Template"></button>
+                </div>
+              </p-header>
+
+              <p-tabView (onChange)="onTabChange($event)">
+                <p-tabPanel [header]="'Header' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderHeader" id="purchaseOrderHeader"
+                      maxlength="1000" style="border-color: black; width: 100%" pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'Delivery Location' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderDelivery"
+                      id="purchaseOrderDelivery" maxlength="1000" style="border-color: black; width: 100%"
+                      pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'Notes' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderNotes" id="purchaseOrderNotes"
+                      maxlength="1000" style="border-color: black; width: 100%" pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'Footer' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderFooter" id="purchaseOrderFooter"
+                      maxlength="1000" style="border-color: black; width: 100%" pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'Payment Terms' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderPaymentTerms"
+                      id="purchaseOrderPaymentTerms" maxlength="1000" style="border-color: black; width: 100%"
+                      pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+
+                <p-tabPanel [header]="'Subject' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderSubject" id="purchaseOrderSubject"
+                      maxlength="1000" style="border-color: black; width: 100%" pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'Content' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderContent" id="purchaseOrderContent"
+                      maxlength="1000" style="border-color: black; width: 100%" pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+
+                <p-tabPanel [header]="'Remarks 1' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderRemarks1"
+                      id="purchaseOrderRemarks1" maxlength="1000" style="border-color: black; width: 100%"
+                      pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'Remarks 2' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderRemarks2"
+                      id="purchaseOrderRemarks2" maxlength="1000" style="border-color: black; width: 100%"
+                      pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+
+                <p-tabPanel [header]="'Remarks 3' | translate">
+                  <div class="p-col-12 p-md-12 p-lg-12">
+                    <textarea class="w-100" [rows]="3" formControlName="purchaseOrderRemarks3"
+                      id="purchaseOrderRemarks3" maxlength="1000" style="border-color: black; width: 100%"
+                      pInputText></textarea>
+                  </div>
+                </p-tabPanel>
+              </p-tabView>
+              <div style="color: red; cursor: pointer" (click)="Selecttemplate('add')">
+                Click here to Add template
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </div>
+      <div class="p-sm-12 p-md-12 p-lg-12">
+        <p-panel>
+          <p-header>
+            <div class="flexrow w-100">
+              <span class="w-100" style="margin-top: 6px">
+                {{ "Item Details" | translate }}
+              </span>
+              <span class="w-100 right">
+                <button pButton type="button" label="Browse From Purchase Requisition"
+                  (click)="PurchaseRequisitionStatus()" [disabled]="isButtonDisabled" icon="fa fa-pencil"
+                  class="ui-button-success"></button>
+              </span>
+            </div>
+          </p-header>
+          <div class="grid">
+            <hot-table [hotId]="hotid" [licenseKey]="licensekey" [settings]="purchaseorder_entry"
+              [data]="purchaseorder_entryDataset"></hot-table>
+          </div>
+        </p-panel>
+      </div>
+      <ng-container *ngIf="showProcurementsLookUp">
+        <app-lookup [header]="'Look Up'" [dataArry]="dataList" [isServerSearch]="isServerSearch"
+          [selectedItem]="selectItem" [columns]="lookupGridColumns" (selectItemEvent)="selectprocurements($event)"
+          (exitEvent)="exit($event)" [cell]="activeRow" (clearEvent)="clear($event)" [width]="width"
+          (hideDialogEvent)="hide($event)" [tableheader]="'Procurements List'" [(show)]="showProcurementsLookUp"
+          (searchEvent)="onSearch($event)"></app-lookup>
+      </ng-container>
+
+      <app-lookup [header]="'Look Up'" [selectedItem]="selectItem" [eleReference]="elementReference"
+        [dataArry]="dataList" (exitEvent)="exit($event)" (clearEvent)="clear($event)" [formControlName]="control"
+        [columns]="lookupGridColumns" (selectItemEvent)="selectControl($event)" (hideDialogEvent)="hide($event)"
+        [tableheader]="'Procurements List'" [(show)]="formControlLookUp"></app-lookup>
+
+      <div class="p-grid">
+        <div class="p-col-12 p-md-5Bill Summary p-lg-5 p-md-offset-7">
+          <p-panel>
+            <p-header>
+              {{ "Bill Summary" | translate }}
+            </p-header>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "Total Gross Amt" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <input class="w-100" id="purchaseOrderTotalGrossAmount" formControlName="purchaseOrderTotalGrossAmount"
+                  readonly pInputText />
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "Tot Item Disc Amt" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <input id="purchaseOrderTotalItemDisAmount" class="w-100"
+                  formControlName="purchaseOrderTotalItemDisAmount" readonly pInputText />
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "Total Disc " | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-grid p-0">
+                <div class="p-col-12 p-md-12 p-lg-3 p-0">
+                  <input id="purchaseOrderTotalDisPer" class="w-100" formControlName="purchaseOrderTotalDisPer"
+                    (change)="CalcDiscFromPer()" pInputText />
+                </div>
+                <span class="p-col-1">
+                  <b>{{ "%" | translate }}</b>
+                </span>
+                <div class="p-col-8 p-0">
+                  <input id="purchaseOrderTotalDisAmount" class="w-100" formControlName="purchaseOrderTotalDisAmount"
+                    (change)="CalcDiscFromAmt()" pInputText />
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "VATable Amt" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <input id="purchaseOrderTotalActualAmount" formControlName="purchaseOrderTotalActualAmount" readonly
+                  (change)="GetTotal()" pInputText />
+              </div>
+            </div>
+            <div *ngIf="VatCalculation == true" class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "VAT " | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-grid p-0">
+                <div class="p-col-4 p-0">
+                  <input [readOnly]="f.purchaseOrderExcludeVat.value" id="purchaseOrderVatPer" class="w-100"
+                    formControlName="purchaseOrderVatPer" (change)="GetTotal()" pInputText />
+                </div>
+                <span class="p-col-1">
+                  <b>{{ "%" | translate }}</b>
+                </span>
+                <div class="p-col-7 p-0">
+                  <input [readOnly]="f.purchaseOrderExcludeVat.value" id="purchaseOrderVatAmt" class="w-100"
+                    formControlName="purchaseOrderVatAmt" (change)="CalcVatFromAmt()" pInputText />
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "Round OFF " | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-grid p-0">
+                <div class="p-col-4 p-0">
+                  <p-dropdown filter="true" id="purchaseOrderVatRoundSign" formControlName="purchaseOrderVatRoundSign"
+                    (onChange)="GetTotal($event)" [options]="v_RoundoffList" value="-">
+                  </p-dropdown>
+                </div>
+                <span class="p-col-1">
+                  <b>{{ "-" | translate }}</b>
+                </span>
+                <div class="p-col-7 p-0">
+                  <input id="purchaseOrderVatRountAmt" class="w-100" formControlName="purchaseOrderVatRountAmt"
+                    (change)="GetTotal()" class="w-100" pInputText />
+                </div>
+              </div>
+            </div>
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-3" for="account">
+                <b>{{ "Net Amt" | translate }}</b>
+              </label>
+              <div class="p-col-12 p-md-12 p-lg-9 p-0">
+                <input id="purchaseOrderNetAmount" class="w-100" pInputText formControlName="purchaseOrderNetAmount"
+                  readonly />
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel [header]="'User Activity' | translate">
+      <p-tabView>
+        <p-tabPanel [header]="'User Activity' | translate">
+          <p-table>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ "User Name" | translate }}</th>
+                <th>{{ "Date" | translate }}</th>
+                <th>{{ "Time" | translate }}</th>
+                <th>{{ "Action" | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <tr></tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+    <p-tabPanel [header]="'Document' | translate">
+      <div class="p-grid p-fluid">
+        <div class="p-sm-12 p-md-3">
+          <p-panel>
+            <p-header>
+              <div class="flexrow w-100">
+                <span class="w-100" style="margin-top: 6px">
+                  {{ "Files" | translate }}
+                </span>
+                <span class="w-100 right">
+                  <div style="display: flex; align-items: center; gap: 4px">
+                    <button pButton type="button" icon="pi pi-plus" label="PR Files" class="p-button-sm"
+                      [disabled]="!btnFlag.edit" (click)="showImportFileDialog()"></button>
+
+                    <button pButton type="button" icon="pi pi-paperclip" label="Attach" class="p-button-sm"
+                      [disabled]="!btnFlag.edit" (click)="showFileAttachmentDialog()"></button>
+                    <button pButton type="button" [disabled]="!btnFlag.edit" icon="pi pi-download" style="width: 130px"
+                      label="Download All" class="p-button-lg" (click)="downloadAllDocuments()"></button>
+                  </div>
+                </span>
+              </div>
+            </p-header>
+
+            <div style="width: 100%; height: 60vh; overflow-y: scroll">
+              <p-tree [value]="files" selectionMode="single" [(selection)]="selectedFile"
+                (onNodeSelect)="onNodeSelect($event)">
+                <ng-template let-node pTemplate="default">
+                  <span>{{ node.label }}</span>
+                  <i *ngIf="isChildNode(node)" class="pi pi-trash delete-icon" (click)="onDeleteNode(node)"
+                    style="margin-left: 20px; cursor: pointer; color: red">
+                  </i>
+                </ng-template>
+              </p-tree>
+            </div>
+          </p-panel>
+        </div>
+        <div class="p-col-12 p-md-9">
+          <p-panel>
+            <p-header>
+              {{ "Document Preview" | translate }}
+            </p-header>
+            <div style="width: 100%; height: 62vh">
+              <iframe *ngIf="previewUrl" [src]="previewUrl" width="100%" height="100%" frameborder="0">
+              </iframe>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-dialog header="Purchase Order List" [(visible)]="displayMaximizable" [modal]="true" [style]="{ width: '90%' }"
+  [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <div class="p-col-12">
+    <p-panel>
+      <p-header>
+        <!-- {{'Sales Voucher List'| translate}} -->
+        <button type="submit" pButton label="Find" (click)="filter()" icon="pi pi-search"></button>
+        <button pButton type="button" label="Clear" icon="fa fa-pencil" (click)="ClearFilter()"
+          class="ui-button-success"></button>
+      </p-header>
+      <form [formGroup]="PurchaseorderFilterForm">
+        <div class="p-grid">
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{
+                "Voucher No" | translate
+                }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <input class="w-100" formControlName="purchaseorderNo" pInputText />
+              </div>
+            </div>
+            <!-- <div class="p-grid inputGroup">
+              <label class="p-col-12 p-md-12 p-lg-2" for="account">{{ 'job' | translate }}</label>
+              <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                <p-dropdown filter="true" class="w-100" formControlName='purchaseorderjob' [options]="jobList">
+                </p-dropdown>
+              </div>
+            </div> -->
+          </div>
+          <div class="p-col-6 p-md-6 p-lg-6">
+            <p-panel>
+              <p-header>
+                <!-- <p-checkbox label="Date Range"></p-checkbox> -->
+                <p-checkbox formControlName="isDate" [binary]="true" label="Date Range"></p-checkbox>
+              </p-header>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "From Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="fromDate" [showIcon]="true"
+                    [disabled]="!PurchaseorderFilterForm.get('isDate')?.value" class="w-100"></p-calendar>
+                </div>
+              </div>
+              <div class="p-grid inputGroup">
+                <label class="p-col-12 p-md-12 p-lg-2">{{
+                  "To Date" | translate
+                  }}</label>
+                <div class="p-col-12 p-md-12 p-lg-10 p-0">
+                  <p-calendar appendTo="body" dateFormat="dd/mm/yy" [showButtonBar]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2000:2040" formControlName="toDate" [showIcon]="true"
+                    [disabled]="!PurchaseorderFilterForm.get('isDate')?.value" class="w-100"></p-calendar>
+                </div>
+              </div>
+            </p-panel>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+
+  <p-table #dt [value]="purchaseOrderarry" [columns]="cols" [paginator]="true" [rows]="10" scrollable="true"
+    scrollWidth="1300px">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width: auto" />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field" [ngClass]="col.class">
+          {{ col.header | translate }}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+        <th class="amount-col">Actions</th>
+      </tr>
+    </ng-template>
+
+<ng-template pTemplate="body" let-purchaseorder_list>
+  <tr>
+    <td *ngFor="let col of cols" [ngClass]="col.class">
+      <ng-container *ngIf="col.field === 'purchaseOrderDate'; else normalCell">
+        {{ purchaseorder_list.purchaseOrderDate | date: 'dd/MM/yyyy' }}
+      </ng-container>
+      <ng-template #normalCell>
+        {{ getCellValue(purchaseorder_list, col.field) }}
+      </ng-template>
+    </td>
+    <td class="amount-col">
+      <button pButton type="button" icon="pi pi-pencil" class="ui-button-info" (click)="
+          GetSavedPurchaseOrderDetails(purchaseorder_list.purchaseOrderId);
+          displayMaximizable = false
+        "></button>
+    </td>
+  </tr>
+</ng-template>
+  </p-table>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-confirmDialog *ngIf="!displayMaximizabletemplate" key="confirm-key" acceptLabel="Yes" rejectLabel="No"
+  header="Confirm" [(visible)]="confirmDropDatabaseDialogVisible"></p-confirmDialog>
+
+<!-- *****    Html Printing starts here  ******************* -->
+
+<div style="height: 0; overflow: hidden">
+  <div id="contentToConvertPO">
+    <div style="margin: 0 25px" class="p-grid p-justify-left">
+      <div class="p-col-6 p-grid">
+        <h1 class="p-col-12">{{ cName }}</h1>
+        <div class="p-col-12">{{ cTel }}</div>
+        <div class="p-col-12">{{ cFax }}</div>
+        <div class="p-col-12">{{ cEmail }}</div>
+      </div>
+    </div>
+
+    <div style="margin: 0 25px" class="p-grid">
+      <div style="text-align: right; font-weight: bold" class="p-col-10">
+        <h2>{{ "Purchase Order" | translate }}</h2>
+      </div>
+      <div class="p-col-10 p-grid" style="border: 1px solid black; border-radius: 12px; margin: 5px">
+        <div class="p-col-6 p-grid">
+          <div class="p-col-4">{{ "LPO No" | translate }}</div>
+          <div class="p-col-8">
+            {{ savedPurchaseOrder?.purchaseOrderLpono }}
+          </div>
+        </div>
+        <div class="p-col-6 p-grid">
+          <div class="p-col-4">{{ "LPO Date" | translate }}</div>
+          <div class="p-col-8">
+            {{ savedPurchaseOrder?.purchaseOrderLpodate | date : "dd/MM/y" }}
+          </div>
+        </div>
+        <div class="p-col-6 p-grid">
+          <div class="p-col-4">{{ "Supplier No." | translate }}</div>
+          <div class="p-col-8">
+            {{ savedPurchaseOrder?.purchaseOrderPartyId }}
+          </div>
+        </div>
+        <div class="p-col-6 p-grid">
+          <div class="p-col-4">{{ "Ref. Date" | translate }}</div>
+          <div class="p-col-8">
+            {{ savedPurchaseOrder?.purchaseOrderDate | date : "dd/MM/y" }}
+          </div>
+        </div>
+      </div>
+      <div class="p-col-10 p-grid" style="border: 1px solid black; border-radius: 12px; margin: 5px">
+        <div class="p-col-4">{{ "Supplier Name. :" | translate }}</div>
+        <div class="p-col-8">
+          {{ getSupplierName(savedPurchaseOrder?.purchaseOrderPartyId) }}
+        </div>
+        <div class="p-col-4">{{ "Contact Person. :" | translate }}</div>
+        <div class="p-col-8">
+          {{ getSupplierContact(savedPurchaseOrder?.purchaseOrderPartyId) }}
+        </div>
+        <div class="p-col-4">{{ "Tele. :" | translate }}</div>
+        <div class="p-col-8">
+          {{ getSupplierTele(savedPurchaseOrder?.purchaseOrderPartyId) }}
+        </div>
+        <div class="p-col-4">{{ "Mobile. :" | translate }}</div>
+        <div class="p-col-8">
+          {{ getSupplierMobile(savedPurchaseOrder?.purchaseOrderPartyId) }}
+        </div>
+        <div class="p-col-4">{{ "Fax. :" | translate }}</div>
+        <div class="p-col-8">
+          {{ getSupplierFax(savedPurchaseOrder?.purchaseOrderPartyId) }}
+        </div>
+        <div class="p-col-4">{{ "Email. :" | translate }}</div>
+        <div class="p-col-8">
+          {{ getSupplierEmail(savedPurchaseOrder?.purchaseOrderPartyId) }}
+        </div>
+      </div>
+
+      <!-- </div> -->
+      <div class="p-col-10" style="border: 1px solid black; border-radius: 12px; margin: 5px">
+        <table style="width: 100%; text-align: left; border-radius: 12px">
+          <thead>
+            <th>{{ "Sl. No" | translate }}</th>
+            <th>{{ "Name" | translate }}</th>
+            <th>{{ "Quantity" | translate }}</th>
+            <th>{{ "Unit" | translate }}</th>
+            <th style="text-align: right; padding-right: 25px">
+              {{ "Unit Price" | translate }}
+            </th>
+            <th style="text-align: right; padding-right: 25px">
+              {{ "Discount" | translate }}
+            </th>
+            <th style="text-align: right; padding-right: 25px">
+              {{ "Amount" | translate }}
+            </th>
+          </thead>
+          <tr style="border-bottom: 1px solid black">
+            <td colspan="100%"></td>
+          </tr>
+          <tr *ngFor="
+              let accountTrans of savedPurchaseOrder?.purchaseOrderDetails;
+              let i = index
+            ">
+            <td style="width: 10%">{{ i + 1 }}</td>
+
+            <td style="width: 10%">
+              <span *ngIf="ItemMasterArray?.length > 0">{{
+                getItemMasterName(accountTrans?.purchaseOrderDetailsMatId)
+                }}</span>
+            </td>
+            <td style="width: 10%">
+              {{ accountTrans?.purchaseOrderDetailsQuantity }}
+            </td>
+            <!-- <td>{{accountTrans?.purchaseOrderDetailsUnitId}}</td> -->
+            <td style="width: 10%">
+              <span *ngIf="unitArray?.length > 0">{{
+                getUnitName(accountTrans?.purchaseOrderDetailsUnitId)
+                }}</span>
+            </td>
+            <td style="width: 10%; text-align: right; padding-right: 15px">
+              {{ accountTrans?.purchaseOrderDetailsRate?.toFixed(2) }}
+            </td>
+            <td style="width: 10%; text-align: right; padding-right: 15px">
+              {{ accountTrans?.purchaseOrderDetailsDiscAmount?.toFixed(2) }}
+            </td>
+            <td style="width: 10%; text-align: right; padding-right: 15px">
+              {{ accountTrans?.purchaseOrderDetailsNetAmt?.toFixed(2) }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="p-col-10">
+        <table style="width: 100%; text-align: left; border-radius: 12px">
+          <tr>
+            <td style="width: 10%"></td>
+            <td style="width: 10%"></td>
+            <td style="width: 10%"></td>
+            <td style="width: 10%"></td>
+            <td style="width: 10%">
+              <div>{{ "Gross Amount" | translate }}</div>
+              <div>{{ "Discount Amount" | translate }}</div>
+              <div>{{ "Vat Amount" | translate }}</div>
+              <div>{{ "Net Amount" | translate }}</div>
+            </td>
+            <td style="width: 10%"></td>
+            <td style="width: 10%; text-align: right; padding-right: 15px">
+              <div>
+                {{
+                savedPurchaseOrder?.purchaseOrderTotalGrossAmount?.toFixed(2)
+                }}
+              </div>
+              <div>
+                {{
+                savedPurchaseOrder?.purchaseOrderTotalItemDisAmount?.toFixed(
+                2
+                )
+                }}
+              </div>
+              <div>
+                {{ savedPurchaseOrder?.purchaseOrderVatAmt?.toFixed(2) }}
+              </div>
+              <div>
+                {{ savedPurchaseOrder?.purchaseOrderNetAmount?.toFixed(2) }}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="p-col-6 p-grid">
+        <div class="p-col-8">
+          <b>{{ sumwordsnew }}</b>
+        </div>
+      </div>
+
+      <div class="p-col-10">
+        <table class="border-table" style="width: 100%; text-align: left; border-collapse: collapse">
+          <thead>
+            <th>TERMS AND CONDITIONS</th>
+          </thead>
+          <tbody>
+            <td></td>
+            <td></td>
+            <td>Page No: 1</td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <p-dialog header="Add Template" [(visible)]="displayMaximizabletemplate" [modal]="true" [style]="{ width: '60%' }"
+    [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+    <app-template [item]="fromPO" [from]="true"></app-template>
+  </p-dialog>
+
+  <p-dialog header="View Template" [(visible)]="displayMaximizabletemplateAdd" [modal]="true" [style]="{ width: '40%' }"
+    [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <div class="min-panel">
+      <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-4">
+          {{ "Templates For" | translate }}
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-8">
+          <p-dropdown filter="true" placeholder="---Select---" [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="headerTemplateValue" (onChange)="selectedtem($event)" [options]="templatList"
+            [filter]="true"></p-dropdown>
+        </div>
+        <div class="p-col-12 box">
+          <p-table [value]="templateTypeData">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Description</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td style="cursor: pointer" (click)="selectedTemplateValue(item.qtemplatesDescription)">
+                  {{ item.qtemplatesDescription }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="pi pi-check" (click)="selectTypeValue()" label="Ok"></button>
+      <button type="button" pButton icon="pi pi-times" (click)="displayMaximizabletemplateAdd = false" label="Cancel"
+        class="ui-button-secondary"></button>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog header="Print Preview" [(visible)]="displayPrintPreview" [modal]="true" [style]="{ width: '70%' }"
+    [maximizable]="true" [baseZIndex]="100" [draggable]="false" [resizable]="false">
+    <button pButton type="button" class="ui-button-primary" label="Print" (click)="getPIReport()"
+      icon="fa fa-print"></button>
+
+    <div id="print">
+      <div class="print page">
+        <div class="company">
+          <div class="flexrow gaprow w-100">
+            <div class="flexcol w-80">
+              <div>
+                <h2 class="flexcol" style="color: #007bff; font-size: 25px">
+                  {{ stationmasterObj?.stationMasterStationName }}
+                </h2>
+
+                <div class="flexrow">
+                  <div class="flexcol">
+                    <b>Address </b>
+                    <b>Tel </b>
+                    <b>TRN</b>
+                    <b>Email </b>
+                  </div>
+                  <div class="flexcol">
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                    <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  </div>
+                  <div class="flexcol">
+                    <div>
+                      {{ stationmasterObj?.stationMasterAddress }}&nbsp;
+                    </div>
+                    <div>{{ stationmasterObj?.stationMasterTele1 }}&nbsp;</div>
+                    <div>
+                      {{
+                      stationmasterObj?.stationMasterVatNo
+                      ? stationmasterObj?.stationMasterVatNo
+                      : 104093336600003
+                      }}&nbsp;
+                    </div>
+                    <div>{{ stationmasterObj?.stationMasterEmail }}&nbsp;</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flexcol w-20">
+              <div class="end">
+                <!-- <img  src="../../../../../assets/Images/GeoMak_Logo_2020.jpg" /> -->
+                <img *ngIf="stationmasterObj?.logotype != 'Rectangular'" class="squreImg" [src]="
+                    'data:image/png;base64,' +
+                    stationmasterObj?.stationMasterLogoImg
+                  " />
+                <img *ngIf="stationmasterObj?.logotype == 'Rectangular'" class="rectImg" [src]="
+                    'data:image/png;base64,' +
+                    stationmasterObj?.stationMasterLogoImg
+                  " />
+              </div>
+            </div>
+          </div>
+          <div class="center">
+            <h2>PURCHASE ORDER</h2>
+          </div>
+
+          <div class="flex">
+            <div class="bank1">
+              <div class="flexrow">
+                <div class="flexcol">
+                  <b>Supplier </b>
+                  <b>Address </b>
+                  <b>Cont. Person </b>
+                  <b>Tel </b>
+                  <b>Mob No</b>
+                  <b>Email</b>
+                  <b>TRN</b>
+                </div>
+                <div class="flexcol">
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="flexcol">
+                  <div>
+                    {{
+                    getSupplierName(savedPurchaseOrder?.purchaseOrderPartyId)
+                    }}&nbsp;
+                  </div>
+                  <div>
+                    {{
+                    getSupplierAddress(
+                    savedPurchaseOrder?.purchaseOrderPartyId
+                    )
+                    }}&nbsp;
+                  </div>
+                  <div>
+                    {{
+                    getSupplierContact(
+                    savedPurchaseOrder?.purchaseOrderPartyId
+                    )
+                    }}&nbsp;
+                  </div>
+                  <div>
+                    {{
+                    getSupplierTele(savedPurchaseOrder?.purchaseOrderPartyId)
+                    }}&nbsp;
+                  </div>
+                  <div>
+                    {{
+                    getSupplierMobile(
+                    savedPurchaseOrder?.purchaseOrderPartyId
+                    )
+                    }}&nbsp;
+                  </div>
+                  <div>
+                    {{
+                    getSupplierEmail(
+                    savedPurchaseOrder?.purchaseOrderPartyId
+                    )
+                    }}&nbsp;
+                  </div>
+                  <div>
+                    {{
+                    getSupplierVatNo(
+                    savedPurchaseOrder?.purchaseOrderPartyId
+                    )
+                    }}&nbsp;
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin: 3px"></div>
+            <div class="bank2">
+              <div class="flexrow">
+                <div class="flexcol">
+                  <b>PO No </b>
+                  <b>Delivery Date </b>
+                  <b>Ref No </b>
+                  <b>Remark</b>
+                </div>
+                <div class="flexcol">
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                  <div>&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="flexcol">
+                  <div>{{ savedPurchaseOrder?.purchaseOrderNo }}&nbsp;</div>
+                  <div>
+                    {{ savedPurchaseOrder?.purchaseOrderDate | date }}&nbsp;
+                  </div>
+                  <div>{{ savedPurchaseOrder?.purchaseOrderRefNo }}&nbsp;</div>
+                  <div>
+                    {{ savedPurchaseOrder?.purchaseOrderRemarks1 }}&nbsp;
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table id="customers">
+            <tr>
+              <th class="w50" style="font-size: larger">
+                {{ "SNO" | translate }}
+              </th>
+              <th style="width: 300px; font-size: larger">
+                {{ "Description" | translate }}
+              </th>
+              <th style="width: 78px; font-size: larger">
+                {{ "Qty" | translate }}
+              </th>
+              <th style="width: 78px; font-size: larger">
+                {{ "Unit.Price" | translate }}
+              </th>
+              <th style="width: 78px; font-size: larger">
+                {{ "Amount" | translate }}
+              </th>
+              <th style="width: 78px; font-size: larger">
+                {{ "Job Name" | translate }}
+              </th>
+            </tr>
+            <tr *ngFor="
+                let item of savedPurchaseOrder?.purchaseOrderDetails;
+                let i = index
+              ">
+              <td class="center">{{ 1 + i }}</td>
+              <td>{{ item?.purchaseOrderDetailsItemName }}</td>
+              <td class="end">
+                {{ item?.purchaseOrderDetailsQuantity.toFixed(2) }}
+              </td>
+              <td class="end">
+                {{ item?.purchaseOrderDetailsRate | number : "0.2" }}
+              </td>
+              <td class="end">
+                {{ item?.purchaseOrderDetailsNetAmt | number : "0.2" }}
+              </td>
+              <td>{{ getJobName(item?.purchaseOrderDetailsJobId) }}</td>
+            </tr>
+            <tr *ngFor="
+                let _ of [].constructor(
+                  getEmptyRowCount(
+                    savedPurchaseOrder?.purchaseOrderDetails?.length
+                  )
+                );
+                let i = index
+              ">
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td style="border-top: 1px solid #b1aeae" colspan="2">
+                <div class="flexrow">
+                  <b>Total Amount is
+                    <!-- {{getCurrencyName(savedPurchaseOrder?.purchaseOrderCurrencyId)}} -->
+                    :</b>
+
+                  <span>
+                    &nbsp;&nbsp;
+                    {{
+                    convertNumberToWordsWithDecimal(
+                    savedPurchaseOrder?.purchaseOrderNetAmount
+                    )
+                    }}</span>
+                </div>
+                <p>
+                  <b>Payment Terms:</b>
+                  <span *ngIf="
+                      savedPurchaseOrder?.purchaseOrderPaymentTerms != null
+                    ">
+                    &nbsp;&nbsp;&nbsp;{{
+                    savedPurchaseOrder?.purchaseOrderPaymentTerms
+                    }}</span>
+                </p>
+              </td>
+              <th colspan="2">
+                <div class="flexcol alignstart">
+                  <strong>{{ "Total Taxable" | translate }}</strong>
+                  <strong>{{ "Discount " | translate }}</strong>
+                  <!-- <strong>{{'Total Amt' | translate}}</strong> -->
+                  <strong>{{ "Total VAT" | translate }}</strong>
+                  <strong>{{ "Grand Total" | translate }}</strong>
+                </div>
+              </th>
+              <th colspan="2">
+                <div class="flexcol alignEnd">
+                  <div>
+                    {{
+                    savedPurchaseOrder?.purchaseOrderTotalGrossAmount
+                    | number : "0.2"
+                    }}
+                    &nbsp;
+                  </div>
+                  <div>
+                    {{
+                    savedPurchaseOrder?.purchaseOrderTotalItemDisAmount
+                    | number : "0.2"
+                    }}
+                    &nbsp;
+                  </div>
+
+                  <div>
+                    {{
+                    savedPurchaseOrder?.purchaseOrderVatAmt | number : "0.2"
+                    }}
+                    &nbsp;
+                  </div>
+
+                  <div>
+                    {{
+                    savedPurchaseOrder?.purchaseOrderNetAmount
+                    | number : "0.2"
+                    }}
+                    &nbsp;
+                  </div>
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <td colspan="11"></td>
+            </tr>
+            <tr>
+              <td colspan="11">
+                <div id="page-container">
+                  <div id="content-wrap">
+                    <div class="border">
+                      <div class="flexrow w-100">
+                        <div class="flexrow wp-50" style="justify-content: space-between">
+                          <div class="flexcol"></div>
+                          <div class="flexcol"></div>
+                        </div>
+                      </div>
+
+                      <div class="signature-container">
+                        <div class="customer-signature">
+                          <b>Customer Signature</b>
+                        </div>
+                        <div class="authorized-signature">
+                          <b>Authorized Signature</b>
+                        </div>
+                      </div>
+
+                      <div class="page-footer w-80">
+                        <div class="sp">
+                          <span>
+                            {{ stationmasterObj?.stationMasterStationName }},
+                            {{ stationmasterObj?.stationMasterAddress }}</span>
+                          <span>
+                            {{ stationmasterObj?.stationMasterCity }}</span>
+                          <span>
+                            {{
+                            stationmasterObj?.stationMasterPostOffice
+                            }}</span>
+                          <span>Tel.
+                            {{ stationmasterObj?.stationMasterTele1 }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <footer id="footer"></footer>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- </body> -->
+    </div>
+  </p-dialog>
+
+  <p-dialog header="Add Attachments" [modal]="true" [(visible)]="fileAttachmentDialogVisibility"
+    [style]="{ width: '50rem' }">
+    <div class="card">
+      <p-fileUpload name="files" [maxFileSize]="1000000" [customUpload]="true"
+        (uploadHandler)="customUploadHandler($event)" [showUploadButton]="true" [showCancelButton]="true"
+        [multiple]="true" [accept]="'.pdf'" [auto]="false" [mode]="'advanced'" [uploadLabel]="'Upload'"
+        [cancelLabel]="'Cancel'" [chooseLabel]="'Choose'">
+        <ng-template #empty>
+          <div>Drag and drop files here to upload.</div>
+        </ng-template>
+        <ng-template #content>
+          <ul *ngIf="attachmentsToUploaded.length">
+            <li *ngFor="let file of attachmentsToUploaded">
+              {{ file.name }} - {{ file.size }} bytes
+            </li>
+          </ul>
+        </ng-template>
+      </p-fileUpload>
+    </div>
+  </p-dialog>
+
+  <p-dialog header="Select File to Transfer" [modal]="true" [(visible)]="fileImportDialogVisibility"
+    [style]="{ width: '50rem' }">
+    <div class="card">
+      <!-- Upload Button (Only if files are selected) -->
+      <div class="mb-2">
+        <button pButton type="button" label="Upload Selected" icon="pi pi-upload" class="p-button-success"
+          (click)="onUploadSelectedFiles()" [disabled]="
+            !selectedDocumentsToTransfer ||
+            selectedDocumentsToTransfer.length === 0
+          "></button>
+      </div>
+
+      <!-- Document Table -->
+      <p-table [value]="documentListToImport" [(selection)]="selectedDocumentsToTransfer" dataKey="id"
+        [paginator]="true" [rows]="10" [responsive]="true" [resizableColumns]="true" selectionMode="multiple">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th>File Name</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row let-i="rowIndex">
+          <tr [pSelectableRow]="row">
+            <td>
+              <p-tableCheckbox [value]="row"></p-tableCheckbox>
+            </td>
+            <td>{{ row.name }}</td>
+            <td>
+              <a pButton type="button" icon="pi pi-eye" class="p-button-text p-button-info" [href]="row.url"
+                target="_blank" title="View PDF"></a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-dialog>
+</div>

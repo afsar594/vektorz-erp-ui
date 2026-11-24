@@ -1,0 +1,64 @@
+.ctrl{
+    color: #45a8e0;
+}
+.custom-input {
+    width: 75%;
+}
+.table-container {
+    max-height: 300px; /* Adjust the max-height value according to your needs */
+    overflow-y: auto;
+}
+.table-container th {
+    position: sticky;
+    top: 0;
+  }
+
+/* Adjustments for smaller screen sizes */
+@media only screen and (max-width: 768px) {
+    .table-container {
+        max-height: 200px;
+    }
+}
+.txt{
+    width: 200px;
+    border: none; /* This removes the border */
+    outline: none;
+}
+.txt:hover {
+    border: none;
+    outline: none;
+    border:1px solid white
+}
+.dropdown-menu {
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-menu ul li {
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.dropdown-menu ul li:hover {
+    background-color: #ddd;
+}
+.st{
+    margin-top: -17px;
+    margin-left: 26px;
+}
+.iconbton{
+    cursor: pointer;
+}
+
+
+
+
+  

@@ -1,0 +1,124 @@
+<app-page-header [nav]='breadcumbmodel' [title]='title'></app-page-header>
+<div class="toolbar">
+    <div class="ui-toolbar-group-left">
+      <button pButton type="button" [label]="'New' | translate" (click)='new()' icon="pi pi-plus"></button>
+      <button pButton type="button" [label]="'Edit' | translate" (click)='edit()'
+        [disabled]='!btnFlag?.edit || !Permission?.Edit' icon="fa fa-pencil" class="ui-button-success"></button>
+  
+      <button pButton type="button" class="ui-button-danger" [disabled]='!btnFlag?.cancel' [label]="'Cancel' | translate"
+         icon="fa fa-ban"></button>
+         
+      <button pButton type="button" class="ui-button-success" (click)='saveprojectdescription()'
+      [disabled]='!btnFlag.save || !Permission?.Add' label="Save" icon="fa fa-floppy-o"></button>
+     
+      <button pButton type="button" class="ui-button-success" (click)='saveprojectdescription()'
+      [disabled]='!btnFlag.update || !Permission.Edit' label="Update" icon="fa fa-floppy-o"></button>
+       
+      <button pButton type="button" class="ui-button-danger" (click)='delete()'
+        [disabled]='!btnFlag.delete || !Permission.Delete' label="Delete" icon="fa fa-trash"></button>
+  
+    </div>
+      <div class="ui-toolbar-group-right">
+        <button pButton type="button" label="Exit" (click)='ExitNew()' icon="fa fa-sign-out"></button> 
+       
+    </div>
+  </div>
+<div class="card card-w-title" [formGroup]='projectdescriptionFormGroup'>
+    <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-2">
+            {{'Project Description Name' | translate}}
+        </div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText placeholder="projectdescription Name"
+                formControlName='projectDescriptionMasterProjectDescriptionName'>
+
+            <div class="error"
+                *ngIf="f.projectDescriptionMasterProjectDescriptionName.errors 
+            && (f.projectDescriptionMasterProjectDescriptionName.dirty || f.projectDescriptionMasterProjectDescriptionName.touched)">
+                <span *ngIf="f.projectDescriptionMasterProjectDescriptionName.errors.required">
+                    Project Description Name is Mandatory Field*</span>
+            </div>
+
+        </div>
+     
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Sort Order' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-3">
+            <input pInputText type="number" placeholder="Sort Order"
+                formControlName='projectDescriptionMasterProjectDescriptionSortOrder'>
+            <div class="error"
+                *ngIf="f.projectDescriptionMasterProjectDescriptionSortOrder.errors 
+            && (f.projectDescriptionMasterProjectDescriptionSortOrder.dirty || f.projectDescriptionMasterProjectDescriptionSortOrder.touched)">
+                <span *ngIf="f.projectDescriptionMasterProjectDescriptionSortOrder.errors.required">Rate is Mandatory
+                    Field*</span>  
+            </div>
+        </div>
+
+        <div class="p-col-12 p-md-12 p-lg-1">{{'Status' | translate}}</div>
+        <div class="p-col-12 p-md-12 p-lg-2">
+            <p-checkbox name="PDStatus"  [binary]="true"
+            formControlName='projectDescriptionMasterProjectDescriptionStatus'></p-checkbox>
+
+        </div>
+
+        
+    </div>
+
+    <div class="p-grid">
+        <!-- <div class="ui-g-12"><p-checkbox name="PDStatus" value="Status" label="Status" [binary]="true" formControlName='projectDescriptionMasterProjectDescriptionStatus' ></p-checkbox></div> -->
+
+      
+    </div>
+
+    <!-- <div class="p-grid">
+        <div class="p-col-12 p-md-12 p-lg-offset-4 p-lg-6">
+            <button pButton class="ui-button-info" [disabled]="!Permission?.Add" [label]='btnlabel'
+                (click)='saveprojectdescription()'></button>
+            <button pButton class="ui-button-warning" label='Clear' (click)='reset()'></button>
+        </div>
+    </div> -->
+
+    <div class="p-grid">
+        <div class="p-col-12">
+            <p-table [value]="projectdescriptionList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>{{'Code' | translate}}</th>
+                        <th> {{'ProjectName' | translate}}</th>
+                        <th>{{'Sort Order' | translate}}</th>
+                        <th>{{'Status' | translate}}</th>
+                        <th>{{'Action' | translate}} </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-projectdescription>
+                    <tr>
+                        <td>{{projectdescription.projectDescriptionMasterProjectDescriptionId}}</td>
+                        <td>{{projectdescription.projectDescriptionMasterProjectDescriptionName}}</td>
+                        <td>{{projectdescription.projectDescriptionMasterProjectDescriptionSortOrder}}</td>
+                        <td>
+                            <!-- {{projectdescription.projectDescriptionMasterProjectDescriptionStatus}} -->
+                            <ng-container
+                                *ngIf="projectdescription.projectDescriptionMasterProjectDescriptionStatus === true">
+                                <input type="checkbox" [checked]="true" [disabled]="true" />
+                            </ng-container>
+                            <ng-container
+                                *ngIf="projectdescription.projectDescriptionMasterProjectDescriptionStatus === false">
+                                <input type="checkbox" [checked]="false" [disabled]="true" />
+                            </ng-container>
+                        </td>
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)='updateValues(projectdescription)'
+                                iconPos="left"></button>
+                            <!-- <button pButton type="button" icon="pi pi-trash"
+                                (click)='removeprojectdescription(projectdescription)' iconPos="left"></button> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog key="confirm-key" acceptLabel="Yes" rejectLabel="No" header="Confirm"></p-confirmDialog>

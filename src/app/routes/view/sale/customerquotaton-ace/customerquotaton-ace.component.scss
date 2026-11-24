@@ -1,0 +1,767 @@
+.box {
+  padding-bottom: 200px;
+
+  border: 1px solid rgb(168, 168, 168);
+  background-color: rgb(226, 226, 217);
+}
+.check {
+  transform: scale(1.6);
+}
+
+.invalid-accordion {
+  border: 2px solid red !important;
+}
+
+.border {
+  border: 2.5px solid rgb(201, 204, 204);
+  box-shadow: 5px 5px rgb(201, 204, 204);
+  padding: 15px;
+}
+
+
+
+
+#Voucher {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  border-radius: 10px;
+  border: 2.5px solid rgb(201, 204, 204);
+  border-collapse: separate;
+}
+
+#Voucher td,
+#Voucher th {
+  // border: 1px solid #ddd;
+  padding: 8px;
+
+}
+
+#Voucher tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#Voucher tr:hover {
+  background-color: #ddd;
+}
+
+#Voucher th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  // background-color: #dfe4e3;
+  color: rgb(0, 0, 0);
+  text-align: center;
+
+}
+
+.w70 {
+  width: 300px;
+}
+
+.w45 {
+  width: 70px;
+}
+
+.signature-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.customer-signature {
+  order: 1;
+  /* Specifies the order of the flex items */
+}
+
+.authorized-signature {
+  order: 2;
+  /* Specifies the order of the flex items */
+}
+
+.page-footer {
+  position: running(footer);
+  bottom: 0;
+  width: 100%;
+  visibility: visible;
+  border-top: 1px solid black;
+
+}
+
+
+
+.page {
+  page-break-after: always;
+
+}
+
+
+
+@page {
+  margin: 20mm
+}
+
+@media print {
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+
+  body {
+    margin: 0;
+  }
+
+}
+
+
+.quotation-wrapper {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.quotation-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+  color: #000;
+}
+
+.quotation-table th,
+.quotation-table td {
+  border-left: 2px solid #000;
+  border-right: 2px solid #000;
+  border-top: 1px dotted #555;
+  border-bottom: 1px dotted #555;
+  padding: 3px 5px;
+  height: 22px;
+  vertical-align: middle;
+}
+
+.quotation-table th {
+  font-weight: 700;
+  text-align: center;
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+}
+
+.quotation-table tr:last-child td {
+  border-bottom: 2px solid #000;
+}
+
+.quotation-table th:nth-child(1),
+.quotation-table td:nth-child(1) {
+  width: 45px;
+}
+
+.quotation-table th:nth-child(2),
+.quotation-table td:nth-child(2) {
+  width: 260px;
+}
+
+.quotation-table th:nth-child(3),
+.quotation-table td:nth-child(3) {
+  width: 125px;
+}
+
+.quotation-table th:nth-child(4),
+.quotation-table td:nth-child(4) {
+  width: 145px;
+}
+
+.quotation-table th:nth-child(5),
+.quotation-table td:nth-child(5) {
+  width: 105px;
+}
+
+.quotation-table th:nth-child(6),
+.quotation-table td:nth-child(6) {
+  width: 150px;
+}
+
+.quotation-table th:nth-child(7),
+.quotation-table td:nth-child(7) {
+  width: 195px;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.empty-row td {
+  height: 22px;
+}
+
+.amount-with-currency {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.final-row td {
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  height: 24px;
+}
+// ===============
+// body {
+//   font-family: Arial, sans-serif;
+//   margin: 0;
+//   padding: 20px;
+//   background-color:#fff;
+// }
+
+// .container {
+//   width: 800px;
+//   margin: 0 auto;
+//   padding: 20px;
+//   background-color: #fff;
+//   border: 1px solid#fff;;
+// }
+
+
+// .header-container {
+//   display: flex;
+//   justify-content: center;
+//   margin-bottom: 5px; /* Adjust margin as needed */
+// }
+
+// .center-text {
+//   text-align: center;
+//   flex-grow: 1;
+// }
+
+// .right-text {
+//   text-align: right;
+//   margin-bottom: 20px; /* Adjust margin as needed */
+// }
+// .header {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: flex-start;
+//   margin-bottom: 20px;
+// }
+
+// .company-info {
+//   max-width: 60%;
+//   font-size: 14px;
+// }
+
+// .lpo-info {
+//   font-size: 14px;
+//   max-width: 40%;
+//   text-align: right;
+// }
+
+// .info-row {
+//   display: flex;
+//   justify-content: space-between;
+//   margin-bottom: 12px; /* Adjust margin as needed */
+// }
+
+// .label {
+//   text-align: left;
+//   padding-right: 10px;
+//   width: 50%;
+  
+// }
+
+// .value {
+//   text-align: center;
+//   width: 50%;
+//   display: inline-block;
+//   margin-right: 20px;
+// }
+
+// .company-info h2 {
+//   margin-top: 0;
+//   font-size: 18px;
+// }
+// /* 
+// .order-table {
+//   margin-top: 20px;
+// } */
+
+// .order-table {
+//   width: 100%;
+//   border-collapse: collapse;
+//   margin-bottom: 20px;
+// }
+
+// .order-table th,
+// .order-table td {
+//   border: 1px solid #000;
+//   padding: 8px;
+//   // text-align: center;
+//   border: none;
+
+// }
+
+// .total-section {
+//   width: 50%;
+//   margin-left: auto;
+//   margin-bottom: 20px;
+// }
+
+// .total-row {
+//   display: flex;
+//   justify-content: space-between;
+//   margin-bottom: 8px;
+// }
+
+// .grand-total {
+//   font-weight: bold;
+//   font-size: 16px;
+// }
+
+// .footer {
+//   text-align: left;
+//   font-size: 14px;
+//   margin-top: 50px;
+// }
+
+// .footer-container {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: flex-start;
+//   margin-top: 50px;
+// }
+
+// .left-side {
+//   text-align: left;
+// }
+
+// .right-side {
+//   text-align: right;
+// }
+
+// .right-side p {
+//   margin: 0;
+//   margin-bottom: 10px;
+// }
+//   /* Separator Bar */
+//   .separator {
+//       border: none;
+//       height: 2px;
+//       background-color:rgb(201, 204, 204);/* Black line for the separator */
+//       margin: 20px 0;
+//   }
+//   .clear {
+//       clear: both;
+//   }
+//   .estimate-info {
+//       text-align: right;
+//   }
+//   .company-details, .contact-details, .estimate-info {
+//       width: 50%;
+//       float: left;
+//   }
+
+//   .clear {
+//       clear: both;
+//   }
+
+//   .company-details {
+//       font-size: 14px;
+//   }
+//   .page-footer {
+//     text-align: center;
+  
+//     margin-left: 10%;
+//     margin-top: 200px;
+//     border-top: 4px solid rgb(201, 204, 204);
+    
+//   }
+//   .sp-line {
+//     text-align: center;
+  
+//     margin-left: -1%;
+//     margin-top: 43px;
+//     border-top: 4px solid rgb(201, 204, 204);
+//     margin-bottom: 20px;
+//   }
+//   .sp{
+//     margin-top: 10px;
+//   }
+
+.inputGroup {
+  margin: 4px 0;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+h2 {
+  margin: 0 0 8px 0;
+}
+
+h1 {
+  margin: 0 0 8px 0;
+}
+
+.grid {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.spacebtw {
+  margin-left: 15px;
+}
+
+.f-r {
+  float: right;
+}
+
+#customers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  // border:  2px solid #85898ee0;
+}
+
+#customers td,
+#customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+
+}
+
+#customers tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#customers tr:hover {
+  background-color: #ddd;
+}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  // text-align: left;
+  background-color: #bcc0bf;
+  color: rgb(0, 0, 0);
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+  margin-bottom: 5px;
+  gap: 2px;
+  /* Adjusted the gap value here */
+}
+
+.gaprow {
+  gap: 50px;
+}
+h1{
+  margin: 0 0 8px 0;
+}
+
+h2{
+  margin: 0 0 8px 0;
+}
+.contain1 {
+  width: 43.5%;
+  border-radius: 1px;
+  margin-top: 6%;
+  // font-size: 16px;
+  padding-bottom: 0%;
+  padding: 8px;
+}
+
+.contain2 {
+  width: 43.5%;
+  border-radius: 1px;
+  margin-top: 5px;
+  // font-size: 18px;
+  padding-bottom: 0%;
+  padding: 8px;
+  margin-left: 65px;
+}
+
+.bank2 {
+  border: 2.5px solid rgb(201, 204, 204);
+  width: 49.5%;
+  margin-bottom: 5px;
+  border-radius: 1px;
+  margin-top: 5px;
+  // font-size: 18px;
+  padding-bottom: 0%;
+  padding: 8px;
+  box-shadow: 5px 5px rgb(201, 204, 204);
+}
+
+.w70 {
+  width: 220px;
+}
+
+.bank1 {
+  border: 2.5px solid rgb(201, 204, 204);
+  width: 49%;
+  margin-bottom: 5px;
+  border-radius: 1px;
+  padding: 8px;
+  margin-top: 5px;
+  // font-size: 18px;
+  padding-bottom: 0%;
+  box-shadow: 5px 5px rgb(201, 204, 204);
+}
+
+.min-panel {
+  min-height: 106px !important;
+}
+
+:host ::ng-deep .ui-table .ui-table-thead>tr>th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: -8px;
+  box-shadow: 1px 3px 6px 0 rgba(32, 33, 36, 0.10);
+}
+
+@media screen and (max-width: 64em) {
+  :host ::ng-deep .ui-table .ui-table-thead>tr>th {
+    top: -8px;
+  }
+}
+
+img {
+  // width: 90px;
+  // height: 135px;
+  margin-top: 15px;
+}
+
+.ui-dropdown {
+  min-width: 50% !important;
+}
+
+.signature-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.customer-signature {
+  order: 1;
+  /* Specifies the order of the flex items */
+}
+
+.authorized-signature {
+  order: 2;
+  /* Specifies the order of the flex items */
+}
+
+.sp{
+  margin-top: 27px;}
+.w0 {
+  width: 60px !important;
+}
+
+.alignEnd {
+  align-items: end;
+}
+
+.alignstart {
+  text-align: start;
+}
+.bR{
+   border-right: 1px solid #ddd ;
+  margin-right:10px ;
+}
+.page-footer {
+  text-align: center;
+
+  margin-left: 10%;
+  margin-top: -3px;
+   border-top: 0px solid rgb(201, 204, 204);
+  
+}
+
+.page {
+  page-break-after: avoid;
+}
+
+
+.hot-table-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+}
+
+::ng-deep .hot-table-wrapper hot-table {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+::ng-deep .hot-table-wrapper .handsontable {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+::ng-deep .hot-table-wrapper .ht_master,
+::ng-deep .hot-table-wrapper .wtHolder {
+  width: 100% !important;
+  height: 100% !important;
+
+}
+/* ================= COST ESTIMATION FULL PAGE ================= */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cost-estimation-page {
+  width: 100%;
+  height: calc(100vh - 170px);
+  padding: 8px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+:host ::ng-deep .cost-accordion,
+:host ::ng-deep .cost-accordion .p-accordion {
+  display: block;
+  width: 100%;
+}
+
+:host ::ng-deep .cost-accordion .p-accordion-tab {
+  width: 100%;
+}
+
+:host ::ng-deep .cost-accordion .p-accordion-header,
+:host ::ng-deep .cost-accordion .p-accordion-header-link {
+  width: 100%;
+}
+
+:host ::ng-deep .cost-accordion .p-accordion-content {
+  width: 100%;
+  padding: 8px;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.accordion-body-full {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cost-table-wrapper {
+  width: 100%;
+  min-height: 200px;
+}
+
+.summary-wrapper {
+  width: 420px;
+  margin-left: auto;
+  padding-top: 10px;
+  flex: 0 0 auto;
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.summary-row label {
+  margin: 0;
+}
+
+.summary-row input {
+  width: 100%;
+}
+
+.vat-row {
+  grid-template-columns: 120px 90px 20px 1fr;
+}
+
+.vat-row span {
+  text-align: center;
+  font-weight: 600;
+}
+
+.empty-hot-row {
+  background: #f7f7f7 !important;
+}
+
+.bold-hot-row {
+  font-weight: 700 !important;
+  background: #eef6f8 !important;
+}
+
+:host ::ng-deep .cost-table-wrapper hot-table {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+:host ::ng-deep .cost-table-wrapper .handsontable,
+:host ::ng-deep .cost-table-wrapper .ht_master,
+:host ::ng-deep .cost-table-wrapper .wtHolder {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media screen and (max-width: 768px) {
+  .summary-wrapper {
+    width: 100%;
+  }
+
+  .vat-row {
+    grid-template-columns: 120px 1fr 20px 1fr;
+  }
+}
+
+
+/* ================= COST ESTIMATION LOOKUP / HANDSONTABLE PRODUCTION FIXES ================= */
+:host ::ng-deep .cost-table-wrapper .handsontable td.htDimmed {
+  color: #333;
+}
+
+:host ::ng-deep .cost-table-wrapper .handsontable td.current,
+:host ::ng-deep .cost-table-wrapper .handsontable td.area {
+  outline: 1px solid #2196f3;
+}
+
+:host ::ng-deep .cost-table-wrapper .handsontable td:nth-child(3) {
+  cursor: pointer;
+}
+
+:host ::ng-deep .cost-table-wrapper .handsontable td:nth-child(3)::after {
+  content: '';
+}
+
+:host ::ng-deep .p-dialog .ui-table,
+:host ::ng-deep .p-dialog .p-datatable {
+  font-size: 13px;
+}
+

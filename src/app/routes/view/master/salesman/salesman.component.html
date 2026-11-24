@@ -1,0 +1,99 @@
+<app-page-header [nav]="breadcumbmodel" [title]="title"></app-page-header>
+<div class="toolbar">
+  <div class="ui-toolbar-group-left">
+    <button
+      pButton
+      type="button"
+      [label]="'New' | translate"
+      (click)="onDisplayAddUpdateDialog('add')"
+      icon="pi pi-plus"
+    ></button>
+  </div>
+</div>
+<div class="card card-w-title">
+  <div class="grid">
+    <div class="col-12">
+      <div class="grid">
+        <hot-table
+          [hotId]="hotid"
+          [licenseKey]="licensekey"
+          [settings]="salesMan_entry"
+          [data]="salesMan_entryDataset"
+        ></hot-table>
+      </div>
+    </div>
+  </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog
+  key="confirm-key"
+  acceptLabel="Yes"
+  rejectLabel="No"
+  header="Confirm"
+></p-confirmDialog>
+
+<p-dialog
+  [header]="operation.insert ? 'Add New Salesman' : 'Update Saleman'"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '650px' }"
+>
+  <form [formGroup]="salesmanFormGroup" class="p-fluid">
+    <!-- Salesman Name -->
+    <div class="p-grid">
+      <div class="p-col-1"></div>
+      <label class="p-col-3 p-text-right">
+        <span class="required">*</span> Salesman Name
+      </label>
+      <div class="p-col-6">
+        <input
+          type="text"
+          pInputText
+          formControlName="salesManMasterSalesManName"
+          placeholder="Type Salesman Name"
+        />
+        <small
+          *ngIf="
+            f.salesManMasterSalesManName?.errors?.required &&
+            f.salesManMasterSalesManName?.touched
+          "
+        >
+          <span class="error">Salesman Name is required</span>
+        </small>
+      </div>
+    </div>
+
+    <!-- Contact No -->
+    <div class="p-grid">
+      <div class="p-col-1"></div>
+      <label class="p-col-3 p-text-right">Contact No</label>
+      <div class="p-col-6">
+        <input
+          type="text"
+          pInputText
+          formControlName="salesManMasterSalesManContactNo"
+          placeholder="Type Contact Number"
+        />
+      </div>
+    </div>
+
+    <!-- Footer buttons (manually placed inside) -->
+    <div class="dialog-footer">
+      <p-button
+        (click)="
+          f.salesManMasterSalesManId.value <= 0
+            ? insertSalesman()
+            : updateSalesman()
+        "
+        [icon]="
+          f.salesManMasterSalesManId.value <= 0 ? 'pi pi-save' : 'pi pi-check'
+        "
+        [label]="f.salesManMasterSalesManId.value <= 0 ? 'Save' : 'Update'"
+        styleClass="p-button-raised p-button-rounded p-button-success"
+      ></p-button>
+    </div>
+  </form>
+</p-dialog>
